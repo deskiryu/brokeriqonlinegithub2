@@ -65,7 +65,7 @@
                 <NavLink class="nav-link" href="messagelist">
                     @if (NewMessageHide)
                     {
-                        ChangeIcon("_content/ReviewIt.Web.Server/favicon.ico");
+                        ChangeIcon("_content/BrokerIQ.Online.Server/favicon.ico");
                         <MudBadge Content="@NewMessageCount" Overlap="true" Color="Color.Inherit" Dot="true">
                             <MudIcon Icon="@Icons.Material.Filled.Email" Style="color: #d7d7d7; margin-left:-3px" />
                             &nbsp;&nbsp;Reminders&nbsp;&nbsp;&nbsp;
@@ -73,7 +73,7 @@
                     }
                     else
                     {
-                        ChangeIcon("_content/ReviewIt.Web.Server/favicon-alert.ico");
+                        ChangeIcon("_content/BrokerIQ.Online.Server/favicon-alert.ico");
                         <MudBadge Content="@NewMessageCount" Overlap="true" Color="Color.Error " Dot="false">
                             <MudIcon Icon="@Icons.Material.Filled.Email" Style="color: #d7d7d7; margin-left:-3px" />
                             &nbsp;&nbsp;Reminders&nbsp;&nbsp;&nbsp;
