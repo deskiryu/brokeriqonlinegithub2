@@ -1,0 +1,517 @@
+﻿@page "/customerdetail/{CustomerId}"
+@using BrokerIQ.Dto.Models
+@using BrokerIQ.Online.Models
+@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Services
+@using BrokerIQ.Online.Services.Interface
+@using System.IO
+@using BrokerIQ.Online.Server.Extensions
+
+@inherits CustomerDetailBase
+@inject ICustomerService CustomerService
+@inject NavigationManager NavigationManager
+
+@inject IJSRuntime js
+@functions {
+    async void PreviewImage()
+    {
+        await Extensions.PreviewFile(js, memoryStream, true);
+    }
+
+    async void SaveImage()
+    {
+        await Extensions.SaveAs(js, imageFileName, imageData);
+    }
+}
+
+<h3>Customer</h3>
+@if (Customer == null)
+{
+    <div class="row ml-2 ">
+        <div class="col-4 mt-2">
+            <h3>Loading</h3>
+        </div>
+    </div>
+    <div class="row ml-2">
+        <div class="col-4">
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        </div>
+    </div>
+}
+else if (!Saved)
+{
+    <section class="customer-detail">
+        <h1 class="page-title">Details for @Customer.FirstName @Customer.LastName</h1>
+        @{
+            var leadingFormat = "00000";
+            //var a = Customer.CustomerId.ToString("00000");
+        }
+        <div class="card ">
+            <div class="card-header">Notifications</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <MudInputString @bind-Value="selectedNotification" Placeholder="Type a notification message" Style="width:100%" />
+                    </div>
+                    <div class="col-3">
+                        <button @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Notification to customer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-header">Details</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-2">
+
+                        @if (CustomerProfilePicture != null)
+                        {
+                            var base64 = Convert.ToBase64String(CustomerProfilePicture.File);
+                            var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                            <img src="@imgSrc" class="img-responsive customer-detail-img" style="width: 100%" />
+                        }
+                    </div>
+                    <div class="col-lg-10">
+                        <div class="form-group row">
+                            <label class="col-lg-2 ">Name</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.Name</label>
+                            </div>
+
+                            <label class="col-lg-2 ">Email</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.EmailAddress</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Date Of Birth</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.DateOfBirth.ToString("dd/MM/yyyy")</label>
+                            </div>
+
+                            <label class="col-lg-2 col-form-label">Employment</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.Employment.GetDisplayName()</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Nationality</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.Nationality.GetDisplayName()</label>
+                            </div>
+
+                            <label class="col-lg-2 col-form-label">Residential Status</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.ResidentialStatus.GetDisplayName()</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Phone type</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.OperatingSystem.GetDisplayName()</label>
+                            </div>
+
+                            <label class="col-lg-2 col-form-label">Email confirmed</label>
+                            @if (Customer.EmailConfirmed)
+                            {
+                                <div class="col-lg-4">
+                                    <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-lg-4">
+                                    <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Address</label>
+                            <div class="col-8">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.Address</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-2 ">Business Name</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.BusinessName</label>
+                            </div>
+                        </div>
+
+                        @if (IsAdmin)
+                        {
+                            var broker = @Brokers.FirstOrDefault(x => x.Id == Customer.ChosenBrokerId);
+                            var name = broker?.Name ?? "None chosen";
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Broker</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@name</label>
+                                </div>
+
+                                <label class="col-lg-2 col-form-label">Suggested Broker 1</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker1</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Suggested Broker 2</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker2</label>
+                                </div>
+
+                                <label class="col-lg-2 col-form-label">Suggested Broker 3</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker3</label>
+                                </div>
+                            </div>
+
+                        }
+
+                    <div class="row col-6 mt-1">
+                        <NavLink href="@($"customeredit/{Customer.Id}")" class="btn btn-primary table-btn mt-1">
+                            Edit Customer
+                        </NavLink>                            
+                        <NavLink href="@($"menuplanedit/0/{Customer.Id}")" class="btn btn-primary table-btn ml-lg-2 mt-1">
+                            Add a Menu Plan
+                        </NavLink>
+                        @if (IsAdmin)
+                        {
+                            <button class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteCustomer">
+                                Delete Customer
+                            </button>
+                        }
+
+
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <section>
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+            <MudTabPanel Text="Insurances">
+                <NavLink href="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="btn btn-primary mb-2">
+                    Add New Insurance
+                </NavLink>
+                <table id="table-insurance" class="table  col-sm-12 table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Insurer</th>
+                            <th>Expiry</th>
+                            @if (IsAdmin)
+                            {
+                                <th>Broker</th>
+                            }
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var insurance in Customer.Insurances)
+                        {
+                            if (!insurance.MenuPlanId.HasValue || insurance.MenuPlanId == 0)
+                            {
+                                <tr>
+                                    <td>@insurance.InsType.GetDisplayName()</td>
+                                    <td>@insurance.Name</td>
+                                    <td>@insurance.ExpiryDate.ToString("dd/MM/yyyy")</td>
+                                    @if (IsAdmin)
+                                    {
+                                        <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
+                                    }
+                                    <td>
+                                        <NavLink href="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
+                                            <i class="fas fa-info-circle"></i>
+                                        </NavLink>
+                                        <NavLink href="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId=0")" class="btn btn-primary table-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </NavLink>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </MudTabPanel>
+            <MudTabPanel Text="Mortgages">
+                <NavLink href="@($"mortgageedit/0/{Customer.Id}")" class="btn btn-primary mb-2">
+                    Add New Mortgage
+                </NavLink>
+                <table id="table-mortgage" class="table  col-sm-12 table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Type</th>
+                            <th>Rate</th>
+                            <th>Promotion End</th>
+                            @if (IsAdmin)
+                            {
+                                <th>Broker</th>
+                            }
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var mortgage in Customer.Mortgages)
+                        {
+                            <tr>
+                                <td>@mortgage.ProviderName</td>
+                                <td>@mortgage.MortgageType.GetDisplayName()</td>
+                                <td>@mortgage.MortgageRateType.GetDisplayName()</td>
+
+                                @if (mortgage.PromotionalEndDate.HasValue)
+                                {
+                                    <td>@mortgage.PromotionalEndDate.Value.ToString("dd/MM/yyyy")</td>
+                                }
+                                @if (IsAdmin)
+                                {
+                                    <td>@Brokers.First(x => x.Id == mortgage.BrokerId)?.Name</td>
+                                }
+                                <td>
+                                    <NavLink href="@($"mortgagedetail/{mortgage.Id}")" class="btn btn-primary table-btn">
+                                        <i class="fas fa-info-circle"></i>
+                                    </NavLink>
+                                    <NavLink href="@($"mortgageedit/{mortgage.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
+                                        <i class="fas fa-edit"></i>
+                                    </NavLink>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </MudTabPanel>
+            <MudTabPanel Text="Uploads">
+                <table id="table-uploads" class="table  col-sm-12 table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Name</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var doc in CustomerDocuments)
+                        {
+                            <tr>
+                                <td>@doc.DocuVaultType</td>
+                                <td>@doc.Description</td>
+                                <td>
+                                    <a class="btn btn-primary table-btn" @onclick="f => ViewDocumentUpload(doc)">
+                                        <i class="fas fa-eye">
+                                        </i>
+                                    </a>
+                                    <a class="btn btn-primary table-btn" @onclick="f => SaveDocumentUpload(doc)">
+                                        <i class="fas fa-download">
+                                        </i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @code{
+                    protected void ViewDocumentUpload(CustomerDocumentDto doc)
+                    {
+                        memoryStream = new MemoryStream(doc.File);
+                        PreviewImage();
+                    }
+
+                    protected void SaveDocumentUpload(CustomerDocumentDto doc)
+                    {
+                        imageFileName = doc.Description + ".jpeg";
+                        imageData = doc.File;
+                        SaveImage();
+                    }
+                }
+            </MudTabPanel>
+            @if (Customer.MenuPlans != null && Customer.MenuPlans.Any())
+            {
+
+                @foreach (var menuplan in Customer.MenuPlans)
+                {
+
+                <MudTabPanel Text="@($"Menuplan: {menuplan.Name}")">
+                    <NavLink href="@($"insuranceedit/0/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary mb-2">
+                        Add New Insurance
+                    </NavLink>
+                    <NavLink href="@($"menuplanedit/{menuplan.Id}/{Customer.Id}")" class="btn btn-primary table-btn mb-2">
+                        Edit this Menu Plan
+                    </NavLink>
+                    <table id="table-menuplan" class="table  col-sm-12 table-striped ">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Insurer</th>
+                                <th>Expiry</th>
+                                @if (IsAdmin)
+                                {
+                                    <th>Broker</th>
+                                }
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var insurance in Customer.Insurances)
+                            {
+                                if (insurance.MenuPlanId.HasValue && insurance.MenuPlanId == menuplan.Id)
+                                {
+                                    <tr>
+                                        <td>@insurance.InsType.GetDisplayName()</td>
+                                        <td>@insurance.Name</td>
+                                        <td>@insurance.ExpiryDate.ToString("dd/MM/yyyy")</td>
+                                        @if (IsAdmin)
+                                        {
+                                            <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
+                                        }
+                                        <td>
+                                            <NavLink href="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
+                                                <i class="fas fa-info-circle"></i>
+                                            </NavLink>
+                                            <NavLink href="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary table-btn">
+                                                <i class="fas fa-edit"></i>
+                                            </NavLink>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </MudTabPanel>
+                }
+            }
+            <MudTabPanel Text="Notes">
+                <button @onclick="@NewNote" class="btn btn-primary mb-2">
+                    Add New Note
+                </button>
+
+                <div class = "row">
+                @if (Notes != null && Notes.Any())
+                {
+                    @foreach (var note in Notes)
+                    {
+                        <MudCard Class="col-sm-5 mb-1 ml-1" Style="background-color: lightgoldenrodyellow">
+                            <MudCardHeader>
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.h6">@note.DateTaken.ToString("dd/MM/yyyy")</MudText>
+                                    @if (IsAdmin)
+                                    {
+                                        @if (note.BrokerId > 0)
+                                        {
+                                            <td>@Brokers.First(x => x.Id == note.BrokerId)?.Name</td>
+                                        }
+                                        else
+                                        {
+                                            <td>Admin</td>                    
+                                        }
+                                    }
+                                </CardHeaderContent>
+                                <CardHeaderActions>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default"  @onclick="f => DeleteNote(note.Id)" />
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default"  @onclick="f => EditNote(note.Id)" />
+                                </CardHeaderActions>
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudText>@note.Message</MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                }
+            </div>
+            </MudTabPanel>
+            <MudTabPanel Text="Chat">
+                @if (!IsAdmin)
+                {
+                    <button @onclick="@NewChat" class="btn btn-primary mb-2">
+                    Send Message
+                    </button>
+                }
+                else
+                {
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Choose Broker</label>
+                        <div class="col-sm-8">
+                            @if(CustomerBrokers!=null && CustomerBrokers.Any())
+                            {
+                                <MudSelect T="int"
+                                            Label="Brokers"
+                                            Placeholder="Select"
+                                            Disabled="false"                           
+                                            @bind-Value="BrokerListId"
+                                            SelectedValuesChanged="@ChatBrokerChanged"
+                                            AdornmentColor="Color.Primary">
+                                    <MudSelectItem Value="0">Select</MudSelectItem>
+                                    @foreach (var item in @CustomerBrokers)
+                                    {
+                                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            }
+                        </div>
+                    </div>                    
+                }
+
+
+                @if (Chat != null && Chat.Messages.Any())
+                {                    
+                    @if (IsAdmin)
+                    {
+                        @if (Chat.BrokerId > 0)
+                        {
+                            <div class = "row col-sm-12">
+                                @{
+                                    var message = $"Chat is with - {@Brokers.First(x => x.Id == Chat.BrokerId)?.Name}";
+                                    <p>@message</p>
+                                }
+                            </div>
+                        }
+                    }
+                    <div class = "row col-sm-12">
+                    @foreach (var message in Chat.Messages)
+                    {
+                            var advancedClass = $"col-sm-6 mb-1 {message.Style}";
+                            <MudCard Class="@advancedClass">
+                            <MudCardHeader>
+                                <CardHeaderContent>
+                                <MudText Typo="Typo.body1">@message.Message</MudText>   
+                                </CardHeaderContent>
+                            </MudCardHeader>
+                            <MudCardContent>        
+                            @if (message.BrokerSource)
+                            {
+                                var combined = $"Sent from us at {@message.SentTime.ToString("dd/MM/yyyy hh:mm:ss")}";
+                                <MudText Typo="Typo.body2">@combined</MudText>
+                            }
+                            else
+                            {
+                                var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToString("dd/MM/yyyy hh:mm:ss")}";
+                                <MudText Typo="Typo.body2">@combined</MudText>
+                            }
+                            </MudCardContent>
+                        </MudCard>
+                    }
+                    </div>
+                }
+
+            </MudTabPanel>
+        </MudTabs>
+    </section>
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to customer list</a>
+}

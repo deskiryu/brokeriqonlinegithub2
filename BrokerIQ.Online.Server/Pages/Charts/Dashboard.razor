@@ -1,0 +1,56 @@
+﻿@page "/charts/dashboard/{brokerId}"
+@inherits DashboardBase
+@using ChartJs.Blazor
+@using BrokerIQ.Online.Services.Interface
+
+<h4>Dashboard for @BrokerName who now have @CustomerCount app users</h4>
+
+@if (!Saved){
+<div class="container-fluid">
+
+
+    <div class="row">
+
+
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
+            <h5>Email invites to Signups</h5>
+            <Chart @ref="_pieChartJs2"
+                   Config="@_pieConfig2" />
+        </div>
+
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
+            <h5>Logins</h5>
+            <Chart @ref="_steppedChartJs"
+                   Config="@_steppedConfig" />
+        </div>
+
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
+            <h5>Converted from email</h5>
+            <Chart @ref="_pieChartJs"
+                   Config="@_pieConfig" />
+        </div>
+
+    </div>
+
+    <div class="row h-20">
+        <div class="col-12 chart_dashboard">
+            <h5>Invite conversion by day</h5>
+            <Chart @ref="_barChartJs"
+                   Config="@_barConfig"
+                   Width="100"
+                   Height="20" />
+
+        </div>
+
+    </div>
+
+
+</div>
+
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to broker list</a>
+}
+

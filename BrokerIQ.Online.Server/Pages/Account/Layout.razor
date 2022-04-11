@@ -1,0 +1,22 @@
+@using BrokerIQ.Online.Server.Shared
+@using BrokerIQ.Online.Services.Interface
+@inherits LayoutComponentBase
+@layout MainLayout
+@inject IAccountService AccountService
+@inject NavigationManager NavigationManager
+
+<div class="col-md-6 offset-md-3 mt-5">
+    @Body
+</div>
+
+@code {
+    protected override async void OnInitialized()
+    {
+        // redirect to home if already logged in
+        //var user = await AccountService.GetUser();
+        //if (user!=null && !string.IsNullOrEmpty(user.Token))
+        //{
+        //    NavigationManager.NavigateTo("");
+        //}
+    }
+}
