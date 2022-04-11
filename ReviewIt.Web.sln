@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30128.74
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReviewIt.Web.Server", "ReviewIt.Web.Server\ReviewIt.Web.Server.csproj", "{51FEAED9-52DB-4168-8083-D4DF5608C0BE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReviewIt.Web.ServerApplication", "ReviewIt.Web.ServerApplication\ReviewIt.Web.ServerApplication.csproj", "{96F6903E-CA4E-4A8F-89AC-614A362FA529}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReviewIt.Web.ClientApplication", "ReviewIt.Web.ClientApplication\ReviewIt.Web.ClientApplication.csproj", "{77E3F613-C0AE-4544-8806-68A744108BBB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E4FE3BB6-9F63-4BA3-84D2-31F4111980E4}"
 EndProject
@@ -25,10 +23,6 @@ Global
 		{96F6903E-CA4E-4A8F-89AC-614A362FA529}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96F6903E-CA4E-4A8F-89AC-614A362FA529}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96F6903E-CA4E-4A8F-89AC-614A362FA529}.Release|Any CPU.Build.0 = Release|Any CPU
-		{77E3F613-C0AE-4544-8806-68A744108BBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{77E3F613-C0AE-4544-8806-68A744108BBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{77E3F613-C0AE-4544-8806-68A744108BBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{77E3F613-C0AE-4544-8806-68A744108BBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

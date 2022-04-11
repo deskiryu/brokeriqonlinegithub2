@@ -7,7 +7,7 @@ namespace ReviewIt.Web.Services.Interface
 {
     using Dto.Models;
     using Models;
-    using ReviewIt.Dto.Request;
+    using BrokerIQ.Dto.Request;
 
     public interface IBrokerService
     {

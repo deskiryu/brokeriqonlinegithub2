@@ -10,7 +10,7 @@ namespace ReviewIt.Web.Pages
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;
     using MudBlazor;
-    using ReviewIt.Dto.Models;
+    using BrokerIQ.Dto.Models;
     using ReviewIt.Web.Server.Models;
     using ReviewIt.Web.Services.Interface;
 

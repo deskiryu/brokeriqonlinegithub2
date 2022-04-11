@@ -14,7 +14,7 @@ namespace ReviewIt.Web.Services
     using Dto.Models;
     using Interface;
     using Models;
-    using ReviewIt.Dto.Request;
+    using BrokerIQ.Dto.Request;
 
     public class ChatService : IChatService
     {

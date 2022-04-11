@@ -6,8 +6,8 @@ namespace ReviewIt.Web.Services
 {
     using System;
     using AutoMapper;
-    using ReviewIt.Dto.Models;
-    using ReviewIt.Dto.Response;
+    using BrokerIQ.Dto.Models;
+    using BrokerIQ.Dto.Response;
     using ReviewIt.Web.Models;
     using ReviewIt.Web.Models.Account;
     using ReviewIt.Web.Server.Helper;

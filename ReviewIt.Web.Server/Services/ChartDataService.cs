@@ -1,4 +1,4 @@
-﻿using ReviewIt.Dto.Model.Statistics;
+﻿using BrokerIQ.Dto.Model.Statistics;
 using ReviewIt.Web.Services.Abstract;
 using ReviewIt.Web.Services.Interface;
 using System;

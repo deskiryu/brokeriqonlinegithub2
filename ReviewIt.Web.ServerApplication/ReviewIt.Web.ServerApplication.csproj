@@ -20,7 +20,6 @@
 		<PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="4.5.1" />
 		<PackageReference Include="Microsoft.Azure.SignalR" Version="1.13.0" />
 		<PackageReference Include="MudBlazor" Version="6.0.2" />
-		<PackageReference Include="ReviewIt.Dto" Version="1.1.97" />
 	</ItemGroup>
 
 	<ItemGroup>

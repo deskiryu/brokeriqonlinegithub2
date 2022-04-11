@@ -2,7 +2,7 @@ using System;
 namespace ReviewIt.Web.Services
 {
     using System.Threading.Tasks;
-    using ReviewIt.Dto.Models;
+    using BrokerIQ.Dto.Models;
     using ReviewIt.Web.Models;
     using ReviewIt.Web.Services.Abstract;
     using ReviewIt.Web.Services.Interface;
