@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "ReviewIt.Web.ServerApp": {
+      "commandName": "Executable"
+    }
+  }
+}

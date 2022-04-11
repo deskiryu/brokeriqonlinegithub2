@@ -1,0 +1,79 @@
+﻿@using System.Net
+@using System.Text
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer Style="max-height: 300px; overflow-y: scroll">
+            @if (Loading)
+            {
+                <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+            }
+            else
+            {
+
+
+                @if (areBrokers)
+                {
+                    <MudText Style="white-space: pre-line;">The reminder :</MudText>
+                }
+                else
+                {
+                    <MudText Style="white-space: pre-line;">The notification message :</MudText>
+                }
+
+                <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">@Notification</MudText>
+                @if (areBrokers)
+                {
+                    <MudText Style="white-space: pre-line;">will be sent to these brokers: </MudText>
+                }
+                else
+                {
+                    <MudText Style="white-space: pre-line;">will be sent to these customers: </MudText>
+                }
+
+
+                <p></p>
+                @foreach (var user in Users)
+                {
+                    <MudText Style="white-space: pre-line;">@user</MudText>
+                }
+
+            }
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Ok">Send</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string Notification { get; set; }
+
+    [Parameter] public bool areBrokers { get; set; }
+
+    [Parameter] public List<string> Users { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Loading = false;
+
+    }
+
+
+    private bool Loading = false;
+
+    private void Ok()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+}

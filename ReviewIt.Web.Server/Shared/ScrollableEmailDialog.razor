@@ -1,0 +1,68 @@
+﻿@using System.Net
+@using System.Text
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer Style="max-height: 300px; overflow-y: scroll">
+            @if (Loading)
+            {
+                <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+            }
+            else
+            {
+                <MudText Style="white-space: pre-line;">@Heading </MudText>
+
+                <p></p>
+                @foreach (var cust in @Customers)
+                {
+                    <MudText Style="white-space: pre-line;">@cust</MudText>
+                }
+
+            }
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Ok">Send</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string Heading { get; set; }
+
+    [Parameter] public List<string> Customers { get; set; }
+
+    [Parameter] public List<(string, int)> EmailInvitation { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Loading = false;
+
+        if(EmailInvitation!=null && EmailInvitation.Count > 0)
+        {
+            Customers = new List<string>();
+            foreach(var invite in EmailInvitation)
+            {
+                Customers.Add($"Invite {invite.Item2+1} will be sent to {invite.Item1}");
+            }
+        }
+
+    }
+
+
+    private bool Loading = false;
+
+    private void Ok()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+}

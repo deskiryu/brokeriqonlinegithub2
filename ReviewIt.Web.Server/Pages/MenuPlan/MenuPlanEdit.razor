@@ -1,0 +1,92 @@
+﻿
+
+@page "/menuplanedit/{MenuPlanId}/{CustomerId}"
+@using ReviewIt.Web.Models
+@using ReviewIt.Dto.Enum
+@using ReviewIt.Web.Server.Extensions
+@using BlazorDateRangePicker
+@using ReviewIt.Web.Services.Interface
+
+@inherits MenuPlanEditBase
+
+
+@if (!Saved)
+{
+    <section class="menuPlan-detail">
+
+        <h4 class="page-title">Add or edit menu plan</h4>
+
+        <EditForm Model="@MenuPlan" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="col-12 row">
+                <div class="col-10 row">
+                    <div class="col-xs-12 col-sm-8">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Name Of Plan</label>
+
+                            <div class="col-sm-5">
+                                <InputText id="lastName" class="form-control" @bind-Value="@MenuPlan.Name" placeholder="Enter name for this MenuPlan"></InputText>
+                                <ValidationMessage class="offset-sm-3" For="@(() => MenuPlan.Name)" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Review Date</label>
+                            <div class="col-sm-5">
+                                    <DateRangePicker @bind-StartDate="ReviewDate" SingleDatePicker="true" class="form-control " Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
+                                    <ValidationMessage class="offset-sm-3" For="@(() => MenuPlan.ReviewDate)" />
+                            </div>
+                            <div class="col-sm-2">
+                                <label>Show</label>
+                                <input type="checkbox" @bind="@MenuPlan.ShowReviewDate" />
+                            </div>
+                        </div>
+
+                        @if (IsAdmin)
+                        {
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Choose Broker</label>
+                                <div class="col-sm-8">
+
+                                    <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId">
+
+                                        @foreach (var broker in @Brokers)
+                                                {
+                                            <option value=@broker.Id>@broker.Name</option>
+                                                }
+                                    </InputSelect>
+                                    <ValidationMessage class="offset-sm-3" For="@(() => BrokerListId)" />
+
+                                </div>
+                            </div>
+                        }
+
+                        <button type="submit" class="btn btn-primary edit-btn mt-1">Save MenuPlan</button>
+                        <a class="btn btn-outline-primary edit-outline-btn ml-lg-2 mt-1" @onclick="@NavigateToOverview">Cancel</a>
+                        @if (MenuPlan.Id > 0)
+                        {
+                            <a class="btn btn-danger ml-2 mt-1" @onclick="@DeleteMenuPlan">
+                                Delete
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+            </div>
+
+        </EditForm>
+
+    </section>
+   
+
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to customer overview</a>
+}
+

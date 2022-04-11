@@ -1,0 +1,68 @@
+﻿@using System.Net
+@using System.Text
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer Style="max-height: 300px; overflow-y: scroll">
+            @if (Loading)
+            {
+                <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+            }
+            else
+            {
+                <MudText Style="white-space: pre-line;">@Heading </MudText>
+
+                <p></p>
+                var linkAll = $"mailto:{@CustomersAll}";
+                <MudLink Href=@linkAll>Send to all</MudLink>
+                <p></p>
+                <table>
+                    @foreach (var cust in Customers)
+                    {
+                    <tr>
+                        @{var link = $"mailto:{cust}";}
+                        @{var custnocolon = cust.Trim(';');}
+                        <MudLink Href=@link>@custnocolon</MudLink>
+                    </tr>
+
+                    }
+                </table>
+            }
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Ok">Send</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string Heading { get; set; }
+
+    [Parameter] public List<string> Customers { get; set; }
+
+    public string CustomersAll { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Loading = false;
+        CustomersAll = string.Join(string.Empty, Customers);
+
+    }
+
+
+    private bool Loading = false;
+
+    private void Ok()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+}

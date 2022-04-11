@@ -1,0 +1,139 @@
+﻿@page "/notifications"
+@inherits NotificationPageBase
+@using ReviewIt.Web.Services.Interface
+@using System
+@inject NavigationManager NavigationManager
+
+<h3>NotificationPage</h3>
+
+
+@if (NotificationsSent == null)
+{
+    <div class="row ml-2 ">
+        <div class="col-4 mt-2">
+            <h3>Loading</h3>
+        </div>
+    </div>
+    <div class="row ml-2">
+        <div class="col-4">
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        </div>
+    </div>
+
+}
+else
+{
+    <div class="card">
+        <div class="card-header">Filter</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-4">
+                    <MudSelect T="int"
+                                Label="Notification Type"
+                                Placeholder="Select"
+                                Clearable="true"
+                                @bind-Value="FilterType"
+                                SelectedValuesChanged="@RecentTypeSelect"
+                                AdornmentColor="Color.Primary">
+                        <MudSelectItem Value="0">All</MudSelectItem>
+                        <MudSelectItem Value="1">Text</MudSelectItem>
+                        <MudSelectItem Value="2">Video</MudSelectItem>
+                        <MudSelectItem Value="3">Audio</MudSelectItem>
+                    </MudSelect>
+                </div>
+                <div class="col-lg-4 control_wrapper">
+                    <MudAutocomplete T="string"
+                                     Label="See notifications for customer"
+                                     Placeholder="Start typing name, email or telephone ..."
+                                     Clearable="true"
+                                     AllowFiltering="true"
+                                     AdornmentColor="Color.Primary"
+                                     TextChanged="@AutoCompleteClick"
+                                     SearchFunc="@OnFilter">
+                    </MudAutocomplete>
+                </div>
+            </div>
+            @if (IsAdmin)
+            {
+                <div class="row">
+
+                    <div class="col-lg-4 control_wrapper">
+                        <MudSelect T="int"
+                                   Label="Filter By Broker"
+                                   Placeholder="Select"
+                                   Clearable="true"
+                                   @bind-Value="BrokerId"
+                                   SelectedValuesChanged="@AutoCompleteClickBroker"
+                                   AdornmentColor="Color.Primary">
+                            <MudSelectItem Value="0">Select</MudSelectItem>
+                            @foreach (var item in @Brokers)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+
+    </div>
+
+    <MudTable Items="@NotificationsSentByType" Hover="true" SortLabel="Sort By" >
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Notification, object>(x=>x.NotificationType)">Type</MudTableSortLabel></MudTh>
+            <MudTh Style="width:60%"><MudTableSortLabel SortBy="new Func<Web.Models.Notification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
+            <MudTh>Customer(s)</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Notification, object>(x=>x.SentDate)">Sent Date</MudTableSortLabel></MudTh>
+            @if (ShowBroker)
+            {
+                <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Notification, object>(x=>x.BrokerName)">Broker</MudTableSortLabel></MudTh>            
+            }
+            @if (ShowEmployee)
+            {
+                <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Notification, object>(x=>x.BrokerStaffName)">Employee</MudTableSortLabel></MudTh>            
+            }
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Type">@context.NotificationType</MudTd>
+            <MudTd DataLabel="First name">@context.Message</MudTd>
+            @{
+                var customersAsName = string.Empty;
+                var customers = Customers.Where(x => context.Targets.Contains(x.Id)).Select(y => y.Name);
+                customersAsName = string.Join(", ", customers);
+
+                <MudTd DataLabel="Last name">@customersAsName</MudTd>
+             }
+            <MudTd DataLabel="Last name">@context.SentDate.ToString("dd/MM/yyyy hh:mm:ss")</MudTd>
+            @if (ShowBroker)
+            {
+                <MudTd DataLabel="Telephone">@context.BrokerName</MudTd>           
+            }
+            @if (ShowEmployee)
+            {
+                <MudTd DataLabel="Email">@context.BrokerStaffName</MudTd>            
+            }
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
+        </PagerContent>
+    </MudTable>
+}
+
+
+
+
+
+<style>
+    .accordion-control-section {
+        margin: 0 10% 0 10%;
+    }
+
+    @@media screen and (max-width: 768px) {
+        .accordion-control-section {
+            margin: 0;
+        }
+    }
+</style>

@@ -1,0 +1,189 @@
+﻿@using ReviewIt.Web.Services
+@using ReviewIt.Web.Services.Interface
+@using ReviewIt.Web.Server.Helper
+@using ReviewIt.Web.Server.Extensions
+@inject LoggedInAppState MyLoggedInAppState
+@inject MessageCountState MyMessageCountState
+@inject IAccountService AccountService
+@inject INotificationService NotificationService
+@implements IDisposable
+
+@inject IJSRuntime js
+@functions {
+    async void ChangeIcon(string iconName)
+    {
+        await Extensions.ChangeIcon(js, iconName);
+    }
+}
+
+<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">BrokerIq.Online</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+
+        @if (MyLoggedInAppState.LoggedIn)
+        {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="customerlist">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Customers
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="videolist">
+                    <span class="oi oi-monitor" aria-hidden="true"></span> Videos
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="audiolist">
+                    <span class="oi oi-bullhorn" aria-hidden="true"></span> Voice Recordings
+                </NavLink>
+            </li>
+
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="notifications">
+                    <span class="oi oi-grid-two-up" aria-hidden="true"></span> Notifications
+                </NavLink>
+            </li>
+
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="emailinvitations">
+                    <span class="oi oi-grid-two-up" aria-hidden="true"></span> Invitations
+                </NavLink>
+            </li>
+
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="messagelist">
+                    @if (NewMessageHide)
+                    {
+                        ChangeIcon("_content/ReviewIt.Web.Server/favicon.ico");
+                        <MudBadge Content="@NewMessageCount" Overlap="true" Color="Color.Inherit" Dot="true">
+                            <MudIcon Icon="@Icons.Material.Filled.Email" Style="color: #d7d7d7; margin-left:-3px" />
+                            &nbsp;&nbsp;Reminders&nbsp;&nbsp;&nbsp;
+                        </MudBadge>
+                    }
+                    else
+                    {
+                        ChangeIcon("_content/ReviewIt.Web.Server/favicon-alert.ico");
+                        <MudBadge Content="@NewMessageCount" Overlap="true" Color="Color.Error " Dot="false">
+                            <MudIcon Icon="@Icons.Material.Filled.Email" Style="color: #d7d7d7; margin-left:-3px" />
+                            &nbsp;&nbsp;Reminders&nbsp;&nbsp;&nbsp;
+                        </MudBadge>
+                    }
+                </NavLink>
+            </li>
+
+            @if (MyLoggedInAppState.IsAdmin)
+            {
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="brokerlist">
+                        <span class="oi oi-grid-two-up" aria-hidden="true"></span> Brokers
+                    </NavLink>
+                </li>
+            }
+
+            @if (MyLoggedInAppState.IsAdmin || MyLoggedInAppState.IsBroker)
+            {
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="brokerstafflist">
+                        <span class="oi oi-grid-two-up" aria-hidden="true"></span> Employees
+                    </NavLink>
+                </li>
+            }
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="account/logout">
+                    <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+                </NavLink>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </li>
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="account/login">
+                    <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                </NavLink>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private int NewMessageCount;
+    private bool NewMessageHide;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        MyLoggedInAppState.OnChange += OnMyChangeHandler;
+        MyMessageCountState.OnMessageCountChange += OnMyMessageCountChangeHandler;
+#if !DEBUG
+        System.Timers.Timer t = new System.Timers.Timer();
+        t.Elapsed += async (s, e) => 
+        { 
+           await UpdateMessageCount();
+           await InvokeAsync(StateHasChanged); 
+        };
+        t.Interval = 10000;
+        t.Start();
+#endif
+    }
+
+    public void Dispose()
+    {
+        MyLoggedInAppState.OnChange -= OnMyChangeHandler;
+        MyMessageCountState.OnMessageCountChange -= OnMyMessageCountChangeHandler;
+    }
+
+    private async void OnMyChangeHandler()
+    {
+        // InvokeAsync is inherited, it syncs the call back to the render thread
+        await InvokeAsync(async () =>
+        {
+            await UpdateMessageCount();
+            StateHasChanged();
+        });
+    }
+
+    private async void OnMyMessageCountChangeHandler()
+    {
+        // InvokeAsync is inherited, it syncs the call back to the render thread
+        await InvokeAsync(async () =>
+        {
+            await UpdateMessageCount();
+        });
+    }
+
+    private async Task UpdateMessageCount(bool refresh = false)
+    {
+        if (MyLoggedInAppState.LoggedIn)
+        {
+            var count = await NotificationService.GetNewBrokerNotificationsCountByBrokerId();
+            NewMessageCount = count;
+            NewMessageHide = @NewMessageCount == 0;
+        }
+    }
+}
+}

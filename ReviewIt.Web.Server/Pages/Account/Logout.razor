@@ -1,0 +1,15 @@
+﻿@page "/account/logout"
+@using ReviewIt.Web.Services.Interface
+@using ReviewIt.Web.Server.Helper
+
+@inject IAccountService AccountService
+@inject LoggedInAppState MyLoggedInAppState
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await AccountService.Logout();
+        MyLoggedInAppState.LoggedIn = false;
+        MyLoggedInAppState.IsAdmin = false;
+    }
+}

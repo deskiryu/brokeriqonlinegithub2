@@ -1,0 +1,208 @@
+﻿@page "/emailinvitations"
+@inherits EmailInvitationBase
+@using ReviewIt.Web.Services.Interface
+@using System
+@inject NavigationManager NavigationManager
+
+<h3>Broker Invites</h3>
+
+@if (!Saved)
+{
+    @if (EmailInvitesSent == null)
+    {
+        <div class="row ml-2 ">
+            <div class="col-4 mt-2">
+                <h3>Loading</h3>
+            </div>
+        </div>
+        <div class="row ml-2">
+            <div class="col-4">
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+            </div>
+        </div>
+    }
+    else
+    {
+<div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <label class="card-title">Add Email Addresses</label>
+                    <MudItem>
+                        <MudTextField @bind-Value="@Email" HelperText="Enter email address" />
+                    </MudItem>
+                    <a @onclick="AddEmail" class="btn btn-primary table-btn">
+                        <i class="fas fa-plus"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <label class="card-title">Upload invite file</label>
+                    <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
+                              @ondragleave="@(() => DragEnterStyle = null)"
+                              @ondragend="@(() => DragEnterStyle = null)"
+                              Class=@("drag-drop-zone " + DragEnterStyle)>
+
+                        <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" />
+                        <MudText Typo="Typo.subtitle1">Drag and drop text files here or click to browse</MudText>
+                    </MudPaper>
+                    <div>
+                        <p>Text files should have a seperate email address on each line</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">New connection list</div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <table class="col-sm-6 ml-4">
+                            @foreach (var item in EmailTargets)
+                            {
+                                <tr>@item</tr>
+                            }
+                        </table>
+                        <EditForm Model="@EmailTargets" OnValidSubmit="@SendInvites">
+                            <div>
+                                <div class="col-sm-6">
+                                    <button type="submit" class="btn btn-primary edit-btn " style="width:max-content">Make connections</button>
+                                    @if (IsAdmin)
+                                    {
+                                        <label style="margin-top: 5px">Choose Broker</label>
+                                        <div>
+
+                                            <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId" style="width:max-content">
+
+                                                @foreach (var broker in @Brokers)
+                                                            {
+                                                    <option value=@broker.Id>@broker.Name</option>
+                                                            }
+                                            </InputSelect>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <button class="btn">
+                    Broker Connections
+                </button>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-8 control_wrapper mb-5">
+                    <label>Filter the list below by email address</label>
+                    <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type email" class="filter_customerBroker" />
+                </div>
+            </div>
+            @if (IsAdmin)
+            {
+                <div class="row mt-1">
+
+                    <div class="col-lg-8 control_wrapper mb-5">
+                        <MudSelect T="int"
+                                   Label="Filter By Broker"
+                                   Placeholder="Select"
+                                   Clearable="true"
+                                   @bind-Value="BrokerId"
+                                   SelectedValuesChanged="@AutoCompleteClickBroker"
+                                   AdornmentColor="Color.Primary">
+                            <MudSelectItem Value="0">Select</MudSelectItem>
+                            @foreach (var item in @Brokers)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                </div>
+            }
+        <div class="row">
+            <div class="col-lg-8 control_wrapper mb-5">
+                        @if (BrokerId > 0)
+                        {
+                        <Button @onclick="ShowSecondEmailList" class="btn btn-primary table-btn">
+                               Send Reminder Emails
+                            </Button>                            
+                        }
+            </div>
+            </div>
+            <table class="table table-striped " style=" table-layout: fixed; word-wrap: break-word;">
+                <thead>
+                    <tr>
+                        <th style="width:8%">Select</th>
+                        <th style="width:27%">Email</th>
+                        <th style="width:10%">Sent Date</th>
+                        <th style="width:10%">Invites</th>
+                        <th style="width:10%">Converted</th>
+                        <th style="width:10%">Delete</th>
+                        @if (ShowEmployee)
+                        {
+                            <th style="width:20%">Employee</th>
+                        }
+                        @if (ShowBroker)
+                        {
+                            <th style="width:20%">Broker</th>
+                        }
+
+                    </tr>
+                </thead>
+                @foreach (var Item in FilteredEmailInvites)
+                {
+                    <tr>
+                        <td><input type="checkbox" @bind="@Item.Selected" disabled="@Item.Converted"/></td>
+                        <td style="padding-right:20px;">@(Item.EmailAddress)</td>
+                        <td style="padding-right:10px">@(Item.CreatedDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss"))</td>
+                        <td style="padding-right:10px;">@(Item.InvitationCount)</td>
+                        <td>
+                            @if (Item.Converted)
+                            {
+                                <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                            }
+                        </td>
+                        <td>
+                            <NavLink @onclick="() => DeleteLink(Item.Id)" class="btn btn-primary table-btn">
+                                <i class="fas fa-trash"></i>
+                            </NavLink>
+                        </td>
+                        @if (ShowEmployee)
+                        {
+                            <td style="padding-right:20px">@(Item.BrokerStaffName)</td>
+                        }
+                        @if (ShowBroker)
+                        {
+                            <td style="padding-right:20px">@(Item.BrokerName)</td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+    }
+    }
+    else
+    {
+    <div class="alert @StatusClass">@Message</div>
+    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to invite list</a>
+    }
+

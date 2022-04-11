@@ -1,0 +1,44 @@
+﻿@using System.ComponentModel.DataAnnotations
+<MudDialog>
+    <DialogContent>
+        <MudContainer Style="width: 350px; height: 200px; overflow-y: scroll">
+            <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+                    <MudTextField T="string" Label="Message to send" Required="true" RequiredError="Please fill in the message" @bind-Value="model.MessageToSend" Lines="5"/>
+                    <MudButton style="mt-1" OnClick="Cancel">Cancel</MudButton>
+                    <MudButton style="mt-1" Color="Color.Primary" ButtonType="ButtonType.Submit">Ok</MudButton>
+            </EditForm>    
+        </MudContainer>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    public class MyModel
+    {
+        [Required]
+        public string MessageToSend { get; set; }
+    }
+
+
+    bool success;
+    string[] errors = { };
+    MudForm form;
+    MyModel model;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();    
+        model = new MyModel();
+    }
+
+
+    public void OnValidSubmit(EditContext context)
+    {
+        MudDialog.Close(DialogResult.Ok(model.MessageToSend));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+}

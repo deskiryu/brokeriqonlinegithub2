@@ -1,0 +1,296 @@
+﻿
+
+@page "/mortgageedit/{MortgageId}/{CustomerId}"
+@using ReviewIt.Web.Models
+@using ReviewIt.Dto.Enum
+@using ReviewIt.Web.Server.Extensions
+@using BlazorDateRangePicker
+@using System.IO
+
+@inherits MortgageEditBase
+
+@inject IJSRuntime js
+@functions {
+    async void DownloadFile(MortgageDocument sdoc)
+    {
+        await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
+    }
+    async void PreviewFile(MortgageDocument sdoc)
+    {
+        var memoryStream = new MemoryStream(sdoc.File);
+        await Extensions.PreviewFile(js, memoryStream);
+    }
+}
+
+@if (!Saved)
+{
+    <section class="mortgage-detail">
+
+        <h4 class="page-title">Add or edit mortgage</h4>
+
+        <EditForm Model="@Mortgage" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="col-12 row">
+                <div class="col-10 row">
+                    <div class="col-xs-12 col-sm-7">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Name Of Mortgage Provider</label>
+
+                            <div class="col-sm-7">
+                                <InputText id="lastName" class="form-control col-sm-7" @bind-Value="@Mortgage.ProviderName" placeholder="Enter name for this mortgage"></InputText>
+                                <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.ProviderName)" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Type of Mortgage</label>
+                            <div class="col-sm-7">
+
+                                <InputSelect id="mortgage" class="form-control col-sm-7" @bind-Value="@MortgageType">
+                                    @if (true)
+                                        {
+                                            var names = Enum.GetNames(typeof(MortgageEnum));
+                                        @for (int i = 1; i <= names.Length; i++)
+                                            {
+                                                MortgageEnum looped = (MortgageEnum)i;
+                                            <option value=@i>@looped.GetDisplayName()</option>
+                                            }
+                                        }
+
+
+
+                                </InputSelect>
+                                <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => MortgageType)" />
+
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Rate type</label>
+                            <div class="col-sm-7">
+
+                                <InputSelect id="mortgageRate" class="form-control col-sm-7" @bind-Value="@MortgageRateType">
+                                    @if (true)
+                                        {
+                                            var names = Enum.GetNames(typeof(MortgageRateEnum));
+                                        @for (int i = 1; i <= names.Length; i++)
+                                            {
+                                                MortgageRateEnum looped = (MortgageRateEnum)i;
+                                            <option value=@i>@looped.GetDisplayName()</option>
+                                            }
+                                        }
+
+
+
+                                </InputSelect>
+                                <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => MortgageRateType)" />
+
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" style="font-size:large">Details</label>
+                            <div class="col-sm-7">
+
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label" style="font-size:large">Show</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Mortgage End Date</label>
+                            <div class="col-sm-7">
+                                <DateRangePicker @bind-StartDate="EndDate" SingleDatePicker="true" class="form-control col-sm-7" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
+                                <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.EndDate)" />
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" @bind="@Mortgage.ShowEndDate" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Monthly Payment</label>
+                            <div class="col-sm-7">
+                                <MudItem class="col" xs="12" sm="6" md="4">
+                                    <MudTextField @bind-Value="@Mortgage.MonthlyPayment" HelperText="Enter a payment" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                                    <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.MonthlyPayment)" />
+                                </MudItem>
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" @bind="@Mortgage.ShowMonthlyPayment" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Interest Rate</label>
+                            <div class="col-sm-7">
+                                <MudItem class="col" xs="12" sm="6" md="4">
+                                    <MudTextField @bind-Value="@Mortgage.InterestRate" HelperText="Enter an interest rate" Format="F2" Adornment="Adornment.Start" AdornmentText="%" />
+                                    <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.InterestRate)" />
+                                </MudItem>
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" @bind="@Mortgage.ShowInterestRate" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Promotional End Date</label>
+                            <div class="col-sm-7">
+                                <DateRangePicker @bind-StartDate="PromotionalEndDate" SingleDatePicker="true" class="form-control col-sm-7" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
+                                <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.PromotionalEndDate)" />
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" @bind="@Mortgage.ShowPromotionalEndDate" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Potential Monthly Payment</label>
+                            <div class="col-sm-7">
+                                <MudItem class="col" xs="12" sm="6" md="4">
+                                    <MudTextField @bind-Value="@Mortgage.PotentialMonthlyPayment" HelperText="Enter a payment" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                                    <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.PotentialMonthlyPayment)" />
+                                </MudItem>
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" @bind="@Mortgage.ShowPotentialMonthlyPayment" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Potential Interest Rate</label>
+                            <div class="col-sm-7">
+                                <MudItem class="col" xs="12" sm="6" md="4">
+                                    <MudTextField @bind-Value="@Mortgage.PotentialInterestRate" HelperText="Enter an interest rate" Format="F2" Adornment="Adornment.Start" AdornmentText="%" />
+                                    <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.PotentialInterestRate)" />
+                                </MudItem>
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" @bind="@Mortgage.ShowPotentialInterestRate" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Potential Mortgage End Date</label>
+                            <div class=" col-sm-7">
+                                <DateRangePicker @bind-StartDate="PotentialEndDate" SingleDatePicker="true" class="form-control col-sm-7" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
+                                <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.PotentialEndDate)" />
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" @bind="@Mortgage.ShowPotentialEndDate" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Mortgage Number</label>
+                            <div class="col-sm-7">
+                                <MudItem class="col-sm-4" xs="12" sm="6" md="4">
+                                    <MudTextField @bind-Value="@Mortgage.MortgageNumber" HelperText="Enter a mortgage number"  />
+                                    <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.MortgageNumber)" />
+                                </MudItem>
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" @bind="@Mortgage.ShowMortgageNumber" />
+                            </div>
+                        </div>
+
+
+                        @if (IsAdmin)
+                        {
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Choose Broker</label>
+                                <div class="col-sm-7">
+
+                                    <InputSelect id="broker" class="form-control col-sm-7" @bind-Value="@BrokerListId">
+
+                                        @foreach (var broker in @Brokers)
+                                                {
+                                            <option value=@broker.Id>@broker.Name</option>
+                                                }
+                                    </InputSelect>
+                                    <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => BrokerListId)" />
+
+                                </div>
+                            </div>
+                        }
+
+                        <button type="submit" class="btn btn-primary edit-btn mt-1">Save mortgage</button>
+                        <a class="btn btn-outline-primary edit-outline-btn ml-lg-2 mt-1" @onclick="@NavigateToOverview">Cancel</a>
+                        @if (Mortgage.Id > 0)
+                        {
+                            <a class="btn btn-danger ml-2 mt-1" @onclick="@DeleteMortgage">
+                                Delete
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+            </div>
+
+        </EditForm>
+
+    </section>
+    
+    @if (int.Parse(MortgageId)>0)
+    {
+    <section class="mt-4">
+        <h4 class ="col-sm-4">Supporting Documents</h4>
+
+        @if (Mortgage.SupportingDocuments != null)
+        {
+        <div class="col-sm-6 mt-1">
+            <div class="card">
+                <div class="card-body">
+                    <MudTable Items="@Mortgage.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="" >
+                        <RowTemplate>
+                            <MudTd>@context.FileName</MudTd>
+                            <MudTd> <a class="btn btn-primary" @onclick="f => PreviewFile(context)">View</a></MudTd>
+                            <MudTd> <a class="btn btn-primary" @onclick="f => DownloadFile(context)">Download</a></MudTd>
+                            <MudTd> <a class="btn btn-danger sm-2" @onclick="f => DeleteMortgageFile(context.Id)">Delete File</a></MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </div>
+            </div>
+        </div>
+
+        }
+    <div class="col-sm-6 mt-1">
+        <div class="card">
+            <div class="card-body">
+                <label class="card-title">Upload pdf files</label>
+                <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
+                            @ondragleave="@(() => DragEnterStyle = null)"
+                            @ondragend="@(() => DragEnterStyle = null)"
+                            Class=@("drag-drop-zone " + DragEnterStyle)>
+
+                    <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" accept="application/pdf" />
+                    <MudText Typo="Typo.subtitle1">Drag and drop pdf files here or click to browse</MudText>
+                </MudPaper>
+            </div>
+        </div>
+    </div>
+
+        <label type="text" class="form-control-plaintext col-sm-4">@LoadFileStatus</label>
+        <div class="col-sm">
+            <div class="spin-row spin-row-bg">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" style="@SpinnerVisible" />
+            </div>
+        </div>
+
+    </section>
+    }
+
+
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to mortgage list</a>
+}
+

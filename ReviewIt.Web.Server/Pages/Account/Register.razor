@@ -1,0 +1,258 @@
+﻿@page "/account/register"
+@using System.IO;
+@using ReviewIt.Web.Services.Interface
+@using ReviewIt.Web.Models.Account
+@using AutoMapper
+@using ReviewIt.Dto.Models
+@inject IAccountService AccountService
+@inject IAlertService AlertService
+@inject IAzureService AzureService
+@inject IAddressService AddressService
+@inject NavigationManager NavigationManager
+@inject IMapper mapper
+
+
+<div class="card">
+    <h4 class="card-header">Register</h4>
+    <div class="card-body">
+        <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <div class="form-group col-12">
+                <label>Company Name</label>
+                <InputText @bind-Value="model.Name" class="form-control" />
+                <ValidationMessage For="@(() => model.Name)" />
+            </div>
+            <div class="form-group row" style="padding-left:15px">
+                <div class="form-group col-6">
+                    <label>Broker First Name</label>
+                    <InputText @bind-Value="model.BrokerFirstName" class="form-control" />
+                    <ValidationMessage For="@(() => model.BrokerFirstName)" />
+                </div>
+                <div class="form-group col-6">
+                    <label>Broker Last Name</label>
+                    <InputText @bind-Value="model.BrokerLastName" class="form-control" />
+                    <ValidationMessage For="@(() => model.BrokerLastName)" />
+                </div>
+            </div>
+            <div class="form-group row" style="padding-left:15px">
+                <div class="form-group col-6">
+                    <label>Email Address</label>
+                    <InputText @bind-Value="model.EmailAddress" class="form-control" />
+                    <ValidationMessage For="@(() => model.EmailAddress)" />
+                </div>
+                <div class="form-group col-6">
+                    <label>Telephone Number</label>
+                    <InputText @bind-Value="model.TelephoneNumber" class="form-control" />
+                    <ValidationMessage For="@(() => model.TelephoneNumber)" />
+                </div>
+            </div>
+            <div class="form-group row" style="padding-left:15px">
+                <div class="form-group col-6">
+                    <label>Address Line 1</label>
+                    <InputText @bind-Value="model.AddressLine1" class="form-control" />
+                    <ValidationMessage For="@(() => model.AddressLine1)" />
+                </div>
+                <div class="form-group col-6">
+                    <label>Address Line 2</label>
+                    <InputText @bind-Value="model.AddressLine2" class="form-control" />
+                    <ValidationMessage For="@(() => model.AddressLine2)" />
+                </div>
+            </div>
+            <div class="form-group row" style="padding-left:15px">
+                <div class="form-group col-6">
+                    <label>City</label>
+                    <InputText @bind-Value="model.AddressLine3" class="form-control" />
+                    <ValidationMessage For="@(() => model.AddressLine3)" />
+                </div>
+            </div>
+            <div class="form-group row" style="padding-left:15px">
+                <div class="form-group col-6">
+                    <label>Postcode</label>
+                    <InputText @bind-Value="model.Postcode" class="form-control" />
+                    <ValidationMessage For="@(() => model.Postcode)" />
+                </div>
+                <div class="form-group col-6" style="margin-top:12px">
+                    <MudButton OnClick="FindAddress" Color="Color.Primary" >Find Address</MudButton>
+                     <MudProgressCircular Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
+                </div>
+
+                <div class="form-group col-12">
+                    <MudSelect T="int"
+                               Label="Addresses"
+                               Placeholder="Select"
+                               Disabled="DropdownDisabled"                           
+                               @bind-Value="AddressId"
+                               SelectedValuesChanged="@AutoCompleteFindAddress"
+                               AdornmentColor="Color.Primary">
+                        <MudSelectItem Value="0">Select</MudSelectItem>
+                        @foreach (var item in @Addresses)
+                        {
+                            <MudSelectItem Value="@item.Item3">@item.Item2</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+
+            </div>
+            <div class="form-group row" style="padding-left:15px">
+                <label class="form-group col-6">Company Logo </label>
+                <div class="form-group col-6">
+                    @if (model.LogoImage != null && model.LogoImage.Length > 0)
+                    {
+                        <img src="data:image/bmp;base64, @(Convert.ToBase64String(model.LogoImage))" />
+                    }
+                </div>
+            </div>
+            <div class="form-group row" style="padding-left:15px">
+                <label class="form-group col-6">Choose company logo </label>
+                <div class="form-group col-6">
+                    <InputFile OnChange="LoadFiles" class="mt-2 ml-lg-2 btn btn-primary" accept="image/jpeg" />
+                </div>
+                <div class="form-group col-6">
+                    <label style="font-size:small">Ratio 2.2:1 Ideally 220px x 100px</label>
+                </div>
+            </div>
+
+            <div class="form-group row" style="padding-left:15px">
+                <div class="form-group col-6">
+                    <label>Password</label>
+                    <InputText @bind-Value="model.Password" type="password" class="form-control" />
+                    <ValidationMessage For="@(() => model.Password)" />
+                </div>
+                <div class="form-group col-6">
+                    <label>Confirm Password</label>
+                    <InputText @bind-Value="model.ConfirmPassword" type="password" class="form-control" />
+                    <ValidationMessage For="@(() => model.ConfirmPassword)" />
+                </div>
+            </div>
+            <div class="form-group col-12">
+                <button disabled="@loading" class="btn btn-primary">
+                    @if (loading)
+                    {
+                        <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                    Register
+                </button>
+                <NavLink href="" class="btn btn-link">Cancel</NavLink>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private AddUser model = new AddUser();
+    private bool loading;
+    public int AddressId { get; set; }
+    public List<(Web.Models.Address, string, int)> Addresses = new List<(Web.Models.Address, string, int)>();
+    public string SpinnerVisible { get; set; }
+    public bool DropdownDisabled { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        SpinnerVisible = "display:none";
+        DropdownDisabled = true;
+    }
+
+    private async void OnValidSubmit()
+    {
+        // reset alerts on submit
+        AlertService.Clear();
+
+        loading = true;
+        var brokerReturned = new BrokerDto();
+        try
+        {
+            var createBroker = mapper.Map<CreateBrokerDto>(model);
+            brokerReturned = await AccountService.Register(createBroker);
+            if (brokerReturned == null || string.IsNullOrEmpty(brokerReturned.EmailAddress))
+            {
+                throw new Exception("Registration failed");
+            }
+
+            if (createBroker.LogoImage != null && createBroker.LogoImage.Length > 0)
+            {
+
+                var memoryStream = new MemoryStream(createBroker.LogoImage);
+                var fileName = brokerReturned.Id.ToString() + ".jpeg";
+                memoryStream.Position = 0;
+                await AzureService.TransferLogoStreamToAzureBlob(fileName, memoryStream, brokerReturned.Id);
+            }
+
+            AlertService.Success("Registration successful - Please check your email, including JUNK folders, for the verfication email", keepAfterRouteChange: true);
+            NavigationManager.NavigateTo("account/login");
+
+        }
+        catch (Exception ex)
+        {
+            AlertService.Error(ex.Message);
+        }
+        loading = false;
+        StateHasChanged();
+
+    }
+
+    public async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+
+        try
+        {
+            var file = e.GetMultipleFiles(1).FirstOrDefault();
+            var ext = Path.GetExtension(file.Name);
+            if (ext != ".jpeg" && ext != ".jpg")
+            {
+                throw new Exception("Jpeg files only");
+            }
+            if (file != null)
+            {
+                var memoryStream = new MemoryStream();
+                await file.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
+                memoryStream.Position = 0;  
+                model.LogoImage = memoryStream.ToArray();
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+    protected async Task FindAddress()
+    {
+        DropdownDisabled = true;
+        SpinnerVisible = "";
+        var ReturnedAddresses = await AddressService.GetAddressesFromPostcode(model.Postcode,"gb");
+        Addresses.Clear();
+        if(ReturnedAddresses!=null && ReturnedAddresses.Any())
+        {
+            for(int i=0; i<ReturnedAddresses.Count(); i++)
+            {
+                var item = ReturnedAddresses[i];
+                var lineTwo = !string.IsNullOrEmpty(item.AddressLine2) ? $"{item.AddressLine2}, " : "";
+                var lineCity = !string.IsNullOrEmpty(item.City) ? $"{item.City}, " : "";
+                var completeAddress = $"{item.AddressLine1}, " +
+                                      lineTwo +
+                                      lineCity +
+                                      item.Postcode;
+                Addresses.Add((item, completeAddress, i));
+            }
+        }
+        SpinnerVisible = "display:none";
+        DropdownDisabled = false;
+
+    }
+
+    protected void AutoCompleteFindAddress()
+    {
+        var thisAddress = Addresses.FirstOrDefault(x => x.Item3 == AddressId);
+        if(thisAddress.Item1 != null)
+        {
+            model.AddressLine1 = thisAddress.Item1.AddressLine1;
+            model.AddressLine2 = thisAddress.Item1.AddressLine2;
+            model.AddressLine3 = thisAddress.Item1.City;
+            model.Postcode = thisAddress.Item1.Postcode;
+        }
+    }
+}

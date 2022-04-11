@@ -1,0 +1,78 @@
+﻿@page "/"
+@using ReviewIt.Web.Services.Interface
+
+@inject IBrokerService BrokerService
+@inject IBrokerStaffService BrokerStaffService
+@inject IAccountService AccountService
+
+@if (Broker != null)
+{
+    @if (BrokerStaff != null)
+    {
+    <div>
+        <h1>Hello @BrokerStaff.FirstName @BrokerStaff.LastName</h1>
+        <h2>for  @Broker.Name </h2>
+    </div>
+    }
+    else
+    {
+        <h1>Hello, @Broker.Name</h1>
+    }
+
+<div>
+    Welcome to your new Digital Customer Engagement platform.
+</div>
+<div class="form-group row">
+    <div class="col-sm-8">
+        @if (Broker.LogoImage != null && Broker.LogoImage.Length > 0)
+        {
+            <img src="data:image/bmp;base64, @(Convert.ToBase64String(Broker.LogoImage))" style="height:100px; width:220px" />
+        }
+    </div>
+</div>
+
+}
+else
+{
+<h1>Hello</h1>
+}
+
+
+
+@code{
+    Web.Models.Broker Broker;
+    Web.Models.BrokerStaff BrokerStaff;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var user = await AccountService.GetUser();
+            if (user != null)
+            {
+                if (user.IsBroker || user.IsBrokerStaff)
+                {
+                    Broker = await BrokerService.GetBroker(user.MasterBrokerId);
+                }
+
+                if (user.IsBrokerStaff)
+                {
+                    var brokerStaffId = 0;
+                    Int32.TryParse(user.Id, out brokerStaffId);
+                    if (brokerStaffId > 0)
+                    {
+                        BrokerStaff = await BrokerStaffService.GetBrokerStaff(brokerStaffId);
+                    }
+
+                }
+            }
+        }
+        catch
+        {
+
+        }
+
+
+
+    }
+}
