@@ -13,6 +13,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Dto.Models;
     using BrokerIQ.Online.Server.Models;
     using BrokerIQ.Online.Services.Interface;
+    using BrokerIQ.Online.Server.Shared;
 
     public class VideoListBase : ComponentBase
     {
@@ -109,7 +110,7 @@ namespace BrokerIQ.Online.Pages
             await VerifyBroker();
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this video?");
-            var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
                 bool succeeded = await VideoService.DeleteVideo(name);
@@ -148,7 +149,7 @@ namespace BrokerIQ.Online.Pages
                 dialogParams.Add("Message", "This video will be sent to customers on their birthday. Continue?");
             }
 
-            var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
                 var returned = await VideoService.SetBirthdayVideo(name, BrokerId, !alreadyChecked);

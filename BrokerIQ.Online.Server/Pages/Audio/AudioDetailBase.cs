@@ -12,6 +12,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
     using MudBlazor;
     using Microsoft.AspNetCore.WebUtilities;
     using System.IO;
+    using BrokerIQ.Online.Server.Shared;
 
     public class AudioDetailBase : ComponentBase
     {

@@ -20,7 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ReviewIt.Web.Server\ReviewIt.Web.Server.csproj" />
+		<ProjectReference Include="..\BrokerIQ.Online.Server\BrokerIQ.Online.Server.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

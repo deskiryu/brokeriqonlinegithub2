@@ -12,6 +12,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
     using MudBlazor;
     using Microsoft.AspNetCore.WebUtilities;
     using System.IO;
+    using BrokerIQ.Online.Server.Shared;
 
     public class VideoDetailBase : ComponentBase
     {
@@ -99,14 +100,14 @@ namespace BrokerIQ.Online.Server.Pages.Video
             if (string.IsNullOrEmpty(selectedNotification))
             {
                 dialogParams.Add("Message", $"Please enter a notification to send.");
-                await DialogService.Show<ReviewIt.Web.Server.Shared.AlertDialog>("Send Notification", dialogParams).Result;
+                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
                 return;
             }
 
             if (selectedNotification.Length > 299)
             {
                 dialogParams.Add("Message", $"Your notification is too long. It needs to be less than 300 letters.");
-                await DialogService.Show<ReviewIt.Web.Server.Shared.AlertDialog>("Send Notification", dialogParams).Result;
+                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
                 return;
             }
             dialogParams.Add("Notification", selectedNotification);
@@ -124,7 +125,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
             dialogParams.Add("Users", targetsName);
             dialogParams.Add("areBrokers", false);
-            var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ScrollableDialog>("Send Video Notification", dialogParams).Result;
+            var result = await DialogService.Show<ScrollableDialog>("Send Video Notification", dialogParams).Result;
 
             if (!result.Cancelled)
             {

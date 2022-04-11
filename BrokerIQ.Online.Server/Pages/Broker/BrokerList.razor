@@ -1,4 +1,6 @@
 ﻿@page "/brokerlist"
+@using BrokerIQ.Online.Models
+@using BrokerIQ.Online.Server.Shared
 @using BrokerIQ.Online.Services.Interface
 @inherits BrokerListBase
 
@@ -92,7 +94,7 @@ else
         string SearchTerm { get; set; } = "";
 
         //filter
-        List<Broker>
+        List<BrokerIQ.Online.Models.Broker>
         FilteredBrokers => Brokers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
 

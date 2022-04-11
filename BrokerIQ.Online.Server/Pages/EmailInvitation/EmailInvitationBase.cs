@@ -15,7 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
+using BrokerIQ.Online.Server.Shared;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -354,7 +354,7 @@ namespace BrokerIQ.Online.Pages
             {
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", "Are you sure you want to delete this connection?");
-                var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
+                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
                 if (!result.Cancelled)
                 {
                     succeeded = await this.EmailInviteService.DeleteEmailInvite(id);

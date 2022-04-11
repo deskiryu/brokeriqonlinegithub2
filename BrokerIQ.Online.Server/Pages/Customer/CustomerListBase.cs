@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace BrokerIQ.Online.Pages
 {
+    using BrokerIQ.Online.Server.Shared;
     using Dto.Models;
     using Microsoft.AspNetCore.Components;
     using Models;
@@ -172,14 +173,14 @@ namespace BrokerIQ.Online.Pages
             if (string.IsNullOrEmpty(selectedNotification))
             {
                 dialogParams.Add("Message", $"Please enter a notification to send.");
-                await DialogService.Show<ReviewIt.Web.Server.Shared.AlertDialog>("Send Notification", dialogParams).Result;
+                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
                 return;
             }
 
             if (selectedNotification.Length > 299)
             {
                 dialogParams.Add("Message", $"Your notification is too long. It needs to be less than 300 letters.");
-                await DialogService.Show<ReviewIt.Web.Server.Shared.AlertDialog>("Send Notification", dialogParams).Result;
+                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
                 return;
             }
             dialogParams.Add("Notification", selectedNotification);
@@ -197,7 +198,7 @@ namespace BrokerIQ.Online.Pages
 
             dialogParams.Add("Users", targetsName);
             dialogParams.Add("areBrokers", false);
-            var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ScrollableDialog>("Send Notification", dialogParams).Result;
+            var result = await DialogService.Show<ScrollableDialog>("Send Notification", dialogParams).Result;
 
             if (!result.Cancelled)
             {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 namespace BrokerIQ.Online.Pages
 {
     using System.ComponentModel.DataAnnotations;
+    using BrokerIQ.Online.Server.Shared;
     using Microsoft.AspNetCore.Components;
     using Models;
     using MudBlazor;
@@ -181,7 +182,7 @@ namespace BrokerIQ.Online.Pages
                 dialogParams.Add("Message", $"MenuPlan will be added for {customer.Name}");
 
 
-                var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("MenuPlan Add", dialogParams).Result;
+                var result = await DialogService.Show<ConfirmCancelDialog>("MenuPlan Add", dialogParams).Result;
                 if (!result.Cancelled)
                 {
                     try
@@ -229,7 +230,7 @@ namespace BrokerIQ.Online.Pages
         {
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this menu plan? All insurances within the plan will also be deleted.");
-            var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
                 try

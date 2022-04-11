@@ -1,5 +1,6 @@
 ﻿@page "/users"
 @using BrokerIQ.Online.Models
+@using BrokerIQ.Online.Server.Shared
 @using BrokerIQ.Online.Services.Interface
 @attribute [Authorize]
 @inject IAccountService AccountService
@@ -67,7 +68,7 @@
     {
         var dialogParams = new DialogParameters();
         dialogParams.Add("Message", "Are you sure you want to delete this customer?");
-        var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
+        var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
         if (!result.Cancelled)
         {
             var user = users.First(x => x.Id == id);

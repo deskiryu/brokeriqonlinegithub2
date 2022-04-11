@@ -1,4 +1,5 @@
 ﻿@page "/customerdetail/{CustomerId}"
+@using BrokerIQ.Dto.Models
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Services
@@ -323,13 +324,13 @@ else if (!Saved)
                     </tbody>
                 </table>
                 @code{
-                    protected void ViewDocumentUpload(ReviewIt.Dto.Models.CustomerDocumentDto doc)
+                    protected void ViewDocumentUpload(CustomerDocumentDto doc)
                     {
                         memoryStream = new MemoryStream(doc.File);
                         PreviewImage();
                     }
 
-                    protected void SaveDocumentUpload(ReviewIt.Dto.Models.CustomerDocumentDto doc)
+                    protected void SaveDocumentUpload(CustomerDocumentDto doc)
                     {
                         imageFileName = doc.Description + ".jpeg";
                         imageData = doc.File;

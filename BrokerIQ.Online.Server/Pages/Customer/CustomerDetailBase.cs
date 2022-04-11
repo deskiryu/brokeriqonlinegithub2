@@ -12,6 +12,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Services.Interface;
     using MudBlazor;
     using System.IO;
+    using BrokerIQ.Online.Server.Shared;
 
     public class CustomerDetailBase : ComponentBase
     {
@@ -209,7 +210,7 @@ namespace BrokerIQ.Online.Pages
             {
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", $"A notification will NOT be sent to {Customer.Name} as they have not confirmed their email address.");
-                var result = await DialogService.Show<ReviewIt.Web.Server.Shared.AlertDialog>("Send Notification", dialogParams).Result;
+                var result = await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
             }
         }
 

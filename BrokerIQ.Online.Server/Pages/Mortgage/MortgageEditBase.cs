@@ -21,7 +21,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Server.AppSettings;
     using Microsoft.Extensions.Options;
     using Microsoft.AspNetCore.Components.Forms;
-    
+    using BrokerIQ.Online.Server.Shared;
 
     public class MortgageEditBase : ComponentBase
     {
@@ -232,7 +232,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     dialogParams.Add("Message", $"Mortgage will be added however a notification will be NOT be sent to {customer.Name} about this new mortgage as their email address is not confirmed");
                 }
-                var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("Mortgage Add", dialogParams).Result;
+                var result = await DialogService.Show<ConfirmCancelDialog>("Mortgage Add", dialogParams).Result;
                 if (!result.Cancelled)
                 {
                     try
@@ -305,7 +305,7 @@ namespace BrokerIQ.Online.Pages
         {
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this mortgage?");
-            var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
                 try
@@ -345,7 +345,7 @@ namespace BrokerIQ.Online.Pages
             {
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", "Are you sure you want to delete this mortgage document?");
-                var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
+                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
                 if (!result.Cancelled)
                 {
                     await SupportingDocumentService.DeleteMortgageFile(id);
@@ -451,7 +451,7 @@ namespace BrokerIQ.Online.Pages
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", $"A maximum of five documents can be shown in the app");
                 success = false;
-                await DialogService.Show<ReviewIt.Web.Server.Shared.AlertDialog>("Send Notification", dialogParams).Result;
+                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
 
             }
             foreach (var file in e.GetMultipleFiles(remainingFiles))
