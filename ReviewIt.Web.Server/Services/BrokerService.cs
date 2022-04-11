@@ -15,7 +15,7 @@ namespace ReviewIt.Web.Services
     using Mapper;
     using Microsoft.Extensions.Options;
     using Models;
-    using ReviewIt.Dto.Request;
+    using BrokerIQ.Dto.Request;
     using ReviewIt.Web.Services.Interface;
 
     public class BrokerService : IBrokerService

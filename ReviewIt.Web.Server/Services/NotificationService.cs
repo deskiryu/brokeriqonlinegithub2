@@ -9,7 +9,7 @@ namespace ReviewIt.Web.Server.Services
     using System.Threading.Tasks;
     using AutoMapper;
     using Newtonsoft.Json;
-    using ReviewIt.Dto.Models;
+    using BrokerIQ.Dto.Models;
     using ReviewIt.Web.Models;
     using ReviewIt.Web.Services.Interface;
     using ReviewIt.Web.Services.Abstract;

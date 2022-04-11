@@ -16,7 +16,7 @@ namespace ReviewIt.Web.Services
     using Mapper;
     using Microsoft.Extensions.Options;
     using Models;
-    using ReviewIt.Dto.Enum;
+    using BrokerIQ.Dto.Enum;
 
     public class CustomerDocumentService : ICustomerDocumentService
     {

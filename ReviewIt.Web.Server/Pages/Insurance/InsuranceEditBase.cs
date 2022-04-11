@@ -12,7 +12,7 @@ namespace ReviewIt.Web.Pages
     using Microsoft.AspNetCore.Components;
     using Models;
     using MudBlazor;
-    using ReviewIt.Dto.Enum;
+    using BrokerIQ.Dto.Enum;
     using Services.Interface;
     using ReviewIt.Web.Server.Shared;
     using ReviewIt.Web.Server.Extensions;

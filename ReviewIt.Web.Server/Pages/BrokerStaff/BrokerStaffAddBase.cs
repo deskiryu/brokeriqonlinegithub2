@@ -8,7 +8,7 @@
     
     using Microsoft.AspNetCore.Components;
     using Models;
-    using ReviewIt.Dto.Models;
+    using BrokerIQ.Dto.Models;
     using ReviewIt.Web.Models.Account;
     using ReviewIt.Web.Server.Models;
     using Services.Interface;

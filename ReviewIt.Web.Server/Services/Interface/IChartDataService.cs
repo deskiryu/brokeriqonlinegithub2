@@ -1,4 +1,4 @@
-﻿using ReviewIt.Dto.Model.Statistics;
+﻿using BrokerIQ.Dto.Model.Statistics;
 using System;
 using System.Collections.Generic;
 using System.Linq;

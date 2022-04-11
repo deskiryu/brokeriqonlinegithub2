@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using ReviewIt.Dto.Models;
+using BrokerIQ.Dto.Models;
 
 namespace ReviewIt.Web.Services.Interface
 {

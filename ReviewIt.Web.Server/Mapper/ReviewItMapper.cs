@@ -9,8 +9,8 @@ namespace ReviewIt.Web.Mapper
     using Dto.Entities;
     using Dto.Models;
     using Models;
-    using ReviewIt.Dto.Enum;
-    using ReviewIt.Dto.Response;
+    using BrokerIQ.Dto.Enum;
+    using BrokerIQ.Dto.Response;
     using ReviewIt.Web.Models.Account;
 
     public class ReviewItMapper : Profile

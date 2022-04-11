@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ReviewIt.Dto.Models;
+using BrokerIQ.Dto.Models;
 using ReviewIt.Web.Models;
 
 namespace ReviewIt.Web.Services.Interface

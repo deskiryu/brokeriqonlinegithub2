@@ -7,8 +7,8 @@ namespace ReviewIt.Web.Pages
 {
     using Microsoft.AspNetCore.Components;
     using Models;
-    using ReviewIt.Dto.Enum;
-    using ReviewIt.Dto.Models;
+    using BrokerIQ.Dto.Enum;
+    using BrokerIQ.Dto.Models;
     using ReviewIt.Web.Services.Interface;
     using MudBlazor;
     using System.IO;

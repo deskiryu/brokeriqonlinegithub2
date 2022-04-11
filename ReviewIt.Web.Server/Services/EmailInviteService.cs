@@ -4,7 +4,7 @@ namespace ReviewIt.Web.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
-    using ReviewIt.Dto.Models;
+    using BrokerIQ.Dto.Models;
     using ReviewIt.Web.Models;
     using ReviewIt.Web.Services.Abstract;
     using ReviewIt.Web.Services.Interface;

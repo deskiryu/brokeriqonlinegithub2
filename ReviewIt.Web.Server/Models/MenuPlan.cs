@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ReviewIt.Web.Models
 {
-    using ReviewIt.Dto.Enum;
+    using BrokerIQ.Dto.Enum;
     using System.ComponentModel.DataAnnotations;
 
     public class MenuPlan
