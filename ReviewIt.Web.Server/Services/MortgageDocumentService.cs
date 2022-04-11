@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
     using System.Net.Http;
     using System.Text.Json;

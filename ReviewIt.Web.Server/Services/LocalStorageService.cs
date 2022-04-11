@@ -1,11 +1,11 @@
 
 
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
     using Microsoft.JSInterop;
     using System.Text.Json;
     using System.Threading.Tasks;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Services.Interface;
     using Microsoft.AspNetCore.Components;
     using Blazored.SessionStorage;
 

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
-using ReviewIt.Web.Services.Interface;
+using BrokerIQ.Online.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Server.Helper
+namespace BrokerIQ.Online.Server.Helper
 {
     public class HealthCheck : IHealthCheck
     {

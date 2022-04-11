@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Models
+namespace BrokerIQ.Online.Models
 {
     public class Chat
     {

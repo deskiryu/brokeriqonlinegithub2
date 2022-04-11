@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Data
+namespace BrokerIQ.Online.Data
 {
     public class WeatherForecastService
     {

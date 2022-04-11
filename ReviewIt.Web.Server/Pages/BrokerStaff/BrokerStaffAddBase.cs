@@ -1,4 +1,4 @@
-﻿namespace ReviewIt.Web.Pages
+﻿namespace BrokerIQ.Online.Pages
 {
     using System;
     using System.IO;
@@ -9,8 +9,8 @@
     using Microsoft.AspNetCore.Components;
     using Models;
     using BrokerIQ.Dto.Models;
-    using ReviewIt.Web.Models.Account;
-    using ReviewIt.Web.Server.Models;
+    using BrokerIQ.Online.Models.Account;
+    using BrokerIQ.Online.Server.Models;
     using Services.Interface;
 
     public class BrokerStaffAddBase : ComponentBase

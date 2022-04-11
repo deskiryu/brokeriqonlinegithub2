@@ -1,6 +1,6 @@
 using System;
 
-namespace ReviewIt.Web.Data
+namespace BrokerIQ.Online.Data
 {
     public class WeatherForecast
     {

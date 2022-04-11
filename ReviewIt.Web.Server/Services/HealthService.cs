@@ -1,12 +1,12 @@
-﻿using ReviewIt.Web.Services.Interface;
-using ReviewIt.Web.Services.Abstract;
+﻿using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Online.Services.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Server.Services
+namespace BrokerIQ.Online.Server.Services
 {
     public class HealthService : IHealthService
     {

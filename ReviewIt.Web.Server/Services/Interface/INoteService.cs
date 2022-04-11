@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Services.Interface
+namespace BrokerIQ.Online.Services.Interface
 {
-    using ReviewIt.Web.Models;
+    using BrokerIQ.Online.Models;
     using System.Threading.Tasks;
 
     public interface INoteService

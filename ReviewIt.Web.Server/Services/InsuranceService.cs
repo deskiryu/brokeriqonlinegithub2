@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
     using System.Net.Http;
     using System.Text.Json;
@@ -15,7 +15,7 @@ namespace ReviewIt.Web.Services
     using Mapper;
     using Microsoft.Extensions.Options;
     using Models;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Services.Interface;
 
     public class InsuranceService : IInsuranceService
     {

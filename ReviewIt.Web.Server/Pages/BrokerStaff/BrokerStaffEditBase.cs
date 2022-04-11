@@ -1,4 +1,4 @@
-﻿namespace ReviewIt.Web.Pages
+﻿namespace BrokerIQ.Online.Pages
 {
     using System;
     using System.IO;
@@ -88,7 +88,7 @@
         {
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this employee?");
-            var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
                 await BrokerStaffService.DeleteBrokerStaff(_brokerStaff.Id);

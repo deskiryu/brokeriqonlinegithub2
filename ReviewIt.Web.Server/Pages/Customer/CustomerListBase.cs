@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Pages
+namespace BrokerIQ.Online.Pages
 {
     using Dto.Models;
     using Microsoft.AspNetCore.Components;
@@ -64,7 +64,7 @@ namespace ReviewIt.Web.Pages
                 }
                 else
                 {
-                    Brokers = new List<ReviewIt.Web.Models.Broker>();
+                    Brokers = new List<Broker>();
                 }
             }
             catch
@@ -228,7 +228,7 @@ namespace ReviewIt.Web.Pages
 
                     if (succeeded)
                     {
-                        AlertService.Alert(new Web.Models.Alert
+                        AlertService.Alert(new AlertBIQ
                         {
                             AutoClose = true,
                             Message = "Notification Sent"

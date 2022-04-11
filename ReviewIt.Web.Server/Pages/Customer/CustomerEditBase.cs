@@ -1,4 +1,4 @@
-﻿namespace ReviewIt.Web.Pages
+﻿namespace BrokerIQ.Online.Pages
 {
     using System;
     using System.Threading.Tasks;

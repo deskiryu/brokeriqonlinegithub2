@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using ReviewIt.Web.Services.Interface
+@using BrokerIQ.Online.Services.Interface
 
 @inject IBrokerService BrokerService
 @inject IBrokerStaffService BrokerStaffService
@@ -40,8 +40,8 @@ else
 
 
 @code{
-    Web.Models.Broker Broker;
-    Web.Models.BrokerStaff BrokerStaff;
+    Broker Broker;
+    BrokerStaff BrokerStaff;
 
     protected override async Task OnInitializedAsync()
     {

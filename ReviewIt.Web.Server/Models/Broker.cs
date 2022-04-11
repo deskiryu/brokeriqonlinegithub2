@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Models
+namespace BrokerIQ.Online.Models
 {
-    using ReviewIt.Web.Server.Models;
+    using BrokerIQ.Online.Server.Models;
     using System.ComponentModel.DataAnnotations;
 
     public class Broker

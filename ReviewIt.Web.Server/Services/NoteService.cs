@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Server.Services
+namespace BrokerIQ.Online.Server.Services
 {
     using System.Linq;
     using System.Net.Http;
@@ -10,10 +10,10 @@ namespace ReviewIt.Web.Server.Services
     using AutoMapper;
     using Newtonsoft.Json;
     using BrokerIQ.Dto.Models;
-    using ReviewIt.Web.Models;
-    using ReviewIt.Web.Services.Interface;
-    using ReviewIt.Web.Services.Abstract;
-    using ReviewIt.Web.Server.Models;
+    using BrokerIQ.Online.Models;
+    using BrokerIQ.Online.Services.Interface;
+    using BrokerIQ.Online.Services.Abstract;
+    using BrokerIQ.Online.Server.Models;
 
     public class NoteService : INoteService
     {

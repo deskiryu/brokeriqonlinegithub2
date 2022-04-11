@@ -1,11 +1,11 @@
-﻿namespace ReviewIt.Web.Services.Interface
+﻿namespace BrokerIQ.Online.Services.Interface
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using BrokerIQ.Dto.Models;
     using BrokerIQ.Dto.Response;
-    using ReviewIt.Web.Models;
-    using ReviewIt.Web.Models.Account;
+    using BrokerIQ.Online.Models;
+    using BrokerIQ.Online.Models.Account;
 
     public interface IAccountService
     {

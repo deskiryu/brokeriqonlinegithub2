@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace ReviewIt.Web.Pages
+namespace BrokerIQ.Online.Pages
 {
     using Microsoft.AspNetCore.Components;
     using MudBlazor;
-    using ReviewIt.Web.Server.Models;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Online.Services.Interface;
 
     public class AudioListBase : ComponentBase
     {
@@ -83,7 +83,7 @@ namespace ReviewIt.Web.Pages
             await VerifyBroker();
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this Audio?");
-            var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
                 bool succeeded = await AudioService.DeleteAudio(name);

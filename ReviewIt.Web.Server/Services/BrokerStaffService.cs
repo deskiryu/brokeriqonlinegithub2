@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
 using BrokerIQ.Dto.Models;
-using ReviewIt.Web.Models;
-using ReviewIt.Web.Services.Abstract;
-using ReviewIt.Web.Services.Interface;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Server.Services
+namespace BrokerIQ.Online.Server.Services
 {
     public class BrokerStaffService : IBrokerStaffService
     {

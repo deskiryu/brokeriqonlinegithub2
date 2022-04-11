@@ -4,14 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 
-namespace ReviewIt.Web.Mapper
+namespace BrokerIQ.Online.Mapper
 {
     using Dto.Entities;
     using Dto.Models;
     using Models;
     using BrokerIQ.Dto.Enum;
     using BrokerIQ.Dto.Response;
-    using ReviewIt.Web.Models.Account;
+    using BrokerIQ.Online.Models.Account;
 
     public class ReviewItMapper : Profile
     {

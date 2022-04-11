@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
-using ReviewIt.Web.AppSettings;
-using ReviewIt.Web.Services.Abstract;
-using ReviewIt.Web.Services.Interface;
+using BrokerIQ.Online.AppSettings;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
     public class AddressService : IAddressService
     {

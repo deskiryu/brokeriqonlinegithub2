@@ -1,4 +1,4 @@
-﻿namespace ReviewIt.Web.Attributes
+﻿namespace BrokerIQ.Online.Attributes
 {
     using System;
     using System.ComponentModel.DataAnnotations;

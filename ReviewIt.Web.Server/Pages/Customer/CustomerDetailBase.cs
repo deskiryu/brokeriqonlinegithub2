@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Pages
+namespace BrokerIQ.Online.Pages
 {
     using Microsoft.AspNetCore.Components;
     using Models;
     using BrokerIQ.Dto.Enum;
     using BrokerIQ.Dto.Models;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Services.Interface;
     using MudBlazor;
     using System.IO;
-    using ReviewIt.Web.Server.Shared;
 
     public class CustomerDetailBase : ComponentBase
     {
@@ -152,14 +151,14 @@ namespace ReviewIt.Web.Pages
                 if (string.IsNullOrEmpty(selectedNotification))
                 {
                     dialogParams.Add("Message", $"Please enter a notification to send.");
-                    await DialogService.Show<ReviewIt.Web.Server.Shared.AlertDialog>("Send Notification", dialogParams).Result;
+                    await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
                     return;
                 }
 
                 if (selectedNotification.Length > 299)
                 {
                     dialogParams.Add("Message", $"Your notification is too long. It needs to be less than 300 letters.");
-                    await DialogService.Show<ReviewIt.Web.Server.Shared.AlertDialog>("Send Notification", dialogParams).Result;
+                    await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
                     return;
                 }
 
@@ -194,7 +193,7 @@ namespace ReviewIt.Web.Pages
 
                     if (succeeded)
                     {
-                        AlertService.Alert(new Web.Models.Alert
+                        AlertService.Alert(new Models.AlertBIQ
                         {
                             AutoClose = true,
                             Message = "Notification Sent"

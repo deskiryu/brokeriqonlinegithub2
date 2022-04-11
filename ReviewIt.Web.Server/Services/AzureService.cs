@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Server.Services
+namespace BrokerIQ.Online.Server.Services
 {
     using System.Collections.Generic;
     using System.IO;
@@ -11,9 +11,9 @@ namespace ReviewIt.Web.Server.Services
     using Azure.Storage.Blobs;
     using Azure.Storage.Blobs.Models;
     using Microsoft.Extensions.Options;
-    using ReviewIt.Web.Server.AppSettings;
-    using ReviewIt.Web.Server.Models;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Server.AppSettings;
+    using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Online.Services.Interface;
 
     public class AzureService : IAzureService
     {

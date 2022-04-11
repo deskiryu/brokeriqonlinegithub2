@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Services.Interface
+namespace BrokerIQ.Online.Services.Interface
 {
     public interface IAddressService
     {

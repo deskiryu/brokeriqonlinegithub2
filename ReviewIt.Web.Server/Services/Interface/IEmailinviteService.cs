@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Models;
-using ReviewIt.Web.Models;
+using BrokerIQ.Online.Models;
 
-namespace ReviewIt.Web.Services.Interface
+namespace BrokerIQ.Online.Services.Interface
 {
     public interface IEmailInviteService
     {

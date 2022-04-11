@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Services.Interface
+namespace BrokerIQ.Online.Services.Interface
 {
     using System.IO;
     using System.Threading.Tasks;
-    using ReviewIt.Web.Server.Models;
+    using BrokerIQ.Online.Server.Models;
 
     public interface IAzureService
     {

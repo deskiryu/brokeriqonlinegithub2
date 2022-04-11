@@ -1,14 +1,14 @@
 ﻿
-namespace ReviewIt.Web.Server.Pages.Audio
+namespace BrokerIQ.Online.Server.Pages.Audio
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
-    using ReviewIt.Web.Models;
-    using ReviewIt.Web.Server.Models;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Models;
+    using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Online.Services.Interface;
     using MudBlazor;
     using Microsoft.AspNetCore.WebUtilities;
     using System.IO;
@@ -35,7 +35,7 @@ namespace ReviewIt.Web.Server.Pages.Audio
 
         protected Audio Audio { get; set; }
 
-        protected List<Web.Models.Customer> Customers { get; set; }
+        protected List<Customer> Customers { get; set; }
 
         protected string Url { get; set; }
         protected string AudioName { get; set; }
@@ -47,7 +47,7 @@ namespace ReviewIt.Web.Server.Pages.Audio
         protected bool Vetted { get; set; }
 
         //filter
-         protected List<Web.Models.Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+         protected List<Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         protected override async Task OnInitializedAsync()
         {
@@ -99,14 +99,14 @@ namespace ReviewIt.Web.Server.Pages.Audio
             if (string.IsNullOrEmpty(selectedNotification))
             {
                 dialogParams.Add("Message", $"Please enter a notification to send.");
-                await DialogService.Show<ReviewIt.Web.Server.Shared.AlertDialog>("Send Notification", dialogParams).Result;
+                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
                 return;
             }
 
             if (selectedNotification.Length > 299)
             {
                 dialogParams.Add("Message", $"Your notification is too long. It needs to be less than 300 letters.");
-                await DialogService.Show<ReviewIt.Web.Server.Shared.AlertDialog>("Send Notification", dialogParams).Result;
+                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
                 return;
             }
             dialogParams.Add("Notification", selectedNotification);
@@ -124,7 +124,7 @@ namespace ReviewIt.Web.Server.Pages.Audio
 
             dialogParams.Add("Users", targetsName);
             dialogParams.Add("areBrokers", false);
-            var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ScrollableDialog>("Send Audio Notification", dialogParams).Result;
+            var result = await DialogService.Show<ScrollableDialog>("Send Audio Notification", dialogParams).Result;
 
             if (!result.Cancelled)
             {
@@ -152,7 +152,7 @@ namespace ReviewIt.Web.Server.Pages.Audio
 
                     if (succeeded)
                     {
-                        AlertService.Alert(new Web.Models.Alert
+                        AlertService.Alert(new AlertBIQ
                         {
                             AutoClose = true,
                             Message = "Notification Sent"

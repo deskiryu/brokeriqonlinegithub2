@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ReviewIt.Web.Models.Account
+namespace BrokerIQ.Online.Models.Account
 {
     public class Login
     {

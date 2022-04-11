@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Server.Models
+namespace BrokerIQ.Online.Server.Models
 {
     public class Audio
     {

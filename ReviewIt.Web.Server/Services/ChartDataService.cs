@@ -1,11 +1,11 @@
 ﻿using BrokerIQ.Dto.Model.Statistics;
-using ReviewIt.Web.Services.Abstract;
-using ReviewIt.Web.Services.Interface;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
     public class ChartDataService : IChartDataService
     {

@@ -1,4 +1,4 @@
-﻿namespace ReviewIt.Web.Services.Concrete
+﻿namespace BrokerIQ.Online.Services.Concrete
 {
     using System;
     using System.Net;
@@ -9,7 +9,7 @@
     using AppSettings;
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Services.Interface;
 
     public class RequestProviderService : IRequestProviderService
     {

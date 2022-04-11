@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Pages
+namespace BrokerIQ.Online.Pages
 {
     using Microsoft.AspNetCore.Components;
     using Models;

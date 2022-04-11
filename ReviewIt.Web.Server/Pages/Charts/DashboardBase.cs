@@ -8,15 +8,15 @@ using ChartJs.Blazor.LineChart;
 using ChartJs.Blazor.PieChart;
 using ChartJs.Blazor.Util;
 using Microsoft.AspNetCore.Components;
-using ReviewIt.Web.Pages.Samples.Shared;
-using ReviewIt.Web.Services;
-using ReviewIt.Web.Services.Interface;
+using BrokerIQ.Online.Pages.Samples.Shared;
+using BrokerIQ.Online.Services;
+using BrokerIQ.Online.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Pages
+namespace BrokerIQ.Online.Pages
 {
     public class DashboardBase : ComponentBase
     {

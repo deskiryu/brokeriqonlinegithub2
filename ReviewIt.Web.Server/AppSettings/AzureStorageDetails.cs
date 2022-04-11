@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Server.AppSettings
+namespace BrokerIQ.Online.Server.AppSettings
 {
     public class AzureStorageDetails
     {

@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Components;
-using ReviewIt.Web.Models;
-using ReviewIt.Web.Server.Enumuration;
-using ReviewIt.Web.Server.Models;
-using ReviewIt.Web.Services.Interface;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Enumuration;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Pages
+namespace BrokerIQ.Online.Pages
 {
     public class NotificationPageBase : ComponentBase
     {

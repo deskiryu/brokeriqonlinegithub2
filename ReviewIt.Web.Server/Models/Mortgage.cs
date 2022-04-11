@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Models
+namespace BrokerIQ.Online.Models
 {
     using BrokerIQ.Dto.Enum;
-    using ReviewIt.Web.Attributes;
+    using BrokerIQ.Online.Attributes;
     using System.ComponentModel.DataAnnotations;
 
     public class Mortgage

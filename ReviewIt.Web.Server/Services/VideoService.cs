@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Server.Services
+namespace BrokerIQ.Online.Server.Services
 {
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
-    using ReviewIt.Web.Server.Models;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Online.Services.Interface;
 
     public class VideoService : IVideoService
     {

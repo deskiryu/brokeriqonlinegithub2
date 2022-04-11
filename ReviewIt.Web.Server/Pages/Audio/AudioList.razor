@@ -2,7 +2,7 @@
 @inherits AudioListBase
 @using System.IO
 @using BrokerIQ.Dto.Models
-@using ReviewIt.Web.Services.Interface
+@using BrokerIQ.Online.Services.Interface
 @inject IEmailService EmailService
 @inject IJSRuntime jsRuntime
 
@@ -25,7 +25,7 @@
             MaxWidth = MaxWidth.Medium
         };
 
-        var result = await DialogService.Show<ReviewIt.Web.Server.Shared.AudioRecordDialog>("Record voice message", dialogParams, dialogOptions).Result;
+        var result = await DialogService.Show<AudioRecordDialog>("Record voice message", dialogParams, dialogOptions).Result;
         if (!result.Cancelled)
         {
             NavigationManager.NavigateTo($"/audiolist");

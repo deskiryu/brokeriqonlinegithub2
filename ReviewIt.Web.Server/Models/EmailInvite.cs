@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ReviewIt.Web.Models
+namespace BrokerIQ.Online.Models
 {
     public class EmailInvite
     {

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace ReviewIt.Web.ServerApplication
+namespace BrokerIQ.Online.ServerApplication
 {
     using AutoMapper;
     using Blazored.SessionStorage;
@@ -12,12 +12,12 @@ namespace ReviewIt.Web.ServerApplication
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Identity;
     using MudBlazor.Services;
-    using ReviewIt.Web.AppSettings;
-    using ReviewIt.Web.Server.AppSettings;
-    using ReviewIt.Web.Server.Helper;
-    using ReviewIt.Web.Server.Services;
-    using ReviewIt.Web.Services.Interface;
-    using ReviewIt.Web.Services.Mock;
+    using BrokerIQ.Online.AppSettings;
+    using BrokerIQ.Online.Server.AppSettings;
+    using BrokerIQ.Online.Server.Helper;
+    using BrokerIQ.Online.Server.Services;
+    using BrokerIQ.Online.Services.Interface;
+    using BrokerIQ.Online.Services.Mock;
     using Services;
     using Services.Abstract;
     using Services.Concrete;

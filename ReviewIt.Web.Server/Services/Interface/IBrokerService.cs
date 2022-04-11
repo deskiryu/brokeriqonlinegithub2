@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Services.Interface
+namespace BrokerIQ.Online.Services.Interface
 {
     using Dto.Models;
     using Models;

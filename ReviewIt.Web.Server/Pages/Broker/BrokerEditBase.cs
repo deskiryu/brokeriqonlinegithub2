@@ -1,4 +1,4 @@
-﻿namespace ReviewIt.Web.Pages
+﻿namespace BrokerIQ.Online.Pages
 {
     using System;
     using System.IO;
@@ -9,7 +9,7 @@
     using Microsoft.AspNetCore.Components.Forms;
     using Models;
     using MudBlazor;
-    using ReviewIt.Web.Server.Shared;
+    
     using Services.Interface;
 
     public class BrokerEditBase : ComponentBase

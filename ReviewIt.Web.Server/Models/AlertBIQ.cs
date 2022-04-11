@@ -1,6 +1,6 @@
-namespace ReviewIt.Web.Models
+namespace BrokerIQ.Online.Models
 {
-    public class Alert
+    public class AlertBIQ
     {
         public string Id { get; set; }
         public AlertType Type { get; set; }

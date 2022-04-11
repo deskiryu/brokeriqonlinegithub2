@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Pages
+namespace BrokerIQ.Online.Pages
 {
     using System.ComponentModel.DataAnnotations;
     using System.Diagnostics.CodeAnalysis;
@@ -14,11 +14,11 @@ namespace ReviewIt.Web.Pages
     using MudBlazor;
     using BrokerIQ.Dto.Enum;
     using Services.Interface;
-    using ReviewIt.Web.Server.Shared;
-    using ReviewIt.Web.Server.Extensions;
+    
+    using BrokerIQ.Online.Server.Extensions;
     using Microsoft.AspNetCore.WebUtilities;
     using Microsoft.AspNetCore.Components.Forms;
-    using ReviewIt.Web.Server.AppSettings;
+    using BrokerIQ.Online.Server.AppSettings;
     using Microsoft.Extensions.Options;
 
     public class InsuranceEditBase : ComponentBase

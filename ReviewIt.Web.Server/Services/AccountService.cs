@@ -2,17 +2,17 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
     using System;
     using AutoMapper;
     using BrokerIQ.Dto.Models;
     using BrokerIQ.Dto.Response;
-    using ReviewIt.Web.Models;
-    using ReviewIt.Web.Models.Account;
-    using ReviewIt.Web.Server.Helper;
-    using ReviewIt.Web.Services.Interface;
-    using ReviewIt.Web.Services.Abstract;
+    using BrokerIQ.Online.Models;
+    using BrokerIQ.Online.Models.Account;
+    using BrokerIQ.Online.Server.Helper;
+    using BrokerIQ.Online.Services.Interface;
+    using BrokerIQ.Online.Services.Abstract;
 
     public class AccountService : IAccountService
     {

@@ -1,5 +1,5 @@
 ﻿@page "/brokerlist"
-@using ReviewIt.Web.Services.Interface
+@using BrokerIQ.Online.Services.Interface
 @inherits BrokerListBase
 
 @inject INotificationService NotificationService
@@ -92,7 +92,7 @@ else
         string SearchTerm { get; set; } = "";
 
         //filter
-        List<Web.Models.Broker>
+        List<Broker>
         FilteredBrokers => Brokers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
 
@@ -200,7 +200,7 @@ else
 
             dialogParams.Add("Users", targetsName);
             dialogParams.Add("areBrokers", true);
-            var result = await DialogService.Show<ReviewIt.Web.Server.Shared.ScrollableDialog>("Send Notification", dialogParams).Result;
+            var result = await DialogService.Show<ScrollableDialog>("Send Notification", dialogParams).Result;
 
             if (!result.Cancelled)
             {
@@ -229,7 +229,7 @@ else
 
                     if (succeeded)
                     {
-                        AlertService.Alert(new Web.Models.Alert
+                        AlertService.Alert(new AlertBIQ
                         {
                             AutoClose = true,
                             Message = "Notification Sent"

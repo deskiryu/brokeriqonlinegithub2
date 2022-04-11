@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Server.Extensions
+namespace BrokerIQ.Online.Server.Extensions
 {
     using System.ComponentModel.DataAnnotations;
     using System.IO;
@@ -10,7 +10,7 @@ namespace ReviewIt.Web.Server.Extensions
     using System.Reflection;
     using System.Threading.Tasks;
     using Microsoft.JSInterop;
-    using ReviewIt.Web.Server.Enumuration;
+    using BrokerIQ.Online.Server.Enumuration;
 
     public static class Extensions
     {

@@ -1,5 +1,5 @@
-@using ReviewIt.Web.Services.Interface
-@using ReviewIt.Web.Models
+@using BrokerIQ.Online.Services.Interface
+@using BrokerIQ.Online.Models
 @implements IDisposable
 @inject IAlertService AlertService
 @inject NavigationManager NavigationManager
@@ -19,7 +19,7 @@
     [Parameter]
     public bool Fade { get; set; } = true;
 
-    private List<ReviewIt.Web.Models.Alert> alerts = new List<ReviewIt.Web.Models.Alert>();
+    private List<AlertBIQ> alerts = new List<AlertBIQ>();
 
     protected override void OnInitialized()
     {
@@ -35,7 +35,7 @@
         NavigationManager.LocationChanged -= OnLocationChange;
     }
 
-    private async void OnAlert(ReviewIt.Web.Models.Alert alert)
+    private async void OnAlert(AlertBIQ alert)
     {
         // ignore alerts sent to other alert components
         if (alert.Id != Id) 
@@ -73,7 +73,7 @@
         AlertService.Clear(Id);
     }
 
-    private async void RemoveAlert(ReviewIt.Web.Models.Alert alert)
+    private async void RemoveAlert(AlertBIQ alert)
     {
         // check if already removed to prevent error on auto close
         if (!alerts.Contains(alert)) return;
@@ -96,7 +96,7 @@
         StateHasChanged();
     }
 
-    private string CssClass(ReviewIt.Web.Models.Alert alert) 
+    private string CssClass(AlertBIQ alert) 
     {
         if (alert == null) return null;
 

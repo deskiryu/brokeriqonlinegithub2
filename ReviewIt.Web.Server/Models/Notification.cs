@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace ReviewIt.Web.Models
+namespace BrokerIQ.Online.Models
 {
     public class Notification
     {

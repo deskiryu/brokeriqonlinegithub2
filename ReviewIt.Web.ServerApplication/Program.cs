@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Azure.Identity;
 
-namespace ReviewIt.Web.ServerApplication
+namespace BrokerIQ.Online.ServerApplication
 {
     public class Program
     {

@@ -1,18 +1,18 @@
 using System;
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
-    using ReviewIt.Web.Models;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Models;
+    using BrokerIQ.Online.Services.Interface;
 
 
     public class AlertService : IAlertService
     {
         private const string _defaultId = "default-alert";
-        public event Action<Alert> OnAlert;
+        public event Action<AlertBIQ> OnAlert;
 
         public void Success(string message, bool keepAfterRouteChange = false, bool autoClose = true)
         {
-            this.Alert(new Alert
+            this.Alert(new AlertBIQ
             {
                 Type = AlertType.Success,
                 Message = message,
@@ -24,7 +24,7 @@ namespace ReviewIt.Web.Services
 
         public void Error(string message, bool keepAfterRouteChange = false, bool autoClose = true)
         {
-            this.Alert(new Alert
+            this.Alert(new AlertBIQ
             {
                 Type = AlertType.Error,
                 Message = message,
@@ -36,7 +36,7 @@ namespace ReviewIt.Web.Services
 
         public void Info(string message, bool keepAfterRouteChange = false, bool autoClose = true)
         {
-            this.Alert(new Alert
+            this.Alert(new AlertBIQ
             {
                 Type = AlertType.Info,
                 Message = message,
@@ -48,7 +48,7 @@ namespace ReviewIt.Web.Services
 
         public void Warn(string message, bool keepAfterRouteChange = false, bool autoClose = true)
         {
-            this.Alert(new Alert
+            this.Alert(new AlertBIQ
             {
                 Type = AlertType.Warning,
                 Message = message,
@@ -58,7 +58,7 @@ namespace ReviewIt.Web.Services
             });
         }        
 
-        public void Alert(Alert alert)
+        public void Alert(AlertBIQ alert)
         {
             alert.Id = alert.Id ?? _defaultId;
             this.OnAlert?.Invoke(alert);
@@ -66,7 +66,7 @@ namespace ReviewIt.Web.Services
 
         public void Clear(string id = _defaultId)
         {
-            this.OnAlert?.Invoke(new Alert { Id = id });
+            this.OnAlert?.Invoke(new AlertBIQ { Id = id });
         }
     }
 }

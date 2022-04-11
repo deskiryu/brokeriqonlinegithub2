@@ -1,4 +1,4 @@
-﻿namespace ReviewIt.Web.Services.Abstract
+﻿namespace BrokerIQ.Online.Services.Abstract
 {
     using System;
     using System.Threading.Tasks;

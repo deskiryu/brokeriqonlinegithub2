@@ -1,4 +1,4 @@
-﻿namespace ReviewIt.Web.AppSettings
+﻿namespace BrokerIQ.Online.AppSettings
 {
     public class ReviewItAPIDetails
     {

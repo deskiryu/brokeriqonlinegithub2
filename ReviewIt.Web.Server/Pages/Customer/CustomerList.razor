@@ -1,5 +1,5 @@
 ﻿@page "/customerlist"
-@using ReviewIt.Web.Services.Interface
+@using BrokerIQ.Online.Services.Interface
 @using Microsoft.AspNetCore.Components
 
 @inherits CustomerListBase
@@ -122,7 +122,7 @@ else
         string SearchTerm { get; set; } = "";
 
         //filter
-        List<Web.Models.Customer>
+        List<Customer>
         FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
     }
     <div>
@@ -130,11 +130,11 @@ else
 <MudTable Items="@FilteredCustomers" Hover="true" SortLabel="Sort By" >
     <HeaderContent>
         <MudTh>Select</MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Customer, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<Web.Models.Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Customer, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Customer, object>(x=>x.DateOfBirth)">Date Of Birth</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Customer, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Customer, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Customer, object>(x=>x.DateOfBirth)">Date Of Birth</MudTableSortLabel></MudTh>
         <MudTh>Verified</MudTh>
         <MudTh></MudTh>
     </HeaderContent>

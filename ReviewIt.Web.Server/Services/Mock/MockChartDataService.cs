@@ -1,12 +1,12 @@
 ﻿using BrokerIQ.Dto.Model.Statistics;
-using ReviewIt.Web.Services.Interface;
+using BrokerIQ.Online.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Services.Mock
+namespace BrokerIQ.Online.Services.Mock
 {
     public class MockChartDataService : IChartDataService
     {

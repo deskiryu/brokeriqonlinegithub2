@@ -1,11 +1,11 @@
 using System;
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
     using System.Threading.Tasks;
     using BrokerIQ.Dto.Models;
-    using ReviewIt.Web.Models;
-    using ReviewIt.Web.Services.Abstract;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Models;
+    using BrokerIQ.Online.Services.Abstract;
+    using BrokerIQ.Online.Services.Interface;
 
 
     public class EmailService : IEmailService

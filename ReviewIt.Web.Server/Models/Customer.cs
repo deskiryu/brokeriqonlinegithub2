@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Models
+namespace BrokerIQ.Online.Models
 {
     using BrokerIQ.Dto.Enum;
     using System.ComponentModel.DataAnnotations;
-    using ReviewIt.Web.Attributes;
+    using BrokerIQ.Online.Attributes;
 
     public class Customer
     {

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
     using Abstract;
     using AutoMapper;
     using Dto.Models;
     using Interface;
     using Models;
-    using ReviewIt.Web.Server.Enumuration;
-    using ReviewIt.Web.Server.Extensions;
+    using BrokerIQ.Online.Server.Enumuration;
+    using BrokerIQ.Online.Server.Extensions;
 
     public class CustomerService : ICustomerService
     {

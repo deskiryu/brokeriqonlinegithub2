@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Text;
 
-namespace ReviewIt.Web.Pages.Samples.Shared
+namespace BrokerIQ.Online.Pages.Samples.Shared
 {
     public static class SampleUtils
     {

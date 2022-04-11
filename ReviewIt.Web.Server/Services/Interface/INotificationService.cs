@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Services.Interface
+namespace BrokerIQ.Online.Services.Interface
 {
+    using BrokerIQ.Online.Models;
     using System.Threading.Tasks;
 
     public interface INotificationService
@@ -16,15 +17,15 @@ namespace ReviewIt.Web.Services.Interface
 
         Task<bool> SendBrokerNotification(string message, List<int> targets);
 
-        Task<IEnumerable<ReviewIt.Web.Models.Notification>> GetNotifications();
+        Task<IEnumerable<Notification>> GetNotifications();
 
-        Task<IEnumerable<ReviewIt.Web.Models.Notification>> GetNotificationByCustomerId(int customerId);
+        Task<IEnumerable<Notification>> GetNotificationByCustomerId(int customerId);
 
-        Task<IEnumerable<ReviewIt.Web.Models.Notification>> GetNotificationByBrokerId(int brokerId);
+        Task<IEnumerable<Notification>> GetNotificationByBrokerId(int brokerId);
 
-        Task<IEnumerable<ReviewIt.Web.Models.BrokerNotification>> GetBrokerNotifications();
+        Task<IEnumerable<BrokerNotification>> GetBrokerNotifications();
 
-        Task<IEnumerable<ReviewIt.Web.Models.BrokerNotification>> GetBrokerNotificationsByBrokerId();
+        Task<IEnumerable<BrokerNotification>> GetBrokerNotificationsByBrokerId();
 
         Task<int> GetNewBrokerNotificationsCountByBrokerId();
 

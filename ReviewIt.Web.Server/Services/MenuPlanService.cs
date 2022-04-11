@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
     using Abstract;
     using AutoMapper;

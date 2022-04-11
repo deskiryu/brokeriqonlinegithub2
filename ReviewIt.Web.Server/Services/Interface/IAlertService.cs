@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Services.Interface
+namespace BrokerIQ.Online.Services.Interface
 {
-    using ReviewIt.Web.Models;
+    using BrokerIQ.Online.Models;
 
     public interface IAlertService
     {
-        event Action<Alert> OnAlert;
+        event Action<AlertBIQ> OnAlert;
         void Success(string message, bool keepAfterRouteChange = false, bool autoClose = true);
         void Error(string message, bool keepAfterRouteChange = false, bool autoClose = true);
         void Info(string message, bool keepAfterRouteChange = false, bool autoClose = true);
         void Warn(string message, bool keepAfterRouteChange = false, bool autoClose = true);
-        void Alert(Alert alert);
+        void Alert(AlertBIQ alert);
         void Clear(string id = null);
     }
 }

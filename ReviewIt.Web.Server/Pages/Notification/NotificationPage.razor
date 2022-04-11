@@ -1,6 +1,6 @@
 ﻿@page "/notifications"
 @inherits NotificationPageBase
-@using ReviewIt.Web.Services.Interface
+@using BrokerIQ.Online.Services.Interface
 @using System
 @inject NavigationManager NavigationManager
 
@@ -83,17 +83,17 @@ else
 
     <MudTable Items="@NotificationsSentByType" Hover="true" SortLabel="Sort By" >
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Notification, object>(x=>x.NotificationType)">Type</MudTableSortLabel></MudTh>
-            <MudTh Style="width:60%"><MudTableSortLabel SortBy="new Func<Web.Models.Notification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Notification, object>(x=>x.NotificationType)">Type</MudTableSortLabel></MudTh>
+            <MudTh Style="width:60%"><MudTableSortLabel SortBy="new Func<Notification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
             <MudTh>Customer(s)</MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Notification, object>(x=>x.SentDate)">Sent Date</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Notification, object>(x=>x.SentDate)">Sent Date</MudTableSortLabel></MudTh>
             @if (ShowBroker)
             {
-                <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Notification, object>(x=>x.BrokerName)">Broker</MudTableSortLabel></MudTh>            
+                <MudTh><MudTableSortLabel SortBy="new Func<Notification, object>(x=>x.BrokerName)">Broker</MudTableSortLabel></MudTh>            
             }
             @if (ShowEmployee)
             {
-                <MudTh><MudTableSortLabel SortBy="new Func<Web.Models.Notification, object>(x=>x.BrokerStaffName)">Employee</MudTableSortLabel></MudTh>            
+                <MudTh><MudTableSortLabel SortBy="new Func<Notification, object>(x=>x.BrokerStaffName)">Employee</MudTableSortLabel></MudTh>            
             }
         </HeaderContent>
         <RowTemplate>

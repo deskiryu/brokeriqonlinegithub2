@@ -2,11 +2,11 @@
 
 
 @using Microsoft.Extensions.Options
-@using ReviewIt.Web.AppSettings
-@using ReviewIt.Web.Services.Interface
-@using ReviewIt.Web.Server.Helper
+@using BrokerIQ.Online.AppSettings
+@using BrokerIQ.Online.Services.Interface
+@using BrokerIQ.Online.Server.Helper
 @using BrokerIQ.Dto.Response
-@using ReviewIt.Web.Server.Extensions
+@using BrokerIQ.Online.Server.Extensions
 
 @inject IAccountService AccountService
 @inject IAlertService AlertService
@@ -53,7 +53,7 @@
 
 @code {
 
-    private ReviewIt.Web.Models.Account.Login model = new ReviewIt.Web.Models.Account.Login();
+    private Login model = new Login();
 
     public bool Loading { get; set; }
 

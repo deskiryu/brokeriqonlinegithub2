@@ -1,7 +1,7 @@
 ﻿@page "/account/register"
 @using System.IO;
-@using ReviewIt.Web.Services.Interface
-@using ReviewIt.Web.Models.Account
+@using BrokerIQ.Online.Services.Interface
+@using BrokerIQ.Online.Models.Account
 @using AutoMapper
 @using BrokerIQ.Dto.Models
 @inject IAccountService AccountService
@@ -142,7 +142,7 @@
     private AddUser model = new AddUser();
     private bool loading;
     public int AddressId { get; set; }
-    public List<(Web.Models.Address, string, int)> Addresses = new List<(Web.Models.Address, string, int)>();
+    public List<(Address, string, int)> Addresses = new List<(Address, string, int)>();
     public string SpinnerVisible { get; set; }
     public bool DropdownDisabled { get; set; }
 

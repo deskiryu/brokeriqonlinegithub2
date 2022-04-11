@@ -1,4 +1,4 @@
-﻿namespace ReviewIt.Web.Server.AppSettings
+﻿namespace BrokerIQ.Online.Server.AppSettings
 {
     public class FileUploadSettings
     {

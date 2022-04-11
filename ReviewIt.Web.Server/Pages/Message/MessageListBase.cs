@@ -4,14 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace ReviewIt.Web.Pages
+namespace BrokerIQ.Online.Pages
 {
     
     using Microsoft.AspNetCore.Components;
     using MudBlazor;
-    using ReviewIt.Web.Models;
-    using ReviewIt.Web.Server.Models;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Models;
+    using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Online.Services.Interface;
 
     public class MessageListBase : ComponentBase
     {

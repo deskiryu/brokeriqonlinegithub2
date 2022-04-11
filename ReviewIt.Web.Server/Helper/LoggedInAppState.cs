@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ReviewIt.Web.Server.Helper
+namespace BrokerIQ.Online.Server.Helper
 {
     public class LoggedInAppState
     {

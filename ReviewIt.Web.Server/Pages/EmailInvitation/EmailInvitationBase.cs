@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 using BrokerIQ.Dto.Models;
-using ReviewIt.Web.Models;
-using ReviewIt.Web.Server.Models;
-using ReviewIt.Web.Server.Shared;
-using ReviewIt.Web.Services.Interface;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Models;
+
+using BrokerIQ.Online.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,7 +16,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Pages
+
+namespace BrokerIQ.Online.Pages
 {
     public class EmailInvitationBase : ComponentBase
     {

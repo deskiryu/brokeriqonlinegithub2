@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReviewIt.Web.Models
+namespace BrokerIQ.Online.Models
 {
     public class BrokerStaff
     {

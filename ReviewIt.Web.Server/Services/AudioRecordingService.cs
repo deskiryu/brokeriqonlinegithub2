@@ -1,8 +1,8 @@
-namespace ReviewIt.Web.Services
+namespace BrokerIQ.Online.Services
 {
     using System.Threading.Tasks;
-    using ReviewIt.Web.Server.Models;
-    using ReviewIt.Web.Services.Interface;
+    using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Online.Services.Interface;
 
     public class AudioRecordingService : IAudioRecordingService
     {

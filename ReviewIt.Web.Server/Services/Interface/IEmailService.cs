@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Models;
 
-namespace ReviewIt.Web.Services.Interface
+namespace BrokerIQ.Online.Services.Interface
 {
     public interface IEmailService
     {

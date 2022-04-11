@@ -1,4 +1,4 @@
-﻿namespace ReviewIt.Web.Server.Enumuration
+﻿namespace BrokerIQ.Online.Server.Enumuration
 {
     public enum RecentPeriodEnum
     {
