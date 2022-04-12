@@ -1,0 +1,89 @@
+﻿@page "/videolist"
+@inherits VideoListBase
+@using System.IO
+@using BrokerIQ.Dto.Models
+@using BrokerIQ.Online.Services.Interface
+
+
+<h1 class="page-title">All Videos</h1>
+
+@if (!Saved)
+{
+    @if (Videos == null)
+    {
+        <div class="row ml-2 ">
+            <div class="col-4 mt-2">
+                <h3>Loading</h3>
+            </div>
+        </div>
+        <div class="row ml-2">
+            <div class="col-4">
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="mt-5">
+            <h5>Upload Video</h5>
+        </div>
+        <InputFile OnChange="LoadFiles" class="mt-2 btn btn-primary" accept="video/mov,video/mp4,video/*" />
+        <p>@status</p>
+        <div class="col-sm">
+            <div class="spin-row spin-row-bg">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
+            </div>
+        </div>
+
+        <MudDialog @bind-IsVisible="RenameUploadVisibility">
+            <TitleContent>
+                Upload & rename video
+            </TitleContent>
+            <DialogContent>
+
+                <MudInputString ID="inVal" @bind-Value="@VideoName" Type="InputType.Text" Placeholder="" />
+            </DialogContent>
+            <DialogActions>
+                <MudButton Color="Color.Secondary" OnClick="OnCancelPushed">Cancel</MudButton>
+                <MudButton Color="Color.Primary" OnClick="UploadButtonPushed">Ok</MudButton>
+            </DialogActions>
+        </MudDialog>
+
+
+        <table id="table-video" class="table col-sm-12 table-striped ">
+            <thead>
+                <tr>
+                    <th class="col-md-10">Uploaded Video</th>
+                    <th class="col-md-1">Watch</th>
+                    <th class="col-md-1">Birthday</th>
+                    <th class="col-md-1">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var Video in Videos)
+                {
+                    <tr>
+                        <td>@Path.GetFileNameWithoutExtension(Video.Name)</td>
+                        <td>
+                            <NavLink href="@($"videodetail?url={Video.Url}")" class="btn btn-primary table-btn">
+                                <i class="fas fa-eye"></i>
+                            </NavLink>
+                        </td>
+                        <td><input type="checkbox" checked="@Video.BirthdayVideo" @onclick="f => SetBirthdayVideo(Video.Name)"/></td>
+                        <td>
+                            <button class="btn btn-primary table-btn" @onclick="f => DeleteVideo(Video.Name)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to video list</a>
+}
