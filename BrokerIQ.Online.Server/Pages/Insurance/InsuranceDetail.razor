@@ -1,0 +1,144 @@
+﻿
+
+@page "/insurancedetail/{InsuranceId}"
+@using BrokerIQ.Online.Models
+@using BrokerIQ.Dto.Enum
+@using System.IO
+@using BrokerIQ.Online.Server.Extensions
+@using System.ComponentModel.Design
+@inherits InsuranceDetailBase
+
+@inject IJSRuntime js
+@functions {
+    async void DownloadFile(InsuranceDocument sdoc)
+    {
+        await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
+    }
+}
+
+@if (Insurance == null)
+{
+    <div class="row ml-2 ">
+        <div class="col-4 mt-2">
+            <h3>Loading</h3>
+        </div>
+    </div>
+    <div class="row ml-2">
+        <div class="col-4">
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        </div>
+    </div>
+}
+else
+{
+    <section class="insurance-detail">
+        <h4 class="page-title">Details for @Insurance.Name </h4>
+
+
+        <div class="col-12 row">
+            <div class="col-10 row">
+                <div class="col-xs-12 col-sm-8">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Name</label>
+                        <div class="col-sm-8">
+                            <label type="text" class="form-control-plaintext">@Insurance.Name</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Type</label>
+                        <div class="col-sm-8">
+                            <label type="text" readonly class="form-control-plaintext">@Insurance.InsType.GetDisplayName()</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Contact</label>
+                        <div class="col-sm-8">
+                            <label type="text" readonly class="form-control-plaintext">@Insurance.ContactNumber</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Policy number</label>
+                        <div class="col-sm-8">
+                            <label type="text" readonly class="form-control-plaintext">@Insurance.PolNumber</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Start Date</label>
+                        <div class="col-sm-8">
+                            <label type="text" readonly class="form-control-plaintext">@Insurance.StartDate.ToString("dd/MM/yyyy")</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Expiry Date</label>
+                        <div class="col-sm-8">
+                            <label type="text" readonly class="form-control-plaintext">@Insurance.ExpiryDate.ToString("dd/MM/yyyy")</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Review Date</label>
+                        <div class="col-sm-8">
+                            <label type="text" readonly class="form-control-plaintext">@Insurance.ReviewDate?.ToString("dd/MM/yyyy")</label>
+                        </div>
+                    </div>
+
+                    @if (Insurance.IsTermTypeInsurance)
+                    {
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Term Type </label>
+                            <div class="col-sm-8">
+                                <label type="text" readonly class="form-control-plaintext">@Insurance.TermType.GetDisplayName()</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Term (Years) </label>
+                            <div class="col-sm-8">
+                                <label type="text" readonly class="form-control-plaintext">@Insurance.TermYears</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Term Amount (£) </label>
+                            <div class="col-sm-8">
+                                <label type="text" readonly class="form-control-plaintext">@Insurance.TermAmount</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Deferred Period (weeks) </label>
+                            <div class="col-sm-8">
+                                <label type="text" readonly class="form-control-plaintext">@Insurance.DeferredPeriodWeeks</label>
+                            </div>
+                        </div>                        
+                    }
+
+
+                    <h4>Supporting Documents</h4>
+
+                    @foreach (var doc in Insurance.SupportingDocuments)
+                    {
+                        <div class="form-group row">
+                            <div class="col-sm-4">
+                                <label type="text" readonly class="form-control-plaintext">@doc.FileName</label>
+                            </div>
+                            <div class="col-sm-4">
+                                <a class="form-control btn btn-primary" @onclick="f => DownloadFile(doc)">Download</a>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </section>
+}

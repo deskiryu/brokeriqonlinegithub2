@@ -1,0 +1,150 @@
+﻿
+
+@page "/brokeredit/{BrokerId}"
+@using BrokerIQ.Online.Models
+@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+@using BlazorDateRangePicker
+@using System.IO
+@using BrokerIQ.Online.Services.Interface
+
+@inherits BrokerEditBase
+
+
+@if (!Saved)
+{
+    <section class="Broker-detail">
+
+        <h4 class="page-title">Add or edit Broker</h4>
+
+        <EditForm Model="@Broker" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="col-12 row">
+
+                <div class="col-xs-12 col-sm-12 com-md-12 col-lg-12">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Brokerage Name</label>
+
+                        <div class="col-sm-8">
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Broker.Name" placeholder="Enter first name for this customer"></InputText>
+                            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.Name)" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Broker First Name</label>
+
+                        <div class="col-sm-8">
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Broker.BrokerFirstName" placeholder="Enter first name for this customer"></InputText>
+                            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.BrokerFirstName)" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Broker Last Name</label>
+
+                        <div class="col-sm-8">
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Broker.BrokerLastName" placeholder="Enter last name for this customer"></InputText>
+                            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.BrokerLastName)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Telephone Number</label>
+                        <div class="col-sm-8">
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Broker.TelephoneNumber" placeholder="Enter telephone for this Broker"></InputText>
+                            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.TelephoneNumber)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Email Address</label>
+                        <div class="col-sm-8">
+                            <label type="text" readonly class="form-control-plaintext">@Broker.EmailAddress</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Address Line 1</label>
+                        <div class="col-sm-8">
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Broker.AddressLine1" placeholder="Enter address for this Broker"></InputText>
+                            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.AddressLine1)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Address Line 2 </label>
+                        <div class="col-sm-8">
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Broker.AddressLine2" placeholder="Enter address for this Broker"></InputText>
+                            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.AddressLine2)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">City </label>
+                        <div class="col-sm-8">
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Broker.AddressLine3" placeholder="Enter address for this Broker"></InputText>
+                            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.AddressLine3)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Postcode</label>
+                        <div class="col-sm-8">
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Broker.Postcode" placeholder="Enter postcode for this Broker"></InputText>
+                            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.Postcode)" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Identifier</label>
+                        <div class="col-sm-8">
+                            <label>@Broker.Identifier</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Company Logo </label>
+                        <div class="col-sm-8">
+                            @if (Broker.LogoImage != null && Broker.LogoImage.Length > 0)
+                            {
+                                <img src="data:image/bmp;base64, @(Convert.ToBase64String(Broker.LogoImage))" />
+                            }
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Choose company logo </label>
+                        <div class="col-sm-8">
+                            <InputFile OnChange="LoadFiles" class="mt-2 btn btn-primary" accept="image/jpeg" />
+                            <label style="font-size:x-small">Ratio 2.2:1 Ideally 220px x 100px</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <button type="submit" class="btn btn-primary edit-btn">Update Broker</button>
+                        <a class="btn btn-outline-primary edit-outline-btn ml-lg-1 " @onclick="@NavigateToOverview">Cancel</a>
+
+                    </div>
+
+
+                    </div>
+
+                </div>
+
+        </EditForm>
+        <button class="btn btn-primary table-btn mt-1" @onclick="DeleteBroker">
+            Delete Broker
+        </button>
+    </section>
+
+
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to Broker list</a>
+}

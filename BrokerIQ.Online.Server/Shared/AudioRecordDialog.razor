@@ -1,0 +1,87 @@
+
+@using BrokerIQ.Online.Services.Interface
+@inject IAudioService AudioService
+@inject IAlertService AlertService
+@inject IAudioService AudioService
+@inject IAudioRecordingService AudioRecordingService
+@inject IJSRuntime jsRuntime
+
+<MudDialog>
+    <DialogContent>
+        @Message
+        <MudButton class="red-text" id="RecordButton" OnClick="Record">Record</MudButton>
+        <MudButton class="gray-text" id="StopButton" Disabled="true">Stop</MudButton>
+
+    <div class="d-flex flex-column py-1" style="margin-top:10px; margin-bottom:10px;">
+        <section class="sound-clips">
+        </section>
+
+        <audio controls autoplay>
+        </audio>
+    </div>
+
+    <MudInputString ID="audioVal" @bind-Value="@AudioName" Type="InputType.Text" Placeholder="Recording name" />
+
+    </DialogContent>
+    <DialogActions>
+            <MudButton Variant="Variant.Filled"Color="Color.Primary" id="SaveButton" OnClick="UploadButtonPushed" >Save</MudButton>
+            <MudButton Variant="Variant.Filled"Color="Color.Primary" id="CancelButton" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string Message { get; set; }
+
+    [Parameter] public int BrokerId { get; set; }
+
+
+    public string AudioName { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+
+    private async Task Record()
+    {
+        await jsRuntime.InvokeVoidAsync("MyJSMethods.startRecording");
+    }
+
+    private async Task UploadButtonPushed()
+    {
+
+        
+        try{
+
+            var remaining = 100;
+            string completeString = "";
+
+            while(remaining>0){
+                remaining = await jsRuntime.InvokeAsync<int>("MyJSMethods.saveRecording");        
+                completeString += await AudioRecordingService.GetAudioRecordingAsBase64();
+
+            }
+
+        await AudioRecordingService.Delete();
+
+        if(string.IsNullOrEmpty(AudioName)){
+            AlertService.Error("Please provide a name for the recording");
+            return;
+        }
+        bool available = await AudioService.NameAvailable(AudioName);
+        if (!available)
+        { 
+            AlertService.Error("That name already exists choose a new one");
+            return;
+        }
+        await AudioService.UploadAudio(AudioName+".wav", completeString, BrokerId);           
+        }
+        catch(Exception ex)
+        {
+
+        }
+
+
+        MudDialog.Close(DialogResult.Ok(true));
+
+    }
+}
