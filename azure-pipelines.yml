@@ -21,7 +21,7 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
     feedsToUse: 'select'
-    vstsFeed: 'a4e5bddc-300e-45b4-bc64-d4675804cc09/53e393f8-755a-4427-972a-baa3005dfcb8'    
+    vstsFeed: 'a4e5bddc-300e-45b4-bc64-d4675804cc09/e120d8a0-8927-4e52-a034-a8ee0f11b119'      
     includeNuGetOrg: true
 
 - task: VSBuild@1
