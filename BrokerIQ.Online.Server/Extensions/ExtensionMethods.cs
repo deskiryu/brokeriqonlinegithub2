@@ -43,6 +43,11 @@ namespace BrokerIQ.Online.Server.Extensions
 
         public async static Task StartWarningTimer(IJSRuntime js, int timeoutIntervalms)
         {
+            if (timeoutIntervalms <= 0)
+            {
+                //default
+                timeoutIntervalms = 900000; //15 mins
+            }
             await js.InvokeAsync<object>(
                 "inactivityTime", timeoutIntervalms);
         }
