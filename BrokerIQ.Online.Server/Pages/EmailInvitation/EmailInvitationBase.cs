@@ -315,7 +315,7 @@ namespace BrokerIQ.Online.Pages
                     createEmail.BrokerStaffId = null;
                 }
 
-                dialogParams.Add("Customers", EmailTargets);
+                dialogParams.Add("Clients", EmailTargets);
                 dialogParams.Add("Heading", "The invitation connection with your brokerage will be made to ");
                 var result = await DialogService.Show<ScrollableEmailDialog>("Make Connections", dialogParams).Result;
 

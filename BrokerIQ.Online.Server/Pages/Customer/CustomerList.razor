@@ -1,4 +1,4 @@
-﻿@page "/customerlist"
+﻿@page "/clientlist"
 @using BrokerIQ.Online.Services.Interface
 @using Microsoft.AspNetCore.Components
 
@@ -7,7 +7,7 @@
 @inject NavigationManager NavigationManager
 @inject IAccountService AccountService
 
-<h1 class="page-title">All insurance customers</h1>
+<h1 class="page-title">All insurance clients</h1>
 
 @if (Customers == null)
 {
@@ -33,17 +33,17 @@ else
                     <MudInputString @bind-Value="selectedNotification" Placeholder="Type a notification message" Style="width:100%" />
                 </div>
                 <div class="col-sm-3 mt-1">
-                    <button @onclick="(async () => await SendNotificationToAll())" class="btn btn-primary text-center">Send Notification to all users</button>
+                    <button @onclick="(async () => await SendNotificationToAll())" class="btn btn-primary text-center">Send Notification to all clients</button>
                 </div>
                 <div class="col-sm-3 mt-1">
-                    <button @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Notification to selected users</button>
+                    <button @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Notification to selected clients</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="card">
-        <div class="card-header">Filter Customers</div>
+        <div class="card-header">Filter Clients</div>
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-4">
@@ -52,7 +52,7 @@ else
                 </div>
                 <div class="col-lg-4 control_wrapper">
                     <MudAutocomplete T="string"
-                                     Label="Go direct to customer"
+                                     Label="Go direct to client"
                                      Placeholder="Start typing name, email or telephone ..."
                                      AdornmentColor="Color.Primary"
                                      TextChanged="@AutoCompleteClick"
@@ -147,7 +147,7 @@ else
         <MudTd DataLabel="Date Of Birth">@context.DateOfBirth.ToString("dd/MM/yyyy")</MudTd>
         <MudTd DataLabel="Verified"><MudCheckBox @bind-Checked="@context.EmailConfirmed" Color="Color.Primary" Disabled="true"></MudCheckBox></MudTd>
         <MudTd DataLabel="">
-            <NavLink href="@($"customerdetail/{@context.Id}")" class="btn btn-primary table-btn">
+            <NavLink href="@($"clientdetail/{@context.Id}")" class="btn btn-primary table-btn">
                 <i class="fas fa-info-circle"></i>
             </NavLink>
         </MudTd>

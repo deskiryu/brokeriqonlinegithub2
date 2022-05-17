@@ -231,7 +231,7 @@ namespace BrokerIQ.Online.Pages
                 catch
                 {
                     StatusClass = "alert-danger";
-                    Message = "Something went wrong getting the customer. Please try again.";
+                    Message = "Something went wrong getting the client. Please try again.";
                     Saved = false;
                     return;
                 }
@@ -331,11 +331,11 @@ namespace BrokerIQ.Online.Pages
         {
             if(Insurance.CustomerId>0)
             {
-                NavigationManager.NavigateTo($"/customerdetail/{Insurance.CustomerId}");
+                NavigationManager.NavigateTo($"/clientdetail/{Insurance.CustomerId}");
             }
             else
             {
-                NavigationManager.NavigateTo($"/customerlist");
+                NavigationManager.NavigateTo($"/clientlist");
             }
         }
 
@@ -494,7 +494,7 @@ namespace BrokerIQ.Online.Pages
                     var dialogParams = new DialogParameters();
 
                     var customer = await CustomerService.GetCustomer(customerId);
-                    dialogParams.Add("Customer", customer.Name);
+                    dialogParams.Add("Client", customer.Name);
 
                     var fileNames = new List<string>(); 
                     var memoryStreams = new List<MemoryStream>();
