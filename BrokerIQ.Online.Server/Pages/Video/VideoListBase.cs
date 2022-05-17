@@ -146,7 +146,7 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
-                dialogParams.Add("Message", "This video will be sent to customers on their birthday. Continue?");
+                dialogParams.Add("Message", "This video will be sent to clients on their birthday. Continue?");
             }
 
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;

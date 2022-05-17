@@ -216,7 +216,7 @@ namespace BrokerIQ.Online.Pages
 
         protected void NavigateToOverview()
         {
-                NavigationManager.NavigateTo($"/customerlist");
+                NavigationManager.NavigateTo($"/clientlist");
         }
 
         protected async Task DeleteProfilePicture(Guid id)
@@ -247,7 +247,7 @@ namespace BrokerIQ.Online.Pages
             if (Customer == null)
             {
                 StatusClass = "alert-danger";
-                Message = "No customer found";
+                Message = "No client found";
                 Saved = true;
                 return;
             }
@@ -285,7 +285,7 @@ namespace BrokerIQ.Online.Pages
         protected async Task DeleteCustomer()
         {
             var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"Are you absolutely sure you want to delete this customer {Customer.Name}? This is a PERMANENT DELETE and cannot be undone.");
+            dialogParams.Add("Message", $"Are you absolutely sure you want to delete this client {Customer.Name}? This is a PERMANENT DELETE and cannot be undone.");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
@@ -299,10 +299,10 @@ namespace BrokerIQ.Online.Pages
                 else
                 {
                     var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "The customer did not delete.");
+                    responseParams.Add("Message", "The client did not delete.");
                     await DialogService.Show<AlertDialog>("Information", responseParams).Result;
                 }
-                NavigationManager.NavigateTo($"/customerlist");
+                NavigationManager.NavigateTo($"/clientlist");
             }
         }
 
@@ -411,7 +411,7 @@ namespace BrokerIQ.Online.Pages
                     responseParams.Add("Message", "The note did not delete.");
                     await DialogService.Show<AlertDialog>("Information", responseParams).Result;
                 }
-                NavigationManager.NavigateTo($"/customerlist");
+                NavigationManager.NavigateTo($"/clientlist");
             }
             else
             {

@@ -1,4 +1,4 @@
-﻿@page "/customerdetail/{CustomerId}"
+﻿@page "/clientdetail/{CustomerId}"
 @using BrokerIQ.Dto.Models
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
@@ -24,7 +24,7 @@
     }
 }
 
-<h3>Customer</h3>
+<h3>Client</h3>
 @if (Customer == null)
 {
     <div class="row ml-2 ">
@@ -54,7 +54,7 @@ else if (!Saved)
                         <MudInputString @bind-Value="selectedNotification" Placeholder="Type a notification message" Style="width:100%" />
                     </div>
                     <div class="col-3">
-                        <button @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Notification to customer</button>
+                        <button @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Notification to client</button>
                     </div>
                 </div>
             </div>
@@ -178,8 +178,8 @@ else if (!Saved)
                         }
 
                     <div class="row col-6 mt-1">
-                        <NavLink href="@($"customeredit/{Customer.Id}")" class="btn btn-primary table-btn mt-1">
-                            Edit Customer
+                        <NavLink href="@($"clientedit/{Customer.Id}")" class="btn btn-primary table-btn mt-1">
+                            Edit Client
                         </NavLink>                            
                         <NavLink href="@($"menuplanedit/0/{Customer.Id}")" class="btn btn-primary table-btn ml-lg-2 mt-1">
                             Add a Menu Plan
@@ -187,7 +187,7 @@ else if (!Saved)
                         @if (IsAdmin)
                         {
                             <button class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteCustomer">
-                                Delete Customer
+                                Delete Client
                             </button>
                         }
 
@@ -513,5 +513,5 @@ else if (!Saved)
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to customer list</a>
+    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to client list</a>
 }

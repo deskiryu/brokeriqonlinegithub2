@@ -127,7 +127,7 @@
         protected async Task DeleteBroker()
         {
             var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"Are you absolutely sure you want to delete this broker {Broker.Name}? This is a PERMANENT DELETE and cannot be undone. All links to customers will be lost. Ensure this broker has no insurances or mortgages with customers.");
+            dialogParams.Add("Message", $"Are you absolutely sure you want to delete this broker {Broker.Name}? This is a PERMANENT DELETE and cannot be undone. All links to clients will be lost. Ensure this broker has no insurances or mortgages with clients.");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
