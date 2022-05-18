@@ -139,7 +139,7 @@ namespace BrokerIQ.Online.Pages
             var customer = Customers.FirstOrDefault(x => x.Name == args);
             if (customer != null)
             {
-                NavigationManager.NavigateTo($"customerdetail/{customer.Id}");
+                NavigationManager.NavigateTo($"clientdetail/{customer.Id}");
             }
         }
 

@@ -329,14 +329,7 @@ namespace BrokerIQ.Online.Pages
 
         protected void NavigateToOverview()
         {
-            if(Insurance.CustomerId>0)
-            {
-                NavigationManager.NavigateTo($"/clientdetail/{Insurance.CustomerId}");
-            }
-            else
-            {
-                NavigationManager.NavigateTo($"/clientlist");
-            }
+            NavigationManager.NavigateTo($"/clientdetail/{CustomerId}");
         }
 
         protected async Task DeleteInsuranceFile(Guid id)

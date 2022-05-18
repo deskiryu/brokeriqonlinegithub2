@@ -216,7 +216,8 @@ namespace BrokerIQ.Online.Pages
 
         protected void NavigateToOverview()
         {
-                NavigationManager.NavigateTo($"/clientlist");
+            // we are already on the correct client's detail page, reset property after saving note
+            Saved = false;
         }
 
         protected async Task DeleteProfilePicture(Guid id)

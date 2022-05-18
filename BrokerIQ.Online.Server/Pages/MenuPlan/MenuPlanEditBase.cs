@@ -254,14 +254,7 @@ namespace BrokerIQ.Online.Pages
 
         protected void NavigateToOverview()
         {
-            if(MenuPlan.CustomerId>0)
-            {
-                NavigationManager.NavigateTo($"/clientdetail/{MenuPlan.CustomerId}");
-            }
-            else
-            {
-                NavigationManager.NavigateTo($"/clientlist");
-            }
+            NavigationManager.NavigateTo($"/clientdetail/{CustomerId}");
         }
 
         public DateTimeOffset? ReviewDate
