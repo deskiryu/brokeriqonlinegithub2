@@ -1,5 +1,6 @@
 ﻿@page "/videolist"
 @inherits VideoListBase
+@using System.Globalization
 @using System.IO
 @using BrokerIQ.Dto.Models
 @using BrokerIQ.Online.Services.Interface
@@ -53,7 +54,8 @@
         <table id="table-video" class="table col-sm-12 table-striped ">
             <thead>
                 <tr>
-                    <th class="col-md-10">Uploaded Video</th>
+                    <th class="col-md-8">Uploaded Video</th>
+                    <th class="col-md-6">Uploaded</th>
                     <th class="col-md-1">Watch</th>
                     <th class="col-md-1">Birthday</th>
                     <th class="col-md-1">Delete</th>
@@ -64,6 +66,7 @@
                 {
                     <tr>
                         <td>@Path.GetFileNameWithoutExtension(Video.Name)</td>
+                        <td>@((Video.Date == null) ? "-" : ((DateTimeOffset)Video.Date).ToString("g", new CultureInfo("en-GB")))</td>
                         <td>
                             <NavLink href="@($"videodetail?url={Video.Url}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-eye"></i>
@@ -80,7 +83,6 @@
             </tbody>
         </table>
     }
-
 }
 else
 {
