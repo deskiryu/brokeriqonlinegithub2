@@ -10,6 +10,8 @@ namespace BrokerIQ.Online.Server.Models
 
         public string Url { get; set; }
 
+        public DateTimeOffset? Date { get; set; }
+
         public bool Vetted { get; set; }
 
         public bool BirthdayVideo { get; set; }
