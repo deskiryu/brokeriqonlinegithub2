@@ -329,14 +329,7 @@ namespace BrokerIQ.Online.Pages
 
         protected void NavigateToOverview()
         {
-            if(Mortgage.CustomerId>0)
-            {
-                NavigationManager.NavigateTo($"/customerdetail/{Mortgage.CustomerId}");
-            }
-            else
-            {
-                NavigationManager.NavigateTo($"/clientlist");
-            }
+            NavigationManager.NavigateTo($"/clientdetail/{CustomerId}");
         }
 
         protected async Task DeleteMortgageFile(Guid id)
