@@ -307,7 +307,6 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-
         protected async Task NewNote()
         {
             bool succeeded = false;
@@ -333,20 +332,14 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-
             if (succeeded)
             {
-                StatusClass = "alert-success";
-                Message = "Note saved successfully";
+                RefreshNotesWithDialogMessage(succeeded, "Note added successfully");
             }
             else
             {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong adding the note. Please try again.";
+                RefreshNotesWithDialogMessage(succeeded, "Something went wrong adding the note. Please try again.");
             }
-
-            Saved = true;
-
         }
 
         protected async Task EditNote(int id)
@@ -379,17 +372,12 @@ namespace BrokerIQ.Online.Pages
 
             if (succeeded)
             {
-                StatusClass = "alert-success";
-                Message = "Note saved successfully";
+                RefreshNotesWithDialogMessage(succeeded, "Note updated successfully");
             }
             else
             {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong adding the note. Please try again.";
+                RefreshNotesWithDialogMessage(succeeded, "Something went wrong updating the note. Please try again");
             }
-
-            Saved = true;
-
         }
 
         protected async Task DeleteNote(int id)
@@ -402,17 +390,12 @@ namespace BrokerIQ.Online.Pages
                 var deleted = await NoteService.Delete(id);
                 if (deleted)
                 {
-                    var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "Deleted successfully");
-                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                    RefreshNotesWithDialogMessage(deleted, "Deleted successfully");
                 }
                 else
                 {
-                    var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "The note did not delete.");
-                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                    RefreshNotesWithDialogMessage(deleted, "The note did not delete.");
                 }
-                NavigationManager.NavigateTo($"/clientlist");
             }
             else
             {
@@ -462,6 +445,23 @@ namespace BrokerIQ.Online.Pages
 
             Saved = true;
 
+        }
+
+        /// <summary>
+        /// Refreshes notes displayed on webpage if desired. Displays appropriate dialog message.
+        /// </summary>
+        /// <param name="success">Success of prior API call</param>
+        /// <param name="message">Message to be displayed in dialog</param>
+        private async void RefreshNotesWithDialogMessage(bool success, string message)
+        {
+            if (success)
+            {
+                Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
+                StateHasChanged();
+            }
+            var responseParams = new DialogParameters();
+            responseParams.Add("Message", message);
+            await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
     }
 }

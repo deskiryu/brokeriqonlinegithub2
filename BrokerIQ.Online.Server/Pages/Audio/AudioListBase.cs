@@ -16,7 +16,6 @@ namespace BrokerIQ.Online.Pages
     {
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
-        protected bool Saved;
 
         public string AudioName { get; set; }
         public string ExtensionName { get; set; }
@@ -42,6 +41,13 @@ namespace BrokerIQ.Online.Pages
         public List<Audio> Audios { get; set; }
 
         public int BrokerId { get; set; }
+
+        public string SpinnerVisible { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            SpinnerVisible = "display:none";
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -91,22 +97,13 @@ namespace BrokerIQ.Online.Pages
 
                 if (succeeded)
                 {
-                    StatusClass = "alert-success";
-                    Message = "Deleted successfully";
-                    Saved = true;
+                    RefreshAudioListWithDialogMessage(succeeded, "Deleted successfully");
                 }
                 else
                 {
-                    StatusClass = "alert-danger";
-                    Message = "Something went wrong deleting the Audio. Please try again.";
-                    Saved = false;
+                    RefreshAudioListWithDialogMessage(succeeded, "Something went wrong deleting the Audio. Please try again.");
                 }
             }
-        }
-
-        protected void NavigateToOverview()
-        {
-            Saved = false;
         }
 
         protected async Task VerifyBroker()
@@ -126,6 +123,45 @@ namespace BrokerIQ.Online.Pages
             {
                 NavigationManager.NavigateTo($"account/logout");
             }
+        }
+
+        public async Task UploadButtonPushed()
+        {
+            // is this a TODO? Moved from AudioList.razor
+        }
+
+        protected async Task AddRecording()
+        {
+            await VerifyBroker();
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("BrokerId", BrokerId);
+            var dialogOptions = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium
+            };
+
+            var result = await DialogService.Show<AudioRecordDialog>("Record voice message", dialogParams, dialogOptions).Result;
+            if (!result.Cancelled)
+            {
+                NavigationManager.NavigateTo($"/audiolist");
+            }
+        }
+
+        /// <summary>
+        /// Refreshes audiolist on page if desired. Displays appropriate dialog message.
+        /// </summary>
+        /// <param name="success">Success of prior API call</param>
+        /// <param name="message">Message to be displayed in dialog</param>
+        private async void RefreshAudioListWithDialogMessage(bool success, string message)
+        {
+            if (success)
+            {
+                Audios = (await AudioService.GetAudios(BrokerId)).ToList();
+                StateHasChanged();
+            }
+            var responseParams = new DialogParameters();
+            responseParams.Add("Message", message);
+            await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
     }
 }

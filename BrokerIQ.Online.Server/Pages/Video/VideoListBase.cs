@@ -117,15 +117,11 @@ namespace BrokerIQ.Online.Pages
 
                 if (succeeded)
                 {
-                    StatusClass = "alert-success";
-                    Message = "Deleted successfully";
-                    Saved = true;
+                    RefreshVideosWithDialogMessage(succeeded, "Deleted successfully");
                 }
                 else
                 {
-                    StatusClass = "alert-danger";
-                    Message = "Something went wrong deleting the video. Please try again.";
-                    Saved = false;
+                    RefreshVideosWithDialogMessage(succeeded, "Something went wrong deleting the video. Please try again.");
                 }
             }
         }
@@ -218,15 +214,11 @@ namespace BrokerIQ.Online.Pages
 
                     if (succeeded)
                     {
-                        StatusClass = "alert-success";
-                        Message = "Uploaded successfully";
-                        Saved = true;
+                        RefreshVideosWithDialogMessage(succeeded, "Uploaded successfully");
                     }
                     else
                     {
-                        StatusClass = "alert-danger";
-                        Message = "Something went wrong adding the video. Please try again.";
-                        Saved = true;
+                        RefreshVideosWithDialogMessage(succeeded, "Something went wrong adding the video. Please try again.");
                     }
 
                 }
@@ -257,6 +249,23 @@ namespace BrokerIQ.Online.Pages
         protected void NavigateToOverview()
         {
             Saved = false;
+        }
+
+        /// <summary>
+        /// Refreshes videolist on page if desired. Displays appropriate dialog message.
+        /// </summary>
+        /// <param name="success">Success of prior API call</param>
+        /// <param name="message">Message to be displayed in dialog</param>
+        private async void RefreshVideosWithDialogMessage(bool success, string message)
+        {
+            if (success)
+            {
+                Videos = (await VideoService.GetVideos(BrokerId)).ToList();
+                StateHasChanged();
+            }
+            var responseParams = new DialogParameters();
+            responseParams.Add("Message", message);
+            await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
     }
 }
