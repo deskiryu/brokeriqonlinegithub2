@@ -434,17 +434,12 @@ namespace BrokerIQ.Online.Pages
 
             if (succeeded)
             {
-                StatusClass = "alert-success";
-                Message = "Message sent successfully";
+                RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
             }
             else
             {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong sending the message. Please try again.";
+                RefreshChatWithDialogMessage(succeeded, "Something went wrong sending the message.Please try again.");
             }
-
-            Saved = true;
-
         }
 
         /// <summary>
@@ -457,6 +452,23 @@ namespace BrokerIQ.Online.Pages
             if (success)
             {
                 Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
+                StateHasChanged();
+            }
+            var responseParams = new DialogParameters();
+            responseParams.Add("Message", message);
+            await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+        }
+
+        /// <summary>
+        /// Refreshes chat displayed on webpage if desired. Displays appropriate dialog message.
+        /// </summary>
+        /// <param name="success">Success of prior API call</param>
+        /// <param name="message">Message to be displayed in dialog</param>
+        private async void RefreshChatWithDialogMessage(bool success, string message)
+        {
+            if (success)
+            {
+                Chat = await ChatService.Get(Customer.Id);
                 StateHasChanged();
             }
             var responseParams = new DialogParameters();
