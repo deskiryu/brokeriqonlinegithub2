@@ -60,7 +60,7 @@
 
         protected void NavigateToOverview()
         {
-            NavigationManager.NavigateTo($"/customerlist");
+            NavigationManager.NavigateTo($"/clientdetail/{CustomerId}");
         }
     }
 }

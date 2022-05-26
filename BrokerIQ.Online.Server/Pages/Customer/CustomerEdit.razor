@@ -1,6 +1,6 @@
 ﻿
 
-@page "/customeredit/{CustomerId}"
+@page "/clientedit/{CustomerId}"
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Server.Extensions
@@ -15,7 +15,7 @@
 {
     <section class="Customer-detail">
 
-        <h4 class="page-title">Add or edit Customer</h4>
+        <h4 class="page-title">Add or edit client</h4>
 
         <EditForm Model="@Customer" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
 
@@ -29,7 +29,7 @@
                         <label class="col-sm-4 col-form-label">First Name</label>
 
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Customer.FirstName" placeholder="Enter first name for this customer"></InputText>
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Customer.FirstName" placeholder="Enter first name for this client"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Customer.FirstName)" />
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                         <label class="col-sm-4 col-form-label">Last Name</label>
 
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Customer.LastName" placeholder="Enter last name for this customer"></InputText>
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Customer.LastName" placeholder="Enter last name for this client"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Customer.LastName)" />
                         </div>
                     </div>
@@ -46,7 +46,7 @@
                         <label class="col-sm-4 col-form-label">Business Name</label>
 
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Customer.BusinessName" placeholder="Enter business name for this customer"></InputText>
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Customer.BusinessName" placeholder="Enter business name for this client"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Customer.BusinessName)" />
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Telephone Number</label>
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Customer.TelephoneNumber" placeholder="Enter telephone for this Customer"></InputText>
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Customer.TelephoneNumber" placeholder="Enter telephone for this client"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Customer.TelephoneNumber)" />
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Date Of Birth</label>
                         <div class="col-sm-8">
-                            <DateRangePicker @bind-StartDate="DateOfBirth" SingleDatePicker="true" placeholder=" Enter DOB for this Customer" class="form-control col-sm-8" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
+                            <DateRangePicker @bind-StartDate="DateOfBirth" SingleDatePicker="true" placeholder=" Enter DOB for this client" class="form-control col-sm-8" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Customer.DateOfBirth)" />
                         </div>
                     </div>
@@ -71,13 +71,13 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Address</label>
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Customer.Address" placeholder="Enter address for this Customer"></InputText>
+                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Customer.Address" placeholder="Enter address for this client"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Customer.Address)" />
                         </div>
                     </div>
 
 
-                    <button type="submit" class="btn btn-primary edit-btn">Update Customer</button>
+                    <button type="submit" class="btn btn-primary edit-btn">Update Client</button>
                     <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToOverview">Cancel</a>
 
 
@@ -124,5 +124,5 @@
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to Customer list</a>
+    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to Client Overview</a>
 }

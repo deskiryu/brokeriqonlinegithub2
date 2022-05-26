@@ -172,7 +172,7 @@ namespace BrokerIQ.Online.Pages
                 catch
                 {
                     StatusClass = "alert-danger";
-                    Message = "Something went wrong getting the customer. Please try again.";
+                    Message = "Something went wrong getting the client. Please try again.";
                     Saved = false;
                     return;
                 }
@@ -254,14 +254,7 @@ namespace BrokerIQ.Online.Pages
 
         protected void NavigateToOverview()
         {
-            if(MenuPlan.CustomerId>0)
-            {
-                NavigationManager.NavigateTo($"/customerdetail/{MenuPlan.CustomerId}");
-            }
-            else
-            {
-                NavigationManager.NavigateTo($"/customerlist");
-            }
+            NavigationManager.NavigateTo($"/clientdetail/{CustomerId}");
         }
 
         public DateTimeOffset? ReviewDate

@@ -119,6 +119,7 @@ namespace BrokerIQ.Online.Server.Services
                         Name = blobItem.Name,
                         Url = this.videoContainerClient.Uri.AbsoluteUri+'/'+blobItem.Name,
                         Vetted = vetted,
+                        Date = blobItem.Properties.LastModified,
                         BirthdayVideo = birthday                
                     });
                 }

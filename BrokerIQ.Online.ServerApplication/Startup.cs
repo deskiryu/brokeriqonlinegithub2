@@ -41,11 +41,11 @@ namespace BrokerIQ.Online.ServerApplication
         {
             services.AddRazorPages(options =>
             {
-                options.Conventions.AuthorizePage("/customerlist");
+                options.Conventions.AuthorizePage("/clientlist");
                 options.Conventions.AuthorizePage("/videolist");
                 options.Conventions.AuthorizePage("/notifications");
-                options.Conventions.AuthorizePage("/customerdetail");
-                options.Conventions.AuthorizePage("/customeredit");
+                options.Conventions.AuthorizePage("/clientdetail");
+                options.Conventions.AuthorizePage("/clientedit");
                 options.Conventions.AuthorizePage("/notifications");
                 options.Conventions.AuthorizePage("/insurancedetail");
                 options.Conventions.AuthorizePage("/insuranceedit");

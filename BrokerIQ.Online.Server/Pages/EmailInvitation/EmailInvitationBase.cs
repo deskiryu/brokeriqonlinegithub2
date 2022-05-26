@@ -333,16 +333,12 @@ namespace BrokerIQ.Online.Pages
 
                     if (succeeded)
                     {
-                        StatusClass = "alert-success";
-                        Message = "Email request sent successfully";
+                        RefreshInvitationsWithDialogMessage(succeeded, "Email request sent successfully");
                     }
                     else
                     {
-                        StatusClass = "alert-danger";
-                        Message = "Some or all of the emails did not add, they may be associated with another broker, check your invite list";
+                        RefreshInvitationsWithDialogMessage(succeeded, "Some or all of the emails did not add, they may be associated with another broker, check your invite list");
                     }
-
-                    Saved = true;
                 }
             }
         }
@@ -368,21 +364,34 @@ namespace BrokerIQ.Online.Pages
 
             if (succeeded)
             {
-                StatusClass = "alert-success";
-                Message = "Connection deleted successfully";
+                RefreshInvitationsWithDialogMessage(succeeded, "Connection deleted successfully");
             }
             else
             {
-                StatusClass = "alert-danger";
-                Message = "The invite connection did not delete, check your invite list";
+                RefreshInvitationsWithDialogMessage(succeeded, "The invite connection did not delete, check your invite list");
             }
-
-            Saved = true;
         }
 
         protected void NavigateToOverview()
         {
             NavigationManager.NavigateTo($"refresh");
+        }
+
+        /// <summary>
+        /// Refreshes invitation information displayed on webpage if desired. Displays appropriate dialog message.
+        /// </summary>
+        /// <param name="success">Success of prior API call</param>
+        /// <param name="message">Message to be displayed in dialog</param>
+        private async void RefreshInvitationsWithDialogMessage(bool success, string message)
+        {
+            if (success)
+            {
+                await FillDetails();
+                StateHasChanged();
+            }
+            var responseParams = new DialogParameters();
+            responseParams.Add("Message", message);
+            await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
     }
 }
