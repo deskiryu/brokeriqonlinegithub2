@@ -1,0 +1,12 @@
+﻿<div class="card" style="width:@this.Width;">
+    <div class="card-body">
+        @CardBody
+    </div>
+</div>
+
+@code {
+        [Parameter]
+        public RenderFragment CardBody { get; set; }
+        [Parameter]
+        public string Width { get; set; } = "200px";
+}

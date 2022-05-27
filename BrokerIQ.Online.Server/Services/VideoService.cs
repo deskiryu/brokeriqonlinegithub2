@@ -32,6 +32,34 @@ namespace BrokerIQ.Online.Server.Services
             return blobs;
         }
 
+        public async Task<Dictionary<string, VideoThumbnail>> GetVideoThumbnails(int brokerId)
+        {
+            var blobs = new Dictionary<string, VideoThumbnail>();
+            try
+            {
+                blobs = await azureService.GetVideoThumbnailBlobs(brokerId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("GetVideoThumbnails: exception " + ex.Message);
+            }
+            return blobs;
+        }
+
+        public async Task<VideoThumbnail> GetVideoThumbnail(string fileName)
+        {
+            var blob = new VideoThumbnail();
+            try
+            {
+                blob = await azureService.GetVideoThumbnailBlob(fileName);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("GetVideoThumbnail: exception " + ex.Message);
+            }
+            return blob;
+        }
+
         public async Task<bool> UploadVideo(string fileName, Stream stream, int brokerId)
         {
             bool succeeded = false;
@@ -53,9 +81,23 @@ namespace BrokerIQ.Online.Server.Services
             {
                 succeeded = await azureService.DeleteVideoBlob(fileName);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("DeleteVideo: exception " + ex.Message);
+            }
+            return succeeded;
+        }
 
+        public async Task<bool> DeleteVideoThumbnail(string fileName)
+        {
+            bool succeeded = false;
+            try
+            {
+                succeeded = await azureService.DeleteVideoThumbnailBlob(fileName);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("DeleteVideoThumbnail: exception " + ex.Message);
             }
             return succeeded;
         }

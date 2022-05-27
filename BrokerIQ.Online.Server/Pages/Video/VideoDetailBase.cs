@@ -48,7 +48,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
         protected bool Vetted { get; set; }
 
         //filter
-         protected List<Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        protected List<Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         protected override async Task OnInitializedAsync()
         {
