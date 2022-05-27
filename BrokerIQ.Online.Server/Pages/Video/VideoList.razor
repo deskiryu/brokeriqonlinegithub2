@@ -55,7 +55,7 @@
         <table id="table-video" class="table col-sm-12 table-striped ">
             <thead>
                 <tr>
-                    <th class="col-md-2">Watch</th>
+                    <th class="col-md-1">Watch</th>
                     <th class="col-md-2">Video Name</th>
                     <th class="col-md-2">Uploaded</th>
                     <th class="col-md-1">Birthday</th>
@@ -73,7 +73,7 @@
                                     @if (DisplayEmbeddedVideo[Video.Name])
                                     {
                                         <td>
-                                            <video id="movie" width="200" height="200" controls preload>
+                                            <video id="movie" width="150" height="150" controls preload>
                                                 <source src='@Video.Url#t=0.1'>
                                             </video>
                                         </td>

@@ -53,9 +53,9 @@ namespace BrokerIQ.Online.Server.Services
             {
                 blob = await azureService.GetVideoThumbnailBlob(fileName);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine("GetVideoThumbnail: exception " + ex.Message);
+                // this is expected to be hit several times as we probe for thumbnail
             }
             return blob;
         }
