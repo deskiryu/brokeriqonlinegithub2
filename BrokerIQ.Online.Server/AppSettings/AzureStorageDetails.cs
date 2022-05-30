@@ -9,6 +9,8 @@ namespace BrokerIQ.Online.Server.AppSettings
         public string Key { get; set; }
         public string ConnectionString { get; set; }
         public string VideoContainerName { get; set; }
+
+        public string VideoThumbnailContainerName { get; set; }
         public string AudioContainerName { get; set; }
         public string LogoContainerName { get; set; }
     }
