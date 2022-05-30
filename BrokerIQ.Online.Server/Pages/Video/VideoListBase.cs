@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -20,8 +21,9 @@ namespace BrokerIQ.Online.Pages
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
         protected bool Saved;
-
         public string VideoName { get; set; }
+        public DateTime? VideoSendDate { get; set; }
+
         public string ExtensionName { get; set; }
         public bool RenameUploadVisibility { get; set; }
 
@@ -196,6 +198,26 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+
+        protected async Task SetVideoSendDate(string name, DateTime? date)
+        {
+            await VerifyBroker();
+            var returned = await VideoService.SetVideoSendDate(name, BrokerId, date);
+
+            if (returned.Item1)
+            {
+                StatusClass = "alert-success";
+                Message = "Video send date set successfully";
+                Saved = true;
+            }
+            else
+            {
+                StatusClass = "alert-danger";
+                Message = "Something went wrong setting the video send date. Please try again.";
+                Saved = false;
+            }
+        }
+
         public async Task UploadButtonPushed()
         {
             RenameUploadVisibility = false;
@@ -218,7 +240,11 @@ namespace BrokerIQ.Online.Pages
                     var memoryStream = new MemoryStream();
                     await fileListEntry.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
                     memoryStream.Position = 0;  
-                    bool succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, memoryStream, BrokerId);
+                    bool succeeded = await VideoService.UploadVideo(
+                        fileName: VideoName + ExtensionName,
+                        sendDate: VideoSendDate,
+                        stream: memoryStream,
+                        brokerId: BrokerId);
 
                     status = $"Finished loading {fileListEntry.Size} bytes from {fileListEntry.Name}";
 
