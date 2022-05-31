@@ -31,6 +31,9 @@ namespace BrokerIQ.Online.Pages
         public IVideoService VideoService { get; set; }
 
         [Inject]
+        public IMetaDefenderCoreService MetaDefenderCoreService { get; set; }
+
+        [Inject]
         public IAccountService AccountService { get; set; }
 
         [Inject]
@@ -57,9 +60,18 @@ namespace BrokerIQ.Online.Pages
 
         public string SpinnerVisible { get; set; }
 
+        public bool VideoUploading { get; set; }
+
+        public bool VideoScanUploading { get; set; }
+
+        public bool VideoScanning { get; set; }
+
+        public int VideoScanningProgress { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
+            StateHasChanged();
 
             try
             {
@@ -196,8 +208,70 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        /// <summary>
+        /// Uploads a file to the OPSWAT service which scans the file for viruses.
+        /// Once uploaded, probes the OPSWAT service for the result of the scan.
+        /// Updates the UI to reflect the status of the scan.
+        /// </summary>
+        /// <param name="fileName">Video to be uploaded</param>
+        /// <param name="ms">Memory stream representation of video</param>
+        /// <returns>boolean result of scan</returns>
+        private bool ScanVideo(String fileName, MemoryStream ms)
+        {
+            bool scanPass = false;
+            string dataId = MetaDefenderCoreService.AnalyseFile(fileName, ms).Result;
+
+            VideoScanUploading = false;
+            StateHasChanged();
+
+            if (dataId != null)
+            {
+                int attempts = 60;
+                VideoScanning = true;
+                StateHasChanged();
+
+                while (attempts > 0)
+                {
+                    dynamic resultJson = MetaDefenderCoreService.FetchAnalysisResult(dataId).Result;
+                    if (resultJson != null)
+                    {
+                        var progressPercentage = resultJson["scan_results"]["progress_percentage"];
+                        VideoScanningProgress = progressPercentage;
+                        StateHasChanged();
+
+                        if (progressPercentage == 100)
+                        {
+                            string result = resultJson["process_info"]["result"];
+                            if (result.Equals("Allowed"))
+                            {
+                                scanPass = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Scan failed for {fileName} dataId {dataId} result {result}");
+                                DisplayErrorDialog($"The antivirus scan failed for {fileName}. Result - {result}.");
+                            }
+                            return scanPass;
+                        }
+                    }
+                    attempts--;
+                }
+                DisplayErrorDialog($"Something went wrong retrieving the results of the anti-virus scan. Try uploading the file again.");
+            }
+            else
+            {
+                DisplayErrorDialog($"Something went wrong uploading {fileName} to anti-virus scanning service. Try again.");
+            }
+
+            return scanPass;
+        }
+
         public async Task UploadButtonPushed()
         {
+            VideoScanUploading = false;
+            VideoScanning = false;
+            VideoScanningProgress = 0;
+            VideoUploading = false;
             RenameUploadVisibility = false;
 
             await VerifyBroker();
@@ -211,63 +285,80 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
-                SpinnerVisible = "display:block";
-
                 if (fileListEntry != null)
                 {
+                    SpinnerVisible = "display:block";
+                    VideoScanUploading = true;
+                    StateHasChanged();
+
                     var memoryStream = new MemoryStream();
                     await fileListEntry.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
-                    memoryStream.Position = 0;  
-                    bool succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, memoryStream, BrokerId);
 
-                    status = $"Finished loading {fileListEntry.Size} bytes from {fileListEntry.Name}";
+                    string fileName = $"{VideoName}{ExtensionName}";
+                    bool scanPass = ScanVideo(fileName, memoryStream);
 
-                    if (succeeded)
+                    VideoScanning = false;
+                    StateHasChanged();
+
+                    if (scanPass)
                     {
-                        var email = new CreateEmailDto
-                        {
-                            Subject = "New Video",
-                            Content = $"A video {VideoName + ExtensionName} has been added and needs to be vetted"
-                        };
+                        VideoUploading = true;
+                        StateHasChanged();
 
-                        try
-                        {
-                            await EmailService.SendEmail(email);
-                        }
-                        catch
-                        {
+                        memoryStream.Position = 0;
+                        bool succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, memoryStream, BrokerId);
 
-                        }
-                    }
+                        status = $"Finished loading {fileListEntry.Size} bytes from {fileListEntry.Name}";
 
-                    if (succeeded)
-                    {
-                        // fetch thumbnail for uploaded video (might not be instantly available as generated by FunctionVideoThumbnail Azure function)
-                        // if issue fetching the image after 10 seconds, just proceed without thumbnail
-                        int attempts = 20;
-                        while (attempts > 0)
+                        if (succeeded)
                         {
-                            string thumbnailName = $"{VideoName}{ExtensionName}.jpeg";
-                            var thumbnail = await VideoService.GetVideoThumbnail(thumbnailName);
-                            if (thumbnail != null && thumbnail.Data != null)
+                            var email = new CreateEmailDto
                             {
-                                VideoThumbnails[thumbnailName] = thumbnail;
-                                break;
+                                Subject = "New Video",
+                                Content = $"A video {VideoName + ExtensionName} has been added and needs to be vetted"
+                            };
+
+                            try
+                            {
+                                await EmailService.SendEmail(email);
                             }
-                            await Task.Delay(1000);
-                            attempts--;
+                            catch
+                            {
+
+                            }
                         }
 
-                        DisplayEmbeddedVideo[$"{VideoName}{ExtensionName}"] = false;
-                        RefreshVideosWithDialogMessage(succeeded, $"Uploaded successfully");
-                    }
-                    else
-                    {
-                        RefreshVideosWithDialogMessage(succeeded, "Something went wrong adding the video. Please try again.");
-                    }
+                        if (succeeded)
+                        {
+                            // fetch thumbnail for uploaded video (might not be instantly available as generated by FunctionVideoThumbnail Azure function)
+                            // if issue fetching the image after 10 seconds, just proceed without thumbnail
+                            int attempts = 20;
+                            while (attempts > 0)
+                            {
+                                string thumbnailName = $"{VideoName}{ExtensionName}.jpeg";
+                                var thumbnail = await VideoService.GetVideoThumbnail(thumbnailName);
+                                if (thumbnail != null && thumbnail.Data != null)
+                                {
+                                    VideoThumbnails[thumbnailName] = thumbnail;
+                                    break;
+                                }
+                                await Task.Delay(1000);
+                                attempts--;
+                            }
 
+                            DisplayEmbeddedVideo[$"{VideoName}{ExtensionName}"] = false;
+                            RefreshVideosWithDialogMessage(succeeded, $"Uploaded successfully");
+                        }
+                        else
+                        {
+                            RefreshVideosWithDialogMessage(succeeded, "Something went wrong adding the video. Please try again.");
+                        }
+                    }
                 }
+
+                VideoUploading = false;
                 SpinnerVisible = "display:none";
+                StateHasChanged();
             }
         }
 
@@ -316,6 +407,17 @@ namespace BrokerIQ.Online.Pages
             var responseParams = new DialogParameters();
             responseParams.Add("Message", message);
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+        }
+
+        /// <summary>
+        /// Displays error message to user in a dialog box.
+        /// </summary>
+        /// <param name="message">Message to be displayed</param>
+        private async void DisplayErrorDialog(string message)
+        {
+            var responseParams = new DialogParameters();
+            responseParams.Add("Message", message);
+            await DialogService.Show<AlertDialog>("Error", responseParams).Result;
         }
     }
 }
