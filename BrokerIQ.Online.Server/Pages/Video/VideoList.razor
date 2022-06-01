@@ -86,50 +86,49 @@
                 {
                     <tr>
                         <td>
-                            <Card Width="100%">
-                                <CardBody>
-                                    @if (DisplayEmbeddedVideo[Video.Name])
-                                    {
-                                        <td>
-                                            <video id="movie" width="150" height="150" controls preload>
+                            <div class="card video_table_col_width">
+                                <div class="card_body video_card-body">
+                                        @if (DisplayEmbeddedVideo[Video.Name])
+                                        {
+                                            <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload autoplay>
                                                 <source src='@Video.Url#t=0.1'>
                                             </video>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        // thumbnails are always {Video.Name}.jpeg
-                                        string thumbnailKey = $"{Video.Name}.jpeg";
-                                        if (VideoThumbnails.ContainsKey(thumbnailKey))
-                                        {
-                                            <div>
-                                                <i class="bi bi-play-circle" style="cursor:pointer;" @onclick="@( () => ShowVideoPlayer(@Video.Name) )">
-                                                    <span>Play</span>
-                                                </i>
-                                                <img class="img-thumbnail" src="@VideoThumbnails[thumbnailKey].Data" style="cursor:pointer; width:100%;"
-                                                    @onclick="@( () => ShowVideoPlayer(@Video.Name) )" />
                                             </div>
+
                                         }
                                         else
                                         {
-                                            <div>
-                                                <i class="bi bi-play-circle" style="cursor:pointer;" @onclick="@( () => ShowVideoPlayer(@Video.Name) )">
-                                                    <span>Play</span>
-                                                </i>
-                                                <img class="img-thumbnail"  style="cursor:pointer; width:100%;"
-                                                    @onclick="@( () => ShowVideoPlayer(@Video.Name) )" />
-                                            </div>
+                                            // thumbnails are always {Video.Name}.jpeg
+                                            string thumbnailKey = $"{Video.Name}.jpeg";
+                                            if (VideoThumbnails.ContainsKey(thumbnailKey))
+                                            {
+                                                <div class="video_thumb">
+                                                    <img class="img-thumbnail" src="@VideoThumbnails[thumbnailKey].Data" style="width:150px;"/>
+                                                    <div class="play-button" @onclick="@( () => ShowVideoPlayer(@Video.Name) )"></div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div>
+                                                    <i class="bi bi-play-circle" style="cursor:pointer;" @onclick="@( () => ShowVideoPlayer(@Video.Name) )">
+                                                        <span>Play</span>
+                                                    </i>
+                                                    <img class="img-thumbnail"  style="cursor:pointer; width:100%;"
+                                                        @onclick="@( () => ShowVideoPlayer(@Video.Name) )" />
+                                                </div>
+                                            }
                                         }
-                                    }
-                                </CardBody>
-                            </Card>
+                                 </div>
+                            </div>
+
                         </td>
                         <td>@Path.GetFileNameWithoutExtension(Video.Name)</td>
                         <td>@((Video.Date == null) ? "-" : ((DateTimeOffset)Video.Date).ToString("g", new CultureInfo("en-GB")))</td>
                         <td><input type="checkbox" checked="@Video.BirthdayVideo" @onclick="f => SetBirthdayVideo(Video.Name)" /></td>
                         <td>
                             <NavLink href="@($"videodetail?url={Video.Url}")" class="btn btn-primary table-btn">
-                                <i class="fas fa-eye"></i>
+                                <i class="fas fa-paper-plane"></i>
                             </NavLink>
                         </td>
                         <td>
