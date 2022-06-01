@@ -398,7 +398,7 @@ app {
 .play-button {
     position: absolute;
     top: calc(100% - 55px);
-    left: 25px;
+    left: calc(0% + 18px);
     width: 40px;
     height: 40px;
     display: block;
@@ -415,7 +415,7 @@ app {
     .play-button:after {
         position: absolute;
         top: calc(100% - 30px);
-        left: 10px;
+        left: calc(0% + 10px);
         display: block;
         content: '';
         box-sizing: border-box;

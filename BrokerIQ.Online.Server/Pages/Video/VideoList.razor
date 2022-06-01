@@ -68,7 +68,7 @@
                 {
                     <tr>
                         <td>
-                            <div class="card">
+                            <div class="card" style="width:170px">
                                 <div class="card_body video_card-body">
                                         @if (DisplayEmbeddedVideo[Video.Name])
                                         {
@@ -110,7 +110,7 @@
                         <td><input type="checkbox" checked="@Video.BirthdayVideo" @onclick="f => SetBirthdayVideo(Video.Name)" /></td>
                         <td>
                             <NavLink href="@($"videodetail?url={Video.Url}")" class="btn btn-primary table-btn">
-                                <i class="fas fa-eye"></i>
+                                <i class="fas fa-paper-plane"></i>
                             </NavLink>
                         </td>
                         <td>
