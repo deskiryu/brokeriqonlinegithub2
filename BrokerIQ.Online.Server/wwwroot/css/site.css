@@ -371,3 +371,65 @@ app {
     text-align: right;
 }
 
+.video_thumb {
+    width: 150px;
+    height: 150px;
+    display: block;
+    border: 2px solid #fff;
+    margin: 0.5em auto;
+    overflow: hidden;
+}
+
+.video_thumb .img {
+    display: block;
+    max-width: 100%;
+}
+
+.video_play {
+    width: 150px;
+    height: 150px;
+    display: block;
+    border: 2px solid #fff;
+    margin: 2em auto;
+    overflow: hidden;
+}
+
+
+.play-button {
+    position: absolute;
+    top: calc(100% - 55px);
+    left: 25px;
+    width: 40px;
+    height: 40px;
+    display: block;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    padding: 0;
+    margin: 0 auto;
+    user-select: none;
+    background-color: rgba(0, 0, 0, 0.6);
+    transition: background-color 0.5s ease;
+    cursor: pointer;
+}
+
+    .play-button:after {
+        position: absolute;
+        top: calc(100% - 30px);
+        left: 10px;
+        display: block;
+        content: '';
+        box-sizing: border-box;
+        border-color: transparent transparent transparent #fff;
+        border-style: solid;
+        border-width: 12px 0 12px 20px;
+    }
+
+    .play-button:hover {
+        background-color: lightgrey;
+    }
+
+
+.video_card-body {
+    padding: 0rem;
+}
+
