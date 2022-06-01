@@ -433,3 +433,11 @@ app {
     padding: 0rem;
 }
 
+.video_table_col_width {
+    width: 170px;
+}
+
+.video_play_size {
+    width: 150px;
+    height: 150px;
+}

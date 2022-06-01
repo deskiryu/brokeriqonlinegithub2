@@ -68,12 +68,12 @@
                 {
                     <tr>
                         <td>
-                            <div class="card" style="width:170px">
+                            <div class="card video_table_col_width">
                                 <div class="card_body video_card-body">
                                         @if (DisplayEmbeddedVideo[Video.Name])
                                         {
                                             <div class="video_play">
-                                            <video id="movie" width="150" height="150" controls preload autoplay>
+                                            <video id="movie" class="video_play_size" controls preload autoplay>
                                                 <source src='@Video.Url#t=0.1'>
                                             </video>
                                             </div>
