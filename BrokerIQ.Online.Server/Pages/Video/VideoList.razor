@@ -70,77 +70,69 @@
         </MudDialog>
 
 
-        <table id="table-video" class="table col-sm-12 table-striped ">
-            <thead>
-                <tr>
-                    <th class="col-md-1">Watch</th>
-                    <th class="col-md-2">Video Name</th>
-                    <th class="col-md-2">Uploaded</th>
-                    <th class="col-md-1">Birthday</th>
-                    <th class="col-md-1">Send</th>
-                    <th class="col-md-1">Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var Video in Videos)
-                {
-                    <tr>
-                        <td>
-                            <Card Width="100%">
-                                <CardBody>
-                                    @if (DisplayEmbeddedVideo[Video.Name])
-                                    {
-                                        <td>
-                                            <video id="movie" width="150" height="150" controls preload>
-                                                <source src='@Video.Url#t=0.1'>
-                                            </video>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        // thumbnails are always {Video.Name}.jpeg
-                                        string thumbnailKey = $"{Video.Name}.jpeg";
-                                        if (VideoThumbnails.ContainsKey(thumbnailKey))
+        <MudTable Items="@Videos" id="table-video" class="table col-sm-12 table-striped ">
+            <HeaderContent>
+                    <MudTh class="col-md-1">Watch</MudTh>
+                    <MudTh class="col-md-2">Video Name</MudTh>
+                    <MudTh class="col-md-2">Uploaded</MudTh>
+                    <MudTh class="col-md-1">Birthday</MudTh>
+                    <MudTh class="col-md-1">Send</MudTh>
+                    <MudTh class="col-md-1">Delete</MudTh>
+            </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Watch">
+                            <div class="card video_table_col_width">
+                                <div class="card_body video_card-body">
+                                        @if (DisplayEmbeddedVideo[context.Name])
                                         {
-                                            <div>
-                                                <i class="bi bi-play-circle" style="cursor:pointer;" @onclick="@( () => ShowVideoPlayer(@Video.Name) )">
-                                                    <span>Play</span>
-                                                </i>
-                                                <img class="img-thumbnail" src="@VideoThumbnails[thumbnailKey].Data" style="cursor:pointer; width:100%;"
-                                                    @onclick="@( () => ShowVideoPlayer(@Video.Name) )" />
+                                            <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload autoplay>
+                                                <source src='@context.Url#t=0.1'>
+                                            </video>
                                             </div>
+
                                         }
                                         else
                                         {
-                                            <div>
-                                                <i class="bi bi-play-circle" style="cursor:pointer;" @onclick="@( () => ShowVideoPlayer(@Video.Name) )">
-                                                    <span>Play</span>
-                                                </i>
-                                                <img class="img-thumbnail"  style="cursor:pointer; width:100%;"
-                                                    @onclick="@( () => ShowVideoPlayer(@Video.Name) )" />
-                                            </div>
+                                            // thumbnails are always {Video.Name}.jpeg
+                                            string thumbnailKey = $"{context.Name}.jpeg";
+                                            if (VideoThumbnails.ContainsKey(thumbnailKey))
+                                            {
+                                                <div class="video_thumb">
+                                                    <img class="img-thumbnail" src="@VideoThumbnails[thumbnailKey].Data" style="width:150px;"/>
+                                                    <div class="play-button" @onclick="@( () => ShowVideoPlayer(@context.Name) )"></div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div>
+                                                    <i class="bi bi-play-circle" style="cursor:pointer;" @onclick="@( () => ShowVideoPlayer(@context.Name) )">
+                                                        <span>Play</span>
+                                                    </i>
+                                                    <img class="img-thumbnail"  style="cursor:pointer; width:100%;"
+                                                        @onclick="@( () => ShowVideoPlayer(@context.Name) )" />
+                                                </div>
+                                            }
                                         }
-                                    }
-                                </CardBody>
-                            </Card>
-                        </td>
-                        <td>@Path.GetFileNameWithoutExtension(Video.Name)</td>
-                        <td>@((Video.Date == null) ? "-" : ((DateTimeOffset)Video.Date).ToString("g", new CultureInfo("en-GB")))</td>
-                        <td><input type="checkbox" checked="@Video.BirthdayVideo" @onclick="f => SetBirthdayVideo(Video.Name)" /></td>
-                        <td>
-                            <NavLink href="@($"videodetail?url={Video.Url}")" class="btn btn-primary table-btn">
-                                <i class="fas fa-eye"></i>
+                                 </div>
+                            </div>
+
+                        </MudTd>
+                        <MudTd DataLabel="Video Name">@Path.GetFileNameWithoutExtension(context.Name)</MudTd>
+                        <MudTd DataLabel="Uploaded">@((context.Date == null) ? "-" : ((DateTimeOffset)context.Date).ToString("g", new CultureInfo("en-GB")))</MudTd>
+                        <MudTd DataLabel="Birthday"><input type="checkbox" checked="@context.BirthdayVideo" @onclick="f => SetBirthdayVideo(context.Name)" /></MudTd>
+                        <MudTd DataLabel="Send">
+                            <NavLink href="@($"videodetail?url={context.Url}")" class="btn btn-primary table-btn">
+                                <i class="fas fa-paper-plane"></i>
                             </NavLink>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary table-btn" @onclick="f => DeleteVideo(Video.Name)">
+                        </MudTd>
+                        <MudTd DataLabel="Delete">
+                            <button class="btn btn-primary table-btn" @onclick="f => DeleteVideo(context.Name)">
                                 <i class="fas fa-trash"></i>
                             </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                        </MudTd>
+                    </RowTemplate>
+        </MudTable>
     }
 }
 else
