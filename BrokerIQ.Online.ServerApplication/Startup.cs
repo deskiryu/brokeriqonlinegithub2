@@ -59,6 +59,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.Configure<ReviewItAPIDetails>(Configuration.GetSection(typeof(ReviewItAPIDetails).Name));
             services.Configure<AzureStorageDetails>(Configuration.GetSection(typeof(AzureStorageDetails).Name));
             services.Configure<FileUploadSettings>(Configuration.GetSection(typeof(FileUploadSettings).Name));
+            services.Configure<MetaDefenderCoreDetails>(Configuration.GetSection(typeof(MetaDefenderCoreDetails).Name));
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IRequestProviderService, RequestProviderService>();
@@ -85,6 +86,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<IChartDataService, ChartDataService>();
             services.AddScoped<INoteService, NoteService>();
             services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<IMetaDefenderCoreService, MetaDefenderCoreService>();
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
             services.AddScoped<MessageCountState>();

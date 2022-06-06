@@ -47,6 +47,7 @@ namespace BrokerIQ.Online.Pages
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
+            StateHasChanged();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
