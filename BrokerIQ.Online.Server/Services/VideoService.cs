@@ -32,7 +32,7 @@ namespace BrokerIQ.Online.Server.Services
             return blobs;
         }
 
-ß        public async Task<Dictionary<string, VideoThumbnail>> GetVideoThumbnails(int brokerId)
+        public async Task<Dictionary<string, VideoThumbnail>> GetVideoThumbnails(int brokerId)
         {
             var blobs = new Dictionary<string, VideoThumbnail>();
             try

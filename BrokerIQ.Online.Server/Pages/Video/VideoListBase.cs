@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -62,6 +63,7 @@ namespace BrokerIQ.Online.Pages
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
+            CultureInfo.CurrentCulture = new CultureInfo("en-GB", false);
 
             try
             {
@@ -82,6 +84,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     throw new Exception();
                 }
+
                 Videos = (await VideoService.GetVideos(BrokerId)).ToList();
                 VideoThumbnails = (await VideoService.GetVideoThumbnails(BrokerId));
                 DisplayEmbeddedVideo = new Dictionary<string, bool>();
@@ -199,7 +202,7 @@ namespace BrokerIQ.Online.Pages
         }
 
 
-        protected async Task SetVideoSendDate(string name, DateTime? date)
+        protected async Task<bool> SetVideoSendDate(string name, DateTime? date)
         {
             await VerifyBroker();
             var returned = await VideoService.SetVideoSendDate(name, BrokerId, date);
@@ -216,6 +219,7 @@ namespace BrokerIQ.Online.Pages
                 Message = "Something went wrong setting the video send date. Please try again.";
                 Saved = false;
             }
+            return Saved;
         }
 
         public async Task UploadButtonPushed()
@@ -319,6 +323,7 @@ namespace BrokerIQ.Online.Pages
         protected void NavigateToOverview()
         {
             Saved = false;
+            NavigationManager.NavigateTo("/videolist/");
         }
 
         protected void ShowVideoPlayer(string videoName)

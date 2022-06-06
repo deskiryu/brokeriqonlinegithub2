@@ -2,9 +2,6 @@
 @inherits VideoListBase
 @using System.Globalization
 @using System.IO
-@using BlazorDateRangePicker
-@using BrokerIQ.Dto.Models
-@using BrokerIQ.Online.Services.Interface
 @using BrokerIQ.Online.Server.Shared
 
 
@@ -44,9 +41,7 @@
             </TitleContent>
             <DialogContent>
                 <MudTextField Label="Video Name" ID="inVal" @bind-Value="@VideoName" Type="InputType.Text" Placeholder="" HelperText="Enter video name" />
-                @* <MudDatePicker @bind-Date="@VideoSendDate" HelperText="(Optional) Enter an annual send date" Elevation="12"/> *@
                 <MudTextField Label= "Send Date" T="DateTime?" @bind-Value="@VideoSendDate" Format="yyyy-MM-dd" HelperText="(Optional) Enter a date of when this should be sent" InputType="InputType.Date"/>
-                @*<DateRangePicker @bind-StartDate="VideoSendDate" SingleDatePicker="true" placeholder="(Optional) Enter a date of when this should be sent" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>*@
 
             </DialogContent>
             <DialogActions>
@@ -61,7 +56,6 @@
                 <tr>
                     <th class="col-md-1">Watch</th>
                     <th class="col-md-2">Video Name</th>
-                    <th class="col-md-2">Uploaded</th>
                     <th class="col-md-1">Upload Date</th>
                     <th class="col-md-1">Next Send Date</th>
                     <th class="col-md-1">Birthday</th>
@@ -113,26 +107,19 @@
                             </Card>
                         </td>
                         <td>@Path.GetFileNameWithoutExtension(Video.Name)</td>
-
-                        <td><input type="checkbox" checked="@Video.BirthdayVideo" @onclick="f => SetBirthdayVideo(Video.Name)" /></td>
+                        <td>@((Video.UploadDate == null) ? "-" : ((DateTimeOffset)Video.UploadDate).ToString("d", new CultureInfo("en-GB")))</td>
+                        <td><MudDatePicker
+                            Culture=@(new CultureInfo("en-GB")) PickerVariant="PickerVariant.Dialog" DisableToolbar="true"
+                            Date="@Video.SendDate" DateChanged="(x) => UpdateVideoSendDate(x, Video.Name)"
+                            style="font-size: 14px; margin-top: -10px; color: #222"
+                        /></td>
+                        <td><input type="checkbox" checked="@Video.BirthdayVideo" @onclick="f => SetBirthdayVideo(Video.Name)"/></td>
                         <td>
                             <NavLink href="@($"videodetail?url={Video.Url}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-eye"></i>
                             </NavLink>
                         </td>
-                        <td>@((Video.UploadDate == null) ? "-" : ((DateTimeOffset)Video.UploadDate).ToString("d", new CultureInfo("en-GB")))</td>
-                        @*<MudTextField T="DateTime?" Value="@Video.SendDate" Format="yyyy-MM-dd" InputType="InputType.Date" ValueChanged="@SetVideoSendDate(Video.Name, Video.SendDate)"/>*@
-                        @*<td>@((Video.SendDate == null) ? "-" : ((DateTimeOffset)Video.SendDate).ToString("d", new CultureInfo("en-GB")))</td>*@
-                        @*<td>
-                            <input type="date" value="@((Video.SendDate == null) ? "" : ((DateTimeOffset)Video.SendDate).ToString("d", new CultureInfo("en-GB")))"
-                                   class="table-striped" style="background: transparent;outline: none;"/>
-                        </td>
-                        *@
-                        @*<DateRangePicker @bind-StartDate="Video.SendDate" SingleDatePicker="true" placeholder="-" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>*@
-                        <MudDatePicker PickerVariant="PickerVariant.Dialog" DisableToolbar="true" @bind-Date="@Video.SendDate"/>
-                        @*<MudDatePicker PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@Video.SendDate"/>*@
-                        @*<td>@((Video.SendDate == null) ? "" : ((DateTimeOffset)Video.SendDate).ToString("d", new CultureInfo("en-GB")))</td>*@
-                        <td><input type="checkbox" checked="@Video.BirthdayVideo" @onclick="f => SetBirthdayVideo(Video.Name)"/></td>
+
 
                         <td>
                             <button class="btn btn-primary table-btn" @onclick="f => DeleteVideo(Video.Name)">
@@ -149,4 +136,20 @@ else
 {
     <div class="alert @StatusClass">@Message</div>
     <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to video list</a>
+}
+
+@code {
+    async void UpdateVideoSendDate(DateTime? sendDate, String name){
+        // Set the new value first, to avoid double firing from the DateChanged event.
+        var existingVideo = this.Videos.First(item => item.Name == name);
+        DateTime? oldDate = existingVideo.SendDate;
+        existingVideo.SendDate = sendDate;
+
+        var returned = await SetVideoSendDate(name, sendDate);
+        if (!returned) {
+            existingVideo.SendDate = oldDate;
+        }
+
+        StateHasChanged();
+    }
 }
