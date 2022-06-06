@@ -14,14 +14,20 @@ namespace BrokerIQ.Online.Server.Services
     using BrokerIQ.Online.Server.AppSettings;
     using BrokerIQ.Online.Server.Models;
     using BrokerIQ.Online.Services.Interface;
+    using System.Text;
+    using Microsoft.WindowsAzure.Storage.Blob;
+    using Microsoft.WindowsAzure.Storage;
 
     public class AzureService : IAzureService
     {
         private AzureStorageDetails azureStorageDetails;
         private BlobServiceClient blobServiceClient;
+        private CloudStorageAccount cloudStorageAccount;
+        private CloudBlobClient cloudBlobClient;
         private BlobContainerClient videoContainerClient;
         private BlobContainerClient audioContainerClient;
         private BlobContainerClient logoContainerClient;
+        private CloudBlobContainer videoThumbnailContainer;
         private bool initialised;
 
         public AzureService(IOptions<AzureStorageDetails> azureStorageDetails)
@@ -39,6 +45,11 @@ namespace BrokerIQ.Online.Server.Services
             this.videoContainerClient = this.blobServiceClient.GetBlobContainerClient(this.azureStorageDetails.VideoContainerName);
             this.audioContainerClient = this.blobServiceClient.GetBlobContainerClient(this.azureStorageDetails.AudioContainerName);
             this.logoContainerClient = this.blobServiceClient.GetBlobContainerClient(this.azureStorageDetails.LogoContainerName);
+
+            // Separate CloudBloudClient required to retrieve video thumbnail container (quirk of Azure function BlobTrigger)
+            this.cloudStorageAccount = CloudStorageAccount.Parse(this.azureStorageDetails.ConnectionString);
+            this.cloudBlobClient = this.cloudStorageAccount.CreateCloudBlobClient();
+            this.videoThumbnailContainer = this.cloudBlobClient.GetContainerReference(this.azureStorageDetails.VideoThumbnailContainerName);
 
             this.initialised = true;
         }
@@ -127,6 +138,59 @@ namespace BrokerIQ.Online.Server.Services
             return videoList;
         }
 
+        public async Task<Dictionary<string, VideoThumbnail>> GetVideoThumbnailBlobs(int brokerId)
+        {
+            if (!this.initialised)
+                await Initialise();
+
+            var videoThumbnails = new Dictionary<string, VideoThumbnail>();
+
+            // ListBlobsSegmentedAsync override required to fetch metadata from the blob 
+            BlobResultSegment blobResultSegment = await videoThumbnailContainer.ListBlobsSegmentedAsync(
+                prefix: null,useFlatBlobListing: true, blobListingDetails: BlobListingDetails.Metadata,
+                maxResults: null, currentToken: null, options: null, operationContext: null,
+                cancellationToken: default);
+
+            foreach (IListBlobItem item in blobResultSegment.Results)
+            {
+                CloudBlockBlob blob = (CloudBlockBlob)item;
+                string foundBrokerId = "";
+                blob.Metadata.TryGetValue("Broker", out foundBrokerId);
+
+                if (brokerId == 0 || foundBrokerId == brokerId.ToString()) {
+                    MemoryStream ms = new MemoryStream();
+                    await blob.DownloadToStreamAsync(ms);
+                    videoThumbnails.Add(blob.Name,
+                        new VideoThumbnail
+                        {
+                            Data = String.Format("data:image/jpeg;base64,{0}", Convert.ToBase64String(ms.ToArray()))
+                        });
+                }
+            }
+
+            return videoThumbnails;
+        }
+
+        public async Task<VideoThumbnail> GetVideoThumbnailBlob(string fileName)
+        {
+            if (!this.initialised)
+                await Initialise();
+
+            VideoThumbnail videoThumbnail = null;
+            CloudBlockBlob blob = videoThumbnailContainer.GetBlockBlobReference(fileName);
+
+            if (blob != null) {
+                MemoryStream ms = new MemoryStream();
+                await blob.DownloadToStreamAsync(ms);
+
+                videoThumbnail = new VideoThumbnail
+                {
+                    Data = String.Format("data:image/jpeg;base64,{0}", Convert.ToBase64String(ms.ToArray()))
+                };
+            }
+
+            return videoThumbnail;
+        }
         public async Task<List<Audio>> GetAudioBlobs(int brokerId)
         {
             if (!this.initialised)
@@ -168,6 +232,16 @@ namespace BrokerIQ.Online.Server.Services
             BlobClient blobClient = this.videoContainerClient.GetBlobClient(fileName);                
 
             return await DeleteBlob(blobClient, fileName);
+        }
+
+        public async Task<bool> DeleteVideoThumbnailBlob(string fileName)
+        {
+            if (!this.initialised)
+                await Initialise();
+
+            CloudBlockBlob blob = this.videoThumbnailContainer.GetBlockBlobReference(fileName);
+
+            return await blob.DeleteIfExistsAsync();
         }
 
         public async Task<bool> DeleteAudioBlob(string fileName)
