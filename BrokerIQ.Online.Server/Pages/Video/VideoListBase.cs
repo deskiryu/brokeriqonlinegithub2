@@ -46,6 +46,9 @@ namespace BrokerIQ.Online.Pages
         public IBrokerService BrokerService { get; set; }
 
         [Inject]
+        public IAdminService AdminService { get; set; }
+
+        [Inject]
         public IEmailService EmailService { get; set; }
 
         public List<Video> Videos { get; set; }
@@ -80,8 +83,9 @@ namespace BrokerIQ.Online.Pages
                 {
                     throw new Exception();
                 }
-                if (user.IsAdmin)
+                if (user.IsAdmin || user.MasterBrokerId == 0)
                 {
+                    await VerifyAdmin();
                     BrokerId = 0;
                 }
                 else if (user.IsBroker || user.IsBrokerStaff)
@@ -368,6 +372,25 @@ namespace BrokerIQ.Online.Pages
             try
             {
                 var response = await BrokerService.VerifyBroker(BrokerId);
+                verified = response.BoolResult;
+            }
+            catch
+            {
+                verified = false;
+            }
+
+            if (!verified)
+            {
+                NavigationManager.NavigateTo($"account/logout");
+            }
+        }
+
+        protected async Task VerifyAdmin()
+        {
+            bool verified;
+            try
+            {
+                var response = await AdminService.VerifyAdmin();
                 verified = response.BoolResult;
             }
             catch
