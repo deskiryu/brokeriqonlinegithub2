@@ -1,9 +1,11 @@
 
 @using BrokerIQ.Online.Services.Interface
+@using System.IO
 @inject IAudioService AudioService
 @inject IAlertService AlertService
 @inject IAudioService AudioService
 @inject IAudioRecordingService AudioRecordingService
+@inject IMetaDefenderCoreService MetaDefenderCoreService
 @inject IJSRuntime jsRuntime
 
 <MudDialog>
@@ -11,7 +13,7 @@
         @Message
         <MudButton class="red-text" id="RecordButton" OnClick="Record">Record</MudButton>
         <MudButton class="gray-text" id="StopButton" Disabled="true">Stop</MudButton>
-
+        @ErrorMessage
     <div class="d-flex flex-column py-1" style="margin-top:10px; margin-bottom:10px;">
         <section class="sound-clips">
         </section>
@@ -21,6 +23,37 @@
     </div>
 
     <MudInputString ID="audioVal" @bind-Value="@AudioName" Type="InputType.Text" Placeholder="Recording name" />
+
+    <div class="">
+       @if (AudioSaving)
+        {
+            <div class="mt-5">
+                Saving audio...
+            </div>
+        }
+        else if (AudioScanUploading)
+        {
+            <div class="mt-5">
+                Uploading recording to virus scanning service...
+            </div>
+        }
+        else if (AudioScanning)
+        {
+            <div class="mt-5">
+                Scanning audio for viruses (@AudioScanningProgress %)
+            </div>
+        }
+        else if (AudioUploading)
+        {
+            <div class="mt-5">
+                Scan complete. Uploading audio to BrokerIQ...
+            </div>
+        }
+
+        <div class="spin-row spin-row-bg">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
+        </div>
+    </div>
 
     </DialogContent>
     <DialogActions>
@@ -36,10 +69,37 @@
 
     [Parameter] public int BrokerId { get; set; }
 
+    public string ErrorMessage { get; set; }
 
     public string AudioName { get; set; }
 
+    public bool AudioUploading { get; set; }
+
+    public bool AudioScanUploading { get; set; }
+
+    public bool AudioScanning { get; set; }
+
+    public int AudioScanningProgress { get; set; }
+
+    public bool AudioSaving { get; set; }
+
+    public string SpinnerVisible { get; set; }
+
     void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        SpinnerVisible = "display:none";
+
+        AudioUploading = false;
+
+        AudioScanUploading = false;
+
+        AudioScanning = false;
+
+        AudioSaving = false;
+    }
 
     private async Task Record()
     {
@@ -49,39 +109,115 @@
     private async Task UploadButtonPushed()
     {
 
-        
+
         try{
+            if(string.IsNullOrEmpty(AudioName)){
+                AlertService.Error("Please provide a name for the recording");
+                return;
+            }
+            bool available = await AudioService.NameAvailable(AudioName);
+            if (!available)
+            {
+                AlertService.Error("That name already exists choose a new one");
+                return;
+            }
+
+            SpinnerVisible = "display:block";
+            AudioSaving = true;
+            StateHasChanged();
 
             var remaining = 100;
             string completeString = "";
 
-            while(remaining>0){
-                remaining = await jsRuntime.InvokeAsync<int>("MyJSMethods.saveRecording");        
+            while (remaining > 0)
+            {
+                remaining = await jsRuntime.InvokeAsync<int>("MyJSMethods.saveRecording");
                 completeString += await AudioRecordingService.GetAudioRecordingAsBase64();
 
             }
 
-        await AudioRecordingService.Delete();
+            await AudioRecordingService.Delete();
+            AudioSaving = false;
 
-        if(string.IsNullOrEmpty(AudioName)){
-            AlertService.Error("Please provide a name for the recording");
-            return;
-        }
-        bool available = await AudioService.NameAvailable(AudioName);
-        if (!available)
-        { 
-            AlertService.Error("That name already exists choose a new one");
-            return;
-        }
-        await AudioService.UploadAudio(AudioName+".wav", completeString, BrokerId);           
+            var bytes = Convert.FromBase64String(completeString);
+            var stream = new MemoryStream(bytes);
+            var fileName = AudioName + ".wav";
+
+            bool safe = await ScanAudio(fileName, stream);
+            if (safe)
+            {
+                AudioUploading = true;
+                StateHasChanged();
+
+                await AudioService.UploadAudio(AudioName+".wav", stream, BrokerId);
+            }
+
         }
         catch(Exception ex)
         {
 
         }
 
-
+        SpinnerVisible = "display:none";
         MudDialog.Close(DialogResult.Ok(true));
 
+    }
+
+    /// <summary>
+    /// Uploads a file to the OPSWAT service which scans the file for viruses.
+    /// Once uploaded, probes the OPSWAT service for the result of the scan.
+    /// Updates the UI to reflect the status of the scan.
+    /// </summary>
+    /// <param name="fileName">Audio to be uploaded</param>
+    /// <param name="ms">Memory stream representation of Audio</param>
+    /// <returns>boolean result of scan</returns>
+    private async Task<bool> ScanAudio(String fileName, MemoryStream ms)
+    {
+        bool scanPass = false;
+        string dataId = MetaDefenderCoreService.AnalyseFile(fileName, ms).Result;
+
+        AudioScanUploading = false;
+        StateHasChanged();
+
+        if (dataId != null)
+        {
+            int attempts = 60;
+            AudioScanning = true;
+            StateHasChanged();
+
+            while (attempts > 0)
+            {
+                dynamic resultJson = await MetaDefenderCoreService.FetchAnalysisResult(dataId);
+                if (resultJson != null)
+                {
+                    var progressPercentage = resultJson["scan_results"]["progress_percentage"];
+                    AudioScanningProgress = progressPercentage;
+                    StateHasChanged();
+
+                    if (progressPercentage == 100)
+                    {
+                        string result = resultJson["process_info"]["result"];
+                        if (result.Equals("Allowed"))
+                        {
+                            scanPass = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Scan failed for {fileName} dataId {dataId} result {result}");
+                            ErrorMessage=$"The antivirus scan failed for {fileName}. Result - {result}.";
+                        }
+                        return scanPass;
+                    }
+                }
+                attempts--;
+            }
+            ErrorMessage=$"Something went wrong retrieving the results of the anti-virus scan. Try recording the audio again.";
+        }
+        else
+        {
+            ErrorMessage=$"Something went wrong uploading {fileName} to anti-virus scanning service. Try again.";
+        }
+
+        return scanPass;
     }
 }
