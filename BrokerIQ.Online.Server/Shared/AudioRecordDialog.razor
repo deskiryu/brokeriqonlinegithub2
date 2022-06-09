@@ -197,14 +197,15 @@
                     if (progressPercentage == 100)
                     {
                         string result = resultJson["process_info"]["result"];
-                        if (result.Equals("Allowed"))
+                        string resultFiletype = resultJson["file_info"]["file_type_category"];
+                        if (result.Equals("Allowed")&& resultFiletype.Equals("M"))
                         {
                             scanPass = true;
                         }
                         else
                         {
-                            Console.WriteLine($"Scan failed for {fileName} dataId {dataId} result {result}");
-                            ErrorMessage=$"The antivirus scan failed for {fileName}. Result - {result}.";
+                            Console.WriteLine($"Scan failed for {fileName} dataId {dataId} result {result} fileType {resultFiletype}");
+                            ErrorMessage=$"The antivirus scan failed for {fileName}. Result - {result} - {resultFiletype}";
                         }
                         return scanPass;
                     }
