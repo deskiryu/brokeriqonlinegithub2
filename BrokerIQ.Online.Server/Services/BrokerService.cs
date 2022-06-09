@@ -107,5 +107,6 @@ namespace BrokerIQ.Online.Services
             var urlToGo = this.BrokerUrl + $"/verifybroker/{id}";
             return await this.requestProviderService.Post<BoolResponseDto>(urlToGo);
         }
+
     }
 }
