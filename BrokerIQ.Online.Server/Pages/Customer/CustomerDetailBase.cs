@@ -94,7 +94,7 @@ namespace BrokerIQ.Online.Pages
             {
                 StatusClass = "alert-danger";
                 Message = "Something went wrong getting customer details";
-                Saved = false;
+                Saved = true;
             }
 
 
@@ -110,7 +110,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting customer details";
-                    Saved = false;
+                    Saved = true;
                 }
             }
 
@@ -357,7 +357,14 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (!string.IsNullOrEmpty(message))
                     {
-                        succeeded = (await NoteService.UpdateNote(message, note.Id)).Id > 0;
+                        try
+                        {
+                            succeeded = (await NoteService.UpdateNote(message, note.Id)).Id > 0;
+                        }
+                        catch
+                        {
+                            RefreshNotesWithDialogMessage(false,"Something went wrong updating the Note. Please try again.");
+                        }
                     }
                 }
                 catch

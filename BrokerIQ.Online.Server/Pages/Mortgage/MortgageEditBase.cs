@@ -134,7 +134,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting broker details";
-                    Saved = false;
+                    Saved = true;
                 }
             }
             else
@@ -147,7 +147,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting broker details";
-                    Saved = false;
+                    Saved = true;
                 }        
             }
 
@@ -165,7 +165,7 @@ namespace BrokerIQ.Online.Pages
             {
                 StatusClass = "alert-danger";
                 Message = "Something went wrong getting mortgage details";
-                Saved = false;
+                Saved = true;
             }
             
         }
@@ -218,7 +218,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting the client. Please try again.";
-                    Saved = false;
+                    Saved = true;
                     return;
                 }
 
@@ -243,7 +243,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         StatusClass = "alert-danger";
                         Message = "Something went wrong adding the new Mortgage. Please try again.";
-                        Saved = false;
+                        Saved = true;
                         return;
                     }
 
@@ -291,7 +291,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong updating the Mortgage. Please try again.";
-                    Saved = false;
+                    Saved = true;
                     return;
                 }
 
@@ -316,7 +316,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong deleting the Mortgage. Please try again.";
-                    Saved = false;
+                    Saved = true;
                     return;
                 }             
 

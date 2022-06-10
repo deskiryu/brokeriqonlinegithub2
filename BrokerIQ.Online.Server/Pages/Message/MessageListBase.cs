@@ -68,7 +68,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         StatusClass = "alert-danger";
                         Message = "Something went wrong getting customer details";
-                        Saved = false;
+                        Saved = true;
                     }
                 }
                 StateHasChanged();

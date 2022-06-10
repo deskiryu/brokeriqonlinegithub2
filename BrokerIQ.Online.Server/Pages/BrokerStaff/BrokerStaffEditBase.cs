@@ -73,9 +73,20 @@
 
         protected async Task HandleValidSubmit()
         {
-            await BrokerStaffService.UpdateBrokerStaff(_brokerStaff);
+            try
+            {
+                await BrokerStaffService.UpdateBrokerStaff(_brokerStaff);
+            }
+            catch
+            {
+                StatusClass = "alert-danger";
+                Message = "Something went wrong updating the Broker Staff. Please try again.";
+                Saved = true;
+                return;
+            }
+
             StatusClass = "alert-success";
-            Message = "BrokerStaff updated successfully.";
+            Message = "Broker staff updated successfully.";
             Saved = true;
         }
 

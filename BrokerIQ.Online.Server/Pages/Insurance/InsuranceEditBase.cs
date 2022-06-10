@@ -135,7 +135,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting broker details";
-                    Saved = false;
+                    Saved = true;
                 }   
             }
             else
@@ -148,7 +148,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting broker details";
-                    Saved = false;
+                    Saved = true;
                 }        
             }
 
@@ -180,7 +180,7 @@ namespace BrokerIQ.Online.Pages
             {
                 StatusClass = "alert-danger";
                 Message = "Something went wrong getting insurance details";
-                Saved = false;
+                Saved = true;
             }
             
         }
@@ -232,7 +232,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting the client. Please try again.";
-                    Saved = false;
+                    Saved = true;
                     return;
                 }
 
@@ -257,7 +257,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         StatusClass = "alert-danger";
                         Message = "Something went wrong adding the new Insurance. Please try again.";
-                        Saved = false;
+                        Saved = true;
                         return;
                     }
 
@@ -291,7 +291,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong updating the Insurance. Please try again.";
-                    Saved = false;
+                    Saved = true;
                     return;
                 }
 
@@ -316,7 +316,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong deleting the Insurance. Please try again.";
-                    Saved = false;
+                    Saved = true;
                     return;
                 }             
 
@@ -352,7 +352,7 @@ namespace BrokerIQ.Online.Pages
             {
                 StatusClass = "alert-danger";
                 Message = "Something went wrong deleting the Insurance File. Please try again.";
-                Saved = false;
+                Saved = true;
                 return;
             }
 

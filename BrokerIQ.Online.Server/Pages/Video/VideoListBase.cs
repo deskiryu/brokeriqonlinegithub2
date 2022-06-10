@@ -207,7 +207,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong setting the birthday video. Please try again.";
-                    Saved = false;
+                    Saved = true;
                 }
             }
         }
