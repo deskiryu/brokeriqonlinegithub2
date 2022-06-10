@@ -107,7 +107,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting broker details";
-                    Saved = false;
+                    Saved = true;
                 }   
             }
             else
@@ -120,7 +120,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting broker details";
-                    Saved = false;
+                    Saved = true;
                 }        
             }
 
@@ -136,7 +136,7 @@ namespace BrokerIQ.Online.Pages
             {
                 StatusClass = "alert-danger";
                 Message = "Something went wrong getting menuPlan details";
-                Saved = false;
+                Saved = true;
             }
             
         }
@@ -193,7 +193,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         StatusClass = "alert-danger";
                         Message = "Something went wrong adding the new MenuPlan. Please try again.";
-                        Saved = false;
+                        Saved = true;
                         return;
                     }
 
@@ -216,7 +216,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong updating the MenuPlan. Please try again.";
-                    Saved = false;
+                    Saved = true;
                     return;
                 }
 
@@ -241,7 +241,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong deleting the MenuPlan. Please try again.";
-                    Saved = false;
+                    Saved = true;
                     return;
                 }             
 
