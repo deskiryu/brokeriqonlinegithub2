@@ -78,6 +78,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IBrokerService, BrokerService>();
+            services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IBrokerStaffService, BrokerStaffService>();
             services.AddScoped<IHealthService, HealthService>();
             services.AddScoped<IAddressService, AddressService>();

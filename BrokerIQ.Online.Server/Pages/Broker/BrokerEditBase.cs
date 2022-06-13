@@ -82,10 +82,22 @@
 
         protected async Task HandleValidSubmit()
         {
-            await BrokerService.UpdateBroker(Broker);
             StatusClass = "alert-success";
             Message = "Broker updated successfully.";
-            Saved = true;
+            try
+            {
+                await BrokerService.UpdateBroker(Broker);
+            }
+            catch
+            {
+                StatusClass = "alert-danger";
+                Message = "Something went wrong updating the Broker. Please try again.";
+
+            }
+            finally
+            {
+                Saved = true;
+            }
         }
 
         protected void NavigateToOverview()

@@ -197,8 +197,8 @@ app {
 
     .spin-row {
         position: relative;
-        height: 120px;
-        width: 120px;
+        height: 50px;
+        width: 50px;
     }
 
     .spin-row-bg {

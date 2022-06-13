@@ -48,14 +48,27 @@
         {
             StatusClass = "alert-danger";
             Message = "There are some validation errors. Please try again.";
+            Saved = false;
         }
 
         protected async Task HandleValidSubmit()
         {
-            await CustomerService.UpdateCustomer(Customer);
             StatusClass = "alert-success";
-            Message = "Customer updated successfully.";
-            Saved = true;
+            Message = "Broker updated successfully.";
+            try
+            {
+                await CustomerService.UpdateCustomer(Customer);
+            }
+            catch
+            {
+                StatusClass = "alert-danger";
+                Message = "Something went wrong updating the Customer. Please try again.";
+
+            }
+            finally
+            {
+                Saved = true;
+            }
         }
 
         protected void NavigateToOverview()

@@ -38,6 +38,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IBrokerService BrokerService { get; set; }
 
+        [Inject]
+        public IAdminService AdminService { get; set; }
+
         public List<Audio> Audios { get; set; }
 
         public int BrokerId { get; set; }
@@ -47,11 +50,7 @@ namespace BrokerIQ.Online.Pages
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
-            StateHasChanged();
-        }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
             try
             {
                 var user = await AccountService.GetUser();
@@ -59,8 +58,9 @@ namespace BrokerIQ.Online.Pages
                 {
                     throw new Exception();
                 }
-                if (user.IsAdmin)
+                if (user.IsAdmin || user.MasterBrokerId == 0)
                 {
+                    await VerifyAdmin();
                     BrokerId = 0;
                 }
                 else if (user.IsBroker || user.IsBrokerStaff)
@@ -126,6 +126,24 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected async Task VerifyAdmin()
+        {
+            bool verified;
+            try
+            {
+                var response = await AdminService.VerifyAdmin();
+                verified = response.BoolResult;
+            }
+            catch
+            {
+                verified = false;
+            }
+
+            if (!verified)
+            {
+                NavigationManager.NavigateTo($"account/logout");
+            }
+        }
         public async Task UploadButtonPushed()
         {
             // is this a TODO? Moved from AudioList.razor
