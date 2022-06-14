@@ -487,7 +487,7 @@ namespace BrokerIQ.Online.Pages
                     var dialogParams = new DialogParameters();
 
                     var customer = await CustomerService.GetCustomer(customerId);
-                    dialogParams.Add("Customer", customer.Name);
+                    dialogParams.Add("Client", customer.Name);
 
                     var fileNames = new List<string>(); 
                     var memoryStreams = new List<MemoryStream>();
