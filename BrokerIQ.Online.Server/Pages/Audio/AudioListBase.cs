@@ -88,7 +88,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task DeleteAudio(string name)
         {
-            await VerifyBroker();
+            await VerifyAccess();
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this Audio?");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
@@ -104,6 +104,23 @@ namespace BrokerIQ.Online.Pages
                 {
                     RefreshAudioListWithDialogMessage(succeeded, "Something went wrong deleting the Audio. Please try again.");
                 }
+            }
+        }
+
+        protected async Task VerifyAccess()
+        {
+            var user = await AccountService.GetUser();
+            if (user.IsAdmin || user.MasterBrokerId == 0)
+            {
+                await VerifyAdmin();
+            }
+            else if (user.IsBroker || user.IsBrokerStaff)
+            {
+                await VerifyBroker();
+            }
+            else
+            {
+                NavigationManager.NavigateTo($"account/logout");
             }
         }
 
@@ -151,7 +168,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task AddRecording()
         {
-            await VerifyBroker();
+            await VerifyAccess();
             var dialogParams = new DialogParameters();
             dialogParams.Add("BrokerId", BrokerId);
             var dialogOptions = new DialogOptions()
