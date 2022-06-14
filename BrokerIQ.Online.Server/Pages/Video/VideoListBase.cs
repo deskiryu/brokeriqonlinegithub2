@@ -130,7 +130,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task DeleteVideo(string name)
         {
-            await VerifyBroker();
+            await VerifyAccess();
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this video?");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
@@ -172,7 +172,8 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task SetBirthdayVideo(string name)
         {
-            await VerifyBroker();
+            await VerifyAccess();
+
             var dialogParams = new DialogParameters();
             var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Name == name);
             bool alreadyChecked = false;
@@ -279,7 +280,7 @@ namespace BrokerIQ.Online.Pages
             VideoUploading = false;
             RenameUploadVisibility = false;
 
-            await VerifyBroker();
+            await VerifyAccess();
 
             bool available = await VideoService.NameAvailable(VideoName);
             if (!available)
@@ -365,6 +366,23 @@ namespace BrokerIQ.Online.Pages
                 VideoUploading = false;
                 SpinnerVisible = "display:none";
                 StateHasChanged();
+            }
+        }
+
+        protected async Task VerifyAccess()
+        {
+            var user = await AccountService.GetUser();
+            if (user.IsAdmin || user.MasterBrokerId == 0)
+            {
+                await VerifyAdmin();
+            }
+            else if (user.IsBroker || user.IsBrokerStaff)
+            {
+                await VerifyBroker();
+            }
+            else
+            {
+                NavigationManager.NavigateTo($"account/logout");
             }
         }
 
