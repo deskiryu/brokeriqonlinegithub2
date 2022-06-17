@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -20,8 +22,9 @@ namespace BrokerIQ.Online.Pages
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
         protected bool Saved;
-
         public string VideoName { get; set; }
+        public DateTime? VideoSendDate { get; set; }
+
         public string ExtensionName { get; set; }
         public bool RenameUploadVisibility { get; set; }
 
@@ -74,6 +77,7 @@ namespace BrokerIQ.Online.Pages
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
+            CultureInfo.CurrentCulture = new CultureInfo("en-GB", false);
             StateHasChanged();
 
             try
@@ -96,6 +100,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     throw new Exception();
                 }
+
                 Videos = (await VideoService.GetVideos(BrokerId)).ToList();
                 VideoThumbnails = (await VideoService.GetVideoThumbnails(BrokerId));
                 DisplayEmbeddedVideo = new Dictionary<string, bool>();
@@ -213,6 +218,26 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected async Task<bool> SetVideoSendDate(string name, DateTime? date)
+        {
+            await VerifyBroker();
+            var returned = await VideoService.SetVideoSendDate(name, BrokerId, date);
+
+            if (returned.Item1)
+            {
+                StatusClass = "alert-success";
+                Message = "Video send date set successfully";
+                Saved = true;
+            }
+            else
+            {
+                StatusClass = "alert-danger";
+                Message = "Something went wrong setting the video send date. Please try again.";
+                Saved = false;
+            }
+            return Saved;
+        }
+
         /// <summary>
         /// Uploads a file to the OPSWAT service which scans the file for viruses.
         /// Once uploaded, probes the OPSWAT service for the result of the scan.
@@ -312,7 +337,7 @@ namespace BrokerIQ.Online.Pages
                         StateHasChanged();
 
                         memoryStream.Position = 0;
-                        bool succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, memoryStream, BrokerId);
+                        bool succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, VideoSendDate, memoryStream, BrokerId);
 
                         status = $"Finished loading {fileListEntry.Size} bytes from {fileListEntry.Name}";
 
@@ -427,6 +452,7 @@ namespace BrokerIQ.Online.Pages
         protected void NavigateToOverview()
         {
             Saved = false;
+            NavigationManager.NavigateTo("/videolist/");
         }
 
         protected void ShowVideoPlayer(string videoName)

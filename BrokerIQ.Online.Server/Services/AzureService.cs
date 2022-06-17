@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace BrokerIQ.Online.Server.Services
@@ -74,14 +76,20 @@ namespace BrokerIQ.Online.Server.Services
             return await TransferStreamToAzureBlob(blobClient, fileName, stream, brokerId);
         }
 
-        public async Task<bool> TransferVideoStreamToAzureBlob(string fileName, Stream stream, int brokerId)
+        public async Task<bool> TransferVideoStreamToAzureBlob(string fileName, DateTime? sendDate, Stream stream, int brokerId)
         {
             if (!this.initialised)
                 await Initialise();
 
-            BlobClient blobClient = this.videoContainerClient.GetBlobClient(fileName);                
-
-            return await TransferStreamToAzureBlob(blobClient, fileName, stream, brokerId);
+            BlobClient blobClient = this.videoContainerClient.GetBlobClient(fileName);
+            var result = await TransferStreamToAzureBlob(blobClient, fileName, stream, brokerId);
+            var tags = new Dictionary<string,string>();
+            tags.Add("Broker", brokerId.ToString());
+            tags.Add("SendDate", ((DateTimeOffset)sendDate).ToString("g"));
+            
+            // TODO: why does this not have a Response i can reference?
+            var response = await blobClient.SetTagsAsync(tags);
+            return result;
         }
 
         private async Task<bool> TransferStreamToAzureBlob(BlobClient blobClient, string fileName, Stream stream, int brokerId)
@@ -89,11 +97,6 @@ namespace BrokerIQ.Online.Server.Services
             Console.WriteLine("Uploading content to Blob storage as blob:\n\t {0}\n", blobClient.Uri);
 
             var response = await blobClient.UploadAsync(stream, true);
-
-            var tags = new Dictionary<string,string>();
-            tags.Add("Broker", brokerId.ToString());
-            await blobClient.SetTagsAsync(tags);
-
             return response.GetRawResponse().Status == (int) HttpStatusCode.Created;
         } 
 
@@ -110,17 +113,27 @@ namespace BrokerIQ.Online.Server.Services
                 var foundBrokerId="";
                 var vetted=false;
                 var birthday = false;
+                // todo: will be a date, placeholder in the datepicker
+                DateTime? sendDate = null;
+
                 if(blobItem.Tags!=null){
                     blobItem.Tags.TryGetValue("Broker", out foundBrokerId);    
                     blobItem.Tags.TryGetValue("Vetted", out string vettedVideo); 
+                    blobItem.Tags.TryGetValue("BirthdayVideo", out string birthdayVideo);
+                    blobItem.Tags.TryGetValue("SendDate", out string sendDateStr);
+                    
+
                     if(vettedVideo != null && !string.IsNullOrEmpty(vettedVideo))
                     {
                         vetted = vettedVideo.Equals("true") ? true : false;   
                     }
-                    blobItem.Tags.TryGetValue("BirthdayVideo", out string birthdayVideo);
                     if (birthdayVideo != null && !string.IsNullOrEmpty(birthdayVideo))
                     {
                         birthday = birthdayVideo.Equals("true") ? true : false;
+                    }
+                    if (sendDateStr!= null && !string.IsNullOrEmpty(sendDateStr))
+                    {
+                        sendDate = DateTime.Parse(sendDateStr);
                     }
                 }
         
@@ -130,7 +143,8 @@ namespace BrokerIQ.Online.Server.Services
                         Name = blobItem.Name,
                         Url = this.videoContainerClient.Uri.AbsoluteUri+'/'+blobItem.Name,
                         Vetted = vetted,
-                        Date = blobItem.Properties.LastModified,
+                        UploadDate = blobItem.Properties.LastModified,
+                        SendDate = sendDate,
                         BirthdayVideo = birthday                
                     });
                 }
@@ -285,33 +299,36 @@ namespace BrokerIQ.Online.Server.Services
                 await foreach (BlobItem blobItem in videoContainerClient.GetBlobsAsync(BlobTraits.All))
                 {
                     BlobClient blobClient = this.videoContainerClient.GetBlobClient(blobItem.Name);
-                    var tags = await blobClient.GetTagsAsync();
+                    if (blobItem.Name == fileName) {
+                        var tags = await blobClient.GetTagsAsync();
 
-                    var foundBrokerId = "";
-                    if (blobItem.Tags != null)
-                    {
-                        blobItem.Tags.TryGetValue("Broker", out foundBrokerId);
-                    }
+                        var foundBrokerId = "";
+                        if (blobItem.Tags != null)
+                        {
+                            blobItem.Tags.TryGetValue("Broker", out foundBrokerId);
+                        }
 
-                    if (foundBrokerId == brokerId.ToString())
-                    {
-                        //All false except the new setting
-                        var newSetting = birthdayVideo ? "true" : "false";
-                        var setting = blobItem.Name == fileName ? newSetting : "false";
-                        var newtags = tags.Value.Tags;  
-                        if(newtags.Any(x => x.Key == "BirthdayVideo"))
+                        // If this broker is the uploading broker, OR Admin user (0)
+                        if (foundBrokerId == brokerId.ToString() || brokerId == 0)
                         {
-                            var found = newtags.FirstOrDefault(x => x.Key == "BirthdayVideo");
-                            newtags.Remove(found);
-                            found = new KeyValuePair<string, string>("BirthdayVideo", setting);
-                            newtags.Add(found);
+                            //All false except the new setting
+                            var newSetting = birthdayVideo ? "true" : "false";
+                            var setting = blobItem.Name == fileName ? newSetting : "false";
+                            var newtags = tags.Value.Tags;
+                            if(newtags.Any(x => x.Key == "BirthdayVideo"))
+                            {
+                                var found = newtags.FirstOrDefault(x => x.Key == "BirthdayVideo");
+                                newtags.Remove(found);
+                                found = new KeyValuePair<string, string>("BirthdayVideo", setting);
+                                newtags.Add(found);
+                            }
+                            else
+                            {
+                                newtags.Add("BirthdayVideo", setting);
+                            }
+
+                            await blobClient.SetTagsAsync(newtags);
                         }
-                        else
-                        {
-                            newtags.Add("BirthdayVideo", setting);
-                        }
-                
-                        await blobClient.SetTagsAsync(newtags);
                     }
 
                 }
@@ -323,5 +340,46 @@ namespace BrokerIQ.Online.Server.Services
 
             return (succeeded, birthdayVideo ? this.videoContainerClient.Uri.AbsoluteUri + '/' + fileName : string.Empty);
         }
+
+        public async Task<(bool,string)> SetVideoSendDate(string fileName, int brokerId, DateTime? sendDate)
+        {
+            bool succeeded = true;
+                try
+                {
+                    if (!this.initialised)
+                        await Initialise();
+
+                    await foreach (BlobItem blobItem in videoContainerClient.GetBlobsAsync(BlobTraits.All))
+                    {
+                        if (blobItem.Name == fileName) {
+                            BlobClient blobClient = this.videoContainerClient.GetBlobClient(blobItem.Name);
+                            var tags = await blobClient.GetTagsAsync();
+
+                            var foundBrokerId = "";
+                            if (blobItem.Tags != null)
+                            {
+                                blobItem.Tags.TryGetValue("Broker", out foundBrokerId);
+                            }
+
+                            // If this broker is the uploading broker, OR Admin user (0)
+                            if (foundBrokerId == brokerId.ToString() || brokerId == 0)
+                            {
+                                var newtags = tags.Value.Tags;
+                                newtags["SendDate"] = ((DateTimeOffset)sendDate).ToString("g", new CultureInfo("en-GB"));
+                                await blobClient.SetTagsAsync(newtags);
+                            }
+                            break;
+                        }
+                    }
+                }
+                catch
+                {
+                    succeeded = false;
+                }
+
+                return (succeeded, succeeded ? this.videoContainerClient.Uri.AbsoluteUri + '/' + fileName : string.Empty);
+            
+        }
+
     }
 }

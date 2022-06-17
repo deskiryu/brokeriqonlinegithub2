@@ -16,7 +16,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<VideoThumbnail> GetVideoThumbnail(string fileName);
 
-        Task<bool> UploadVideo(string fileName, Stream stream, int brokerId);
+        Task<bool> UploadVideo(string fileName, DateTime? sendDate, Stream stream, int brokerId);
 
         Task<bool> DeleteVideo(string fileName);
 
@@ -27,5 +27,8 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> NameAvailable(string name);
 
         Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool birthdayVideo = true);
+
+        Task<(bool, string)> SetVideoSendDate(string fileName, int brokerId, DateTime? sendDate);
+
     }
 }
