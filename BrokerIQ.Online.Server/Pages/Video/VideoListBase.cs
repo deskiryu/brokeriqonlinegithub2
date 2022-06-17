@@ -166,11 +166,11 @@ namespace BrokerIQ.Online.Pages
                     // clean up dictionaries for displaying and storing thumbnails in memory
                     VideoThumbnails.Remove(thumbnailName);
                     DisplayEmbeddedVideo.Remove(name);
-                    RefreshVideosWithDialogMessage(succeeded, "Deleted successfully");
+                    await RefreshVideosWithDialogMessage(succeeded, "Deleted successfully");
                 }
                 else
                 {
-                    RefreshVideosWithDialogMessage(succeeded, "Something went wrong deleting the video. Please try again.");
+                    await RefreshVideosWithDialogMessage(succeeded, "Something went wrong deleting the video. Please try again.");
                 }
             }
         }
@@ -205,15 +205,11 @@ namespace BrokerIQ.Online.Pages
                 }
                 if (returned.Item1)
                 {
-                    StatusClass = "alert-success";
-                    Message = "Birthday video set successfully";
-                    Saved = true;
+                    await RefreshVideosWithDialogMessage(true, "Birthday video set successfully");
                 }
                 else
                 {
-                    StatusClass = "alert-danger";
-                    Message = "Something went wrong setting the birthday video. Please try again.";
-                    Saved = true;
+                    await RefreshVideosWithDialogMessage(false, "Something went wrong setting the birthday video. Please try again.");
                 }
             }
         }
@@ -225,17 +221,14 @@ namespace BrokerIQ.Online.Pages
 
             if (returned.Item1)
             {
-                StatusClass = "alert-success";
-                Message = "Video send date set successfully";
-                Saved = true;
+                await RefreshVideosWithDialogMessage(true, "Video send date set successfully");
             }
             else
             {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong setting the video send date. Please try again.";
-                Saved = false;
+                await RefreshVideosWithDialogMessage(false, "Something went wrong setting the video send date. Please try again.");
             }
-            return Saved;
+
+            return returned.Item1;
         }
 
         /// <summary>
@@ -246,7 +239,7 @@ namespace BrokerIQ.Online.Pages
         /// <param name="fileName">Video to be uploaded</param>
         /// <param name="ms">Memory stream representation of video</param>
         /// <returns>boolean result of scan</returns>
-        private bool ScanVideo(String fileName, MemoryStream ms)
+        private async Task<bool> ScanVideo(String fileName, MemoryStream ms)
         {
             bool scanPass = false;
             string dataId = MetaDefenderCoreService.AnalyseFile(fileName, ms).Result;
@@ -280,18 +273,18 @@ namespace BrokerIQ.Online.Pages
                             else
                             {
                                 Console.WriteLine($"Scan failed for {fileName} dataId {dataId} result {result} fileType {resultFiletype}");
-                                DisplayErrorDialog($"The antivirus scan failed for {fileName}. Result - {result} - {resultFiletype}");
+                                await DisplayErrorDialog($"The antivirus scan failed for {fileName}. Result - {result} - {resultFiletype}");
                             }
                             return scanPass;
                         }
                     }
                     attempts--;
                 }
-                DisplayErrorDialog($"Something went wrong retrieving the results of the anti-virus scan. Try uploading the file again.");
+                await DisplayErrorDialog($"Something went wrong retrieving the results of the anti-virus scan. Try uploading the file again.");
             }
             else
             {
-                DisplayErrorDialog($"Something went wrong uploading {fileName} to anti-virus scanning service. Try again.");
+                await DisplayErrorDialog($"Something went wrong uploading {fileName} to anti-virus scanning service. Try again.");
             }
 
             return scanPass;
@@ -326,7 +319,7 @@ namespace BrokerIQ.Online.Pages
                     await fileListEntry.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
 
                     string fileName = $"{VideoName}{ExtensionName}";
-                    bool scanPass = ScanVideo(fileName, memoryStream);
+                    bool scanPass = await ScanVideo(fileName, memoryStream);
 
                     VideoScanning = false;
                     StateHasChanged();
@@ -379,11 +372,11 @@ namespace BrokerIQ.Online.Pages
                             }
 
                             DisplayEmbeddedVideo[$"{VideoName}{ExtensionName}"] = false;
-                            RefreshVideosWithDialogMessage(succeeded, $"Uploaded successfully");
+                            await RefreshVideosWithDialogMessage(succeeded, $"Uploaded successfully");
                         }
                         else
                         {
-                            RefreshVideosWithDialogMessage(succeeded, "Something went wrong adding the video. Please try again.");
+                            await RefreshVideosWithDialogMessage(succeeded, "Something went wrong adding the video. Please try again.");
                         }
                     }
                 }
@@ -466,13 +459,14 @@ namespace BrokerIQ.Online.Pages
         /// </summary>
         /// <param name="success">Success of prior API call</param>
         /// <param name="message">Message to be displayed in dialog</param>
-        private async void RefreshVideosWithDialogMessage(bool success, string message)
+        private async Task RefreshVideosWithDialogMessage(bool success, string message)
         {
             if (success)
             {
                 Videos = (await VideoService.GetVideos(BrokerId)).ToList();
                 StateHasChanged();
             }
+
             var responseParams = new DialogParameters();
             responseParams.Add("Message", message);
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
@@ -482,11 +476,27 @@ namespace BrokerIQ.Online.Pages
         /// Displays error message to user in a dialog box.
         /// </summary>
         /// <param name="message">Message to be displayed</param>
-        private async void DisplayErrorDialog(string message)
+        private async Task DisplayErrorDialog(string message)
         {
             var responseParams = new DialogParameters();
             responseParams.Add("Message", message);
             await DialogService.Show<AlertDialog>("Error", responseParams).Result;
+        }
+
+        protected async Task UpdateVideoSendDate(DateTime? sendDate, String name)
+        {
+            // Set the new value first, to avoid double firing from the DateChanged event.
+            var existingVideo = this.Videos.First(item => item.Name == name);
+            DateTime? oldDate = existingVideo.SendDate;
+            existingVideo.SendDate = sendDate;
+
+            var returned = await SetVideoSendDate(name, sendDate);
+            if (!returned)
+            {
+                existingVideo.SendDate = oldDate;
+            }
+
+            StateHasChanged();
         }
     }
 }

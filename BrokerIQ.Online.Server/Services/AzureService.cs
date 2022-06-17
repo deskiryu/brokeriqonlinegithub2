@@ -86,9 +86,8 @@ namespace BrokerIQ.Online.Server.Services
             var tags = new Dictionary<string,string>();
             tags.Add("Broker", brokerId.ToString());
             tags.Add("SendDate", ((DateTimeOffset)sendDate).ToString("g"));
-            
-            // TODO: why does this not have a Response i can reference?
-            var response = await blobClient.SetTagsAsync(tags);
+         
+            await blobClient.SetTagsAsync(tags);
             return result;
         }
 
@@ -113,7 +112,7 @@ namespace BrokerIQ.Online.Server.Services
                 var foundBrokerId="";
                 var vetted=false;
                 var birthday = false;
-                // todo: will be a date, placeholder in the datepicker
+
                 DateTime? sendDate = null;
 
                 if(blobItem.Tags!=null){
@@ -133,7 +132,11 @@ namespace BrokerIQ.Online.Server.Services
                     }
                     if (sendDateStr!= null && !string.IsNullOrEmpty(sendDateStr))
                     {
-                        sendDate = DateTime.Parse(sendDateStr);
+                        var trySendDate = new DateTime();
+                        if(DateTime.TryParse(sendDateStr, out trySendDate))
+                        {
+                            sendDate = trySendDate;
+                        }
                     }
                 }
         

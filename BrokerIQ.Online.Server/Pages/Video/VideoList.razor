@@ -128,11 +128,11 @@
                         <MudTd DataLabel="Video Send Data">                  
                             <MudDatePicker
                             Culture=@(new CultureInfo("en-GB")) PickerVariant="PickerVariant.Dialog" DisableToolbar="true"
-                            Date="@context.SendDate" DateChanged="(x) => UpdateVideoSendDate(x, context.Name)"
+                            Date="@context.SendDate" DateChanged="async (x) => await UpdateVideoSendDate(x, context.Name)"
                             style="font-size: 14px; margin-top: -10px"
                             />
                         </MudTd>
-                        <MudTd DataLabel="Birthday"><input type="checkbox" checked="@context.BirthdayVideo" @onclick="f => SetBirthdayVideo(context.Name)" /></MudTd>
+                        <MudTd DataLabel="Birthday"><input type="checkbox" checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Name)" /></MudTd>
                         <MudTd DataLabel="Send">
                             <NavLink href="@($"videodetail?url={context.Url}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-paper-plane"></i>
@@ -151,20 +151,4 @@ else
 {
     <div class="alert @StatusClass">@Message</div>
     <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to video list</a>
-}
-
-@code {
-    async void UpdateVideoSendDate(DateTime? sendDate, String name){
-        // Set the new value first, to avoid double firing from the DateChanged event.
-        var existingVideo = this.Videos.First(item => item.Name == name);
-        DateTime? oldDate = existingVideo.SendDate;
-        existingVideo.SendDate = sendDate;
-
-        var returned = await SetVideoSendDate(name, sendDate);
-        if (!returned) {
-            existingVideo.SendDate = oldDate;
-        }
-
-        StateHasChanged();
-    }
 }
