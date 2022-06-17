@@ -1,0 +1,31 @@
+@using BrokerIQ.Online.Services.Interface;
+
+<MudDialog>
+    <DialogContent>
+        UI Version: @VersionService.GetVersion()
+        <br>
+        API Version: @ApiVersion
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Submit" Variant="Variant.Text">close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [Inject]
+    public IVersionService VersionService { get; set; }
+
+    public string ApiVersion { get; set; }
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        ApiVersion = await VersionService.GetApiVersion();
+    }
+}
