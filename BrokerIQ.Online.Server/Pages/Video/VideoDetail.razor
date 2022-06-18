@@ -62,7 +62,24 @@ else
     <div>
         Filter customers: <input @bind-value="SearchTerm" @bind-value:event="oninput" class="mt-1 mb-1" />
     </div>
-
+    <div class="col-lg-8 control_wrapper">
+        @if (IsAdmin)
+        {
+            <MudSelect T="int"
+                        Label="Filter By Broker"
+                        Placeholder="Select"
+                        Clearable="true"
+                        @bind-Value="BrokerId"
+                        SelectedValuesChanged="@AutoCompleteClickBroker"
+                        AdornmentColor="Color.Primary">
+                <MudSelectItem Value="0">Select</MudSelectItem>
+                @foreach (var item in @Brokers)
+                {
+                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                }
+            </MudSelect>            
+        }
+    </div>
     <table id="table-video-customer" class="table col-sm-12 table-striped ">
         <thead>
             <tr>
