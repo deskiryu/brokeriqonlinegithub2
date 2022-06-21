@@ -112,6 +112,7 @@ namespace BrokerIQ.Online.Server.Services
                 var foundBrokerId="";
                 var vetted=false;
                 var birthday = false;
+                var sendTick = false;
 
                 DateTime? sendDate = null;
 
@@ -120,9 +121,9 @@ namespace BrokerIQ.Online.Server.Services
                     blobItem.Tags.TryGetValue("Vetted", out string vettedVideo); 
                     blobItem.Tags.TryGetValue("BirthdayVideo", out string birthdayVideo);
                     blobItem.Tags.TryGetValue("SendDate", out string sendDateStr);
-                    
+                    blobItem.Tags.TryGetValue("SendDateTick", out string sendDateTickStr);
 
-                    if(vettedVideo != null && !string.IsNullOrEmpty(vettedVideo))
+                    if (vettedVideo != null && !string.IsNullOrEmpty(vettedVideo))
                     {
                         vetted = vettedVideo.Equals("true") ? true : false;   
                     }
@@ -130,10 +131,14 @@ namespace BrokerIQ.Online.Server.Services
                     {
                         birthday = birthdayVideo.Equals("true") ? true : false;
                     }
+                    if (sendDateTickStr != null && !string.IsNullOrEmpty(sendDateTickStr))
+                    {
+                        sendTick = sendDateTickStr.Equals("true") ? true : false;
+                    }
                     if (sendDateStr!= null && !string.IsNullOrEmpty(sendDateStr))
                     {
-                        var trySendDate = new DateTime();
-                        if(DateTime.TryParse(sendDateStr, out trySendDate))
+                        if(DateTime.TryParse(sendDateStr, System.Globalization.CultureInfo.GetCultureInfo("en-GB"),
+                            System.Globalization.DateTimeStyles.None, out DateTime trySendDate))
                         {
                             sendDate = trySendDate;
                         }
@@ -148,7 +153,8 @@ namespace BrokerIQ.Online.Server.Services
                         Vetted = vetted,
                         UploadDate = blobItem.Properties.LastModified,
                         SendDate = sendDate,
-                        BirthdayVideo = birthday                
+                        BirthdayVideo = birthday,
+                        SendDateTick = sendTick
                     });
                 }
             }
@@ -380,6 +386,48 @@ namespace BrokerIQ.Online.Server.Services
 
                 return (succeeded, succeeded ? this.videoContainerClient.Uri.AbsoluteUri + '/' + fileName : string.Empty);
             
+        }
+
+        public async Task<(bool, string)> SetVideoSendDateTick(string fileName, int brokerId, bool value)
+        {
+            bool succeeded = true;
+            try
+            {
+                if (!this.initialised)
+                    await Initialise();
+
+                await foreach (BlobItem blobItem in videoContainerClient.GetBlobsAsync(BlobTraits.All))
+                {
+                    if (blobItem.Name == fileName)
+                    {
+                        BlobClient blobClient = this.videoContainerClient.GetBlobClient(blobItem.Name);
+                        var tags = await blobClient.GetTagsAsync();
+
+                        var foundBrokerId = "";
+                        if (blobItem.Tags != null)
+                        {
+                            blobItem.Tags.TryGetValue("Broker", out foundBrokerId);
+                        }
+
+                        // If this broker is the uploading broker, OR Admin user (0)
+                        if (foundBrokerId == brokerId.ToString() || brokerId == 0)
+                        {
+                            var newtags = tags.Value.Tags;
+                            var newSetting = value ? "true" : "false";
+                            newtags["SendDateTick"] = newSetting;
+                            await blobClient.SetTagsAsync(newtags);
+                        }
+                        break;
+                    }
+                }
+            }
+            catch
+            {
+                succeeded = false;
+            }
+
+            return (succeeded, succeeded ? this.videoContainerClient.Uri.AbsoluteUri + '/' + fileName : string.Empty);
+
         }
 
     }

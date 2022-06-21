@@ -30,5 +30,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<(bool, string)> SetVideoSendDate(string fileName, int brokerId, DateTime? sendDate);
 
+        Task<(bool, string)> SetVideoSendDateTick(string fileName, int brokerId, bool value);
+
     }
 }

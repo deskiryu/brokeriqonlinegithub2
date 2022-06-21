@@ -244,6 +244,49 @@ namespace BrokerIQ.Online.Pages
             return returned.Item1;
         }
 
+        protected async Task SetSendDateTick(string name)
+        {
+            await VerifyAccess();
+
+            if (await CheckIsAdmin())
+            {
+                await RefreshVideosWithDialogMessage(true, "Admin cannot set send date tick");
+                return;
+            }
+
+            var dialogParams = new DialogParameters();
+            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Name == name);
+            bool alreadyChecked = false;
+            if (videoAlreadyChecked != null)
+            {
+                alreadyChecked = videoAlreadyChecked.SendDateTick;
+            }
+            if (alreadyChecked)
+            {
+                dialogParams.Add("Message", "This video will not send on this date. Continue?");
+            }
+            else
+            {
+                dialogParams.Add("Message", "This video will be sent to all cilents on this date. Continue?");
+            }
+
+
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                var returned = await VideoService.SetVideoSendDateTick(name, BrokerId, !alreadyChecked);
+
+                if (returned.Item1)
+                {
+                    await RefreshVideosWithDialogMessage(true, "Send date tick set successfully");
+                }
+                else
+                {
+                    await RefreshVideosWithDialogMessage(false, "Something went wrong setting the send date tick. Please try again.");
+                }
+            }
+        }
+
         /// <summary>
         /// Uploads a file to the OPSWAT service which scans the file for viruses.
         /// Once uploaded, probes the OPSWAT service for the result of the scan.
@@ -481,6 +524,7 @@ namespace BrokerIQ.Online.Pages
         {
             if (refresh)
             {
+                Videos.Clear();
                 Videos = (await VideoService.GetVideos(BrokerId)).ToList();
                 StateHasChanged();
             }
@@ -508,13 +552,7 @@ namespace BrokerIQ.Online.Pages
             DateTime? oldDate = existingVideo.SendDate;
             existingVideo.SendDate = sendDate;
 
-            var returned = await SetVideoSendDate(name, sendDate);
-            if (!returned)
-            {
-                existingVideo.SendDate = oldDate;
-            }
-
-            StateHasChanged();
+            await SetVideoSendDate(name, sendDate);
         }
     }
 }

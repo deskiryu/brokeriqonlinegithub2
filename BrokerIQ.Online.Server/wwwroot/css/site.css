@@ -441,3 +441,17 @@ app {
     width: 150px;
     height: 150px;
 }
+
+
+.video_checkbox_tick {
+    margin-top: 4px;
+}
+
+.video_checkbox_label {
+    margin-left: 5px;
+}
+.video_send_date {
+    margin-right: 15px;
+}
+
+
