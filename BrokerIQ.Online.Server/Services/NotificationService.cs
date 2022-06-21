@@ -148,11 +148,11 @@ namespace BrokerIQ.Online.Server.Services
 
         public async Task<int> GetNewBrokerNotificationsCountByBrokerId()
         {
-            //var user = await this.accountService.GetUser();
-            //this.requestProviderService.Token = user?.Token;
-            //var brokerId = user.MasterBrokerId;
+            var user = await this.accountservice.getuser();
+            this.requestproviderservice.token = user?.token;
+            var brokerid = user.masterbrokerid;
 
-            //var answer = await this.requestProviderService.Get<int>(this.notificationUrl + $"/brokerById/newcount?brokerId={brokerId}");
+            var answer = await this.requestProviderService.Get<int>(this.notificationUrl + $"/brokerById/newcount?brokerId={brokerId}");
             return 0;
         }
 
