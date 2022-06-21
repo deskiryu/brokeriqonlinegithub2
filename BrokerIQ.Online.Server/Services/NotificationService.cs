@@ -153,7 +153,7 @@ namespace BrokerIQ.Online.Server.Services
             var brokerId = user.MasterBrokerId;
 
             var answer = await this.requestProviderService.Get<int>(this.notificationUrl + $"/brokerById/newcount?brokerId={brokerId}");
-            return 0;
+            return answer;
         }
 
         public async Task MarkAsReadByBrokerId()
