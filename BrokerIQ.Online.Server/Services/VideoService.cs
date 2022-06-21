@@ -159,5 +159,20 @@ namespace BrokerIQ.Online.Server.Services
             }
             return returned;
         }
+
+        public async Task<(bool, string)> SetVideoSendDateTick(string fileName, int brokerId, bool value)
+        {
+            var returned = (false, string.Empty);
+
+            try
+            {
+                returned = await azureService.SetVideoSendDateTick(fileName, brokerId, value);
+            }
+            catch
+            {
+
+            }
+            return returned;
+        }
     }
 }

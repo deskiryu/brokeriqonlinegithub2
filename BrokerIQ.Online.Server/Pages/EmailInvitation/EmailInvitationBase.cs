@@ -333,11 +333,11 @@ namespace BrokerIQ.Online.Pages
 
                     if (succeeded)
                     {
-                        RefreshInvitationsWithDialogMessage(succeeded, "Email request sent successfully");
+                        await RefreshInvitationsWithDialogMessage(succeeded, "Email request sent successfully");
                     }
                     else
                     {
-                        RefreshInvitationsWithDialogMessage(succeeded, "Some or all of the emails did not add, they may be associated with another broker, check your invite list");
+                        await RefreshInvitationsWithDialogMessage(succeeded, "Some or all of the emails did not add, they may be associated with another broker, check your invite list");
                     }
                 }
             }
@@ -364,11 +364,11 @@ namespace BrokerIQ.Online.Pages
 
             if (succeeded)
             {
-                RefreshInvitationsWithDialogMessage(succeeded, "Connection deleted successfully");
+                await RefreshInvitationsWithDialogMessage(succeeded, "Connection deleted successfully");
             }
             else
             {
-                RefreshInvitationsWithDialogMessage(succeeded, "The invite connection did not delete, check your invite list");
+                await RefreshInvitationsWithDialogMessage(succeeded, "The invite connection did not delete, check your invite list");
             }
         }
 
@@ -382,7 +382,7 @@ namespace BrokerIQ.Online.Pages
         /// </summary>
         /// <param name="success">Success of prior API call</param>
         /// <param name="message">Message to be displayed in dialog</param>
-        private async void RefreshInvitationsWithDialogMessage(bool success, string message)
+        private async Task RefreshInvitationsWithDialogMessage(bool success, string message)
         {
             if (success)
             {

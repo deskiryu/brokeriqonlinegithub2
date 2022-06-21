@@ -24,5 +24,6 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> IsVettedVideo(string fileName);
         Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool birthdayVideo = true);
         Task<(bool, string)> SetVideoSendDate(string fileName, int brokerId, DateTime? sendDate);
+        Task<(bool, string)> SetVideoSendDateTick(string fileName, int brokerId, bool value);
     }
 }
