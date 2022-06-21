@@ -179,6 +179,12 @@ namespace BrokerIQ.Online.Pages
         {
             await VerifyAccess();
 
+            if (await CheckIsAdmin())
+            {
+                await RefreshVideosWithDialogMessage(true, "Admin cannot set birthday video");
+                return;
+            }
+
             var dialogParams = new DialogParameters();
             var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Name == name);
             bool alreadyChecked = false;
@@ -194,6 +200,7 @@ namespace BrokerIQ.Online.Pages
             {
                 dialogParams.Add("Message", "This video will be sent to clients on their birthday. Continue?");
             }
+
 
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
@@ -216,7 +223,13 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task<bool> SetVideoSendDate(string name, DateTime? date)
         {
-            await VerifyBroker();
+            await VerifyAccess();
+            if (await CheckIsAdmin())
+            {
+                await RefreshVideosWithDialogMessage(true, "Admin cannot set video date");
+                return false;
+            }
+
             var returned = await VideoService.SetVideoSendDate(name, BrokerId, date);
 
             if (returned.Item1)
@@ -425,6 +438,14 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task VerifyAdmin()
         {
+            if (!await CheckIsAdmin())
+            {
+                NavigationManager.NavigateTo($"account/logout");
+            }
+        }
+
+        protected async Task<bool> CheckIsAdmin()
+        {
             bool verified;
             try
             {
@@ -436,10 +457,7 @@ namespace BrokerIQ.Online.Pages
                 verified = false;
             }
 
-            if (!verified)
-            {
-                NavigationManager.NavigateTo($"account/logout");
-            }
+            return verified;
         }
 
         protected void NavigateToOverview()
@@ -459,9 +477,9 @@ namespace BrokerIQ.Online.Pages
         /// </summary>
         /// <param name="success">Success of prior API call</param>
         /// <param name="message">Message to be displayed in dialog</param>
-        private async Task RefreshVideosWithDialogMessage(bool success, string message)
+        private async Task RefreshVideosWithDialogMessage(bool refresh, string message)
         {
-            if (success)
+            if (refresh)
             {
                 Videos = (await VideoService.GetVideos(BrokerId)).ToList();
                 StateHasChanged();

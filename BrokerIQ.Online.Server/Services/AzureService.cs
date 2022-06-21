@@ -302,38 +302,36 @@ namespace BrokerIQ.Online.Server.Services
                 await foreach (BlobItem blobItem in videoContainerClient.GetBlobsAsync(BlobTraits.All))
                 {
                     BlobClient blobClient = this.videoContainerClient.GetBlobClient(blobItem.Name);
-                    if (blobItem.Name == fileName) {
-                        var tags = await blobClient.GetTagsAsync();
 
-                        var foundBrokerId = "";
-                        if (blobItem.Tags != null)
-                        {
-                            blobItem.Tags.TryGetValue("Broker", out foundBrokerId);
-                        }
+                    var tags = await blobClient.GetTagsAsync();
 
-                        // If this broker is the uploading broker, OR Admin user (0)
-                        if (foundBrokerId == brokerId.ToString() || brokerId == 0)
-                        {
-                            //All false except the new setting
-                            var newSetting = birthdayVideo ? "true" : "false";
-                            var setting = blobItem.Name == fileName ? newSetting : "false";
-                            var newtags = tags.Value.Tags;
-                            if(newtags.Any(x => x.Key == "BirthdayVideo"))
-                            {
-                                var found = newtags.FirstOrDefault(x => x.Key == "BirthdayVideo");
-                                newtags.Remove(found);
-                                found = new KeyValuePair<string, string>("BirthdayVideo", setting);
-                                newtags.Add(found);
-                            }
-                            else
-                            {
-                                newtags.Add("BirthdayVideo", setting);
-                            }
-
-                            await blobClient.SetTagsAsync(newtags);
-                        }
+                    var foundBrokerId = "";
+                    if (blobItem.Tags != null)
+                    {
+                        blobItem.Tags.TryGetValue("Broker", out foundBrokerId);
                     }
 
+                    // If this broker is the uploading broker -- admin cannot set birthday video
+                    if (foundBrokerId == brokerId.ToString())
+                    {
+                        //All false except the new setting
+                        var newSetting = birthdayVideo ? "true" : "false";
+                        var setting = blobItem.Name == fileName ? newSetting : "false";
+                        var newtags = tags.Value.Tags;
+                        if(newtags.Any(x => x.Key == "BirthdayVideo"))
+                        {
+                            var found = newtags.FirstOrDefault(x => x.Key == "BirthdayVideo");
+                            newtags.Remove(found);
+                            found = new KeyValuePair<string, string>("BirthdayVideo", setting);
+                            newtags.Add(found);
+                        }
+                        else
+                        {
+                            newtags.Add("BirthdayVideo", setting);
+                        }
+
+                        await blobClient.SetTagsAsync(newtags);
+                    }
                 }
             }
             catch
