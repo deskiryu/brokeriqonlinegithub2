@@ -58,7 +58,7 @@
             </TitleContent>
             <DialogContent>
                 <MudTextField Label="Video Name" ID="inVal" @bind-Value="@VideoName" Type="InputType.Text" Placeholder="" HelperText="Enter video name" />
-                <MudTextField Label= "Send Date" T="DateTime?" @bind-Value="@VideoSendDate" Format="yyyy-MM-dd" HelperText="(Optional) Enter a date of when this should be sent" InputType="InputType.Date"/>
+                <MudTextField Label= "Send Date" T="DateTime?" @bind-Value="@VideoSendDate" Format="yyyy-MM-dd" HelperText="(Optional) Enter a date of when this should be sent"/>
 
             </DialogContent>
             <DialogActions>
@@ -70,19 +70,19 @@
 
         <MudTable Items="@Videos" id="table-video" class="table col-sm-12 table-striped ">
             <HeaderContent>
-                    <MudTh class="col-md-1">Watch</MudTh>
-                    <MudTh class="col-md-2">
+                    <MudTh class="video_table_col_width_parent">Watch</MudTh>
+                    <MudTh class="">
                         <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.Name)">Video Name</MudTableSortLabel>
                     </MudTh>
-                    <MudTh class="col-md-2">
+                    <MudTh class="">
                         <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.UploadDate)">Uploaded</MudTableSortLabel>
                     </MudTh>
-                    <MudTh class="col-md-2">
+                    <MudTh class="">
                         <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.SendDate)">Send Date</MudTableSortLabel>
                     </MudTh>
-                    <MudTh class="col-md-1">Birthday</MudTh>
-                    <MudTh class="col-md-1">Send</MudTh>
-                    <MudTh class="col-md-1">Delete</MudTh>
+                    <MudTh class="">Birthday</MudTh>
+                    <MudTh class="">Send</MudTh>
+                    <MudTh class="">Delete</MudTh>
             </HeaderContent>
                     <RowTemplate>
                         <MudTd DataLabel="Watch">

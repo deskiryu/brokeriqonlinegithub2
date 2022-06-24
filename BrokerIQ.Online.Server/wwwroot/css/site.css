@@ -433,8 +433,12 @@ app {
     padding: 0rem;
 }
 
+.video_table_col_width_parent {
+    width: 190px!important;
+}
+
 .video_table_col_width {
-    width: 170px;
+    width: 170px!important;
 }
 
 .video_play_size {
