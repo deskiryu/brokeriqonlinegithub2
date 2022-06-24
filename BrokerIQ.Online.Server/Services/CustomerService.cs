@@ -10,8 +10,8 @@ namespace BrokerIQ.Online.Services
     using Dto.Models;
     using Interface;
     using Models;
-    using BrokerIQ.Online.Server.Enumuration;
     using BrokerIQ.Online.Server.Extensions;
+    using BrokerIQ.Dto.Enum;
 
     public class CustomerService : ICustomerService
     {

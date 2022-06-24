@@ -10,7 +10,7 @@ namespace BrokerIQ.Online.Server.Extensions
     using System.Reflection;
     using System.Threading.Tasks;
     using Microsoft.JSInterop;
-    using BrokerIQ.Online.Server.Enumuration;
+    using BrokerIQ.Dto.Enum;
 
     public static class Extensions
     {
