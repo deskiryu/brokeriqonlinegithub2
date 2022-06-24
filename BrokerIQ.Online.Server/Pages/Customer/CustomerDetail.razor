@@ -13,14 +13,24 @@
 
 @inject IJSRuntime js
 @functions {
-    async void PreviewImage()
+    async Task PreviewImage()
     {
         await Extensions.PreviewFile(js, memoryStream, true);
     }
 
-    async void SaveImage()
+    async Task SaveImage()
     {
         await Extensions.SaveAs(js, imageFileName, imageData);
+    }
+
+    async Task DownloadPdf(CustomerDocumentDto sdoc)
+    {
+        await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
+    }
+    async Task PreviewPdf(CustomerDocumentDto sdoc)
+    {
+        var memoryStream = new MemoryStream(sdoc.File);
+        await Extensions.PreviewFile(js, memoryStream);
     }
 }
 
@@ -324,17 +334,31 @@ else if (!Saved)
                     </tbody>
                 </table>
                 @code{
-                    protected void ViewDocumentUpload(CustomerDocumentDto doc)
+                    protected async Task ViewDocumentUpload(CustomerDocumentDto doc)
                     {
-                        memoryStream = new MemoryStream(doc.File);
-                        PreviewImage();
+                        if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
+                        {
+                            memoryStream = new MemoryStream(doc.File);
+                            PreviewImage();
+                        }
+                        else
+                        {
+                            await PreviewPdf(doc);
+                        }
                     }
 
-                    protected void SaveDocumentUpload(CustomerDocumentDto doc)
+                    protected async Task SaveDocumentUpload(CustomerDocumentDto doc)
                     {
-                        imageFileName = doc.Description + ".jpeg";
-                        imageData = doc.File;
-                        SaveImage();
+                        if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
+                        {
+                            imageFileName = doc.Description + ".jpeg";
+                            imageData = doc.File;
+                            SaveImage();
+                        }
+                        else
+                        {
+                            await DownloadPdf(doc);
+                        }
                     }
                 }
             </MudTabPanel>

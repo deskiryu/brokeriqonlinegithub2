@@ -98,11 +98,11 @@ namespace BrokerIQ.Online.Pages
 
                 if (succeeded)
                 {
-                    RefreshAudioListWithDialogMessage(succeeded, "Deleted successfully");
+                    await RefreshAudioListWithDialogMessage(succeeded, "Deleted successfully");
                 }
                 else
                 {
-                    RefreshAudioListWithDialogMessage(succeeded, "Something went wrong deleting the Audio. Please try again.");
+                    await RefreshAudioListWithDialogMessage(succeeded, "Something went wrong deleting the Audio. Please try again.");
                 }
             }
         }
@@ -161,10 +161,6 @@ namespace BrokerIQ.Online.Pages
                 NavigationManager.NavigateTo($"account/logout");
             }
         }
-        public async Task UploadButtonPushed()
-        {
-            // is this a TODO? Moved from AudioList.razor
-        }
 
         protected async Task AddRecording()
         {
@@ -188,7 +184,7 @@ namespace BrokerIQ.Online.Pages
         /// </summary>
         /// <param name="success">Success of prior API call</param>
         /// <param name="message">Message to be displayed in dialog</param>
-        private async void RefreshAudioListWithDialogMessage(bool success, string message)
+        private async Task RefreshAudioListWithDialogMessage(bool success, string message)
         {
             if (success)
             {
