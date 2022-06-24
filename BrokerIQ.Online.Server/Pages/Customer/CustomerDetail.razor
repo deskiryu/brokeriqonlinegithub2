@@ -308,6 +308,7 @@ else if (!Saved)
                 <table id="table-uploads" class="table  col-sm-12 table-striped ">
                     <thead>
                         <tr>
+                            <th>Document</th>
                             <th>Type</th>
                             <th>Name</th>
                             <th></th>
@@ -318,6 +319,14 @@ else if (!Saved)
                         {
                             <tr>
                                 <td>@doc.DocuVaultType</td>
+                                <td>@if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
+                                    {
+                                        <p>Photo</p>
+                                    }
+                                    else{
+                                        <p>Pdf</p> 
+                                    }
+                                </td>
                                 <td>@doc.Description</td>
                                 <td>
                                     <a class="btn btn-primary table-btn" @onclick="f => ViewDocumentUpload(doc)">
