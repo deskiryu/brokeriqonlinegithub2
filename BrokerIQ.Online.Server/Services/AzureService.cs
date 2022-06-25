@@ -76,7 +76,7 @@ namespace BrokerIQ.Online.Server.Services
             return await TransferStreamToAzureBlob(blobClient, fileName, stream, brokerId);
         }
 
-        public async Task<bool> TransferVideoStreamToAzureBlob(string fileName, DateTime? sendDate, Stream stream, int brokerId)
+        public async Task<bool> TransferVideoStreamToAzureBlob(string fileName, Stream stream, int brokerId)
         {
             if (!this.initialised)
                 await Initialise();
@@ -85,7 +85,6 @@ namespace BrokerIQ.Online.Server.Services
             var result = await TransferStreamToAzureBlob(blobClient, fileName, stream, brokerId);
             var tags = new Dictionary<string,string>();
             tags.Add("Broker", brokerId.ToString());
-            tags.Add("SendDate", ((DateTimeOffset)sendDate).ToString("g"));
          
             await blobClient.SetTagsAsync(tags);
             return result;
