@@ -5,8 +5,9 @@
 @using BrokerIQ.Online.Models.Account
 @using AutoMapper
 @using BrokerIQ.Dto.Models
+@using BrokerIQ.Online.Server.Shared
 @inject IAccountService AccountService
-@inject IAlertService AlertService
+@inject IDialogService DialogService
 @inject IAzureService AzureService
 @inject IAddressService AddressService
 @inject NavigationManager NavigationManager
@@ -155,11 +156,9 @@
 
     private async void OnValidSubmit()
     {
-        // reset alerts on submit
-        AlertService.Clear();
-
         loading = true;
-        var brokerReturned = new BrokerDto();
+        var brokerReturned = new BrokerDto();                                
+        var dialogParams = new DialogParameters();
         try
         {
             var createBroker = mapper.Map<CreateBrokerDto>(model);
@@ -178,13 +177,14 @@
                 await AzureService.TransferLogoStreamToAzureBlob(fileName, memoryStream, brokerReturned.Id);
             }
 
-            AlertService.Success("Registration successful - Please check your email, including JUNK folders, for the verfication email", keepAfterRouteChange: true);
-            NavigationManager.NavigateTo("account/login");
+            dialogParams.Add("Message", $"Registration successful - Please check your email, including JUNK folders, for the verfication email");
+            await DialogService.Show<AlertDialog>("Registration", dialogParams).Result;
 
         }
         catch (Exception ex)
         {
-            AlertService.Error(ex.Message);
+            dialogParams.Add("Message", ex.Message);
+            await DialogService.Show<AlertDialog>("Registration", dialogParams).Result;
         }
         loading = false;
         StateHasChanged();
