@@ -197,8 +197,8 @@ app {
 
     .spin-row {
         position: relative;
-        height: 120px;
-        width: 120px;
+        height: 50px;
+        width: 50px;
     }
 
     .spin-row-bg {
@@ -433,11 +433,29 @@ app {
     padding: 0rem;
 }
 
+.video_table_col_width_parent {
+    width: 190px!important;
+}
+
 .video_table_col_width {
-    width: 170px;
+    width: 170px!important;
 }
 
 .video_play_size {
     width: 150px;
     height: 150px;
 }
+
+
+.video_checkbox_tick {
+    margin-top: 4px;
+}
+
+.video_checkbox_label {
+    margin-left: 5px;
+}
+.video_send_date {
+    margin-right: 15px;
+}
+
+

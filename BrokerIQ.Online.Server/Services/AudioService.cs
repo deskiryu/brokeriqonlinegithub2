@@ -10,10 +10,22 @@ namespace BrokerIQ.Online.Server.Services
     using System.Threading.Tasks;
     using BrokerIQ.Online.Server.Models;
     using BrokerIQ.Online.Services.Interface;
+    using Microsoft.AspNetCore.Components;
 
     public class AudioService : IAudioService
     {
         private readonly IAzureService azureService;
+
+        [Inject]
+        public IMetaDefenderCoreService MetaDefenderCoreService { get; set; }
+
+        public bool AudioUploading { get; set; }
+
+        public bool AudioScanUploading { get; set; }
+
+        public bool AudioScanning { get; set; }
+
+        public int AudioScanningProgress { get; set; }
 
         public AudioService(IAzureService azureService)
         {
@@ -34,14 +46,12 @@ namespace BrokerIQ.Online.Server.Services
             return blobs;
         }
 
-        public async Task<bool> UploadAudio(string fileName, string audioAsBase64, int brokerId)
+        public async Task<bool> UploadAudio(string fileName, MemoryStream audioStream, int brokerId)
         {
             bool succeeded = false;
             try
             {
-                var bytes = Convert.FromBase64String(audioAsBase64);
-                var stream = new MemoryStream(bytes);
-                succeeded = await azureService.TransferAudioStreamToAzureBlob(fileName, stream, brokerId);
+                succeeded = await azureService.TransferAudioStreamToAzureBlob(fileName, audioStream, brokerId);
             }
             catch
             {
@@ -78,5 +88,7 @@ namespace BrokerIQ.Online.Server.Services
             }
             return !foundName;
         }
+
+
     }
 }

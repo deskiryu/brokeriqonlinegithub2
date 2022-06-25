@@ -60,12 +60,12 @@ namespace BrokerIQ.Online.Server.Services
             return blob;
         }
 
-        public async Task<bool> UploadVideo(string fileName, Stream stream, int brokerId)
+        public async Task<bool> UploadVideo(string fileName, DateTime? sendDate, Stream stream, int brokerId)
         {
             bool succeeded = false;
             try
             {
-                succeeded = await azureService.TransferVideoStreamToAzureBlob(fileName, stream, brokerId);
+                succeeded = await azureService.TransferVideoStreamToAzureBlob(fileName, sendDate, stream, brokerId);
             }
             catch
             {
@@ -137,6 +137,36 @@ namespace BrokerIQ.Online.Server.Services
             try
             {
                 returned = await azureService.SetBirthdayVideo(fileName, brokerId, birthdayVideo);
+            }
+            catch
+            {
+
+            }
+            return returned;
+        }
+
+        public async Task<(bool, string)> SetVideoSendDate(string fileName, int brokerId, DateTime? sendDate)
+        {
+            var returned = (false,string.Empty);
+
+            try
+            {
+                returned = await azureService.SetVideoSendDate(fileName, brokerId, sendDate);
+            }
+            catch
+            {
+
+            }
+            return returned;
+        }
+
+        public async Task<(bool, string)> SetVideoSendDateTick(string fileName, int brokerId, bool value)
+        {
+            var returned = (false, string.Empty);
+
+            try
+            {
+                returned = await azureService.SetVideoSendDateTick(fileName, brokerId, value);
             }
             catch
             {

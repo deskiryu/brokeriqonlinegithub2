@@ -2,9 +2,6 @@
 @inherits VideoListBase
 @using System.Globalization
 @using System.IO
-@using BrokerIQ.Dto.Models
-@using BrokerIQ.Online.Services.Interface
-@using BrokerIQ.Online.Server.Shared
 
 
 <h1 class="page-title">All Videos</h1>
@@ -31,7 +28,7 @@
         </div>
         <InputFile OnChange="LoadFiles" class="mt-2 btn btn-primary" accept="video/mov,video/mp4,video/*" />
         <p>@status</p>
-        <div class="col-sm">
+        <div class="">
             @if (VideoScanUploading)
             {
                 <div class="mt-5">
@@ -57,11 +54,12 @@
 
         <MudDialog @bind-IsVisible="RenameUploadVisibility">
             <TitleContent>
-                Upload & rename video
+                Upload Video
             </TitleContent>
             <DialogContent>
+                <MudTextField Label="Video Name" ID="inVal" @bind-Value="@VideoName" Type="InputType.Text" Placeholder="" HelperText="Enter video name" />
+                <MudTextField Label= "Send Date" T="DateTime?" @bind-Value="@VideoSendDate" Format="yyyy-MM-dd" HelperText="(Optional) Enter a date of when this should be sent"/>
 
-                <MudInputString ID="inVal" @bind-Value="@VideoName" Type="InputType.Text" Placeholder="" />
             </DialogContent>
             <DialogActions>
                 <MudButton Color="Color.Secondary" OnClick="OnCancelPushed">Cancel</MudButton>
@@ -72,12 +70,19 @@
 
         <MudTable Items="@Videos" id="table-video" class="table col-sm-12 table-striped ">
             <HeaderContent>
-                    <MudTh class="col-md-1">Watch</MudTh>
-                    <MudTh class="col-md-2">Video Name</MudTh>
-                    <MudTh class="col-md-2">Uploaded</MudTh>
-                    <MudTh class="col-md-1">Birthday</MudTh>
-                    <MudTh class="col-md-1">Send</MudTh>
-                    <MudTh class="col-md-1">Delete</MudTh>
+                    <MudTh class="video_table_col_width_parent">Watch</MudTh>
+                    <MudTh class="">
+                        <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.Name)">Video Name</MudTableSortLabel>
+                    </MudTh>
+                    <MudTh class="">
+                        <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.UploadDate)">Uploaded</MudTableSortLabel>
+                    </MudTh>
+                    <MudTh class="">
+                        <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.SendDate)">Send Date</MudTableSortLabel>
+                    </MudTh>
+                    <MudTh class="">Birthday</MudTh>
+                    <MudTh class="">Send</MudTh>
+                    <MudTh class="">Delete</MudTh>
             </HeaderContent>
                     <RowTemplate>
                         <MudTd DataLabel="Watch">
@@ -119,8 +124,22 @@
 
                         </MudTd>
                         <MudTd DataLabel="Video Name">@Path.GetFileNameWithoutExtension(context.Name)</MudTd>
-                        <MudTd DataLabel="Uploaded">@((context.Date == null) ? "-" : ((DateTimeOffset)context.Date).ToString("g", new CultureInfo("en-GB")))</MudTd>
-                        <MudTd DataLabel="Birthday"><input type="checkbox" checked="@context.BirthdayVideo" @onclick="f => SetBirthdayVideo(context.Name)" /></MudTd>
+                        <MudTd DataLabel="Uploaded">@((context.UploadDate == null) ? "-" : ((DateTimeOffset)context.UploadDate).ToString("g", new CultureInfo("en-GB")))</MudTd>
+                        <MudTd DataLabel="Video Send Data">   
+                            <div class="row">
+                                <MudDatePicker Class="video_send_date"
+                                Culture=@(new CultureInfo("en-GB")) PickerVariant="PickerVariant.Dialog" DisableToolbar="true"
+                                Date="@context.SendDate" DateChanged="async (x) => await UpdateVideoSendDate(x, context.Name)"
+                                style="font-size: 14px; margin-top: -10px">
+                                </MudDatePicker>
+                                </div>
+                            <div class="row mt-2">
+                                <input type="checkbox" class="video_checkbox_tick" checked="@context.SendDateTick" @onclick="async f => await SetSendDateTick(context.Name)" />
+                                <label class="video_checkbox_label">Send on this date</label>
+
+                            </div>
+                        </MudTd>
+                        <MudTd DataLabel="Birthday"><input type="checkbox" checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Name)" /></MudTd>
                         <MudTd DataLabel="Send">
                             <NavLink href="@($"videodetail?url={context.Url}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-paper-plane"></i>

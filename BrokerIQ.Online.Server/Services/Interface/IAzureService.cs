@@ -11,7 +11,7 @@ namespace BrokerIQ.Online.Services.Interface
     public interface IAzureService
     {
         Task Initialise();
-        Task<bool> TransferVideoStreamToAzureBlob(string fileName, Stream stream, int brokerId);
+        Task<bool> TransferVideoStreamToAzureBlob(string fileName, DateTime? sendDate, Stream stream, int brokerId);
         Task<bool> TransferAudioStreamToAzureBlob(string fileName, Stream stream, int brokerId);
         Task<bool> TransferLogoStreamToAzureBlob(string fileName, Stream stream, int brokerId);
         Task<List<Video>> GetVideoBlobs(int brokerId);
@@ -22,6 +22,8 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> DeleteVideoThumbnailBlob(string fileName);
         Task<bool> DeleteAudioBlob(string fileName);
         Task<bool> IsVettedVideo(string fileName);
-        Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool birthdayVideo = true);     
+        Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool birthdayVideo = true);
+        Task<(bool, string)> SetVideoSendDate(string fileName, int brokerId, DateTime? sendDate);
+        Task<(bool, string)> SetVideoSendDateTick(string fileName, int brokerId, bool value);
     }
 }

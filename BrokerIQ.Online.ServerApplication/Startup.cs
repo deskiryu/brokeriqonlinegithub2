@@ -78,6 +78,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IBrokerService, BrokerService>();
+            services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IBrokerStaffService, BrokerStaffService>();
             services.AddScoped<IHealthService, HealthService>();
             services.AddScoped<IAddressService, AddressService>();
@@ -87,6 +88,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<INoteService, NoteService>();
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IMetaDefenderCoreService, MetaDefenderCoreService>();
+            services.AddScoped<IVersionService, VersionService>();
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
             services.AddScoped<MessageCountState>();

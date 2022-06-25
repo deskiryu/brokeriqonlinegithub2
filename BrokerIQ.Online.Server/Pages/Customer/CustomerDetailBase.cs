@@ -94,7 +94,7 @@ namespace BrokerIQ.Online.Pages
             {
                 StatusClass = "alert-danger";
                 Message = "Something went wrong getting customer details";
-                Saved = false;
+                Saved = true;
             }
 
 
@@ -110,7 +110,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting customer details";
-                    Saved = false;
+                    Saved = true;
                 }
             }
 
@@ -334,11 +334,11 @@ namespace BrokerIQ.Online.Pages
 
             if (succeeded)
             {
-                RefreshNotesWithDialogMessage(succeeded, "Note added successfully");
+                await RefreshNotesWithDialogMessage(succeeded, "Note added successfully");
             }
             else
             {
-                RefreshNotesWithDialogMessage(succeeded, "Something went wrong adding the note. Please try again.");
+                await RefreshNotesWithDialogMessage(succeeded, "Something went wrong adding the note. Please try again.");
             }
         }
 
@@ -357,7 +357,14 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (!string.IsNullOrEmpty(message))
                     {
-                        succeeded = (await NoteService.UpdateNote(message, note.Id)).Id > 0;
+                        try
+                        {
+                            succeeded = (await NoteService.UpdateNote(message, note.Id)).Id > 0;
+                        }
+                        catch
+                        {
+                            await RefreshNotesWithDialogMessage(false,"Something went wrong updating the Note. Please try again.");
+                        }
                     }
                 }
                 catch
@@ -372,11 +379,11 @@ namespace BrokerIQ.Online.Pages
 
             if (succeeded)
             {
-                RefreshNotesWithDialogMessage(succeeded, "Note updated successfully");
+                await RefreshNotesWithDialogMessage(succeeded, "Note updated successfully");
             }
             else
             {
-                RefreshNotesWithDialogMessage(succeeded, "Something went wrong updating the note. Please try again");
+                await RefreshNotesWithDialogMessage(succeeded, "Something went wrong updating the note. Please try again");
             }
         }
 
@@ -390,11 +397,11 @@ namespace BrokerIQ.Online.Pages
                 var deleted = await NoteService.Delete(id);
                 if (deleted)
                 {
-                    RefreshNotesWithDialogMessage(deleted, "Deleted successfully");
+                    await RefreshNotesWithDialogMessage(deleted, "Deleted successfully");
                 }
                 else
                 {
-                    RefreshNotesWithDialogMessage(deleted, "The note did not delete.");
+                    await RefreshNotesWithDialogMessage(deleted, "The note did not delete.");
                 }
             }
             else
@@ -434,11 +441,11 @@ namespace BrokerIQ.Online.Pages
 
             if (succeeded)
             {
-                RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
+                await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
             }
             else
             {
-                RefreshChatWithDialogMessage(succeeded, "Something went wrong sending the message.Please try again.");
+                await RefreshChatWithDialogMessage(succeeded, "Something went wrong sending the message.Please try again.");
             }
         }
 
@@ -447,7 +454,7 @@ namespace BrokerIQ.Online.Pages
         /// </summary>
         /// <param name="success">Success of prior API call</param>
         /// <param name="message">Message to be displayed in dialog</param>
-        private async void RefreshNotesWithDialogMessage(bool success, string message)
+        private async Task RefreshNotesWithDialogMessage(bool success, string message)
         {
             if (success)
             {
@@ -464,7 +471,7 @@ namespace BrokerIQ.Online.Pages
         /// </summary>
         /// <param name="success">Success of prior API call</param>
         /// <param name="message">Message to be displayed in dialog</param>
-        private async void RefreshChatWithDialogMessage(bool success, string message)
+        private async Task RefreshChatWithDialogMessage(bool success, string message)
         {
             if (success)
             {

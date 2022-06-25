@@ -49,7 +49,7 @@ namespace BrokerIQ.Online.Services
 
         public async Task<IEnumerable<CustomerDocumentDto>> Get(int customerId)
         {
-            var answer = await this.requestProviderService.Get<IEnumerable<CustomerDocumentDto>>(this.CustomerDocumentUrl + @"/bycustomer/" + $"{customerId}");
+            var answer = await this.requestProviderService.Get<IEnumerable<CustomerDocumentDto>>(this.CustomerDocumentUrl + @"/bycustomer/" + $"{customerId}?eagerLoadPdf=true");
             answer = answer.Where(x => x.DocuVaultType != DocuVaultTypeEnum.ProfilePicture);
             return answer;
         }

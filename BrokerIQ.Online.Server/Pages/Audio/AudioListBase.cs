@@ -38,6 +38,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IBrokerService BrokerService { get; set; }
 
+        [Inject]
+        public IAdminService AdminService { get; set; }
+
         public List<Audio> Audios { get; set; }
 
         public int BrokerId { get; set; }
@@ -47,11 +50,7 @@ namespace BrokerIQ.Online.Pages
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
-            StateHasChanged();
-        }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
             try
             {
                 var user = await AccountService.GetUser();
@@ -59,8 +58,9 @@ namespace BrokerIQ.Online.Pages
                 {
                     throw new Exception();
                 }
-                if (user.IsAdmin)
+                if (user.IsAdmin || user.MasterBrokerId == 0)
                 {
+                    await VerifyAdmin();
                     BrokerId = 0;
                 }
                 else if (user.IsBroker || user.IsBrokerStaff)
@@ -88,7 +88,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task DeleteAudio(string name)
         {
-            await VerifyBroker();
+            await VerifyAccess();
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this Audio?");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
@@ -98,12 +98,29 @@ namespace BrokerIQ.Online.Pages
 
                 if (succeeded)
                 {
-                    RefreshAudioListWithDialogMessage(succeeded, "Deleted successfully");
+                    await RefreshAudioListWithDialogMessage(succeeded, "Deleted successfully");
                 }
                 else
                 {
-                    RefreshAudioListWithDialogMessage(succeeded, "Something went wrong deleting the Audio. Please try again.");
+                    await RefreshAudioListWithDialogMessage(succeeded, "Something went wrong deleting the Audio. Please try again.");
                 }
+            }
+        }
+
+        protected async Task VerifyAccess()
+        {
+            var user = await AccountService.GetUser();
+            if (user.IsAdmin || user.MasterBrokerId == 0)
+            {
+                await VerifyAdmin();
+            }
+            else if (user.IsBroker || user.IsBrokerStaff)
+            {
+                await VerifyBroker();
+            }
+            else
+            {
+                NavigationManager.NavigateTo($"account/logout");
             }
         }
 
@@ -126,14 +143,28 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        public async Task UploadButtonPushed()
+        protected async Task VerifyAdmin()
         {
-            // is this a TODO? Moved from AudioList.razor
+            bool verified;
+            try
+            {
+                var response = await AdminService.VerifyAdmin();
+                verified = response.BoolResult;
+            }
+            catch
+            {
+                verified = false;
+            }
+
+            if (!verified)
+            {
+                NavigationManager.NavigateTo($"account/logout");
+            }
         }
 
         protected async Task AddRecording()
         {
-            await VerifyBroker();
+            await VerifyAccess();
             var dialogParams = new DialogParameters();
             dialogParams.Add("BrokerId", BrokerId);
             var dialogOptions = new DialogOptions()
@@ -153,7 +184,7 @@ namespace BrokerIQ.Online.Pages
         /// </summary>
         /// <param name="success">Success of prior API call</param>
         /// <param name="message">Message to be displayed in dialog</param>
-        private async void RefreshAudioListWithDialogMessage(bool success, string message)
+        private async Task RefreshAudioListWithDialogMessage(bool success, string message)
         {
             if (success)
             {
