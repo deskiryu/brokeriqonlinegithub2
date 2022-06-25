@@ -76,7 +76,7 @@ namespace BrokerIQ.Online.Server.Services
             return await TransferStreamToAzureBlob(blobClient, fileName, stream, brokerId);
         }
 
-        public async Task<bool> TransferVideoStreamToAzureBlob(string fileName, DateTime? sendDate, Stream stream, int brokerId)
+        public async Task<bool> TransferVideoStreamToAzureBlob(string fileName, Stream stream, int brokerId)
         {
             if (!this.initialised)
                 await Initialise();

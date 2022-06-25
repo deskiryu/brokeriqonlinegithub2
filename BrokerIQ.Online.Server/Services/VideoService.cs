@@ -60,12 +60,12 @@ namespace BrokerIQ.Online.Server.Services
             return blob;
         }
 
-        public async Task<bool> UploadVideo(string fileName, DateTime? sendDate, Stream stream, int brokerId)
+        public async Task<bool> UploadVideo(string fileName, Stream stream, int brokerId)
         {
             bool succeeded = false;
             try
             {
-                succeeded = await azureService.TransferVideoStreamToAzureBlob(fileName, sendDate, stream, brokerId);
+                succeeded = await azureService.TransferVideoStreamToAzureBlob(fileName, stream, brokerId);
             }
             catch
             {

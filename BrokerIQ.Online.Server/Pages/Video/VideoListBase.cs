@@ -386,7 +386,7 @@ namespace BrokerIQ.Online.Pages
                         StateHasChanged();
 
                         memoryStream.Position = 0;
-                        bool succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, VideoSendDate, memoryStream, BrokerId);
+                        bool succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, memoryStream, BrokerId);
 
                         status = $"Finished loading {fileListEntry.Size} bytes from {fileListEntry.Name}";
 
