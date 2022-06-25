@@ -85,7 +85,6 @@ namespace BrokerIQ.Online.Server.Services
             var result = await TransferStreamToAzureBlob(blobClient, fileName, stream, brokerId);
             var tags = new Dictionary<string,string>();
             tags.Add("Broker", brokerId.ToString());
-            tags.Add("SendDate", ((DateTimeOffset)sendDate).ToString("g"));
          
             await blobClient.SetTagsAsync(tags);
             return result;
