@@ -16,7 +16,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<VideoThumbnail> GetVideoThumbnail(string fileName);
 
-        Task<bool> UploadVideo(string fileName, DateTime? sendDate, Stream stream, int brokerId);
+        Task<bool> UploadVideo(string fileName, Stream stream, int brokerId);
 
         Task<bool> DeleteVideo(string fileName);
 
