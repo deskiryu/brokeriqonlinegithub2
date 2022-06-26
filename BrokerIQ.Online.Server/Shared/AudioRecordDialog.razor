@@ -155,11 +155,11 @@
         }
         catch(Exception ex)
         {
-
+            MudDialog.Close(DialogResult.Ok("false"));
         }
 
         SpinnerVisible = "display:none";
-        MudDialog.Close(DialogResult.Ok(true));
+        MudDialog.Close(DialogResult.Ok("true"));
 
     }
 

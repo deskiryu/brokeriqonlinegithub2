@@ -83,10 +83,6 @@ namespace BrokerIQ.Online.Server.Services
 
             BlobClient blobClient = this.videoContainerClient.GetBlobClient(fileName);
             var result = await TransferStreamToAzureBlob(blobClient, fileName, stream, brokerId);
-            var tags = new Dictionary<string,string>();
-            tags.Add("Broker", brokerId.ToString());
-         
-            await blobClient.SetTagsAsync(tags);
             return result;
         }
 
@@ -95,6 +91,11 @@ namespace BrokerIQ.Online.Server.Services
             Console.WriteLine("Uploading content to Blob storage as blob:\n\t {0}\n", blobClient.Uri);
 
             var response = await blobClient.UploadAsync(stream, true);
+
+            var tags = new Dictionary<string,string>();
+            tags.Add("Broker", brokerId.ToString());
+            await blobClient.SetTagsAsync(tags);
+
             return response.GetRawResponse().Status == (int) HttpStatusCode.Created;
         } 
 
