@@ -318,7 +318,12 @@ else if (!Saved)
                         @foreach (var doc in CustomerDocuments)
                         {
                             <tr>
-                                <td>@doc.DocuVaultType</td>
+                                <td>@{
+                                        var strDocType = string.Empty;
+                                        DocumentTypeEnumValues.TryGetValue((int)doc.DocuVaultType, out strDocType);
+                                        @strDocType
+                                    }
+                                </td>
                                 <td>@if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
                                     {
                                         <p>Photo</p>
@@ -343,6 +348,7 @@ else if (!Saved)
                     </tbody>
                 </table>
                 @code{
+                
                     protected async Task ViewDocumentUpload(CustomerDocumentDto doc)
                     {
                         if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)

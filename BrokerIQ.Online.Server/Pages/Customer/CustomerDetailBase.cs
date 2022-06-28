@@ -13,6 +13,7 @@ namespace BrokerIQ.Online.Pages
     using MudBlazor;
     using System.IO;
     using BrokerIQ.Online.Server.Shared;
+    using BrokerIQ.Online.Server.Extensions;
 
     public class CustomerDetailBase : ComponentBase
     {
@@ -80,6 +81,7 @@ namespace BrokerIQ.Online.Pages
 
         public int BrokerListId = 0;
 
+        public Dictionary<int,string> DocumentTypeEnumValues = new Dictionary<int, string>();
 
         protected override async Task OnInitializedAsync()
         {
@@ -89,6 +91,14 @@ namespace BrokerIQ.Online.Pages
                 CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
                 Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
+                foreach (var item in Enum.GetValues(typeof(DocuVaultTypeEnum)).Cast<DocuVaultTypeEnum>())
+                {
+                    if (item == DocuVaultTypeEnum.ProfilePicture)
+                    {
+                        continue;
+                    }
+                    DocumentTypeEnumValues.Add((int)item, item.GetDisplayName());
+                }
             }
             catch
             {
