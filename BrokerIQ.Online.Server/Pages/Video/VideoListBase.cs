@@ -16,6 +16,8 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Server.Models;
     using BrokerIQ.Online.Services.Interface;
     using BrokerIQ.Online.Server.Shared;
+    using BrokerIQ.Online.Models;
+    using System.ComponentModel.DataAnnotations;
 
     public class VideoListBase : ComponentBase
     {
@@ -56,11 +58,16 @@ namespace BrokerIQ.Online.Pages
 
         public List<Video> Videos { get; set; }
 
+        public List<Broker> Brokers { get; set; }
+
         public Dictionary<string, VideoThumbnail> VideoThumbnails { get; set; }
 
         public Dictionary<string, bool> DisplayEmbeddedVideo { get; set; }
 
         public int BrokerId { get; set; }
+
+        [Required]
+        public int BrokerListId = 0;
 
         public IBrowserFile fileListEntry;
 
@@ -74,11 +81,14 @@ namespace BrokerIQ.Online.Pages
 
         public int VideoScanningProgress { get; set; }
 
+        public bool IsAdmin { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
             CultureInfo.CurrentCulture = new CultureInfo("en-GB", false);
             StateHasChanged();
+            IsAdmin = false;
 
             try
             {
@@ -90,7 +100,9 @@ namespace BrokerIQ.Online.Pages
                 if (user.IsAdmin || user.MasterBrokerId == 0)
                 {
                     await VerifyAdmin();
+                    IsAdmin = true;
                     BrokerId = 0;
+                    Brokers = (await BrokerService.GetBrokers()).ToList();
                 }
                 else if (user.IsBroker || user.IsBrokerStaff)
                 {
@@ -107,6 +119,10 @@ namespace BrokerIQ.Online.Pages
                 foreach (Video video in Videos)
                 {
                     DisplayEmbeddedVideo[video.Name] = false;
+                    if (user.IsAdmin)
+                    {
+                        video.Broker = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
+                    }
                 }
                 StateHasChanged();
             }
@@ -375,7 +391,7 @@ namespace BrokerIQ.Online.Pages
                     await fileListEntry.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
 
                     string fileName = $"{VideoName}{ExtensionName}";
-                    bool scanPass = await ScanVideo(fileName, memoryStream);
+                    bool scanPass = true;// REMOVE REMOVE REMOVE await ScanVideo(fileName, memoryStream);
 
                     VideoScanning = false;
                     StateHasChanged();
@@ -386,7 +402,12 @@ namespace BrokerIQ.Online.Pages
                         StateHasChanged();
 
                         memoryStream.Position = 0;
-                        bool succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, memoryStream, BrokerId);
+                        var localBrokerId = BrokerId;
+                        if (IsAdmin)
+                        {
+                            localBrokerId = BrokerListId;
+                        }
+                        bool succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, memoryStream, localBrokerId);
 
                         status = $"Finished loading {fileListEntry.Size} bytes from {fileListEntry.Name}";
 
@@ -467,6 +488,7 @@ namespace BrokerIQ.Online.Pages
             {
                 var response = await BrokerService.VerifyBroker(BrokerId);
                 verified = response.BoolResult;
+                IsAdmin = false;
             }
             catch
             {
@@ -494,6 +516,7 @@ namespace BrokerIQ.Online.Pages
             {
                 var response = await AdminService.VerifyAdmin();
                 verified = response.BoolResult;
+                IsAdmin = verified;
             }
             catch
             {
@@ -526,6 +549,12 @@ namespace BrokerIQ.Online.Pages
             {
                 Videos.Clear();
                 Videos = (await VideoService.GetVideos(BrokerId)).ToList();
+                if (IsAdmin){
+                    foreach (Video video in Videos)
+                    {
+                        video.Broker = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
+                    }
+                }
                 StateHasChanged();
             }
 

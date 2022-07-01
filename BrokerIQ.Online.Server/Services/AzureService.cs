@@ -109,7 +109,8 @@ namespace BrokerIQ.Online.Server.Services
             
             await foreach (BlobItem blobItem in videoContainerClient.GetBlobsAsync(BlobTraits.All))
             {
-                var foundBrokerId="";
+                var foundBroker="";
+                var foundBrokerId = 0;
                 var vetted=false;
                 var birthday = false;
                 var sendTick = false;
@@ -117,12 +118,16 @@ namespace BrokerIQ.Online.Server.Services
                 DateTime? sendDate = null;
 
                 if(blobItem.Tags!=null){
-                    blobItem.Tags.TryGetValue("Broker", out foundBrokerId);    
+                    blobItem.Tags.TryGetValue("Broker", out foundBroker);    
                     blobItem.Tags.TryGetValue("Vetted", out string vettedVideo); 
                     blobItem.Tags.TryGetValue("BirthdayVideo", out string birthdayVideo);
                     blobItem.Tags.TryGetValue("SendDate", out string sendDateStr);
                     blobItem.Tags.TryGetValue("SendDateTick", out string sendDateTickStr);
 
+                    if(foundBroker !=null && !string.IsNullOrEmpty(foundBroker))
+                    {
+                        Int32.TryParse(foundBroker, out foundBrokerId);
+                    }
                     if (vettedVideo != null && !string.IsNullOrEmpty(vettedVideo))
                     {
                         vetted = vettedVideo.Equals("true") ? true : false;   
@@ -145,7 +150,8 @@ namespace BrokerIQ.Online.Server.Services
                     }
                 }
         
-                if(brokerId==0 || foundBrokerId == brokerId.ToString())
+
+                if(brokerId==0 || foundBrokerId == brokerId)
                 {
                     videoList.Add(new Video{
                         Name = blobItem.Name,
@@ -154,7 +160,8 @@ namespace BrokerIQ.Online.Server.Services
                         UploadDate = blobItem.Properties.LastModified,
                         SendDate = sendDate,
                         BirthdayVideo = birthday,
-                        SendDateTick = sendTick
+                        SendDateTick = sendTick,
+                        BrokerId = foundBrokerId
                     });
                 }
             }
