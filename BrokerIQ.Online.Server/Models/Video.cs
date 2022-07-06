@@ -19,5 +19,9 @@ namespace BrokerIQ.Online.Server.Models
         public bool BirthdayVideo { get; set; }
 
         public bool SendDateTick { get; set; }
+
+        public int BrokerId { get; set; }
+
+        public string Broker { get; set; }
     }
 }

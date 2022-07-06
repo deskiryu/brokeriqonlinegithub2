@@ -35,7 +35,7 @@ namespace BrokerIQ.Online.Services
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             var localBrokerId = brokerId > 0 ? brokerId :  user.MasterBrokerId;
-            string newUrl = this.ChatUrl + $"?customerId={customerId}&brokerid={localBrokerId}";
+            string newUrl = this.ChatUrl + $"/{customerId}/{localBrokerId}";
 
             var ChatDto = await requestProviderService.Get<ChatDto>(newUrl);
             var chat = mapper.Map<Chat>(ChatDto);

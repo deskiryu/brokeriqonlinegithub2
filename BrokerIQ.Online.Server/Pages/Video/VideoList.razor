@@ -58,11 +58,21 @@
             </TitleContent>
             <DialogContent>
                 <MudTextField Label="Video Name" ID="inVal" @bind-Value="@VideoName" Type="InputType.Text" Placeholder="" HelperText="Enter video name" />
+                    @if(IsAdmin){
+                    <MudSelect id="brokerVideo" class="form-control" @bind-Value="@BrokerListId">
+                        <MudSelectItem Value=0>No Broker</MudSelectItem>
+                        @foreach (var broker in @Brokers)
+                                {
+                            <MudSelectItem Value=@broker.Id>@broker.Name</MudSelectItem>
+                                }
+                    </MudSelect>
+                    }
             </DialogContent>
             <DialogActions>
                 <MudButton Color="Color.Secondary" OnClick="OnCancelPushed">Cancel</MudButton>
                 <MudButton Color="Color.Primary" OnClick="UploadButtonPushed">Ok</MudButton>
             </DialogActions>
+
         </MudDialog>
 
 
@@ -78,6 +88,13 @@
                     <MudTh class="">
                         <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.SendDate)">Send Date</MudTableSortLabel>
                     </MudTh>
+                    @if (IsAdmin)
+                    {
+                        <MudTh class="">
+                            <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.Broker)">Broker</MudTableSortLabel>
+                        </MudTh>      
+                    }
+
                     <MudTh class="">Birthday</MudTh>
                     <MudTh class="">Send</MudTh>
                     <MudTh class="">Delete</MudTh>
@@ -123,7 +140,7 @@
                         </MudTd>
                         <MudTd DataLabel="Video Name">@Path.GetFileNameWithoutExtension(context.Name)</MudTd>
                         <MudTd DataLabel="Uploaded">@((context.UploadDate == null) ? "-" : ((DateTimeOffset)context.UploadDate).ToString("g", new CultureInfo("en-GB")))</MudTd>
-                        <MudTd DataLabel="Video Send Data">   
+                        <MudTd DataLabel="Video Send Date">   
                             <div class="row">
                                 <MudDatePicker Class="video_send_date"
                                 Culture=@(new CultureInfo("en-GB")) PickerVariant="PickerVariant.Dialog" DisableToolbar="true"
@@ -137,6 +154,10 @@
 
                             </div>
                         </MudTd>
+                        @if (IsAdmin)
+                        {
+                            <MudTd DataLabel="Broker">@context.Broker</MudTd>              
+                        }
                         <MudTd DataLabel="Birthday"><input type="checkbox" checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Name)" /></MudTd>
                         <MudTd DataLabel="Send">
                             <NavLink href="@($"videodetail?url={context.Url}")" class="btn btn-primary table-btn">
