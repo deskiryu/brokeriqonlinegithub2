@@ -14,5 +14,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<Chat> Get(int customerId, int brokerId = 0);
 
         Task<bool> Send(string message, int customerId);
+
+        Task<int> GetUnRead(int customerId, int brokerId = 0);
     }
 }
