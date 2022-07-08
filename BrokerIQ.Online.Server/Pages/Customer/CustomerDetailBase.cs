@@ -81,6 +81,12 @@ namespace BrokerIQ.Online.Pages
 
         public int BrokerListId = 0;
 
+        public int UnReadChat { get; set; }
+
+        public bool BadgeDot { get; set; }
+
+        public MudBlazor.Color ChatBadgeColour { get; set; }
+
         public Dictionary<int,string> DocumentTypeEnumValues = new Dictionary<int, string>();
 
         protected override async Task OnInitializedAsync()
@@ -126,7 +132,10 @@ namespace BrokerIQ.Online.Pages
 
             if (!IsAdmin)
             {
+                UnReadChat = await ChatService.GetUnRead(Customer.Id);
                 Chat = await ChatService.Get(Customer.Id);
+                ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
+                BadgeDot = UnReadChat == 0 ;
             }
             else
             {

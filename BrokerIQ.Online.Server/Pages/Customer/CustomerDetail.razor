@@ -471,7 +471,7 @@ else if (!Saved)
                 }
             </div>
             </MudTabPanel>
-            <MudTabPanel Text="Chat">
+            <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot'>
                 @if (!IsAdmin)
                 {
                     <button @onclick="@NewChat" class="btn btn-primary mb-2">
