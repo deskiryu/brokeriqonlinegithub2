@@ -35,7 +35,7 @@ namespace BrokerIQ.Online.Services
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             var localBrokerId = brokerId > 0 ? brokerId :  user.MasterBrokerId;
-            string newUrl = this.ChatUrl + $"/{customerId}/{localBrokerId}";
+            string newUrl = this.ChatUrl + $"/{customerId}/{localBrokerId}?markAsReadByBroker=true";
 
             var ChatDto = await requestProviderService.Get<ChatDto>(newUrl);
             var chat = mapper.Map<Chat>(ChatDto);
@@ -58,6 +58,17 @@ namespace BrokerIQ.Online.Services
 
             var answer = await requestProviderService.Post<CreateChatMessageDto,ChatMessageDto>(this.ChatUrl, createChatMessage);
             return answer!=null&&answer.Id>0;
+        }
+
+        public async Task<int> GetUnRead(int customerId, int brokerId = 0)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var localBrokerId = brokerId > 0 ? brokerId : user.MasterBrokerId;
+            string newUrl = this.ChatUrl + $"/UnreadByBroker/{customerId}/{localBrokerId}";
+
+            var count = await requestProviderService.Get<int>(newUrl);
+            return count;
         }
     }
 }
