@@ -115,7 +115,7 @@
                 AlertService.Error("Please provide a name for the recording");
                 return;
             }
-            bool available = await AudioService.NameAvailable(AudioName);
+            bool available = await AudioService.NameAvailable(AudioName, BrokerId);
             if (!available)
             {
                 AlertService.Error("That name already exists choose a new one");

@@ -372,7 +372,7 @@ namespace BrokerIQ.Online.Pages
 
             await VerifyAccess();
 
-            bool available = await VideoService.NameAvailable(VideoName);
+            bool available = await VideoService.NameAvailable(VideoName, BrokerId);
             if (!available)
             {
                 StatusClass = "alert-danger";

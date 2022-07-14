@@ -24,7 +24,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<bool> IsVetted(string fileName, int brokerId);
 
-        Task<bool> NameAvailable(string name);
+        Task<bool> NameAvailable(string name, int brokerId);
 
         Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool birthdayVideo = true);
 

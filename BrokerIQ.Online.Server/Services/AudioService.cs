@@ -78,23 +78,22 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<bool> NameAvailable(string name)
+        public async Task<bool> NameAvailable(string fileName, int brokerId)
         {
-            var url = this.audioUrl + $"?brokerId={0}";
-            var answer = new List<AudioDto>();
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = this.audioUrl + $"/nameavailable/{fileName}?brokerId={brokerId}";
+            var answer = false;
             try
             {
-                answer = await this.requestProviderService.Get<List<AudioDto>>(url);
+                answer = await this.requestProviderService.Get<bool>(url);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"NameAvailable: failed to retrieve list of all audios - exception {ex.Message}");
+                Console.WriteLine($"NameAvailable: exception {ex.Message}");
             }
-            var blobs = this.mapper.Map<List<Audio>>(answer);
-            bool foundName = blobs.Any(x => Path.GetFileNameWithoutExtension(x.Name).Equals(name, StringComparison.InvariantCultureIgnoreCase));
-            return !foundName;
+            return answer;
         }
-
-
     }
 }

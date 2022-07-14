@@ -145,23 +145,22 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<bool> NameAvailable(string name)
+        public async Task<bool> NameAvailable(string fileName, int brokerId)
         {
-            // currently the filename must be unique across blob between all brokers, might be worth generating underlying filenames
-            // in the future so different brokers can use the same displayed filenames. brokerId 0 returns all videos.
-            var url = this.videoUrl + $"?brokerId={0}";
-            var answer = new List<AzureVideoDto>();
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = this.videoUrl + $"/nameavailable/{fileName}?brokerId={brokerId}";
+            var answer = false;
             try
             {
-                answer = await this.requestProviderService.Get<List<AzureVideoDto>>(url);
+                answer = await this.requestProviderService.Get<bool>(url);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"NameAvailable: failed to retrieve list of all videos - exception {ex.Message}");
+                Console.WriteLine($"NameAvailable: exception {ex.Message}");
             }
-            var blobs = this.mapper.Map<List<Video>>(answer);
-            bool foundName = blobs.Any(x => Path.GetFileNameWithoutExtension(x.Name).Equals(name, StringComparison.InvariantCultureIgnoreCase));
-            return !foundName;
+            return answer;
         }
 
         public async Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool birthdayVideo = true)
