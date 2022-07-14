@@ -8,7 +8,7 @@
 @using BrokerIQ.Online.Server.Shared
 @inject IAccountService AccountService
 @inject IDialogService DialogService
-@inject IAzureService AzureService
+@inject ILogoService LogoService
 @inject IAddressService AddressService
 @inject NavigationManager NavigationManager
 @inject IMapper mapper
@@ -174,7 +174,7 @@
                 var memoryStream = new MemoryStream(createBroker.LogoImage);
                 var fileName = brokerReturned.Id.ToString() + ".jpeg";
                 memoryStream.Position = 0;
-                await AzureService.TransferLogoStreamToAzureBlob(fileName, memoryStream, brokerReturned.Id);
+                await LogoService.UploadLogo(fileName, memoryStream, brokerReturned.Id);
             }
 
             dialogParams.Add("Message", $"Registration successful - Please check your email, including JUNK folders, for the verfication email");

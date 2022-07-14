@@ -157,7 +157,7 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
-                bool succeeded = await VideoService.DeleteVideo(name);
+                bool succeeded = await VideoService.DeleteVideo(name, BrokerId);
 
                 if (succeeded)
                 {
@@ -172,7 +172,7 @@ namespace BrokerIQ.Online.Pages
                     }
                     
                     string thumbnailName = $"{name}.jpeg";
-                    bool thumbnail_deleted = await VideoService.DeleteVideoThumbnail(thumbnailName);
+                    bool thumbnail_deleted = await VideoService.DeleteVideoThumbnail(thumbnailName, BrokerId);
                     if (!thumbnail_deleted)
                     {
                         // just log to console for now, user doesn't need to know about thumbnail deletion
@@ -438,7 +438,7 @@ namespace BrokerIQ.Online.Pages
                             while (attempts > 0)
                             {
                                 string thumbnailName = $"{VideoName}{ExtensionName}.jpeg";
-                                var thumbnail = await VideoService.GetVideoThumbnail(thumbnailName);
+                                var thumbnail = await VideoService.GetVideoThumbnail(thumbnailName, BrokerId);
                                 if (thumbnail != null && thumbnail.Data != null)
                                 {
                                     VideoThumbnails[thumbnailName] = thumbnail; 

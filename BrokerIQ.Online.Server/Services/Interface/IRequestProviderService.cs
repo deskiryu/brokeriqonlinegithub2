@@ -1,6 +1,7 @@
 ﻿namespace BrokerIQ.Online.Services.Abstract
 {
     using System;
+    using System.IO;
     using System.Threading.Tasks;
 
     public interface IRequestProviderService
@@ -8,6 +9,8 @@
         Task<bool> Post<T>(string url, T data);
 
         Task<TReturn> Post<T, TReturn>(string url, T data);
+        
+        Task<TReturn> Post<T, TReturn>(string url, MemoryStream data, string mediaType);
 
         Task<TReturn> Post<TReturn>(string url);
 

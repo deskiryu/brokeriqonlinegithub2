@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 
 namespace BrokerIQ.Online.Mapper
 {
-    using Dto.Entities;
     using Dto.Models;
     using Models;
-    using BrokerIQ.Dto.Enum;
     using BrokerIQ.Dto.Response;
     using BrokerIQ.Online.Models.Account;
+    using BrokerIQ.Online.Server.Models;
 
     public class ReviewItMapper : Profile
     {
@@ -31,6 +27,7 @@ namespace BrokerIQ.Online.Mapper
             MenuPlanMapper();
             NotesMapper();
             ChatMapper();
+            AzureStorageMapper();
         }
         public void CustomerMapper()
         {
@@ -247,7 +244,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.PromotionalEndDate, opt => opt.MapFrom((src, dest) =>
                 {
                     DateTime? ped = null;
-                    if (src.PromotionalEndDate.Year>2000)
+                    if (src.PromotionalEndDate.Year > 2000)
                     {
                         ped = src.PromotionalEndDate;
                     }
@@ -300,8 +297,8 @@ namespace BrokerIQ.Online.Mapper
                 }))
                 .ForMember(d => d.InterestRate, opt => opt.MapFrom((src, dest) =>
                 {
-                    decimal? pir=null;
-                    if(src.InterestRate > 0.0m)
+                    decimal? pir = null;
+                    if (src.InterestRate > 0.0m)
                     {
                         pir = src.InterestRate;
                     }
@@ -729,5 +726,12 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.BrokerSource, opt => opt.MapFrom(r => r.BrokerSource));
         }
 
+        private void AzureStorageMapper()
+        {
+            CreateMap<Video, AzureVideoDto>();
+            CreateMap<AzureVideoDto, Video>();
+            CreateMap<Audio, AudioDto>();
+            CreateMap<AudioDto, Audio>();
+        }
     }
 }

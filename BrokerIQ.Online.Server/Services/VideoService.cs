@@ -1,178 +1,218 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BrokerIQ.Online.Server.Services
 {
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMapper;
     using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Online.Services.Abstract;
     using BrokerIQ.Online.Services.Interface;
+    using BrokerIQ.Dto.Models;
 
     public class VideoService : IVideoService
     {
-        private readonly IAzureService azureService;
+        private readonly string videoUrl = "Video";
+        private readonly IRequestProviderService requestProviderService;
+        private readonly IMapper mapper;
+        private readonly IAccountService accountService;
 
-        public VideoService(IAzureService azureService)
+        public VideoService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService)
         {
-            this.azureService = azureService;
+            this.mapper = mapper;
+            this.requestProviderService = requestProviderService;
+            this.accountService = accountService;
         }
         public async Task<List<Video>> GetVideos(int brokerId)
         {
-            var blobs = new List<Video>();
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = this.videoUrl + $"?brokerId={brokerId}";
+            var answer = new List<AzureVideoDto>();
             try
             {
-                blobs = await azureService.GetVideoBlobs(brokerId);
+                answer = await this.requestProviderService.Get<List<AzureVideoDto>>(url);
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"GetVideos: exception {ex.Message}");
             }
-            return blobs;
+            return this.mapper.Map<List<Video>>(answer);
         }
 
         public async Task<Dictionary<string, VideoThumbnail>> GetVideoThumbnails(int brokerId)
         {
-            var blobs = new Dictionary<string, VideoThumbnail>();
+            var url = this.videoUrl + $"/thumbnail?brokerId={brokerId}";
+            var answer = new Dictionary<string, VideoThumbnail>();
             try
             {
-                blobs = await azureService.GetVideoThumbnailBlobs(brokerId);
+                answer = await this.requestProviderService.Get<Dictionary<string, VideoThumbnail>>(url);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("GetVideoThumbnails: exception " + ex.Message);
+                Console.WriteLine($"GetVideoThumbnails: exception {ex.Message}");
             }
-            return blobs;
+            return answer;
         }
 
-        public async Task<VideoThumbnail> GetVideoThumbnail(string fileName)
+        public async Task<VideoThumbnail> GetVideoThumbnail(string fileName, int brokerId)
         {
-            var blob = new VideoThumbnail();
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = this.videoUrl + $"/thumbnail/{fileName}?brokerId={brokerId}";
+            VideoThumbnail answer = null;
             try
             {
-                blob = await azureService.GetVideoThumbnailBlob(fileName);
+                answer = await this.requestProviderService.Get<VideoThumbnail>(url);
             }
             catch
             {
-                // this is expected to be hit several times as we probe for thumbnail
+                // we expect the thumbnail to not be available immediately - don't print exception to console
             }
-            return blob;
+            return answer;
         }
 
-        public async Task<bool> UploadVideo(string fileName, Stream stream, int brokerId)
+        public async Task<bool> UploadVideo(string fileName, MemoryStream videoStream, int brokerId)
         {
-            bool succeeded = false;
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"?brokerId={brokerId}&fileName={fileName}";
+            var answer = false;
             try
             {
-                succeeded = await azureService.TransferVideoStreamToAzureBlob(fileName, stream, brokerId);
-            }
-            catch
-            {
-
-            }
-            return succeeded;
-        }
-
-        public async Task<bool> DeleteVideo(string fileName)
-        {
-            bool succeeded = false;
-            try
-            {
-                succeeded = await azureService.DeleteVideoBlob(fileName);
+                answer = await this.requestProviderService.Post<MemoryStream, bool>(url, videoStream, "application/octet-stream");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("DeleteVideo: exception " + ex.Message);
+                Console.WriteLine($"UploadVideo: exception {ex.Message}");
             }
-            return succeeded;
+            return answer;
         }
 
-        public async Task<bool> DeleteVideoThumbnail(string fileName)
+        public async Task<bool> DeleteVideo(string fileName, int brokerId)
         {
-            bool succeeded = false;
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"?brokerId={brokerId}&fileName={fileName}";
+            var answer = false;
             try
             {
-                succeeded = await azureService.DeleteVideoThumbnailBlob(fileName);
+                answer = await this.requestProviderService.Delete(url);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("DeleteVideoThumbnail: exception " + ex.Message);
+                Console.WriteLine($"DeleteVideo: exception {ex.Message}");
             }
-            return succeeded;
+            return answer;
         }
 
-        public async Task<bool> IsVetted(string fileName)
+        public async Task<bool> DeleteVideoThumbnail(string fileName, int brokerId)
         {
-            bool succeeded = false;
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/thumbnail?brokerId={brokerId}&fileName={fileName}";
+            var answer = false;
             try
             {
-                succeeded = await azureService.IsVettedVideo(fileName);
+                answer = await this.requestProviderService.Delete(url);
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"DeleteVideoThumbnail: exception {ex.Message}");
             }
-            return succeeded;
+            return answer;
+        }
+
+        public async Task<bool> IsVetted(string fileName, int brokerId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = this.videoUrl + $"/vetted?brokerId={brokerId}&fileName={fileName}";
+            var answer = false;
+            try
+            {
+                answer = await this.requestProviderService.Get<bool>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"IsVetted: exception {ex.Message}");
+            }
+            return answer;
         }
 
         public async Task<bool> NameAvailable(string name)
         {
-            bool foundName = true;
+            // currently the filename must be unique across blob between all brokers, might be worth generating underlying filenames
+            // in the future so different brokers can use the same displayed filenames. brokerId 0 returns all videos.
+            var url = this.videoUrl + $"?brokerId={0}";
+            var answer = new List<AzureVideoDto>();
             try
             {
-                var blobs = await azureService.GetVideoBlobs(0);
-                foundName = blobs.Any(x => Path.GetFileNameWithoutExtension(x.Name).Equals(name, StringComparison.InvariantCultureIgnoreCase));
+                answer = await this.requestProviderService.Get<List<AzureVideoDto>>(url);
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"NameAvailable: failed to retrieve list of all videos - exception {ex.Message}");
             }
+            var blobs = this.mapper.Map<List<Video>>(answer);
+            bool foundName = blobs.Any(x => Path.GetFileNameWithoutExtension(x.Name).Equals(name, StringComparison.InvariantCultureIgnoreCase));
             return !foundName;
         }
 
-        public async Task<(bool,string)> SetBirthdayVideo(string fileName, int brokerId, bool birthdayVideo = true)
+        public async Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool birthdayVideo = true)
         {
-            var returned = (false,string.Empty);
+            var answer = (false, string.Empty);
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/setbirthdayvideo?brokerId={brokerId}&fileName={fileName}&isBirthdayVideo={birthdayVideo}";
             try
             {
-                returned = await azureService.SetBirthdayVideo(fileName, brokerId, birthdayVideo);
+                answer = await this.requestProviderService.Post<(bool, string)>(url);
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"SetBirthdayVideo: exception {ex.Message}");
             }
-            return returned;
+            return answer;
         }
 
         public async Task<(bool, string)> SetVideoSendDate(string fileName, int brokerId, DateTime? sendDate)
         {
-            var returned = (false,string.Empty);
-
+            var answer = (false, string.Empty);
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/setsenddate?brokerId={brokerId}&fileName={fileName}&sendDate={sendDate.Value.ToString("yyyy-MM-dd")}";
             try
             {
-                returned = await azureService.SetVideoSendDate(fileName, brokerId, sendDate);
+                answer = await this.requestProviderService.Post<(bool, string)>(url);
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"SetVideoSendDate: exception {ex.Message}");
             }
-            return returned;
+            return answer;
         }
 
         public async Task<(bool, string)> SetVideoSendDateTick(string fileName, int brokerId, bool value)
         {
-            var returned = (false, string.Empty);
-
+            var answer = (false, string.Empty);
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/setsenddatetick?brokerId={brokerId}&fileName={fileName}&value={value}";
             try
             {
-                returned = await azureService.SetVideoSendDateTick(fileName, brokerId, value);
+                answer = await this.requestProviderService.Post<(bool, string)>(url);
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"SetVideoSendDateTick: exception {ex.Message}");
             }
-            return returned;
+            return answer;
         }
     }
 }

@@ -1,91 +1,97 @@
 using System.Collections.Generic;
-using System.Text;
 
 namespace BrokerIQ.Online.Server.Services
 {
     using System;
     using System.IO;
     using System.Linq;
-    using System.Net.Http;
     using System.Threading.Tasks;
+    using AutoMapper;
+    using BrokerIQ.Dto.Models;
     using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Online.Services.Abstract;
     using BrokerIQ.Online.Services.Interface;
-    using Microsoft.AspNetCore.Components;
 
     public class AudioService : IAudioService
     {
-        private readonly IAzureService azureService;
+        private readonly string audioUrl = "Audio";
+        private readonly IRequestProviderService requestProviderService;
+        private readonly IMapper mapper;
+        private readonly IAccountService accountService;
 
-        [Inject]
-        public IMetaDefenderCoreService MetaDefenderCoreService { get; set; }
-
-        public bool AudioUploading { get; set; }
-
-        public bool AudioScanUploading { get; set; }
-
-        public bool AudioScanning { get; set; }
-
-        public int AudioScanningProgress { get; set; }
-
-        public AudioService(IAzureService azureService)
+        public AudioService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService)
         {
-            this.azureService = azureService;
+            this.mapper = mapper;
+            this.requestProviderService = requestProviderService;
+            this.accountService = accountService;
         }
 
         public async Task<List<Audio>> GetAudios(int brokerId)
         {
-            var blobs = new List<Audio>();
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = this.audioUrl + $"?brokerId={brokerId}";
+            var answer = new List<AudioDto>();
             try
             {
-                blobs = await azureService.GetAudioBlobs(brokerId);
+                answer = await this.requestProviderService.Get<List<AudioDto>>(url);
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"GetAudios: exception {ex.Message}");
             }
-            return blobs;
+            return this.mapper.Map<List<Audio>>(answer);
         }
 
         public async Task<bool> UploadAudio(string fileName, MemoryStream audioStream, int brokerId)
         {
-            bool succeeded = false;
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.audioUrl + $"?brokerId={brokerId}&fileName={fileName}";
+            var answer = false;
             try
             {
-                succeeded = await azureService.TransferAudioStreamToAzureBlob(fileName, audioStream, brokerId);
+                answer = await this.requestProviderService.Post<MemoryStream, bool>(url, audioStream, "application/octet-stream");
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"UploadAudio: exception {ex.Message}");
             }
-            return succeeded;
+            return answer;
         }
 
-        public async Task<bool> DeleteAudio(string fileName)
+        public async Task<bool> DeleteAudio(string fileName, int brokerId)
         {
-            bool succeeded = false;
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.audioUrl + $"?brokerId={brokerId}&fileName={fileName}";
+            var answer = false;
             try
             {
-                succeeded = await azureService.DeleteAudioBlob(fileName);
+                answer = await this.requestProviderService.Delete(url);
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"DeleteAudio: exception {ex.Message}");
             }
-            return succeeded;
+            return answer;
         }
 
         public async Task<bool> NameAvailable(string name)
         {
-            bool foundName = true;
+            var url = this.audioUrl + $"?brokerId={0}";
+            var answer = new List<AudioDto>();
             try
             {
-                var blobs = await azureService.GetAudioBlobs(0);
-                foundName = blobs.Any(x => Path.GetFileNameWithoutExtension(x.Name).Equals(name, StringComparison.InvariantCultureIgnoreCase));
+                answer = await this.requestProviderService.Get<List<AudioDto>>(url);
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"NameAvailable: failed to retrieve list of all audios - exception {ex.Message}");
             }
+            var blobs = this.mapper.Map<List<Audio>>(answer);
+            bool foundName = blobs.Any(x => Path.GetFileNameWithoutExtension(x.Name).Equals(name, StringComparison.InvariantCultureIgnoreCase));
             return !foundName;
         }
 

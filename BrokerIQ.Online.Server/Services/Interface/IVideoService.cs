@@ -14,15 +14,15 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<Dictionary<string, VideoThumbnail>> GetVideoThumbnails(int brokerId);
 
-        Task<VideoThumbnail> GetVideoThumbnail(string fileName);
+        Task<VideoThumbnail> GetVideoThumbnail(string fileName, int brokerId);
 
-        Task<bool> UploadVideo(string fileName, Stream stream, int brokerId);
+        Task<bool> UploadVideo(string fileName, MemoryStream videoStream, int brokerId);
 
-        Task<bool> DeleteVideo(string fileName);
+        Task<bool> DeleteVideo(string fileName, int brokerId);
 
-        Task<bool> DeleteVideoThumbnail(string fileName);
+        Task<bool> DeleteVideoThumbnail(string fileName, int brokerId);
 
-        Task<bool> IsVetted(string fileName);
+        Task<bool> IsVetted(string fileName, int brokerId);
 
         Task<bool> NameAvailable(string name);
 

@@ -14,7 +14,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<bool> UploadAudio(string fileName, MemoryStream audioStream, int brokerId);
 
-        Task<bool> DeleteAudio(string fileName);
+        Task<bool> DeleteAudio(string fileName, int brokerId);
 
         Task<bool> NameAvailable(string name);
     }
