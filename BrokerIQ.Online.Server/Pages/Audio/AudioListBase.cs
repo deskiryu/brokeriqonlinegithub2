@@ -94,7 +94,7 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
-                bool succeeded = await AudioService.DeleteAudio(name);
+                bool succeeded = await AudioService.DeleteAudio(name, BrokerId);
 
                 if (succeeded)
                 {

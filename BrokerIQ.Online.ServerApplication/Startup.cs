@@ -74,7 +74,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<IVideoService, VideoService>();
             services.AddScoped<IAudioService, AudioService>();
             services.AddScoped<IAudioRecordingService, AudioRecordingService>();
-            services.AddScoped<IAzureService, AzureService>();
+            services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IBrokerService, BrokerService>();

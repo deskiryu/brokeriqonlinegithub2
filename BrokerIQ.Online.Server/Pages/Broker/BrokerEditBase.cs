@@ -25,7 +25,7 @@
         public IAccountService AccountService { get; set; }
 
         [Inject]
-        public IAzureService AzureService { get; set; }
+        public ILogoService LogoService { get; set; }
 
         [Inject]
         public IInsuranceDocumentService SupportingDocumentService { get; set; }
@@ -123,7 +123,7 @@
                     Broker.LogoImage = memoryStream.ToArray();
                     var fileName = Broker.Id.ToString() + ".jpeg";
                     memoryStream.Position = 0;
-                    await AzureService.TransferLogoStreamToAzureBlob(fileName, memoryStream, Broker.Id);
+                    await LogoService.UploadLogo(fileName, memoryStream, Broker.Id);
                 }
             }
             catch (Exception ex)
