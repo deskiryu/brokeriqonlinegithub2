@@ -608,12 +608,7 @@ namespace BrokerIQ.Online.Mapper
         public void NotificationMapper()
         {
             CreateMap<NotificationDto, Notification>();
-            CreateMap<NotificationDto, BrokerNotification>()
-                .ForMember(d => d.Message, action => action.MapFrom(s => s.Message))
-                .ForMember(d => d.BrokerId, action => action.MapFrom(s => s.BrokerId))
-                .ForMember(d => d.Read, action => action.MapFrom(s => s.Read))
-                .ForMember(d => d.SentDate, action => action.MapFrom(s => s.SentDate))
-            .ForAllOtherMembers(opt => opt.Ignore());
+            CreateMap<BrokerNotificationDto, BrokerNotification>();
         }
 
         private void EmailInviteMapper()
