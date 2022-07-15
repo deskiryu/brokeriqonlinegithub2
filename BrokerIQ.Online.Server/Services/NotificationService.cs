@@ -132,7 +132,7 @@ namespace BrokerIQ.Online.Server.Services
 
         public async Task<IEnumerable<BrokerNotification>> GetBrokerNotifications()
         {
-            var answer = await this.requestProviderService.Get<IEnumerable<NotificationDto>>(this.notificationUrl + $"/broker");
+            var answer = await this.requestProviderService.Get<IEnumerable<BrokerNotificationDto>>(this.notificationUrl + $"/broker");
             return this.mapper.Map<IEnumerable<BrokerNotification>>(answer);
         }
 
@@ -142,7 +142,7 @@ namespace BrokerIQ.Online.Server.Services
             this.requestProviderService.Token = user?.Token;
             var brokerId = user.MasterBrokerId;
 
-            var answer = await this.requestProviderService.Get<IEnumerable<NotificationDto>>(this.notificationUrl + $"/brokerById?brokerId={brokerId}");
+            var answer = await this.requestProviderService.Get<IEnumerable<BrokerNotificationDto>>(this.notificationUrl + $"/brokerById?brokerId={brokerId}");
             return this.mapper.Map<IEnumerable<BrokerNotification>>(answer);
         }
 

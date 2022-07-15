@@ -26,32 +26,35 @@
     }
     else
     {
-        <table id="table-message" class="table col-sm-12 table-striped ">
-            <thead>
-                <tr>
-                    <th class="col-md-6">Message</th>
-                    <th class="col-md-4">Sent</th>
-                    @if (IsAdmin)
-                    {
-                        <th>Broker</th>
-                    }
-                </tr>
 
-            </thead>
-            <tbody>
-                @foreach (var message in BrokerNotifications)
-                {
-                    <tr style="@message.RowStyle">
-                        <td>@Path.GetFileNameWithoutExtension(message.Message)</td>
-                        <td>@(message.SentDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss"))</td>
-                        @if (IsAdmin)
-                        {
-                            <td>@Brokers.FirstOrDefault(x => x.Id == message.BrokerId)?.Name</td>
-                        }
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <MudTable Items="@BrokerNotifications" Hover="true" SortLabel="Sort By" >
+            <HeaderContent>
+                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.SentDate)">Sent</MudTableSortLabel></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Message">
+                    @if (context.RelevantCustomerId > 0 && context.FormattedLinkMessage!=null && context.FormattedLinkMessage.Count==3)
+                    {
+                        @context.FormattedLinkMessage[0]
+                        <MudLink href="@($"clientdetail/{@context.RelevantCustomerId}")">
+                            @context.FormattedLinkMessage[1]
+                        </MudLink>
+                        @context.FormattedLinkMessage[2]
+                    }
+                    else
+                    {
+                        @context.Message           
+                    }
+
+                </MudTd>
+                <MudTd DataLabel="Sent">@context.SentDate</MudTd>   
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
+            </PagerContent>
+        </MudTable>
+
     }
 }
 else
