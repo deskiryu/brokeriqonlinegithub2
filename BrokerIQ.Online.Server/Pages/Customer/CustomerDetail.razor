@@ -526,13 +526,18 @@ else if (!Saved)
                             <MudCardHeader>
                                 <CardHeaderContent>
                                 <MudText Typo="Typo.body1">@message.Message</MudText>   
+
                                 </CardHeaderContent>
                             </MudCardHeader>
                             <MudCardContent>        
                             @if (message.BrokerSource)
                             {
                                 var combined = $"Sent from us at {@message.SentTime.ToString("dd/MM/yyyy hh:mm:ss")}";
-                                <MudText Typo="Typo.body2">@combined</MudText>
+                                        <MudText Typo="Typo.body2">@combined</MudText>
+                                @if (message.IsRead)
+                                {
+                                    <MudIconButton Icon="@Icons.Material.Filled.Check" Color="Color.Primary" />
+                                }
                             }
                             else
                             {
