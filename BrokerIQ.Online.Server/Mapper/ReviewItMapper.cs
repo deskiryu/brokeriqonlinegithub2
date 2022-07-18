@@ -711,6 +711,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.Message, opt => opt.MapFrom(r => r.Message))
                 .ForMember(p => p.SentTime, opt => opt.MapFrom(r => r.SentTime))
                 .ForMember(p => p.Image, opt => opt.MapFrom(r => r.Image))
+                .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
                 .ForMember(p => p.BrokerSource, opt => opt.MapFrom(r => r.BrokerSource));
 
             CreateMap<ChatMessage, ChatMessageDto>()
@@ -718,6 +719,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.Message, opt => opt.MapFrom(r => r.Message))
                 .ForMember(p => p.SentTime, opt => opt.MapFrom(r => r.SentTime))
                 .ForMember(p => p.Image, opt => opt.MapFrom(r => r.Image))
+                .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
                 .ForMember(p => p.BrokerSource, opt => opt.MapFrom(r => r.BrokerSource));
         }
 

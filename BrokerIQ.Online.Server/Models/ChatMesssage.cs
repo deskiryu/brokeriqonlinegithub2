@@ -13,5 +13,7 @@ namespace BrokerIQ.Online.Models
         public byte[] Image { get; set; }
         public int ChatId { get; set; }
         public string Style { get => BrokerSource ? "chat_broker" : "chat_client"; }
+
+        public bool IsRead { get; set; }
     }
 }
