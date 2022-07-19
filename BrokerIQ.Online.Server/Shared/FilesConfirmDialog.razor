@@ -20,6 +20,11 @@
             }
             else
             {
+                @if (!string.IsNullOrEmpty(Message))
+                {
+                    <MudText Style="white-space: pre-line;">@Message</MudText>                  
+                }
+
                 @if (@OverSized)
                 {
                     <MudText Style="white-space: pre-line;">Some files were too big</MudText>
@@ -54,6 +59,8 @@
     [Parameter] public List<string> FileNames { get; set; }
 
     [Parameter] public string Client { get; set; }
+
+    [Parameter] public string Message { get; set; }
 
     [Parameter] public List<MemoryStream> MemoryStreams { get; set; }
 

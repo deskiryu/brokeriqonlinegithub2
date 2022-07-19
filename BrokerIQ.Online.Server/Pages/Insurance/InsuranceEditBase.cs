@@ -110,6 +110,7 @@ namespace BrokerIQ.Online.Pages
         public InsuranceEditBase()
         {
             Insurance = new Insurance();
+            Insurance.SupportingDocuments = new List<InsuranceDocument>();
         }
 
         protected override async Task OnInitializedAsync()
@@ -248,6 +249,7 @@ namespace BrokerIQ.Online.Pages
                 }
 
                 var fileNamesAndMemoryStreams = new List<(string, MemoryStream)>();
+                var fileNamesAndBytes = new List<(string, byte[])>();
                 foreach (var file in LoadedFiles)
                 {
                     var loopMemoryStream = new MemoryStream();
@@ -263,10 +265,18 @@ namespace BrokerIQ.Online.Pages
                 bool agreed;
                 if (LoadedFiles.Any())
                 {
-                    dialogParams.Add("Filenames", fileNamesAndMemoryStreams.Select(x => x.Item1));
-                    dialogParams.Add("MemoryStreams", fileNamesAndMemoryStreams.Select(x => x.Item2));
+
+                    dialogParams.Add("Filenames", fileNamesAndMemoryStreams.Select(x => x.Item1).ToList());
+                    dialogParams.Add("MemoryStreams", fileNamesAndMemoryStreams.Select(x => x.Item2).ToList());
                     var result = await DialogService.Show<FilesConfirmDialog>("Insurance Add", dialogParams).Result;
                     agreed = !result.Cancelled;
+                    if (agreed)
+                    {
+                        foreach (var file in fileNamesAndMemoryStreams)
+                        {
+                            fileNamesAndBytes.Add((file.Item1, file.Item2.ToArray()));
+                        }
+                    }
                 }
                 else
                 {
@@ -278,7 +288,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     try
                     {
-                        await InsuranceService.AddInsurance(Insurance);
+                        await InsuranceService.AddInsurance(Insurance, fileNamesAndBytes);
                     }
                     catch
                     {
@@ -500,7 +510,23 @@ namespace BrokerIQ.Online.Pages
             }
             if (success)
             {
-                await UploadFiles();
+                if(Insurance.Id > 0)
+                {
+                    await UploadFiles();
+                }
+                else
+                {
+                    Insurance.SupportingDocuments.Clear();
+                    foreach (var file in LoadedFiles)
+                    {
+                        Insurance.SupportingDocuments.Add(new InsuranceDocument
+                            {
+                             FileName = file.Name,
+                             SupportingDocumentType = DocumentTypeEnum.PDF
+                        });
+                    }
+                    StateHasChanged();
+                }
             }
         }
 

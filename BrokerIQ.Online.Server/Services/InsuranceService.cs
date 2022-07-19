@@ -66,6 +66,7 @@ namespace BrokerIQ.Online.Services
 
             if(documents!=null && documents.Any())
             {
+                mapped.Documents = new List<CreateInsuranceDocumentDto>();
                 foreach(var document in documents)
                 {
                     var insuranceDoc = new InsuranceDocument
