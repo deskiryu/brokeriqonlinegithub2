@@ -246,8 +246,35 @@ namespace BrokerIQ.Online.Pages
                 {
                     dialogParams.Add("Message", $"Insurance will be added however a notification will be NOT be sent to {customer.Name} about this new insurance as their email address is not confirmed");
                 }
-                var result = await DialogService.Show<ConfirmCancelDialog>("Insurance Add", dialogParams).Result;
-                if (!result.Cancelled)
+
+                var fileNamesAndMemoryStreams = new List<(string, MemoryStream)>();
+                foreach (var file in LoadedFiles)
+                {
+                    var loopMemoryStream = new MemoryStream();
+                    if (file.Size > this.fileUploadSettings.MaxFileSize)
+                    {
+                        dialogParams.Add("Oversize", "true");
+                        continue;
+                    }
+                    await file.OpenReadStream(this.fileUploadSettings.MaxFileSize).CopyToAsync(loopMemoryStream);
+                    fileNamesAndMemoryStreams.Add((file.Name,loopMemoryStream));
+                }
+
+                bool agreed;
+                if (LoadedFiles.Any())
+                {
+                    dialogParams.Add("Filenames", fileNamesAndMemoryStreams.Select(x => x.Item1));
+                    dialogParams.Add("MemoryStreams", fileNamesAndMemoryStreams.Select(x => x.Item2));
+                    var result = await DialogService.Show<FilesConfirmDialog>("Insurance Add", dialogParams).Result;
+                    agreed = !result.Cancelled;
+                }
+                else
+                {
+                    var result = await DialogService.Show<ConfirmCancelDialog>("Insurance Add", dialogParams).Result;
+                    agreed = !result.Cancelled;
+                }
+
+                if (agreed)
                 {
                     try
                     {
