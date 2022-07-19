@@ -53,5 +53,10 @@ namespace BrokerIQ.Online.Services
             answer = answer.Where(x => x.DocuVaultType != DocuVaultTypeEnum.ProfilePicture);
             return answer;
         }
+
+        public async Task<bool> DeleteCustomerDocument(Guid id)
+        {
+            return await this.requestProviderService.Delete(this.CustomerDocumentUrl, id);
+        }
     }
 }
