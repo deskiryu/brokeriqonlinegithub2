@@ -501,5 +501,33 @@ namespace BrokerIQ.Online.Pages
             responseParams.Add("Message", message);
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
+
+
+        protected async Task DeleteDocumentUpload(CustomerDocumentDto doc)
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"Are you sure you want to delete this client document?");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                var deleted = await CustomerDocumentService.DeleteCustomerDocument(doc.Id);
+                if (deleted)
+                {
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", "Deleted successfully");
+                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+
+                    CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                    StateHasChanged();
+
+                }
+                else
+                {
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", "The document did not delete.");
+                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                }
+            }
+        }
     }
 }
