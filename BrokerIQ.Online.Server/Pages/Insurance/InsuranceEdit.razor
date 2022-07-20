@@ -232,31 +232,27 @@
 
     @if (Insurance.SupportingDocuments != null)
     {
-    <div class="col-sm-6 mt-1">
-        <div class="card">
-            <div class="card-body">
-                @if (Insurance.Id>0)
+        <div class="col-sm-6 mt-1">
+            <div class="card">
+                <div class="card-body">
+                    <MudTable Items="@Insurance.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="">
+                        <RowTemplate>
+                            <MudTd>@context.FileName</MudTd>
+                            @if (Insurance.Id > 0)
                             {
-                                <MudTable Items="@Insurance.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="" >
-                                    <RowTemplate>
-                                        <MudTd>@context.FileName</MudTd>
-                                        <MudTd> <a class="btn btn-primary" @onclick="f => PreviewFile(context)">View</a></MudTd>
-                                        <MudTd> <a class="btn btn-primary" @onclick="f => DownloadFile(context)">Download</a></MudTd>
-                                        <MudTd> <a class="btn btn-danger sm-2" @onclick="f => DeleteInsuranceFile(context.Id)">Delete File</a></MudTd>
-                                    </RowTemplate>
-                                </MudTable>
+                                <MudTd> <a class="btn btn-primary" @onclick="f => PreviewFile(context)">View</a></MudTd>
+                                <MudTd> <a class="btn btn-primary" @onclick="f => DownloadFile(context)">Download</a></MudTd>
+                                <MudTd> <a class="btn btn-danger sm-2" @onclick="f => DeleteInsuranceFile(context.Id)">Delete File</a></MudTd>
                             }
                             else
                             {
-                                <MudTable Items="@Insurance.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="" >
-                                    <RowTemplate>
-                                        <MudTd>@context.FileName</MudTd>
-                                    </RowTemplate>
-                                </MudTable>
+                               <MudTd> <a class="btn btn-danger sm-2" @onclick="f => DeleteInsuranceFile(context)">Delete File</a></MudTd>                     
                             }
+                        </RowTemplate>
+                    </MudTable>
+                </div>
             </div>
         </div>
-    </div>
     }
     <div class="col-sm-6 mt-1">
         <div class="card">

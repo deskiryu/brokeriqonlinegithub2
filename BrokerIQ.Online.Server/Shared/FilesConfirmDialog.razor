@@ -39,9 +39,14 @@
                         <MudButton Color="Color.Primary" OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudButton>                  
                     }
 
-                    <MudText Style="white-space: pre-line;">will be sent to this client: </MudText>
+                    <MudText Style="white-space: pre-line;">will be sent to this client </MudText>
                     <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">@Client</MudText>
-                    <MudText Style="white-space: pre-line;">along with a notification</MudText>                   
+
+                    @if (string.IsNullOrEmpty(Message))
+                    {
+                        <MudText Style="white-space: pre-line;">along with a notification</MudText>                   
+                    }
+                                      
                 }
             }
         </MudContainer>

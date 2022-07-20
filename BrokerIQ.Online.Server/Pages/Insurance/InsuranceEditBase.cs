@@ -396,6 +396,15 @@ namespace BrokerIQ.Online.Pages
 
         }
 
+        protected void DeleteInsuranceFile(InsuranceDocument doc)
+        {
+            Insurance.SupportingDocuments.Remove(doc);
+            var loadedtoRemove = LoadedFiles.FirstOrDefault(x => x.Name == doc.FileName);
+            if(loadedtoRemove != null)
+            {
+                LoadedFiles.Remove(loadedtoRemove);
+            }   
+        }
         protected async Task UploadInsuranceFile(string filename, byte[] dataBytes)
         {
             if (id == 0)
