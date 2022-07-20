@@ -16,6 +16,7 @@ namespace BrokerIQ.Online.Services
     using Microsoft.Extensions.Options;
     using Models;
     using BrokerIQ.Online.Services.Interface;
+    using BrokerIQ.Dto.Enum;
 
     public class MortgageService : IMortgageService
     {
@@ -62,6 +63,33 @@ namespace BrokerIQ.Online.Services
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             return await this.requestProviderService.Delete(this.MortgageUrl, id);
+        }
+
+        public async Task<Mortgage> AddMortgage(Mortgage ins, List<(string, byte[])> documents)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var mapped = mapper.Map<CreateMortgageDto>(ins);
+
+            if (documents != null && documents.Any())
+            {
+                mapped.Documents = new List<CreateMortgageDocumentDto>();
+                foreach (var document in documents)
+                {
+                    var MortgageDoc = new MortgageDocument
+                    {
+                        File = document.Item2,
+                        FileName = document.Item1,
+                        SupportingDocumentType = DocumentTypeEnum.PDF
+                    };
+                    var mappedDoc = mapper.Map<CreateMortgageDocumentDto>(MortgageDoc);
+                    mapped.Documents.Add(mappedDoc);
+                }
+
+            }
+
+            var answer = await this.requestProviderService.Post<CreateMortgageDto, MortgageDto>(this.MortgageUrl, mapped);
+            return this.mapper.Map<Mortgage>(answer);
         }
     }
 }

@@ -237,9 +237,7 @@
 
     </section>
     
-    @if (int.Parse(MortgageId)>0)
-    {
-    <section class="mt-4">
+
         <h4 class ="col-sm-4">Supporting Documents</h4>
 
         @if (Mortgage.SupportingDocuments != null)
@@ -249,12 +247,20 @@
                 <div class="card-body">
                     <MudTable Items="@Mortgage.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="" >
                         <RowTemplate>
-                            <MudTd>@context.FileName</MudTd>
+                        <MudTd>@context.FileName</MudTd>
+                        @if (Mortgage.Id > 0)
+                        {
                             <MudTd> <a class="btn btn-primary" @onclick="f => PreviewFile(context)">View</a></MudTd>
                             <MudTd> <a class="btn btn-primary" @onclick="f => DownloadFile(context)">Download</a></MudTd>
                             <MudTd> <a class="btn btn-danger sm-2" @onclick="f => DeleteMortgageFile(context.Id)">Delete File</a></MudTd>
+                        }
+                        else
+                        {
+                            <MudTd> <a class="btn btn-danger sm-2" @onclick="f => DeleteMortgageFile(context)">Delete File</a></MudTd>                     
+                        }
                         </RowTemplate>
                     </MudTable>
+
                 </div>
             </div>
         </div>
@@ -282,10 +288,6 @@
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" style="@SpinnerVisible" />
             </div>
         </div>
-
-    </section>
-    }
-
 
 }
 else
