@@ -110,6 +110,7 @@ namespace BrokerIQ.Online.Pages
         public InsuranceEditBase()
         {
             Insurance = new Insurance();
+            Insurance.SupportingDocuments = new List<InsuranceDocument>();
         }
 
         protected override async Task OnInitializedAsync()
@@ -246,12 +247,48 @@ namespace BrokerIQ.Online.Pages
                 {
                     dialogParams.Add("Message", $"Insurance will be added however a notification will be NOT be sent to {customer.Name} about this new insurance as their email address is not confirmed");
                 }
-                var result = await DialogService.Show<ConfirmCancelDialog>("Insurance Add", dialogParams).Result;
-                if (!result.Cancelled)
+
+                var fileNamesAndMemoryStreams = new List<(string, MemoryStream)>();
+                var fileNamesAndBytes = new List<(string, byte[])>();
+                foreach (var file in LoadedFiles)
+                {
+                    var loopMemoryStream = new MemoryStream();
+                    if (file.Size > this.fileUploadSettings.MaxFileSize)
+                    {
+                        dialogParams.Add("Oversize", "true");
+                        continue;
+                    }
+                    await file.OpenReadStream(this.fileUploadSettings.MaxFileSize).CopyToAsync(loopMemoryStream);
+                    fileNamesAndMemoryStreams.Add((file.Name,loopMemoryStream));
+                }
+
+                bool agreed;
+                if (LoadedFiles.Any())
+                {
+
+                    dialogParams.Add("Filenames", fileNamesAndMemoryStreams.Select(x => x.Item1).ToList());
+                    dialogParams.Add("MemoryStreams", fileNamesAndMemoryStreams.Select(x => x.Item2).ToList());
+                    var result = await DialogService.Show<FilesConfirmDialog>("Insurance Add", dialogParams).Result;
+                    agreed = !result.Cancelled;
+                    if (agreed)
+                    {
+                        foreach (var file in fileNamesAndMemoryStreams)
+                        {
+                            fileNamesAndBytes.Add((file.Item1, file.Item2.ToArray()));
+                        }
+                    }
+                }
+                else
+                {
+                    var result = await DialogService.Show<ConfirmCancelDialog>("Insurance Add", dialogParams).Result;
+                    agreed = !result.Cancelled;
+                }
+
+                if (agreed)
                 {
                     try
                     {
-                        await InsuranceService.AddInsurance(Insurance);
+                        await InsuranceService.AddInsurance(Insurance, fileNamesAndBytes);
                     }
                     catch
                     {
@@ -359,6 +396,15 @@ namespace BrokerIQ.Online.Pages
 
         }
 
+        protected void DeleteInsuranceFile(InsuranceDocument doc)
+        {
+            Insurance.SupportingDocuments.Remove(doc);
+            var loadedtoRemove = LoadedFiles.FirstOrDefault(x => x.Name == doc.FileName);
+            if(loadedtoRemove != null)
+            {
+                LoadedFiles.Remove(loadedtoRemove);
+            }   
+        }
         protected async Task UploadInsuranceFile(string filename, byte[] dataBytes)
         {
             if (id == 0)
@@ -473,7 +519,23 @@ namespace BrokerIQ.Online.Pages
             }
             if (success)
             {
-                await UploadFiles();
+                if(Insurance.Id > 0)
+                {
+                    await UploadFiles();
+                }
+                else
+                {
+                    Insurance.SupportingDocuments.Clear();
+                    foreach (var file in LoadedFiles)
+                    {
+                        Insurance.SupportingDocuments.Add(new InsuranceDocument
+                            {
+                             FileName = file.Name,
+                             SupportingDocumentType = DocumentTypeEnum.PDF
+                        });
+                    }
+                    StateHasChanged();
+                }
             }
         }
 

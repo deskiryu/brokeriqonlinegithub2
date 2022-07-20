@@ -16,6 +16,7 @@ namespace BrokerIQ.Online.Services
     using Microsoft.Extensions.Options;
     using Models;
     using BrokerIQ.Online.Services.Interface;
+    using BrokerIQ.Dto.Enum;
 
     public class InsuranceService : IInsuranceService
     {
@@ -53,6 +54,33 @@ namespace BrokerIQ.Online.Services
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             var mapped = mapper.Map<CreateInsuranceDto>(ins);
+            var answer = await this.requestProviderService.Post<CreateInsuranceDto, InsuranceDto>(this.InsuranceUrl, mapped);
+            return this.mapper.Map<Insurance>(answer);
+        }
+
+        public async Task<Insurance> AddInsurance(Insurance ins, List<(string, byte[])> documents)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var mapped = mapper.Map<CreateInsuranceDto>(ins);
+
+            if(documents!=null && documents.Any())
+            {
+                mapped.Documents = new List<CreateInsuranceDocumentDto>();
+                foreach(var document in documents)
+                {
+                    var insuranceDoc = new InsuranceDocument
+                    {
+                        File = document.Item2,
+                        FileName = document.Item1,
+                        SupportingDocumentType = DocumentTypeEnum.PDF
+                    };
+                    var mappedDoc = mapper.Map<CreateInsuranceDocumentDto>(insuranceDoc);
+                    mapped.Documents.Add(mappedDoc);
+                }
+
+            }            
+            
             var answer = await this.requestProviderService.Post<CreateInsuranceDto, InsuranceDto>(this.InsuranceUrl, mapped);
             return this.mapper.Map<Insurance>(answer);
         }

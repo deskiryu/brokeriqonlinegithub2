@@ -20,6 +20,11 @@
             }
             else
             {
+                @if (!string.IsNullOrEmpty(Message))
+                {
+                    <MudText Style="white-space: pre-line;">@Message</MudText>                  
+                }
+
                 @if (@OverSized)
                 {
                     <MudText Style="white-space: pre-line;">Some files were too big</MudText>
@@ -34,9 +39,14 @@
                         <MudButton Color="Color.Primary" OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudButton>                  
                     }
 
-                    <MudText Style="white-space: pre-line;">will be sent to this client: </MudText>
+                    <MudText Style="white-space: pre-line;">will be sent to this client </MudText>
                     <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">@Client</MudText>
-                    <MudText Style="white-space: pre-line;">along with a notification</MudText>                   
+
+                    @if (string.IsNullOrEmpty(Message))
+                    {
+                        <MudText Style="white-space: pre-line;">along with a notification</MudText>                   
+                    }
+                                      
                 }
             }
         </MudContainer>
@@ -54,6 +64,8 @@
     [Parameter] public List<string> FileNames { get; set; }
 
     [Parameter] public string Client { get; set; }
+
+    [Parameter] public string Message { get; set; }
 
     [Parameter] public List<MemoryStream> MemoryStreams { get; set; }
 
