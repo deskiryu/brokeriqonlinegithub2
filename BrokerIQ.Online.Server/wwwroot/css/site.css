@@ -4,15 +4,6 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-a, .btn-link {
-    color:     color: black;
-}
-
-.btn-primary {
-    color: black;
-    background-color: #ede574;
-    border-color: #585858;
-}
 
 app {
     position: relative;
@@ -458,18 +449,4 @@ app {
     margin-right: 15px;
 }
 
-.btn-primary.focus, .btn-primary:focus {
-    color: #fff;
-    background-color: #feea00;
-    border-color: #0062cc;
-    color: black;
-    box-shadow: 0 0 0 .2remrgba(38,143,255,.5);
-}
-
-.btn-primary:hover {
-    color: #fff;
-    background-color: #feea00;
-    border-color: #0062cc;
-    color: black;
-}
 

@@ -6,7 +6,7 @@
 </div>
 
 <div class="main">
-    <div class="top-row px-4">
+    <div class="top-row px-4" style="background-color:black">
         <MudButton Variant="Variant.Text" @onclick="OpenDialog" class="float-right" style="text-transform: capitalize">about</MudButton>
     </div>
 
@@ -15,7 +15,7 @@
         @Body
     </div>
 </div>
-<MudThemeProvider />
+
 <MudDialogProvider />
 <MudThemeProvider Theme="MyCustomTheme" />
 
@@ -25,9 +25,11 @@
     {
         Palette = new Palette()
         {
-            Primary = Colors.Blue.Default,
-            Secondary = Colors.Grey.Default,
+            Primary = Colors.Yellow.Default,
+            Secondary = Colors.Yellow.Default,
             AppbarBackground = Colors.Red.Default,
+            TextPrimary = Colors.Shades.Black,
+            TextSecondary = Colors.Shades.Black,
         },
 
         LayoutProperties = new LayoutProperties()

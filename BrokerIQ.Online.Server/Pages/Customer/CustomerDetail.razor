@@ -64,7 +64,7 @@ else if (!Saved)
                         <MudInputString @bind-Value="selectedNotification" Placeholder="Type a notification message" Style="width:100%" />
                     </div>
                     <div class="col-3">
-                        <button @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Notification to client</button>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Notification to client</MudButton>
                     </div>
                 </div>
             </div>
@@ -188,17 +188,17 @@ else if (!Saved)
                         }
 
                     <div class="row col-6 mt-1">
-                        <NavLink href="@($"clientedit/{Customer.Id}")" class="btn btn-primary table-btn mt-1">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" href="@($"clientedit/{Customer.Id}")" class="mt-1">
                             Edit Client
-                        </NavLink>                            
-                        <NavLink href="@($"menuplanedit/0/{Customer.Id}")" class="btn btn-primary table-btn ml-lg-2 mt-1">
+                        </MudButton>                            
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" href="@($"menuplanedit/0/{Customer.Id}")" class="ml-lg-2 mt-1">
                             Add a Menu Plan
-                        </NavLink>
+                        </MudButton>
                         @if (IsAdmin)
                         {
-                            <button class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteCustomer">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" class="ml-lg-2 mt-1" @onclick="DeleteCustomer">
                                 Delete Client
-                            </button>
+                            </MudButton>
                         }
 
 
@@ -214,9 +214,9 @@ else if (!Saved)
     <section>
         <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
             <MudTabPanel Text="Insurances">
-                <NavLink href="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="btn btn-primary mb-2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" href="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
                     Add New Insurance
-                </NavLink>
+                </MudButton>
                 <table id="table-insurance" class="table  col-sm-12 table-striped ">
                     <thead>
                         <tr>
@@ -244,12 +244,12 @@ else if (!Saved)
                                         <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
                                     }
                                     <td>
-                                        <NavLink href="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" href="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
                                             <i class="fas fa-info-circle"></i>
-                                        </NavLink>
-                                        <NavLink href="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId=0")" class="btn btn-primary table-btn">
+                                        </MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" href="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId=0")" class="btn btn-primary table-btn">
                                             <i class="fas fa-edit"></i>
-                                        </NavLink>
+                                        </MudButton>
                                     </td>
                                 </tr>
                             }
