@@ -73,8 +73,8 @@
                     <InputText @bind-Value="model.Postcode" class="form-control" />
                     <ValidationMessage For="@(() => model.Postcode)" />
                 </div>
-                <div class="form-group col-6" style="margin-top:12px">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="FindAddress" >Find Address</MudButton>
+                <div class="form-group col-6" style="">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:12px")" OnClick="FindAddress" >Find Address</MudButton>
                      <MudProgressCircular Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
                 </div>
 
@@ -107,7 +107,15 @@
             <div class="form-group row" style="padding-left:15px">
                 <label class="form-group col-6">Choose company logo </label>
                 <div class="form-group col-6">
-                    <InputFile OnChange="LoadFiles" class="mt-2 ml-lg-2 btn btn-primary" accept="image/jpeg" />
+                <InputFile id="logofileinput" OnChange="LoadFiles" accept="image/jpeg" hidden multiple/>
+                <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Style="@($"color:{Colors.Shades.Black};")"
+                   StartIcon="@Icons.Filled.CloudUpload"
+                   for="logofileinput">
+                    Choose File
+                </MudButton>
                 </div>
                 <div class="form-group col-6">
                     <label style="font-size:small">Ratio 2.2:1 Ideally 220px x 100px</label>

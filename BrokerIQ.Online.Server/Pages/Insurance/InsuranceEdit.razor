@@ -209,13 +209,11 @@
                             </div>
                         }
 
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" type="submit" class="mt-1">Save insurance</MudButton>
-                        <a class="btn btn-outline-primary edit-outline-btn ml-lg-2 mt-1" @onclick="@NavigateToOverview">Cancel</a>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" type="submit" class="mt-1">Save insurance</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview">Cancel</MudButton>
                         @if (Insurance.Id > 0)
                         {
-                            <a class="btn btn-danger ml-2 mt-1" @onclick="@DeleteInsurance">
-                                Delete
-                            </a>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteInsurance">Delete</MudButton>
                         }
 
                     </div>
