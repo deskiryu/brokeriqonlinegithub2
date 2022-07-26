@@ -21,7 +21,7 @@
     </div>
     <div class="row ml-2">
         <div class="col-4">
-            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+            <MudProgressLinear Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Indeterminate="true" Class="my-7" />
         </div>
     </div>
 }
@@ -39,10 +39,10 @@ else
                     <MudInputString @bind-Value="selectedNotification" Placeholder="Type a reminder message" Style="width:100%" />
                 </div>
                 <div class="col-sm-3 mt-1">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="(async () => await SendNotificationToAll())" class="btn btn-primary text-center">Send reminder to all brokers</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendNotificationToAll())" class="btn btn-primary text-center">Send reminder to all brokers</MudButton>
                 </div>
                 <div class="col-sm-3 mt-1">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send reminder to selected brokers</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send reminder to selected brokers</MudButton>
                 </div>
             </div>
         </div>
@@ -158,10 +158,10 @@ else
                         <td>@broker.TelephoneNumber</td>
                         <td>@broker.EmailAddress</td>
                         <td>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"brokeredit/{broker.Id}")" class="btn btn-primary table-btn">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"brokeredit/{broker.Id}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-edit"></i>
                             </MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"charts/dashboard/{broker.Id}")" class="btn btn-primary table-btn">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"charts/dashboard/{broker.Id}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-chart-line"></i>
                             </MudButton>
                         </td>

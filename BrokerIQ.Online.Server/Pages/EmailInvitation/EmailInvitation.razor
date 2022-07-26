@@ -31,7 +31,7 @@
                     <MudItem>
                         <MudTextField @bind-Value="@Email" HelperText="Enter email address" />
                     </MudItem>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddEmail">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="AddEmail">
                         <i class="fas fa-plus"></i>
                     </MudButton>
                 </div>
@@ -72,7 +72,7 @@
                         <EditForm Model="@EmailTargets" OnValidSubmit="@SendInvites">
                             <div>
                                 <div class="col-sm-6">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" type="submit"  style="width:max-content">Make connections</MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" type="submit" >Make connections</MudButton>
                                     @if (IsAdmin)
                                     {
                                         <label style="margin-top: 5px">Choose Broker</label>
@@ -179,7 +179,7 @@
                             }
                         </td>
                         <td>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary"  OnClick="() => DeleteLink(Item.Id)" class="btn btn-primary table-btn">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"  OnClick="() => DeleteLink(Item.Id)" class="btn btn-primary table-btn">
                                 <i class="fas fa-trash"></i>
                             </MudButton>
                         </td>

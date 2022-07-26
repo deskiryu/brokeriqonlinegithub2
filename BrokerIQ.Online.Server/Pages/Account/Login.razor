@@ -37,11 +37,11 @@
                 <ValidationMessage For="@(() => model.Password)" />
             </MudCardContent>
             <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" Disabled="@Loading">Login</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Class="ml-auto" Disabled="@Loading">Login</MudButton>
             </MudCardActions>
         </MudCard>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="account/register" class="btn btn-link">Register</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="account/resetpassword" class="btn btn-link">Forgot Password</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="account/register" class="btn btn-link">Register</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="account/resetpassword" class="btn btn-link">Forgot Password</MudButton>
         </EditForm>
 @code {
     public double? Amount { get; set; }

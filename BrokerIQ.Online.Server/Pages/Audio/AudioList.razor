@@ -10,7 +10,7 @@
 
 <h1 class="page-title">All Audios</h1>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="AddRecording">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="AddRecording">
     Add Recording
 </MudButton>
 
@@ -49,8 +49,8 @@ else
             <MudInputString ID="inVal" @bind-Value="@AudioName" Type="InputType.Text" Placeholder="" />
         </DialogContent>
         <DialogActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="OnCancelPushed">Cancel</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Ok</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Style="@($"color:{Colors.Shades.Black};")" OnClick="OnCancelPushed">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Ok</MudButton>
         </DialogActions>
     </MudDialog>
 
@@ -69,13 +69,13 @@ else
                 <tr>
                     <td>@Path.GetFileNameWithoutExtension(Audio.Name)</td>
                     <td>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"audiodetail?url={Audio.Url}")" class="btn btn-primary table-btn">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"audiodetail?url={Audio.Url}")" class="btn btn-primary table-btn">
                             <i class="fas fa-headphones"></i>
                         </MudButton>
                     </td>
 
                     <td>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" class="btn btn-primary table-btn" @onclick="f => DeleteAudio(Audio.Name)">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn" @onclick="f => DeleteAudio(Audio.Name)">
                             <i class="fas fa-trash"></i>
                         </MudButton>
                     </td>

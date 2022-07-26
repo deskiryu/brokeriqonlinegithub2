@@ -33,10 +33,10 @@ else
                     <MudInputString @bind-Value="selectedNotification" Placeholder="Type a notification message" Style="width:100%" />
                 </div>
                 <div class="col-sm-3 mt-1">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="(async () => await SendNotificationToAll())" >Send Notification to all clients</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendNotificationToAll())" >Send Notification to all clients</MudButton>
                 </div>
                 <div class="col-sm-3 mt-1">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="(async () => await SendNotificationToSelected())" >Send Notification to selected clients</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendNotificationToSelected())" >Send Notification to selected clients</MudButton>
                 </div>
             </div>
         </div>
@@ -147,7 +147,7 @@ else
         <MudTd DataLabel="Date Of Birth">@context.DateOfBirth.ToString("dd/MM/yyyy")</MudTd>
         <MudTd DataLabel="Verified"><MudCheckBox @bind-Checked="@context.EmailConfirmed" Disabled="true"></MudCheckBox></MudTd>
         <MudTd DataLabel="">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"clientdetail/{@context.Id}")" >
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientdetail/{@context.Id}")" >
                 <i class="fas fa-info-circle"></i>
             </MudButton>
         </MudTd>

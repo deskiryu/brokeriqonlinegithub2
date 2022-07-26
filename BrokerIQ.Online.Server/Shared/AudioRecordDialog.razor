@@ -11,8 +11,8 @@
 <MudDialog>
     <DialogContent>
         @Message
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" class="red-text" id="RecordButton" OnClick="Record">Record</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" class="gray-text" id="StopButton" Disabled="true">Stop</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="red-text" id="RecordButton" OnClick="Record">Record</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="gray-text" id="StopButton" Disabled="true">Stop</MudButton>
         @ErrorMessage
     <div class="d-flex flex-column py-1" style="margin-top:10px; margin-bottom:10px;">
         <section class="sound-clips">
@@ -57,8 +57,8 @@
 
     </DialogContent>
     <DialogActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" id="SaveButton" OnClick="UploadButtonPushed" >Save</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" id="CancelButton" OnClick="Cancel">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" id="SaveButton" OnClick="UploadButtonPushed" >Save</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" id="CancelButton" OnClick="Cancel">Cancel</MudButton>
     </DialogActions>
 </MudDialog>
 

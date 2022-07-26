@@ -74,7 +74,7 @@
                     <ValidationMessage For="@(() => model.Postcode)" />
                 </div>
                 <div class="form-group col-6" style="margin-top:12px">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="FindAddress" >Find Address</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="FindAddress" >Find Address</MudButton>
                      <MudProgressCircular Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
                 </div>
 
@@ -127,14 +127,14 @@
                 </div>
             </div>
             <div class="form-group col-12">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" disabled="@loading" class="btn btn-primary">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" disabled="@loading" class="btn btn-primary">
                     @if (loading)
                     {
                         <span class="spinner-border spinner-border-sm mr-1"></span>
                     }
                     Register
                 </MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="" class="btn btn-link">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="" class="btn btn-link">Cancel</MudButton>
             </div>
         </EditForm>
     </div>

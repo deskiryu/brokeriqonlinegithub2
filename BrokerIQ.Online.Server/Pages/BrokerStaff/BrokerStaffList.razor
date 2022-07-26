@@ -27,7 +27,7 @@
     else
     {
 
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"brokerstaffadd")" class="btn btn-primary mb-2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"brokerstaffadd")" class="btn btn-primary mb-2">
             Add New Employee
         </MudButton>
 
@@ -57,7 +57,7 @@
                                 var broker = @Brokers.FirstOrDefault(x => x.Id == bStaff.BrokerId);
                                 <td>@broker.Name</td>
                             }
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"brokerStaffedit/{bStaff.Id}")" class="btn btn-primary table-btn">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"brokerStaffedit/{bStaff.Id}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-edit"></i>
                             </MudButton>
                         </tr>
