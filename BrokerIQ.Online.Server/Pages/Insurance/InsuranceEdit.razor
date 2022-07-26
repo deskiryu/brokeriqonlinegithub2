@@ -117,7 +117,7 @@
                             </div>
                             <div class="col-sm-2">
                                 <label>Show</label>
-                                <input type="checkbox" @bind="@Insurance.ShowReviewDate" />
+                                <MudCheckBox Checked="@Insurance.ShowReviewDate" />
                             </div>
                         </div>
 
@@ -155,7 +155,7 @@
                                 </div>
                                 <div class="col-sm-2 mt-5">
                                     <label>Show</label>
-                                    <input type="checkbox" @bind="@Insurance.ShowTermYears" />
+                                    <MudCheckBox Checked="@Insurance.ShowTermYears" />
                                 </div>
                             </div>
 
@@ -169,7 +169,7 @@
                                 </div>
                                 <div class="col-sm-2 mt-5">
                                     <label>Show</label>
-                                    <input type="checkbox" @bind="@Insurance.ShowTermAmount" />
+                                    <MudCheckBox Checked="@Insurance.ShowTermAmount" />
                                 </div>
                             </div>
 
@@ -183,7 +183,7 @@
                                 </div>
                                 <div class="col-sm-2 mt-5">
                                     <label>Show</label>
-                                    <input type="checkbox" @bind="@Insurance.ShowDeferredPeriodWeeks" />
+                                    <MudCheckBox Checked="@Insurance.ShowDeferredPeriodWeeks" />
                                 </div>
                             </div>
                         }
@@ -209,7 +209,7 @@
                             </div>
                         }
 
-                        <button type="submit" class="btn btn-primary edit-btn mt-1">Save insurance</button>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" type="submit" class="mt-1">Save insurance</MudButton>
                         <a class="btn btn-outline-primary edit-outline-btn ml-lg-2 mt-1" @onclick="@NavigateToOverview">Cancel</a>
                         @if (Insurance.Id > 0)
                         {

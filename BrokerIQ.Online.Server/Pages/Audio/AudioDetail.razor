@@ -43,10 +43,10 @@ else
                 <MudInputString @bind-Value="selectedNotification" Placeholder="Type a notification message" Style="width:100%" />
             </div>
             <div class="col-sm-3 mt-1">
-                <button @onclick="(async () => await SendNotificationToAll())" class="btn btn-primary text-center">Send Audio Notification to all users</button>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="(async () => await SendNotificationToAll())" class="btn btn-primary text-center">Send Audio Notification to all users</MudButton>
             </div>
             <div class="col-sm-3 mt-1">
-                <button @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Audio Notification to selected users</button>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Audio Notification to selected users</MudButton>
             </div>
                     }
                     else{
@@ -73,7 +73,7 @@ else
         @foreach (var customer in FilteredCustomers)
             {
         <tr>
-            <td><input type="checkbox" @bind="@customer.Selected" /></td>
+            <td><MudCheckBox Checked="@customer.Selected" /></td>
             <td>@customer.Name</td>
             <td>
                 @if (customer.EmailConfirmed)

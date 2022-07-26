@@ -39,10 +39,10 @@ else
                     <MudInputString @bind-Value="selectedNotification" Placeholder="Type a reminder message" Style="width:100%" />
                 </div>
                 <div class="col-sm-3 mt-1">
-                    <button @onclick="(async () => await SendNotificationToAll())" class="btn btn-primary text-center">Send reminder to all brokers</button>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="(async () => await SendNotificationToAll())" class="btn btn-primary text-center">Send reminder to all brokers</MudButton>
                 </div>
                 <div class="col-sm-3 mt-1">
-                    <button @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send reminder to selected brokers</button>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send reminder to selected brokers</MudButton>
                 </div>
             </div>
         </div>
@@ -153,17 +153,17 @@ else
                                 <img src="data:image/bmp;base64, @(Convert.ToBase64String(broker.LogoImage))" style="width:110px; height:50px" />
                             }
                         </td>
-                        <td><input type="checkbox" @bind="@broker.Selected" /></td>
+                        <td><MudCheckBox Checked="@broker.Selected" /></td>
                         <td>@broker.Name</td>
                         <td>@broker.TelephoneNumber</td>
                         <td>@broker.EmailAddress</td>
                         <td>
-                            <NavLink href="@($"brokeredit/{broker.Id}")" class="btn btn-primary table-btn">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"brokeredit/{broker.Id}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-edit"></i>
-                            </NavLink>
-                            <NavLink href="@($"charts/dashboard/{broker.Id}")" class="btn btn-primary table-btn">
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"charts/dashboard/{broker.Id}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-chart-line"></i>
-                            </NavLink>
+                            </MudButton>
                         </td>
                     </tr>
                 }
@@ -250,7 +250,3 @@ else
         }
     }
 }
-
-@*<button @onclick="QuickAddEmployee" class="btn btn-dark table-btn quick-add-btn">&nbsp;&nbsp;+&nbsp;&nbsp;</button>
-
-    <AddEmployeeDialog @ref="AddEmployeeDialog" CloseEventCallback="@AddEmployeeDialog_OnDialogClose"></AddEmployeeDialog>*@

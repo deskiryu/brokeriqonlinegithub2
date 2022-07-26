@@ -40,8 +40,8 @@
                 <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" Disabled="@Loading">Login</MudButton>
             </MudCardActions>
         </MudCard>
-            <MudNavLink href="account/register" class="btn btn-link">Register</MudNavLink>
-            <NavLink href="account/resetpassword" class="btn btn-link">Forgot Password</NavLink>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="account/register" class="btn btn-link">Register</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="account/resetpassword" class="btn btn-link">Forgot Password</MudButton>
         </EditForm>
 @code {
     public double? Amount { get; set; }

@@ -244,10 +244,10 @@ else if (!Saved)
                                         <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
                                     }
                                     <td>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" href="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
                                             <i class="fas fa-info-circle"></i>
                                         </MudButton>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" href="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId=0")" class="btn btn-primary table-btn">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId=0")" class="btn btn-primary table-btn">
                                             <i class="fas fa-edit"></i>
                                         </MudButton>
                                     </td>
@@ -258,9 +258,9 @@ else if (!Saved)
                 </table>
             </MudTabPanel>
             <MudTabPanel Text="Mortgages">
-                <NavLink href="@($"mortgageedit/0/{Customer.Id}")" class="btn btn-primary mb-2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"mortgageedit/0/{Customer.Id}")" class="btn btn-primary mb-2">
                     Add New Mortgage
-                </NavLink>
+                </MudButton>
                 <table id="table-mortgage" class="table  col-sm-12 table-striped ">
                     <thead>
                         <tr>
@@ -292,12 +292,12 @@ else if (!Saved)
                                     <td>@Brokers.First(x => x.Id == mortgage.BrokerId)?.Name</td>
                                 }
                                 <td>
-                                    <NavLink href="@($"mortgagedetail/{mortgage.Id}")" class="btn btn-primary table-btn">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"mortgagedetail/{mortgage.Id}")" class="btn btn-primary table-btn">
                                         <i class="fas fa-info-circle"></i>
-                                    </NavLink>
-                                    <NavLink href="@($"mortgageedit/{mortgage.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"mortgageedit/{mortgage.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
                                         <i class="fas fa-edit"></i>
-                                    </NavLink>
+                                    </MudButton>
                                 </td>
                             </tr>
                         }
@@ -334,18 +334,15 @@ else if (!Saved)
                                 </td>
                                 <td>@doc.Description</td>
                                 <td>
-                                    <a class="btn btn-primary table-btn" @onclick="f => ViewDocumentUpload(doc)">
-                                        <i class="fas fa-eye">
-                                        </i>
-                                    </a>
-                                    <a class="btn btn-primary table-btn" @onclick="f => SaveDocumentUpload(doc)">
-                                        <i class="fas fa-download">
-                                        </i>
-                                    </a>
-                                    <a class="btn btn-primary table-btn" @onclick="f => DeleteDocumentUpload(doc)">
-                                        <i class="fas fa-trash">
-                                        </i>
-                                    </a>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="f => ViewDocumentUpload(doc)">
+                                        <i class="fas fa-eye"></i>
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="f => SaveDocumentUpload(doc)">
+                                        <i class="fas fa-download"></i>
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="f => DeleteDocumentUpload(doc)">
+                                        <i class="fas fa-trash"></i>
+                                    </MudButton>
                                 </td>
                             </tr>
                         }
@@ -388,12 +385,12 @@ else if (!Saved)
                 {
 
                 <MudTabPanel Text="@($"Menuplan: {menuplan.Name}")">
-                    <NavLink href="@($"insuranceedit/0/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary mb-2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary mb-2">
                         Add New Insurance
-                    </NavLink>
-                    <NavLink href="@($"menuplanedit/{menuplan.Id}/{Customer.Id}")" class="btn btn-primary table-btn mb-2">
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"menuplanedit/{menuplan.Id}/{Customer.Id}")" class="btn btn-primary table-btn mb-2">
                         Edit this Menu Plan
-                    </NavLink>
+                    </MudButton>
                     <table id="table-menuplan" class="table  col-sm-12 table-striped ">
                         <thead>
                             <tr>
@@ -421,12 +418,12 @@ else if (!Saved)
                                             <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
                                         }
                                         <td>
-                                            <NavLink href="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
                                                 <i class="fas fa-info-circle"></i>
-                                            </NavLink>
-                                            <NavLink href="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary table-btn">
+                                            </MudButton>
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary table-btn">
                                                 <i class="fas fa-edit"></i>
-                                            </NavLink>
+                                            </MudButton>
                                         </td>
                                     </tr>
                                 }
@@ -437,9 +434,9 @@ else if (!Saved)
                 }
             }
             <MudTabPanel Text="Notes">
-                <button @onclick="@NewNote" class="btn btn-primary mb-2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="@NewNote" class="btn btn-primary mb-2">
                     Add New Note
-                </button>
+                </MudButton>
 
                 <div class = "row">
                 @if (Notes != null && Notes.Any())
@@ -478,9 +475,9 @@ else if (!Saved)
             <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot'>
                 @if (!IsAdmin)
                 {
-                    <button @onclick="@NewChat" class="btn btn-primary mb-2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="@NewChat" class="btn btn-primary mb-2">
                     Send Message
-                    </button>
+                    </MudButton>
                 }
                 else
                 {

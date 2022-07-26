@@ -75,7 +75,7 @@ else
             @foreach (var customer in FilteredCustomers)
             {
                 <tr>
-                    <td><input type="checkbox" @bind="@customer.Selected" /></td>
+                    <td><MudCheckBox Checked="@customer.Selected" /></td>
                     <td>@customer.Name</td>
                     <td>
                         @if (customer.EmailConfirmed)

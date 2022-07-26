@@ -36,7 +36,7 @@
                     @foreach(var fileName in FileNameAndStreams)
                     {
                         <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">@fileName.Item1</MudText>                  
-                        <MudButton Color="Color.Primary" OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudButton>                  
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudButton>                  
                     }
 
                     <MudText Style="white-space: pre-line;">will be sent to this client </MudText>
@@ -52,8 +52,8 @@
         </MudContainer>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Ok">Continue</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Ok">Continue</MudButton>
     </DialogActions>
 </MudDialog>
 

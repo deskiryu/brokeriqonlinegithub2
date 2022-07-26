@@ -31,9 +31,9 @@
                     <MudItem>
                         <MudTextField @bind-Value="@Email" HelperText="Enter email address" />
                     </MudItem>
-                    <a @onclick="AddEmail" class="btn btn-primary table-btn">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddEmail">
                         <i class="fas fa-plus"></i>
-                    </a>
+                    </MudButton>
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@
                         <EditForm Model="@EmailTargets" OnValidSubmit="@SendInvites">
                             <div>
                                 <div class="col-sm-6">
-                                    <button type="submit" class="btn btn-primary edit-btn " style="width:max-content">Make connections</button>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" type="submit"  style="width:max-content">Make connections</MudButton>
                                     @if (IsAdmin)
                                     {
                                         <label style="margin-top: 5px">Choose Broker</label>
@@ -100,9 +100,7 @@
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">
-                <button class="btn">
-                    Broker Connections
-                </button>
+                Broker Connections
             </h5>
         </div>
         <div class="card-body">
@@ -166,7 +164,7 @@
                 @foreach (var Item in FilteredEmailInvites)
                 {
                     <tr>
-                        <td><input type="checkbox" @bind="@Item.Selected" disabled="@Item.Converted"/></td>
+                        <td><MudCheckBox Checked="@Item.Selected" disabled="@Item.Converted"/></td>
                         <td style="padding-right:20px;">@(Item.EmailAddress)</td>
                         <td style="padding-right:10px">@(Item.CreatedDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss"))</td>
                         <td style="padding-right:10px;">@(Item.InvitationCount)</td>
@@ -181,9 +179,9 @@
                             }
                         </td>
                         <td>
-                            <NavLink @onclick="() => DeleteLink(Item.Id)" class="btn btn-primary table-btn">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary"  OnClick="() => DeleteLink(Item.Id)" class="btn btn-primary table-btn">
                                 <i class="fas fa-trash"></i>
-                            </NavLink>
+                            </MudButton>
                         </td>
                         @if (ShowEmployee)
                         {

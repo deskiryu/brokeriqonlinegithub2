@@ -51,8 +51,8 @@
 
 
                 <div class="form-group row">
-                    <button type="submit" class="btn btn-primary edit-btn">Update employee</button>
-                    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToOverview">Cancel</a>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" type="submit" class="btn btn-primary edit-btn">Update employee</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" class="btn btn-outline-primary edit-outline-btn" OnClick="@NavigateToOverview">Cancel</MudButton>
                 </div>
 
 
@@ -66,9 +66,9 @@
 
     </EditForm>
     <div class="row col-6 mt-1">
-        <button class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteCustomer">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteCustomer">
             Delete Employee
-        </button>
+        </MudButton>
     </div>
 </section>
 

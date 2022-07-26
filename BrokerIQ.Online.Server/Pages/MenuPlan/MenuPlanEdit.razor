@@ -41,7 +41,7 @@
                             </div>
                             <div class="col-sm-2">
                                 <label>Show</label>
-                                <input type="checkbox" @bind="@MenuPlan.ShowReviewDate" />
+                                <MudCheckBox Checked="@MenuPlan.ShowReviewDate" />
                             </div>
                         </div>
 
@@ -64,7 +64,7 @@
                             </div>
                         }
 
-                        <button type="submit" class="btn btn-primary edit-btn mt-1">Save MenuPlan</button>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" type="submit" class="mt-1">Save MenuPlan</MudButton>
                         <a class="btn btn-outline-primary edit-outline-btn ml-lg-2 mt-1" @onclick="@NavigateToOverview">Cancel</a>
                         @if (MenuPlan.Id > 0)
                         {

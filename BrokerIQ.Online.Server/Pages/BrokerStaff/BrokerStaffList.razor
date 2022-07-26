@@ -27,9 +27,9 @@
     else
     {
 
-        <NavLink href="@($"brokerstaffadd")" class="btn btn-primary mb-2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"brokerstaffadd")" class="btn btn-primary mb-2">
             Add New Employee
-        </NavLink>
+        </MudButton>
 
         <div class="table-responsive">
             <table id="table-broker" class="table col-sm-12 table-striped ">
@@ -57,9 +57,9 @@
                                 var broker = @Brokers.FirstOrDefault(x => x.Id == bStaff.BrokerId);
                                 <td>@broker.Name</td>
                             }
-                            <NavLink href="@($"brokerStaffedit/{bStaff.Id}")" class="btn btn-primary table-btn">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Link="@($"brokerStaffedit/{bStaff.Id}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-edit"></i>
-                            </NavLink>
+                            </MudButton>
                         </tr>
                     }
                 </tbody>
