@@ -127,6 +127,9 @@ else
     }
     <div>
 
+    <div class="card">
+        <div class="card-header">Clients</div>
+        <div class="card-body">
 <MudTable Items="@FilteredCustomers" Hover="true" SortLabel="Sort By" >
     <HeaderContent>
         <MudTh>Select</MudTh>
@@ -157,7 +160,8 @@ else
         <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
     </PagerContent>
 </MudTable>
-
+</div>
+</div>
     </div>
     @code {
 

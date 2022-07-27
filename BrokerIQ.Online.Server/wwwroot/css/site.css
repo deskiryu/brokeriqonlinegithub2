@@ -193,7 +193,7 @@ app {
     }
 
     .spin-row-bg {
-        background-color: white;
+        background-color: #F5F5F5;
     }
 
     #container .row {
@@ -418,7 +418,9 @@ app {
     .play-button:hover {
         background-color: lightgrey;
     }
-
+.card {
+    background-color: #FAFAFA;
+}
 
 .video_card-body {
     padding: 0rem;
