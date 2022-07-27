@@ -162,7 +162,7 @@
                 @foreach (var Item in FilteredEmailInvites)
                 {
                     <tr>
-                        <td><MudCheckBox Checked="@Item.Selected" disabled="@Item.Converted"/></td>
+                        <td><MudCheckBox @bind-Checked="@Item.Selected" disabled="@Item.Converted"/></td>
                         <td style="padding-right:20px;">@(Item.EmailAddress)</td>
                         <td style="padding-right:10px">@(Item.CreatedDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss"))</td>
                         <td style="padding-right:10px;">@(Item.InvitationCount)</td>

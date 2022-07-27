@@ -108,7 +108,7 @@
                                 <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.EndDate)" />
                             </div>
                             <div class="col-sm-1">
-                                <MudCheckBox Checked="@Mortgage.ShowEndDate" />
+                                <MudCheckBox @bind-Checked="@Mortgage.ShowEndDate" />
                             </div>
                         </div>
 
@@ -121,7 +121,7 @@
                                 </MudItem>
                             </div>
                             <div class="col-sm-1">
-                                <MudCheckBox Checked="@Mortgage.ShowMonthlyPayment" />
+                                <MudCheckBox @bind-Checked="@Mortgage.ShowMonthlyPayment" />
                             </div>
                         </div>
 
@@ -134,7 +134,7 @@
                                 </MudItem>
                             </div>
                             <div class="col-sm-1">
-                                <MudCheckBox Checked="@Mortgage.ShowInterestRate" />
+                                <MudCheckBox @bind-Checked="@Mortgage.ShowInterestRate" />
                             </div>
                         </div>
 
@@ -145,7 +145,7 @@
                                 <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.PromotionalEndDate)" />
                             </div>
                             <div class="col-sm-1">
-                                <MudCheckBox Checked="@Mortgage.ShowPromotionalEndDate" />
+                                <MudCheckBox @bind-Checked="@Mortgage.ShowPromotionalEndDate" />
                             </div>
                         </div>
 
@@ -158,7 +158,7 @@
                                 </MudItem>
                             </div>
                             <div class="col-sm-1">
-                                <MudCheckBox Checked="@Mortgage.ShowPotentialMonthlyPayment" />
+                                <MudCheckBox @bind-Checked="@Mortgage.ShowPotentialMonthlyPayment" />
                             </div>
                         </div>
 
@@ -171,7 +171,7 @@
                                 </MudItem>
                             </div>
                             <div class="col-sm-1">
-                                <MudCheckBox Checked="@Mortgage.ShowPotentialInterestRate" />
+                                <MudCheckBox @bind-Checked="@Mortgage.ShowPotentialInterestRate" />
                             </div>
                         </div>
 
@@ -182,7 +182,7 @@
                                 <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.PotentialEndDate)" />
                             </div>
                             <div class="col-sm-1">
-                                <MudCheckBox Checked="@Mortgage.ShowPotentialEndDate" />
+                                <MudCheckBox @bind-Checked="@Mortgage.ShowPotentialEndDate" />
                             </div>
                         </div>
 
@@ -195,7 +195,7 @@
                                 </MudItem>
                             </div>
                             <div class="col-sm-1">
-                                <MudCheckBox Checked="@Mortgage.ShowMortgageNumber" />
+                                <MudCheckBox @bind-Checked="@Mortgage.ShowMortgageNumber" />
                             </div>
                         </div>
 
