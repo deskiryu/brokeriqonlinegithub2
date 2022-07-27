@@ -72,7 +72,7 @@
                         <EditForm Model="@EmailTargets" OnValidSubmit="@SendInvites">
                             <div>
                                 <div class="col-sm-6">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" type="submit" >Make connections</MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" ButtonType="ButtonType.Submit" >Make connections</MudButton>
                                     @if (IsAdmin)
                                     {
                                         <label style="margin-top: 5px">Choose Broker</label>
