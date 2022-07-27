@@ -26,7 +26,15 @@
         <div class="mt-5">
             <h5>Upload Video</h5>
         </div>
-        <InputFile OnChange="LoadFiles" class="mt-2 btn btn-primary" accept="video/mov,video/mp4,video/*" />
+        <InputFile id="videofileinput" OnChange="LoadFiles" accept="video/mov,video/mp4,video/*" hidden multiple/>
+        <MudButton HtmlTag="label"
+           Variant="Variant.Filled"
+           Color="Color.Primary"
+           Style="@($"color:{Colors.Shades.Black};")"
+           StartIcon="@Icons.Filled.CloudUpload"
+           for="videofileinput">
+            Upload Video
+        </MudButton>
         <p>@status</p>
         <div class="">
             @if (VideoScanUploading)
@@ -69,8 +77,8 @@
                     }
             </DialogContent>
             <DialogActions>
-                <MudButton Color="Color.Secondary" OnClick="OnCancelPushed">Cancel</MudButton>
-                <MudButton Color="Color.Primary" OnClick="UploadButtonPushed">Ok</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="OnCancelPushed">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="UploadButtonPushed">Ok</MudButton>
             </DialogActions>
 
         </MudDialog>
@@ -149,7 +157,7 @@
                                 </MudDatePicker>
                                 </div>
                             <div class="row mt-2">
-                                <input type="checkbox" class="video_checkbox_tick" checked="@context.SendDateTick" @onclick="async f => await SetSendDateTick(context.Name)" />
+                                <MudCheckBox Checked="@context.SendDateTick" @onclick="async f => await SetSendDateTick(context.Name)" />
                                 <label class="video_checkbox_label">Send on this date</label>
 
                             </div>
@@ -158,16 +166,16 @@
                         {
                             <MudTd DataLabel="Broker">@context.Broker</MudTd>              
                         }
-                        <MudTd DataLabel="Birthday"><input type="checkbox" checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Name)" /></MudTd>
+                        <MudTd DataLabel="Birthday"><MudCheckBox Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Name)" /></MudTd>
                         <MudTd DataLabel="Send">
-                            <NavLink href="@($"videodetail?url={context.Url}")" class="btn btn-primary table-btn">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"videodetail?url={context.Url}")" >
                                 <i class="fas fa-paper-plane"></i>
-                            </NavLink>
+                            </MudButton>
                         </MudTd>
                         <MudTd DataLabel="Delete">
-                            <button class="btn btn-primary table-btn" @onclick="f => DeleteVideo(context.Name)">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"class="btn btn-primary table-btn" @onclick="f => DeleteVideo(context.Name)">
                                 <i class="fas fa-trash"></i>
-                            </button>
+                            </MudButton>
                         </MudTd>
                     </RowTemplate>
         </MudTable>
@@ -176,5 +184,5 @@
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to video list</a>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to video list</MudButton>
 }

@@ -108,7 +108,7 @@
                                 <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.EndDate)" />
                             </div>
                             <div class="col-sm-1">
-                                <input type="checkbox" @bind="@Mortgage.ShowEndDate" />
+                                <MudCheckBox Checked="@Mortgage.ShowEndDate" />
                             </div>
                         </div>
 
@@ -121,7 +121,7 @@
                                 </MudItem>
                             </div>
                             <div class="col-sm-1">
-                                <input type="checkbox" @bind="@Mortgage.ShowMonthlyPayment" />
+                                <MudCheckBox Checked="@Mortgage.ShowMonthlyPayment" />
                             </div>
                         </div>
 
@@ -134,7 +134,7 @@
                                 </MudItem>
                             </div>
                             <div class="col-sm-1">
-                                <input type="checkbox" @bind="@Mortgage.ShowInterestRate" />
+                                <MudCheckBox Checked="@Mortgage.ShowInterestRate" />
                             </div>
                         </div>
 
@@ -145,7 +145,7 @@
                                 <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.PromotionalEndDate)" />
                             </div>
                             <div class="col-sm-1">
-                                <input type="checkbox" @bind="@Mortgage.ShowPromotionalEndDate" />
+                                <MudCheckBox Checked="@Mortgage.ShowPromotionalEndDate" />
                             </div>
                         </div>
 
@@ -158,7 +158,7 @@
                                 </MudItem>
                             </div>
                             <div class="col-sm-1">
-                                <input type="checkbox" @bind="@Mortgage.ShowPotentialMonthlyPayment" />
+                                <MudCheckBox Checked="@Mortgage.ShowPotentialMonthlyPayment" />
                             </div>
                         </div>
 
@@ -171,7 +171,7 @@
                                 </MudItem>
                             </div>
                             <div class="col-sm-1">
-                                <input type="checkbox" @bind="@Mortgage.ShowPotentialInterestRate" />
+                                <MudCheckBox Checked="@Mortgage.ShowPotentialInterestRate" />
                             </div>
                         </div>
 
@@ -182,7 +182,7 @@
                                 <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.PotentialEndDate)" />
                             </div>
                             <div class="col-sm-1">
-                                <input type="checkbox" @bind="@Mortgage.ShowPotentialEndDate" />
+                                <MudCheckBox Checked="@Mortgage.ShowPotentialEndDate" />
                             </div>
                         </div>
 
@@ -195,7 +195,7 @@
                                 </MudItem>
                             </div>
                             <div class="col-sm-1">
-                                <input type="checkbox" @bind="@Mortgage.ShowMortgageNumber" />
+                                <MudCheckBox Checked="@Mortgage.ShowMortgageNumber" />
                             </div>
                         </div>
 
@@ -219,8 +219,8 @@
                             </div>
                         }
 
-                        <button type="submit" class="btn btn-primary edit-btn mt-1">Save mortgage</button>
-                        <a class="btn btn-outline-primary edit-outline-btn ml-lg-2 mt-1" @onclick="@NavigateToOverview">Cancel</a>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" >Save mortgage</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>
                         @if (Mortgage.Id > 0)
                         {
                             <a class="btn btn-danger ml-2 mt-1" @onclick="@DeleteMortgage">
@@ -248,16 +248,15 @@
                     <MudTable Items="@Mortgage.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="" >
                         <RowTemplate>
                         <MudTd>@context.FileName</MudTd>
-                        @if (Mortgage.Id > 0)
-                        {
-                            <MudTd> <a class="btn btn-primary" @onclick="f => PreviewFile(context)">View</a></MudTd>
-                            <MudTd> <a class="btn btn-primary" @onclick="f => DownloadFile(context)">Download</a></MudTd>
-                            <MudTd> <a class="btn btn-danger sm-2" @onclick="f => DeleteMortgageFile(context.Id)">Delete File</a></MudTd>
-                        }
-                        else
-                        {
-                            <MudTd> <a class="btn btn-danger sm-2" @onclick="f => DeleteMortgageFile(context)">Delete File</a></MudTd>                     
-                        }
+                        @if (Mortgage.Id > 0){
+                            <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => PreviewFile(context))" class="btn btn-link">View</MudButton></MudTd>
+                            <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DownloadFile(context))" class="btn btn-link">Download</MudButton></MudTd>
+                            <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteMortgageFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
+                            }
+                            else
+                            {            
+                               <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteMortgageFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
+                            }
                         </RowTemplate>
                     </MudTable>
 
@@ -293,5 +292,5 @@
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to Client Overview</a>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
 }

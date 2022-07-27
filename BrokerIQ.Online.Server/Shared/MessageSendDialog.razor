@@ -4,8 +4,8 @@
         <MudContainer Style="width: 350px; height: 200px; overflow-y: scroll">
             <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
                     <MudTextField T="string" Label="Message to send" Required="true" RequiredError="Please fill in the message" @bind-Value="model.MessageToSend" Lines="5"/>
-                    <MudButton style="mt-1" OnClick="Cancel">Cancel</MudButton>
-                    <MudButton style="mt-1" Color="Color.Primary" ButtonType="ButtonType.Submit">Ok</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};mt-1")"  OnClick="Cancel">Cancel</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};mt-1")"  ButtonType="ButtonType.Submit">Ok</MudButton>
             </EditForm>    
         </MudContainer>
     </DialogContent>

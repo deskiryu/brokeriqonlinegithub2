@@ -37,7 +37,7 @@
                     @if (context.RelevantCustomerId > 0 && context.FormattedLinkMessage!=null && context.FormattedLinkMessage.Count==3)
                     {
                         @context.FormattedLinkMessage[0]
-                        <MudLink href="@($"clientdetail/{@context.RelevantCustomerId}")">
+                        <MudLink href="@($"clientdetail/{@context.RelevantCustomerId}")" Color="Color.Tertiary">
                             @context.FormattedLinkMessage[1]
                         </MudLink>
                         @context.FormattedLinkMessage[2]
@@ -60,7 +60,7 @@
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to message list</a>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to messge list</MudButton>
 }
 
 @code{

@@ -10,7 +10,7 @@
     </div>
     <div class="row ml-2">
         <div class="col-4">
-            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+            <MudProgressLinear Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Indeterminate="true" Class="my-7" />
         </div>
     </div>
 }
@@ -75,7 +75,7 @@ else
             @foreach (var customer in FilteredCustomers)
             {
                 <tr>
-                    <td><input type="checkbox" @bind="@customer.Selected" /></td>
+                    <td><MudCheckBox Checked="@customer.Selected" /></td>
                     <td>@customer.Name</td>
                     <td>
                         @if (customer.EmailConfirmed)
