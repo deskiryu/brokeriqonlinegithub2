@@ -157,7 +157,7 @@
                                 </MudDatePicker>
                                 </div>
                             <div class="row mt-2">
-                                <MudCheckBox @bind-Checked="@context.SendDateTick" @onclick="async f => await SetSendDateTick(context.Name)" />
+                                <MudCheckBox Checked="@context.SendDateTick" @onclick="async f => await SetSendDateTick(context.Name)" />
                                 <label class="video_checkbox_label">Send on this date</label>
 
                             </div>
@@ -166,7 +166,7 @@
                         {
                             <MudTd DataLabel="Broker">@context.Broker</MudTd>              
                         }
-                        <MudTd DataLabel="Birthday"><MudCheckBox @bind-Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Name)" /></MudTd>
+                        <MudTd DataLabel="Birthday"><MudCheckBox Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Name)" /></MudTd>
                         <MudTd DataLabel="Send">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"videodetail?url={context.Url}")" >
                                 <i class="fas fa-paper-plane"></i>
