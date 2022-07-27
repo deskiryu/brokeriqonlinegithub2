@@ -135,7 +135,7 @@ else
                                 <label type="text" readonly class="form-control-plaintext">@doc.FileName</label>
                             </div>
                             <div class="col-sm-4">
-                                <a class="form-control btn btn-primary" @onclick="f => DownloadFile(doc)">Download</a>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DownloadFile(doc))" class="btn btn-link">Download</MudButton>
                             </div>
                         </div>
                     }

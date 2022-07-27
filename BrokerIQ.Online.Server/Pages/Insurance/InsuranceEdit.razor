@@ -209,7 +209,7 @@
                             </div>
                         }
 
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" type="submit" class="mt-1">Save insurance</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" type="submit" >Save insurance</MudButton>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview">Cancel</MudButton>
                         @if (Insurance.Id > 0)
                         {
@@ -238,13 +238,13 @@
                             <MudTd>@context.FileName</MudTd>
                             @if (Insurance.Id > 0)
                             {
-                                <MudTd> <a class="btn btn-primary" @onclick="f => PreviewFile(context)">View</a></MudTd>
-                                <MudTd> <a class="btn btn-primary" @onclick="f => DownloadFile(context)">Download</a></MudTd>
-                                <MudTd> <a class="btn btn-danger sm-2" @onclick="f => DeleteInsuranceFile(context.Id)">Delete File</a></MudTd>
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => PreviewFile(context))" class="btn btn-link">View</MudButton></MudTd>
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Secondary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DownloadFile(context))" class="btn btn-link">Download</MudButton></MudTd>
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteInsuranceFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
                             }
                             else
-                            {
-                               <MudTd> <a class="btn btn-danger sm-2" @onclick="f => DeleteInsuranceFile(context)">Delete File</a></MudTd>                     
+                            {            
+                               <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteInsuranceFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
                             }
                         </RowTemplate>
                     </MudTable>
@@ -279,6 +279,6 @@
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to Client Overview</a>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
 }
 

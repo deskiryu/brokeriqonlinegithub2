@@ -135,9 +135,7 @@
             <div class="col-lg-8 control_wrapper mb-5">
                         @if (BrokerId > 0)
                         {
-                        <Button @onclick="ShowSecondEmailList" class="btn btn-primary table-btn">
-                               Send Reminder Emails
-                            </Button>                            
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@ShowSecondEmailList" >Send Reminder Emails</MudButton>                          
                         }
             </div>
             </div>
@@ -201,6 +199,6 @@
     else
     {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to invite list</a>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to invite list</MudButton>
     }
 
