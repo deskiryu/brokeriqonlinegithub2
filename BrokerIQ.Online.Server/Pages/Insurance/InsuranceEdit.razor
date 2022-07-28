@@ -117,7 +117,7 @@
                             </div>
                             <div class="col-sm-2">
                                 <label>Show</label>
-                                <MudCheckBox Checked="@Insurance.ShowReviewDate" />
+                                <MudCheckBox @bind-Checked="@Insurance.ShowReviewDate" />
                             </div>
                         </div>
 
@@ -155,7 +155,7 @@
                                 </div>
                                 <div class="col-sm-2 mt-5">
                                     <label>Show</label>
-                                    <MudCheckBox Checked="@Insurance.ShowTermYears" />
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowTermYears" />
                                 </div>
                             </div>
 
@@ -169,7 +169,7 @@
                                 </div>
                                 <div class="col-sm-2 mt-5">
                                     <label>Show</label>
-                                    <MudCheckBox Checked="@Insurance.ShowTermAmount" />
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowTermAmount" />
                                 </div>
                             </div>
 
@@ -183,7 +183,7 @@
                                 </div>
                                 <div class="col-sm-2 mt-5">
                                     <label>Show</label>
-                                    <MudCheckBox Checked="@Insurance.ShowDeferredPeriodWeeks" />
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowDeferredPeriodWeeks" />
                                 </div>
                             </div>
                         }
