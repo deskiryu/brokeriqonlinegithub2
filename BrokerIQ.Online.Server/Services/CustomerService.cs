@@ -27,7 +27,7 @@ namespace BrokerIQ.Online.Services
             this.accountService = accountService;
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId=0, int filterRecent=0, int filterPeriod = 0)
+        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId=0, int filterRecent=0, int filterPeriod = 0, bool profilePictures=false)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -58,6 +58,7 @@ namespace BrokerIQ.Online.Services
                     url += "/getwithfilter";
                 }
             }
+            url += $"?profilePictures={profilePictures}";
 
             var answer = await this.requestProviderService.Post<SearchOptionDto,IEnumerable<CustomerDto>>(url, searchOption);
             return this.mapper.Map<IEnumerable<Customer>>(answer);
