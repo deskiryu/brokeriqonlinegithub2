@@ -10,20 +10,11 @@
 @inject IDialogService DialogService
 @inject IAccountService AccountService
 
-<h1 class="page-title">All insurance brokers</h1>
+<h3 class="page-title">Brokers</h3>
 
 @if (Brokers == null)
 {
-    <div class="row ml-2 ">
-        <div class="col-4 mt-2">
-            <h3>Loading</h3>
-        </div>
-    </div>
-    <div class="row ml-2">
-        <div class="col-4">
-            <MudProgressLinear Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Indeterminate="true" Class="my-7" />
-        </div>
-    </div>
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="" />
 }
 else
 {

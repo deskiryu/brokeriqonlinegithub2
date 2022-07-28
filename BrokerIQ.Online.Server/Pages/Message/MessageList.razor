@@ -7,21 +7,14 @@
 @inject IEmailService EmailService
 @inject MessageCountState MyMessageCountState
 
-<h1 class="page-title">All Messages</h1>
+<h3 class="page-title">Reminders</h3>
 
 @if (!Saved)
 {
     @if (BrokerNotifications == null)
     {
-        <div class="row ml-2 ">
-            <div class="col-4 mt-2">
-                <h3>Loading</h3>
-            </div>
-        </div>
-        <div class="row ml-2">
-            <div class="col-4">
-                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-            </div>
+        <div>
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
         </div>
     }
     else

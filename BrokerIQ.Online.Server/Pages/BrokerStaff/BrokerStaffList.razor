@@ -7,21 +7,14 @@
 @inject IAlertService AlertService
 
 
-<h1 class="page-title">Employees</h1>
+<h3 class="page-title">Employees</h3>
 
 @if (!Saved)
 {
     @if (BrokerStaff == null)
     {
-        <div class="row ml-2 ">
-            <div class="col-4 mt-2">
-                <h3>Loading</h3>
-            </div>
-        </div>
-        <div class="row ml-2">
-            <div class="col-4">
-                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-            </div>
+        <div>
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
         </div>
     }
     else

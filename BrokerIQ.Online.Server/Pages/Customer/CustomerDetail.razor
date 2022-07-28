@@ -37,21 +37,14 @@
 <h3>Client Overview</h3>
 @if (Customer == null)
 {
-    <div class="row ml-2 ">
-        <div class="col-4 mt-2">
-            <h3>Loading</h3>
-        </div>
-    </div>
-    <div class="row ml-2">
-        <div class="col-4">
-            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-        </div>
+    <div>
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
     </div>
 }
 else if (!Saved)
 {
     <section class="customer-detail">
-        <h1 class="page-title">Details for @Customer.FirstName @Customer.LastName</h1>
+        <h3 class="page-title">Details for @Customer.FirstName @Customer.LastName</h3>
         @{
             var leadingFormat = "00000";
             //var a = Customer.CustomerId.ToString("00000");
