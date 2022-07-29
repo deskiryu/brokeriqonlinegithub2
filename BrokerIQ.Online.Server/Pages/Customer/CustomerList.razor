@@ -7,19 +7,12 @@
 @inject NavigationManager NavigationManager
 @inject IAccountService AccountService
 
-<h1 class="page-title">All insurance clients</h1>
+<h3 class="page-title">Clients</h3>
 
 @if (Customers == null)
 {
-    <div class="row ml-2 ">
-        <div class="col-4 mt-2">
-            <h3>Loading</h3>
-        </div>
-    </div>
-    <div class="row ml-2">
-        <div class="col-4">
-            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-        </div>
+    <div>
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
     </div>
 }
 else
@@ -132,6 +125,7 @@ else
         <div class="card-body">
 <MudTable Items="@FilteredCustomers" Hover="true" SortLabel="Sort By" >
     <HeaderContent>
+        <MudTh></MudTh>
         <MudTh>Select</MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
@@ -142,6 +136,7 @@ else
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd><td><img src="@context.PPAsImage" class="rounded-pill" style="width:30px;"/></td></MudTd>
         <MudTd DataLabel="Select"><MudCheckBox @bind-Checked="@context.Selected" ></MudCheckBox></MudTd>
         <MudTd DataLabel="First name">@context.FirstName</MudTd>
         <MudTd DataLabel="Last name">@context.LastName</MudTd>

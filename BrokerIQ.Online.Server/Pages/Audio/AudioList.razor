@@ -8,32 +8,26 @@
 @inject IJSRuntime jsRuntime
 
 
-<h1 class="page-title">All Audios</h1>
+<h3 class="page-title">Voice recordings</h3>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="AddRecording">
-    Add Recording
+<MudButton Variant="Variant.Filled" 
+Color="Color.Primary" 
+Style="@($"color:{Colors.Shades.Black};")" 
+StartIcon="@Icons.Filled.MicNone"
+class="btn btn-primary table-btn" 
+@onclick="AddRecording">
+    New Voice recording
 </MudButton>      
 
 
 @if (Audios == null)
 {
-    <div class="row ml-2 ">
-        <div class="col-4 mt-2">
-            <h3>Loading</h3>
-        </div>
-    </div>
-    <div class="row ml-2">
-        <div class="col-4">
-            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-        </div>
+    <div>
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
     </div>
 }
 else
 {
-    <div class="mt-5">
-        <h5>Upload Audio</h5>
-    </div>
-
     <p>@status</p>
     <div class="col-sm">
         <div class="spin-row spin-row-bg">
@@ -59,7 +53,7 @@ else
     <table id="table-Audio" class="table col-sm-12 table-striped ">
         <thead>
             <tr>
-                <th class="col-md-10">Uploaded Audio</th>
+                <th class="col-md-10">Voice recording</th>
                 <th class="col-md-1">Listen</th>
                 <th class="col-md-1">Delete</th>
             </tr>

@@ -53,6 +53,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.EmailConfirmed, action => action.MapFrom(s => s.EmailConfirmed))
                 .ForMember(d => d.Insurances, action => action.MapFrom(s => s.Insurances))
                 .ForMember(d => d.MenuPlans, action => action.MapFrom(s => s.MenuPlans))
+                .ForMember(d => d.ProfilePicture, action => action.MapFrom(s => s.ProfilePicture))
                 .ForMember(d => d.Mortgages, action => action.MapFrom(s => s.Mortgages));
 
             CreateMap<Customer, UpdateCustomerDto>()

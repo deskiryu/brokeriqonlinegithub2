@@ -4,22 +4,14 @@
 @using System
 @inject NavigationManager NavigationManager
 
-<h3>NotificationPage</h3>
+<h3>Notifications</h3>
 
 
 @if (NotificationsSent == null)
 {
-    <div class="row ml-2 ">
-        <div class="col-4 mt-2">
-            <h3>Loading</h3>
-        </div>
+    <div>
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
     </div>
-    <div class="row ml-2">
-        <div class="col-4">
-            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-        </div>
-    </div>
-
 }
 else
 {

@@ -8,10 +8,10 @@
 @inject IMetaDefenderCoreService MetaDefenderCoreService
 @inject IJSRuntime jsRuntime
 
-<MudDialog>
+<MudDialog Style="@($"background:{Colors.Grey.Lighten4};")">
     <DialogContent>
         @Message
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="red-text" id="RecordButton" OnClick="Record">Record</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" StartIcon="@Icons.Filled.MicNone" class="red-text" id="RecordButton" OnClick="Record">Record</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="gray-text" id="StopButton" Disabled="true">Stop</MudButton>
         @ErrorMessage
     <div class="d-flex flex-column py-1" style="margin-top:10px; margin-bottom:10px;">

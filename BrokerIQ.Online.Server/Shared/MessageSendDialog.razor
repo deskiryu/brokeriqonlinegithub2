@@ -1,5 +1,5 @@
 ﻿@using System.ComponentModel.DataAnnotations
-<MudDialog>
+<MudDialog Style="@($"background:{Colors.Grey.Lighten4};")">
     <DialogContent>
         <MudContainer Style="width: 350px; height: 200px; overflow-y: scroll">
             <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
