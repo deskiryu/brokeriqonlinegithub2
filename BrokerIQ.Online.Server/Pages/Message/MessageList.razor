@@ -24,6 +24,10 @@
             <HeaderContent>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.SentDate)">Sent</MudTableSortLabel></MudTh>
+                @if (IsAdmin)
+                {
+                    <MudTh>Broker</MudTh>
+                }
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Message">
@@ -42,6 +46,11 @@
 
                 </MudTd>
                 <MudTd DataLabel="Sent">@context.SentDate</MudTd>   
+                @if (IsAdmin)
+                {
+                    <MudTd>@Brokers.FirstOrDefault(x => x.Id == context.BrokerId)?.Name</MudTd>
+                }
+
             </RowTemplate>
             <PagerContent>
                 <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
