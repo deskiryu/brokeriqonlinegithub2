@@ -36,9 +36,17 @@ namespace BrokerIQ.Online.Server.Pages.Video
         [Inject]
         public IAccountService AccountService { get; set; }
 
+        [Inject]
+        public IBrokerService BrokerService { get; set; }
+
+
         protected Video Video { get; set; }
 
         protected List<Customer> Customers { get; set; }
+
+        public List<Broker> Brokers { get; set; }
+
+        public int BrokerId { get; set; }
 
         protected string Url { get; set; }
         protected string VideoName { get; set; }
@@ -49,6 +57,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
         protected bool Vetted { get; set; }
 
+        protected bool IsAdmin { get; set; }
+
         //filter
         protected List<Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
@@ -56,6 +66,18 @@ namespace BrokerIQ.Online.Server.Pages.Video
         {
             var query = new Uri(NavigationManager.Uri).Query;
             selectedNotification = "A new video has arrived";
+
+            var user = await AccountService.GetUser();
+            IsAdmin = user.IsAdmin;
+            if (IsAdmin)
+            {
+                Brokers = (await BrokerService.GetBrokers()).ToList();
+            }
+            else
+            {
+                Brokers = new List<Broker>();
+            }
+
 
             if (QueryHelpers.ParseQuery(query).TryGetValue("Url", out var value))
             {
@@ -74,7 +96,6 @@ namespace BrokerIQ.Online.Server.Pages.Video
             
             try
             {
-                var user = await AccountService.GetUser();
                 if (user == null)
                 {
                     throw new Exception();
@@ -99,6 +120,40 @@ namespace BrokerIQ.Online.Server.Pages.Video
         protected async Task SendNotificationToSelected(bool sendAll = false)
         {
             await OpenNotificationDialog(false);
+        }
+
+
+        protected async Task<IEnumerable<string>> OnFilterBroker(string value)
+        {
+            if (Brokers != null && Brokers.Any())
+            {
+                // In real life use an asynchronous function for fetching data from an api.
+                IEnumerable<Broker> filtered = null;
+                if (string.IsNullOrEmpty(value))
+                {
+                    filtered = Brokers;
+                }
+                else
+                {
+                    filtered = Brokers.Where(i => i.Name.ToLower().Contains(value.ToLower()) ||
+                    i.EmailAddress.ToLower().Contains(value.ToLower()));
+                }
+
+
+                var results = await Task.FromResult(filtered.Select(x => x.Name).Distinct().ToList());
+                return results;
+            }
+            else
+            {
+                return new List<string>();
+            }
+        }
+
+        protected async Task AutoCompleteClickBroker()
+        {
+            Customers.Clear();
+            Customers = null;
+            Customers = (await CustomerService.GetAllCustomers(BrokerId)).ToList();
         }
 
         protected async Task OpenNotificationDialog(bool sendAll = false)
