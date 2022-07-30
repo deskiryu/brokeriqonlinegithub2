@@ -34,7 +34,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
         public IVideoService VideoService { get; set; }
 
         [Inject]
-        IAccountService AccountService { get; set; }
+        public IAccountService AccountService { get; set; }
 
         [Inject]
         public IBrokerService BrokerService { get; set; }
