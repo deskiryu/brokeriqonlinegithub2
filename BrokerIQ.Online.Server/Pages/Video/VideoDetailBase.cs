@@ -96,7 +96,6 @@ namespace BrokerIQ.Online.Server.Pages.Video
             
             try
             {
-                var user = await AccountService.GetUser();
                 if (user == null)
                 {
                     throw new Exception();
