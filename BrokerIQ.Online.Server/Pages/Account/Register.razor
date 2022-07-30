@@ -8,7 +8,7 @@
 @using BrokerIQ.Online.Server.Shared
 @inject IAccountService AccountService
 @inject IDialogService DialogService
-@inject IAzureService AzureService
+@inject ILogoService LogoService
 @inject IAddressService AddressService
 @inject NavigationManager NavigationManager
 @inject IMapper mapper
@@ -73,8 +73,8 @@
                     <InputText @bind-Value="model.Postcode" class="form-control" />
                     <ValidationMessage For="@(() => model.Postcode)" />
                 </div>
-                <div class="form-group col-6" style="margin-top:12px">
-                    <MudButton OnClick="FindAddress" Color="Color.Primary" >Find Address</MudButton>
+                <div class="form-group col-6" style="">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:12px")" OnClick="FindAddress" >Find Address</MudButton>
                      <MudProgressCircular Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
                 </div>
 
@@ -107,7 +107,15 @@
             <div class="form-group row" style="padding-left:15px">
                 <label class="form-group col-6">Choose company logo </label>
                 <div class="form-group col-6">
-                    <InputFile OnChange="LoadFiles" class="mt-2 ml-lg-2 btn btn-primary" accept="image/jpeg" />
+                <InputFile id="logofileinput" OnChange="LoadFiles" accept="image/jpeg" hidden multiple/>
+                <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Style="@($"color:{Colors.Shades.Black};")"
+                   StartIcon="@Icons.Filled.CloudUpload"
+                   for="logofileinput">
+                    Choose File
+                </MudButton>
                 </div>
                 <div class="form-group col-6">
                     <label style="font-size:small">Ratio 2.2:1 Ideally 220px x 100px</label>
@@ -117,24 +125,24 @@
             <div class="form-group row" style="padding-left:15px">
                 <div class="form-group col-6">
                     <label>Password</label>
-                    <InputText @bind-Value="model.Password" type="password" class="form-control" />
+                    <MudTextField @bind-Value="model.Password" Label="Password" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPassword" AdornmentAriaLabel="Show Password"/>
                     <ValidationMessage For="@(() => model.Password)" />
                 </div>
                 <div class="form-group col-6">
                     <label>Confirm Password</label>
-                    <InputText @bind-Value="model.ConfirmPassword" type="password" class="form-control" />
+                    <MudTextField @bind-Value="model.ConfirmPassword" Label="Password" InputType="@PasswordInputConfirm" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIconConfirm" OnAdornmentClick="ShowPasswordConfirm" AdornmentAriaLabel="Show Password"/>
                     <ValidationMessage For="@(() => model.ConfirmPassword)" />
                 </div>
             </div>
             <div class="form-group col-12">
-                <button disabled="@loading" class="btn btn-primary">
+                <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" disabled="@loading" class="btn btn-primary">
                     @if (loading)
                     {
                         <span class="spinner-border spinner-border-sm mr-1"></span>
                     }
                     Register
-                </button>
-                <NavLink href="" class="btn btn-link">Cancel</NavLink>
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"  Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>
             </div>
         </EditForm>
     </div>
@@ -152,6 +160,22 @@
     {
         SpinnerVisible = "display:none";
         DropdownDisabled = true;
+    }
+
+    bool isShow; InputType PasswordInput = InputType.Password;string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void ShowPassword()
+    {
+        @if (isShow){isShow = false; PasswordInputIcon = Icons.Material.Filled.VisibilityOff; PasswordInput = InputType.Password;}
+        else {isShow = true; PasswordInputIcon = Icons.Material.Filled.Visibility; PasswordInput = InputType.Text;}
+    }
+
+    bool isShowConfirm; InputType PasswordInputConfirm = InputType.Password;string PasswordInputIconConfirm = Icons.Material.Filled.VisibilityOff;
+
+    void ShowPasswordConfirm()
+    {
+        @if (isShowConfirm){isShowConfirm = false; PasswordInputIconConfirm = Icons.Material.Filled.VisibilityOff; PasswordInputConfirm = InputType.Password;}
+        else {isShowConfirm = true; PasswordInputIconConfirm = Icons.Material.Filled.Visibility; PasswordInputConfirm = InputType.Text;}
     }
 
     private async void OnValidSubmit()
@@ -174,7 +198,7 @@
                 var memoryStream = new MemoryStream(createBroker.LogoImage);
                 var fileName = brokerReturned.Id.ToString() + ".jpeg";
                 memoryStream.Position = 0;
-                await AzureService.TransferLogoStreamToAzureBlob(fileName, memoryStream, brokerReturned.Id);
+                await LogoService.UploadLogo(fileName, memoryStream, brokerReturned.Id);
             }
 
             dialogParams.Add("Message", $"Registration successful - Please check your email, including JUNK folders, for the verfication email");
@@ -255,5 +279,10 @@
             model.AddressLine3 = thisAddress.Item1.City;
             model.Postcode = thisAddress.Item1.Postcode;
         }
+    }
+
+    protected void NavigateToOverview()
+    {
+        NavigationManager.NavigateTo($"/account/login");
     }
 }

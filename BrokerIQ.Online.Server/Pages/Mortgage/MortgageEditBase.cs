@@ -109,6 +109,7 @@ namespace BrokerIQ.Online.Pages
         public MortgageEditBase()
         {
             Mortgage = new Mortgage();
+            Mortgage.SupportingDocuments = new List<MortgageDocument>();
         }
 
         protected override async Task OnInitializedAsync()
@@ -232,12 +233,48 @@ namespace BrokerIQ.Online.Pages
                 {
                     dialogParams.Add("Message", $"Mortgage will be added however a notification will be NOT be sent to {customer.Name} about this new mortgage as their email address is not confirmed");
                 }
-                var result = await DialogService.Show<ConfirmCancelDialog>("Mortgage Add", dialogParams).Result;
-                if (!result.Cancelled)
+
+                var fileNamesAndMemoryStreams = new List<(string, MemoryStream)>();
+                var fileNamesAndBytes = new List<(string, byte[])>();
+                foreach (var file in LoadedFiles)
+                {
+                    var loopMemoryStream = new MemoryStream();
+                    if (file.Size > this.fileUploadSettings.MaxFileSize)
+                    {
+                        dialogParams.Add("Oversize", "true");
+                        continue;
+                    }
+                    await file.OpenReadStream(this.fileUploadSettings.MaxFileSize).CopyToAsync(loopMemoryStream);
+                    fileNamesAndMemoryStreams.Add((file.Name, loopMemoryStream));
+                }
+
+                bool agreed;
+                if (LoadedFiles.Any())
+                {
+
+                    dialogParams.Add("Filenames", fileNamesAndMemoryStreams.Select(x => x.Item1).ToList());
+                    dialogParams.Add("MemoryStreams", fileNamesAndMemoryStreams.Select(x => x.Item2).ToList());
+                    var result = await DialogService.Show<FilesConfirmDialog>("Mortgage Add", dialogParams).Result;
+                    agreed = !result.Cancelled;
+                    if (agreed)
+                    {
+                        foreach (var file in fileNamesAndMemoryStreams)
+                        {
+                            fileNamesAndBytes.Add((file.Item1, file.Item2.ToArray()));
+                        }
+                    }
+                }
+                else
+                {
+                    var result = await DialogService.Show<ConfirmCancelDialog>("Mortgage Add", dialogParams).Result;
+                    agreed = !result.Cancelled;
+                }
+
+                if (agreed)
                 {
                     try
                     {
-                        await MortgageService.AddMortgage(Mortgage);
+                        await MortgageService.AddMortgage(Mortgage, fileNamesAndBytes);
                     }
                     catch
                     {
@@ -357,6 +394,16 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected void DeleteMortgageFile(MortgageDocument doc)
+        {
+            Mortgage.SupportingDocuments.Remove(doc);
+            var loadedtoRemove = LoadedFiles.FirstOrDefault(x => x.Name == doc.FileName);
+            if (loadedtoRemove != null)
+            {
+                LoadedFiles.Remove(loadedtoRemove);
+            }
+        }
+
         protected async Task UploadMortgageFile(string filename, byte[] dataBytes)
         {
             if (id == 0)
@@ -467,7 +514,23 @@ namespace BrokerIQ.Online.Pages
             }
             if (success)
             {
-                await UploadFiles();
+                if (Mortgage.Id > 0)
+                {
+                    await UploadFiles();
+                }
+                else
+                {
+                    Mortgage.SupportingDocuments.Clear();
+                    foreach (var file in LoadedFiles)
+                    {
+                        Mortgage.SupportingDocuments.Add(new MortgageDocument
+                        {
+                            FileName = file.Name,
+                            SupportingDocumentType = DocumentTypeEnum.PDF
+                        });
+                    }
+                    StateHasChanged();
+                }
             }
         }
 

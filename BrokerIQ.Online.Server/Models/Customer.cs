@@ -74,10 +74,26 @@ namespace BrokerIQ.Online.Models
 
         public virtual ICollection<CustomerDocument> CustomerDocuments { get; set; }
 
+        public virtual CustomerDocument ProfilePicture { get; set; }
+
         public bool Selected { get; set; }
 
         public string Name => Salutation + ' ' + FirstName + ' ' + LastName;
 
         public string MultiSelect => FirstName + LastName + EmailAddress + TelephoneNumber + DateOfBirth.ToString();
+
+        public string PPAsImage
+        {
+            get
+            {
+                if(ProfilePicture != null && ProfilePicture.File.Any())
+                {
+                    var base64 = Convert.ToBase64String(ProfilePicture.File);
+                    var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                    return imgSrc;
+                }
+                return null;
+            }
+        }
     }
 }

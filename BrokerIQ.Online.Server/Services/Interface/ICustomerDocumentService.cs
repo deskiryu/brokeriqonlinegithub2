@@ -18,5 +18,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<IEnumerable<CustomerDocumentDto>> Get(int customerId);
 
+        Task<bool> DeleteCustomerDocument(Guid id);
+
     }
 }

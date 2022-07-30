@@ -7,57 +7,53 @@
 @inject IEmailService EmailService
 @inject MessageCountState MyMessageCountState
 
-<h1 class="page-title">All Messages</h1>
+<h3 class="page-title">Reminders</h3>
 
 @if (!Saved)
 {
     @if (BrokerNotifications == null)
     {
-        <div class="row ml-2 ">
-            <div class="col-4 mt-2">
-                <h3>Loading</h3>
-            </div>
-        </div>
-        <div class="row ml-2">
-            <div class="col-4">
-                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-            </div>
+        <div>
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
         </div>
     }
     else
     {
-        <table id="table-message" class="table col-sm-12 table-striped ">
-            <thead>
-                <tr>
-                    <th class="col-md-6">Message</th>
-                    <th class="col-md-4">Sent</th>
-                    @if (IsAdmin)
-                    {
-                        <th>Broker</th>
-                    }
-                </tr>
 
-            </thead>
-            <tbody>
-                @foreach (var message in BrokerNotifications)
-                {
-                    <tr style="@message.RowStyle">
-                        <td>@Path.GetFileNameWithoutExtension(message.Message)</td>
-                        <td>@(message.SentDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss"))</td>
-                        @if (IsAdmin)
-                        {
-                            <td>@Brokers.FirstOrDefault(x => x.Id == message.BrokerId)?.Name</td>
-                        }
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <MudTable Items="@BrokerNotifications" Hover="true" SortLabel="Sort By" >
+            <HeaderContent>
+                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.SentDate)">Sent</MudTableSortLabel></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Message">
+                    @if (context.RelevantCustomerId > 0 && context.FormattedLinkMessage!=null && context.FormattedLinkMessage.Count==3)
+                    {
+                        @context.FormattedLinkMessage[0]
+                        <MudLink href="@($"clientdetail/{@context.RelevantCustomerId}")" Color="Color.Tertiary">
+                            @context.FormattedLinkMessage[1]
+                        </MudLink>
+                        @context.FormattedLinkMessage[2]
+                    }
+                    else
+                    {
+                        @context.Message           
+                    }
+
+                </MudTd>
+                <MudTd DataLabel="Sent">@context.SentDate</MudTd>   
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
+            </PagerContent>
+        </MudTable>
+
     }
 }
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to message list</a>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to messge list</MudButton>
 }
 
 @code{

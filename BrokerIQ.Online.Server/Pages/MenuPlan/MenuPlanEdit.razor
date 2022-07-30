@@ -41,7 +41,7 @@
                             </div>
                             <div class="col-sm-2">
                                 <label>Show</label>
-                                <input type="checkbox" @bind="@MenuPlan.ShowReviewDate" />
+                                <MudCheckBox @bind-Checked="@MenuPlan.ShowReviewDate" />
                             </div>
                         </div>
 
@@ -64,13 +64,11 @@
                             </div>
                         }
 
-                        <button type="submit" class="btn btn-primary edit-btn mt-1">Save MenuPlan</button>
-                        <a class="btn btn-outline-primary edit-outline-btn ml-lg-2 mt-1" @onclick="@NavigateToOverview">Cancel</a>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" >Save MenuPlan</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>
                         @if (MenuPlan.Id > 0)
                         {
-                            <a class="btn btn-danger ml-2 mt-1" @onclick="@DeleteMenuPlan">
-                                Delete
-                            </a>
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteMenuPlan">Delete</MudButton>
                         }
 
                     </div>
@@ -87,5 +85,5 @@
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to Client Overview</a>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
 }

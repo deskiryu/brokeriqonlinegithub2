@@ -10,6 +10,7 @@
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
     using BrokerIQ.Online.Services.Interface;
+    using System.IO;
 
     public class RequestProviderService : IRequestProviderService
     {
@@ -41,6 +42,16 @@
 
             var content = new StringContent(JsonConvert.SerializeObject(data));
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            HttpResponseMessage response = await httpClient.PostAsync($"{this.BaseUrl}/{url}", content);
+            return ConsumeResponse<TReturn>(response);
+        }
+
+        public async Task<TReturn> Post<T, TReturn>(string url, MemoryStream data, string mediaType)
+        {
+            HttpClient httpClient = CreateHttpClient();
+            var content = new ByteArrayContent(data.ToArray());
+            content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 
             HttpResponseMessage response = await httpClient.PostAsync($"{this.BaseUrl}/{url}", content);
             return ConsumeResponse<TReturn>(response);

@@ -34,7 +34,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
         public IVideoService VideoService { get; set; }
 
         [Inject]
-        IAccountService AccountService { get; set; }
+        public IAccountService AccountService { get; set; }
 
         [Inject]
         public IBrokerService BrokerService { get; set; }
@@ -92,12 +92,16 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 {
                     AlertService.Error("Get Videos failed");
                 }
-
             }
             
             try
             {
-                Vetted = await VideoService.IsVetted(VideoName);
+                if (user == null)
+                {
+                    throw new Exception();
+                }
+
+                Vetted = await VideoService.IsVetted(VideoName, user.MasterBrokerId);
                 Customers = (await CustomerService.GetAllCustomers()).ToList();
             }
             catch
@@ -228,6 +232,5 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 };
             }
         }
-
     }
 }

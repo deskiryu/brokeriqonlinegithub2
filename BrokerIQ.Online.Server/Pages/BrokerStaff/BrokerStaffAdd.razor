@@ -48,19 +48,19 @@
                         <div class="form-group row" style="padding-left:15px">
                             <div class="form-group col-6">
                                 <label>Password</label>
-                                <InputText @bind-Value="BrokerStaff.Password" type="password" class="form-control" />
+                                <MudTextField @bind-Value="BrokerStaff.Password" Label="Password" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPassword" AdornmentAriaLabel="Show Password"/>
                                 <ValidationMessage For="@(() => BrokerStaff.Password)" />
                             </div>
                             <div class="form-group col-6">
                                 <label>Confirm Password</label>
-                                <InputText @bind-Value="BrokerStaff.ConfirmPassword" type="password" class="form-control" />
+                                <MudTextField @bind-Value="BrokerStaff.ConfirmPassword" Label="Password" InputType="@PasswordInputConfirm" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIconConfirm" OnAdornmentClick="ShowPasswordConfirm" AdornmentAriaLabel="Show Password"/>
                                 <ValidationMessage For="@(() => BrokerStaff.ConfirmPassword)" />
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <button type="submit" class="btn btn-primary edit-btn">Add Employee</button>
-                            <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToOverview">Cancel</a>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Add Employee</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>
                         </div>
 
 
@@ -72,11 +72,27 @@
             </div>
         </div>
 </section>
+@code{
+    bool isShow; InputType PasswordInput = InputType.Password;string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
+    void ShowPassword()
+    {
+        @if (isShow){isShow = false; PasswordInputIcon = Icons.Material.Filled.VisibilityOff; PasswordInput = InputType.Password;}
+        else {isShow = true; PasswordInputIcon = Icons.Material.Filled.Visibility; PasswordInput = InputType.Text;}
+    }
+
+    bool isShowConfirm; InputType PasswordInputConfirm = InputType.Password;string PasswordInputIconConfirm = Icons.Material.Filled.VisibilityOff;
+
+    void ShowPasswordConfirm()
+    {
+        @if (isShowConfirm){isShowConfirm = false; PasswordInputIconConfirm = Icons.Material.Filled.VisibilityOff; PasswordInputConfirm = InputType.Password;}
+        else {isShowConfirm = true; PasswordInputIconConfirm = Icons.Material.Filled.Visibility; PasswordInputConfirm = InputType.Text;}
+    }
+}
 
 }
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to employee list</a>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to employee list</MudButton>
 }

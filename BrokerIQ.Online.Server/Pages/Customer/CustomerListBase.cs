@@ -78,7 +78,7 @@ namespace BrokerIQ.Online.Pages
         {
             try
             {
-                Customers = (await CustomerService.GetAllCustomers()).ToList();
+                Customers = (await CustomerService.GetAllCustomers(profilePictures:true)).ToList();
             }
             catch
             {
@@ -147,14 +147,14 @@ namespace BrokerIQ.Online.Pages
         {
             Customers.Clear();
             Customers = null;
-            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod)).ToList();
+            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, profilePictures:true)).ToList();
         }
 
         protected async Task RecentFilterSelect()
         {
             Customers.Clear();
             Customers = null;
-            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod)).ToList();
+            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, profilePictures: true)).ToList();
         }
 
         protected async Task SendNotificationToAll()

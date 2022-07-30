@@ -8,11 +8,11 @@
 @inject IMetaDefenderCoreService MetaDefenderCoreService
 @inject IJSRuntime jsRuntime
 
-<MudDialog>
+<MudDialog Style="@($"background:{Colors.Grey.Lighten4};")">
     <DialogContent>
         @Message
-        <MudButton class="red-text" id="RecordButton" OnClick="Record">Record</MudButton>
-        <MudButton class="gray-text" id="StopButton" Disabled="true">Stop</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" StartIcon="@Icons.Filled.MicNone" class="red-text" id="RecordButton" OnClick="Record">Record</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="gray-text" id="StopButton" Disabled="true">Stop</MudButton>
         @ErrorMessage
     <div class="d-flex flex-column py-1" style="margin-top:10px; margin-bottom:10px;">
         <section class="sound-clips">
@@ -57,8 +57,8 @@
 
     </DialogContent>
     <DialogActions>
-            <MudButton Variant="Variant.Filled"Color="Color.Primary" id="SaveButton" OnClick="UploadButtonPushed" >Save</MudButton>
-            <MudButton Variant="Variant.Filled"Color="Color.Primary" id="CancelButton" OnClick="Cancel">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" id="SaveButton" OnClick="UploadButtonPushed" >Save</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" id="CancelButton" OnClick="Cancel">Cancel</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -115,7 +115,7 @@
                 AlertService.Error("Please provide a name for the recording");
                 return;
             }
-            bool available = await AudioService.NameAvailable(AudioName);
+            bool available = await AudioService.NameAvailable(AudioName, BrokerId);
             if (!available)
             {
                 AlertService.Error("That name already exists choose a new one");

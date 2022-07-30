@@ -1,10 +1,10 @@
-﻿<MudDialog>
+﻿<MudDialog Style="@($"background:{Colors.Grey.Lighten4};")">
     <DialogContent>
         @Message
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Submit">Ok</MudButton>
     </DialogActions>
 </MudDialog>
 

@@ -6,7 +6,7 @@
 @inject IAccountService AccountService
 @inject NavigationManager NavigationManager
 
-<h1>Edit User</h1>
+<h3>Edit User</h3>
 @if (model != null)
 {
     <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
@@ -39,14 +39,14 @@
             </div>
         </div>
         <div class="form-group">
-            <button disabled="@loading" class="btn btn-primary">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" disabled="@loading" class="btn btn-primary">
                 @if (loading) 
                 {
                     <span class="spinner-border spinner-border-sm mr-1"></span>
                 }
                 Save
-            </button>
-            <NavLink href="users" class="btn btn-link">Cancel</NavLink>
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="users" class="btn btn-link">Cancel</MudButton>
         </div>
     </EditForm>
 }

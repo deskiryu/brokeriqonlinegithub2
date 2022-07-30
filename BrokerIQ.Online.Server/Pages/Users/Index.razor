@@ -6,8 +6,8 @@
 @inject IAccountService AccountService
 @inject IDialogService DialogService
 
-<h1>Users</h1>
-<NavLink href="users/add" class="btn btn-sm btn-success mb-2">Add User</NavLink>
+<h3>Users</h3>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="users/add" class="btn btn-sm btn-success mb-2">Add User</MudButton>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -27,8 +27,8 @@
                     <td>@user.LastName</td>
                     <td>@user.Username</td>
                     <td style="white-space: nowrap">
-                        <NavLink href="@($"users/edit/{user.Id}")" class="btn btn-sm btn-primary mr-1">Edit</NavLink>
-                        <button @onclick="@(() => DeleteUser(user.Id))" disabled="@user.IsDeleting" class="btn btn-sm btn-danger btn-delete-user">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"users/edit/{user.Id}")" class="btn btn-sm btn-primary mr-1">Edit</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(() => DeleteUser(user.Id))" disabled="@user.IsDeleting" class="btn btn-sm btn-danger btn-delete-user">
                             @if (user.IsDeleting) 
                             {
                                 <span class="spinner-border spinner-border-sm"></span>
@@ -37,7 +37,7 @@
                             {
                                 <span>Delete</span>
                             }
-                        </button>
+                        </MudButton>
                     </td>
                 </tr>
             }

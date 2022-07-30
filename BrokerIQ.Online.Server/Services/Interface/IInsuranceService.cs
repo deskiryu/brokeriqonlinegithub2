@@ -17,5 +17,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<Insurance> AddInsurance(Insurance ins);
 
         Task<bool> DeleteInsurance(int id);
+
+        Task<Insurance> AddInsurance(Insurance ins, List<(string, byte[])> documents);
     }
 }
