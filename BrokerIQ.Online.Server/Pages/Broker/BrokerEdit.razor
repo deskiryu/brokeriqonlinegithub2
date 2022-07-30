@@ -119,7 +119,15 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Choose company logo </label>
                         <div class="col-sm-8">
-                            <InputFile OnChange="LoadFiles" class="mt-2 btn btn-primary" accept="image/jpeg" />
+                            <InputFile id="logofileinputbroker" OnChange="LoadFiles" accept="image/jpeg" hidden multiple/>
+                            <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Style="@($"color:{Colors.Shades.Black};")"
+                               StartIcon="@Icons.Filled.CloudUpload"
+                               for="logofileinputbroker">
+                                Choose File
+                            </MudButton>
                             <label style="font-size:x-small">Ratio 2.2:1 Ideally 220px x 100px</label>
                         </div>
                     </div>
