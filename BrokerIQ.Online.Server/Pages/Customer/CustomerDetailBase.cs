@@ -442,9 +442,6 @@ namespace BrokerIQ.Online.Pages
                     if (!string.IsNullOrEmpty(message))
                     {
                         succeeded = (await ChatService.Send(message, Customer.Id));
-                        var user = await AccountService.GetUser();
-                        var notifMessage = $"You have a new chat message from your Broker";
-                        succeeded |= await NotificationService.SendMessageNotification(notifMessage, new List<int> { Customer.Id }, user.MasterBrokerId, chat:true);
                     }
                 }
                 catch
