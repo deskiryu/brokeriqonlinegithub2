@@ -223,9 +223,7 @@
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>
                         @if (Mortgage.Id > 0)
                         {
-                            <a class="btn btn-danger ml-2 mt-1" @onclick="@DeleteMortgage">
-                                Delete
-                            </a>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteMortgage">Delete</MudButton>
                         }
 
                     </div>
