@@ -36,17 +36,35 @@ namespace BrokerIQ.Online.Models
             get
             {
                 var myStrings = new List<string>();
-                string[] words = Message.Split(' ');
-                if(words.Length > 4 && words[0]=="Your" && words[1]=="client")
+                var position = Message.IndexOf("Your", StringComparison.OrdinalIgnoreCase);
+                var position2 = Message.IndexOf("client", StringComparison.OrdinalIgnoreCase);
+
+                if(position>=0 && position2 == position + 5)
                 {
-                    myStrings.Add(words[0]+' '+words[1] + ' ');
-                    myStrings.Add(words[2] + ' ' + words[3] + ' ');
-                    var bigEnd = string.Empty;
-                    for(int i = 4; i < words.Length; i++)
+                    try
                     {
-                        bigEnd += words[i] + ' ';
+                        myStrings.Add(Message.Substring(0, position+12));
+                        var customerNameStart = Message.Substring(position + 12, Message.Length - position - 12);
+                        string[] words = customerNameStart.Split(' ');
+                        if(words.Length>=2)
+                        {
+                            myStrings.Add(words[0] + ' ' + words[1] + ' ');
+                        }
+
+                        var bigEnd = string.Empty;
+                        for (int i = 2; i < words.Length; i++)
+                        {
+                            bigEnd += words[i] + ' ';
+                        }
+                        myStrings.Add(bigEnd);
                     }
-                    myStrings.Add(bigEnd);
+                    catch
+                    {
+                        myStrings.Clear();
+                        myStrings.Add(Message);
+                    }
+
+
                 }
                 else
                 {
