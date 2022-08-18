@@ -15,5 +15,7 @@ namespace BrokerIQ.Online.Models
         public string Style { get => BrokerSource ? "chat_broker" : "chat_client"; }
 
         public bool IsRead { get; set; }
+
+        public virtual ChatDocument ChatDocument { get; set; }
     }
 }

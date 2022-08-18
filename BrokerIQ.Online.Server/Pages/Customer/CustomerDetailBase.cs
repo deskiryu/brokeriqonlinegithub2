@@ -14,6 +14,7 @@ namespace BrokerIQ.Online.Pages
     using System.IO;
     using BrokerIQ.Online.Server.Shared;
     using BrokerIQ.Online.Server.Extensions;
+    using Microsoft.AspNetCore.Components.Forms;
 
     public class CustomerDetailBase : ComponentBase
     {
@@ -63,6 +64,13 @@ namespace BrokerIQ.Online.Pages
         public IEnumerable<Note> Notes { get; set; }
 
         public Chat Chat { get; set; }
+
+        public string DragEnterStyle { get; set; }
+
+        protected List<IBrowserFile> LoadedFiles = new();
+
+        public string SpinnerVisible { get; set; }
+        public string LoadFileStatus { get; set; }
 
         [Parameter]
         public string CustomerId { get; set; }
@@ -441,7 +449,32 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (!string.IsNullOrEmpty(message))
                     {
-                        succeeded = (await ChatService.Send(message, Customer.Id));
+                        if (LoadedFiles.Any())
+                        {
+                            var fileName = "";
+                            var memoryStream = new MemoryStream();
+                            var file = LoadedFiles[0];
+                            if(file != null)
+                            {
+                                fileName = LoadedFiles[0].Name;
+                                await file.OpenReadStream(1024*1024).CopyToAsync(memoryStream);
+
+                                var sdoc = new ChatDocument();
+                                sdoc.FileName = fileName;
+                                sdoc.File = memoryStream.ToArray();
+                                succeeded = (await ChatService.Send(message, Customer.Id, sdoc));
+                            }
+                            
+
+
+
+
+                        }
+                        else
+                        {
+                            succeeded = (await ChatService.Send(message, Customer.Id));
+                        }
+
                     }
                 }
                 catch
@@ -526,5 +559,37 @@ namespace BrokerIQ.Online.Pages
                 }
             }
         }
+
+        protected async Task LoadFiles(InputFileChangeEventArgs e)
+        {
+            if (e.FileCount > 1)
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", $"Only one document per chat message");
+                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
+
+            }
+            LoadedFiles.Clear();
+            foreach (var file in e.GetMultipleFiles(1))
+            {
+                try
+                {
+                    var ext = Path.GetExtension(file.Name);
+                    if (ext != ".pdf")
+                    {
+                        throw new Exception("Pdf files only");
+                    }
+                    LoadedFiles.Add(file);
+                }
+                catch (Exception ex)
+                {
+                    LoadFileStatus = ex.Message;
+
+                    break;
+                }
+            }
+        }
+
+
     }
 }

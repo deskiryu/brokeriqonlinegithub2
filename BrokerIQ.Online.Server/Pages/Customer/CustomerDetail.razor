@@ -468,6 +468,21 @@ else if (!Saved)
             <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot'>
                 @if (!IsAdmin)
                 {
+                        <div class="col-sm-6 mt-1">
+                            <div class="card">
+                                <div class="card-body">
+                                    <label class="card-title">Upload pdf files</label>
+                                    <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
+                                                @ondragleave="@(() => DragEnterStyle = null)"
+                                                @ondragend="@(() => DragEnterStyle = null)"
+                                                Class=@("drag-drop-zone " + DragEnterStyle)>
+
+                                        <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" accept="application/pdf"/>
+                                        <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
+                                    </MudPaper>
+                                </div>
+                            </div>
+                        </div>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewChat" class="btn btn-primary mb-2">
                     Send Message
                     </MudButton>
