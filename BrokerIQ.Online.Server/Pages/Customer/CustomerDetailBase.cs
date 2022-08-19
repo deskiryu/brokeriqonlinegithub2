@@ -14,6 +14,9 @@ namespace BrokerIQ.Online.Pages
     using System.IO;
     using BrokerIQ.Online.Server.Shared;
     using BrokerIQ.Online.Server.Extensions;
+    using Microsoft.AspNetCore.Components.Forms;
+    using Microsoft.Extensions.Options;
+    using BrokerIQ.Online.Server.AppSettings;
 
     public class CustomerDetailBase : ComponentBase
     {
@@ -50,6 +53,10 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IChatService ChatService { get; set; }
 
+        [Inject]
+        public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
+        private FileUploadSettings fileUploadSettings { get; set; }
+
         public Customer Customer { get; set; }
 
         public CustomerDocumentDto CustomerProfilePicture { get; set; }
@@ -63,6 +70,13 @@ namespace BrokerIQ.Online.Pages
         public IEnumerable<Note> Notes { get; set; }
 
         public Chat Chat { get; set; }
+
+        public string DragEnterStyle { get; set; }
+
+        protected List<IBrowserFile> LoadedChatFiles = new();
+
+        public string SpinnerVisible { get; set; }
+        public string LoadFileStatus { get; set; }
 
         [Parameter]
         public string CustomerId { get; set; }
@@ -87,7 +101,7 @@ namespace BrokerIQ.Online.Pages
 
         public MudBlazor.Color ChatBadgeColour { get; set; }
 
-        public Dictionary<int,string> DocumentTypeEnumValues = new Dictionary<int, string>();
+        public Dictionary<int, string> DocumentTypeEnumValues = new Dictionary<int, string>();
 
         protected override async Task OnInitializedAsync()
         {
@@ -135,7 +149,7 @@ namespace BrokerIQ.Online.Pages
                 UnReadChat = await ChatService.GetUnRead(Customer.Id);
                 Chat = await ChatService.Get(Customer.Id);
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
-                BadgeDot = UnReadChat == 0 ;
+                BadgeDot = UnReadChat == 0;
             }
             else
             {
@@ -147,7 +161,7 @@ namespace BrokerIQ.Online.Pages
                     }
                 }
             }
-
+            fileUploadSettings = this.FileUploadSettingsOption.Value;
 
         }
 
@@ -165,7 +179,7 @@ namespace BrokerIQ.Online.Pages
         {
 
             if (Customer.EmailConfirmed)
-            {                
+            {
                 var dialogParams = new DialogParameters();
 
                 if (string.IsNullOrEmpty(selectedNotification))
@@ -204,7 +218,7 @@ namespace BrokerIQ.Online.Pages
                     var succeeded = false;
                     try
                     {
-                        succeeded = await NotificationService.SendMessageNotification(selectedNotification, targetsId,user.MasterBrokerId);
+                        succeeded = await NotificationService.SendMessageNotification(selectedNotification, targetsId, user.MasterBrokerId);
                     }
                     catch
                     {
@@ -330,7 +344,7 @@ namespace BrokerIQ.Online.Pages
         {
             bool succeeded = false;
             var result = await DialogService.Show<NoteEditDialog>("New Note").Result;
-            if(!result.Cancelled)
+            if (!result.Cancelled)
             {
                 var message = result.Data.ToString();
 
@@ -338,7 +352,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (!string.IsNullOrEmpty(message))
                     {
-                       succeeded = (await NoteService.SaveNote(message, Customer.Id)).Id>0;
+                        succeeded = (await NoteService.SaveNote(message, Customer.Id)).Id > 0;
                     }
                 }
                 catch
@@ -362,14 +376,14 @@ namespace BrokerIQ.Online.Pages
         }
 
         protected async Task EditNote(int id)
-        {                
+        {
             bool succeeded = false;
             var note = Notes.FirstOrDefault(x => x.Id == id);
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", note.Message);
-            
+
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
-            if(!result.Cancelled)
+            if (!result.Cancelled)
             {
                 var message = result.Data.ToString();
                 try
@@ -382,7 +396,7 @@ namespace BrokerIQ.Online.Pages
                         }
                         catch
                         {
-                            await RefreshNotesWithDialogMessage(false,"Something went wrong updating the Note. Please try again.");
+                            await RefreshNotesWithDialogMessage(false, "Something went wrong updating the Note. Please try again.");
                         }
                     }
                 }
@@ -432,7 +446,51 @@ namespace BrokerIQ.Online.Pages
         protected async Task NewChat()
         {
             bool succeeded = false;
-            var result = await DialogService.Show<MessageSendDialog>("Send Message").Result;
+
+            var fileAttached = false;
+            var sdoc = new ChatDocument();
+            var dialogParams = new DialogParameters();
+
+            try
+            {
+                if (LoadedChatFiles.Any())
+                {
+                    var fileName = "";
+                    var memoryStream = new MemoryStream();
+                    var file = LoadedChatFiles[0];
+                    if (file != null)
+                    {
+                        fileAttached = true;
+                        fileName = LoadedChatFiles[0].Name;
+
+                        if (file.Size > this.fileUploadSettings.MaxFileSize)
+                        {
+                            dialogParams.Add("Oversize", "true");
+                            fileAttached = false;
+                        }
+                        else
+                        {
+                            await file.OpenReadStream(this.fileUploadSettings.MaxFileSize).CopyToAsync(memoryStream);
+
+                            sdoc.FileName = fileName;
+                            sdoc.File = memoryStream.ToArray();
+
+                            dialogParams.Add("Filenames", new List<string>{
+                                sdoc.FileName
+                            });
+                            dialogParams.Add("MemoryStreams", new List<MemoryStream> { 
+                                memoryStream
+                            });
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                fileAttached = false;
+            }
+
+            var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams).Result;
             if (!result.Cancelled)
             {
                 var message = result.Data.ToString();
@@ -441,12 +499,19 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (!string.IsNullOrEmpty(message))
                     {
-                        succeeded = (await ChatService.Send(message, Customer.Id));
+                        if (fileAttached)
+                        {
+                            succeeded = (await ChatService.Send(message, Customer.Id, sdoc));
+                        }
+                        else
+                        {
+                            succeeded = (await ChatService.Send(message, Customer.Id));
+                        }
                     }
                 }
                 catch
                 {
-
+                    succeeded = false;
                 }
             }
             else
@@ -526,5 +591,41 @@ namespace BrokerIQ.Online.Pages
                 }
             }
         }
+
+        protected async Task LoadFiles(InputFileChangeEventArgs e)
+        {
+            if (e.FileCount > 1)
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", $"Only one document per chat message");
+                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
+
+            }
+            LoadedChatFiles.Clear();
+            foreach (var file in e.GetMultipleFiles(1))
+            {
+                try
+                {
+                    var ext = Path.GetExtension(file.Name);
+                    if (ext != ".pdf")
+                    {
+                        throw new Exception("Pdf files only");
+                    }
+                    LoadedChatFiles.Add(file);
+                }
+                catch (Exception ex)
+                {
+                    LoadFileStatus = ex.Message;
+
+                    break;
+                }
+            }
+        }
+
+        protected async Task DeleteChatDocument()
+        {
+            LoadedChatFiles.Clear();
+        }
+
     }
 }

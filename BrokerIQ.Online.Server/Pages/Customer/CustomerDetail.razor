@@ -342,8 +342,8 @@ else if (!Saved)
                     </tbody>
                 </table>
                 @code{
-                
-                    protected async Task ViewDocumentUpload(CustomerDocumentDto doc)
+
+                protected async Task ViewDocumentUpload(CustomerDocumentDto doc)
                     {
                         if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
                         {
@@ -354,6 +354,17 @@ else if (!Saved)
                         {
                             await PreviewPdf(doc);
                         }
+                    }
+
+                    protected async Task ViewDocumentUpload(ChatDocument doc)
+                    {
+                        var converted = new CustomerDocumentDto
+                        {
+                            SupportingDocumentType = doc.SupportingDocumentType,
+                            File = doc.File,
+
+                        };
+                        ViewDocumentUpload(converted);
                     }
 
                     protected async Task SaveDocumentUpload(CustomerDocumentDto doc)
@@ -468,9 +479,33 @@ else if (!Saved)
             <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot'>
                 @if (!IsAdmin)
                 {
+                        <div class="col-sm-6 mt-1">
+                            <div class="card">
+                                <div class="card-body">
+                                    <label class="card-title">Upload pdf files</label>
+                                    <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
+                                                @ondragleave="@(() => DragEnterStyle = null)"
+                                                @ondragend="@(() => DragEnterStyle = null)"
+                                                Class=@("drag-drop-zone " + DragEnterStyle)>
+
+                                        <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" accept="application/pdf"/>
+                                        <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
+                                    </MudPaper>                      
+                                    @if(LoadedChatFiles.Any()){
+                                    var filename = LoadedChatFiles[0].Name;
+                                    <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())" class="btn btn-link">Remove @filename</MudButton>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+  
+                    <div class="col-sm-6 mt-1">
+                    <div class="card">
+                    <div class="card-body">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewChat" class="btn btn-primary mb-2">
-                    Send Message
+                    Send Chat
                     </MudButton>
+                    </div></div></div>
                 }
                 else
                 {
@@ -497,7 +532,9 @@ else if (!Saved)
                     </div>                    
                 }
 
-
+                <div class="col-sm-6 mt-1">
+                <div class="card">
+                <div class="card-body">
                 @if (Chat != null && Chat.Messages.Any())
                 {                    
                     @if (IsAdmin)
@@ -521,9 +558,25 @@ else if (!Saved)
                                 <CardHeaderContent>
                                 <MudText Typo="Typo.body1">@message.Message</MudText>   
 
-                                </CardHeaderContent>
+                                    </CardHeaderContent>
                             </MudCardHeader>
-                            <MudCardContent>        
+                            <MudCardContent>                                           
+                                @if (message.ChatDocumentId > 0)
+                                        {
+                                            <div>
+                                            @if (message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.JPEG || message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.PNG)
+                                            {
+                                                <MudText>Photo Attachement- @message.ChatDocument.FileName</MudText>
+                                            }
+                                            else{
+                                                <MudText>Pdf Attachment- @message.ChatDocument.FileName</MudText> 
+                                            } 
+
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(message.ChatDocument)">
+                                                <i class="fas fa-eye"></i>
+                                            </MudButton></div>
+
+                                        }     
                             @if (message.BrokerSource)
                             {
                                 var combined = $"Sent from us at {@message.SentTime.ToString("dd/MM/yyyy hh:mm:ss")}";
@@ -543,7 +596,7 @@ else if (!Saved)
                     }
                     </div>
                 }
-
+                </div></div></div>
             </MudTabPanel>
         </MudTabs>
     </section>

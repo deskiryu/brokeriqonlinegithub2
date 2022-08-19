@@ -60,6 +60,28 @@ namespace BrokerIQ.Online.Services
             return answer!=null&&answer.Id>0;
         }
 
+        public async Task<bool> Send(string message, int customerId, ChatDocument chatDocument)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var brokerId = user.MasterBrokerId;
+            var createChatMessage = new CreateChatMessageDto
+            {
+                BrokerId = brokerId,
+                CustomerId = customerId,
+                Message = message,
+                BrokerSource = true,
+                ChatDocument = new CreateChatDocumentDto
+                {
+                     File = chatDocument.File,
+                     FileName = chatDocument.FileName
+                }
+            };
+
+            var answer = await requestProviderService.Post<CreateChatMessageDto, ChatMessageDto>(this.ChatUrl, createChatMessage);
+            return answer != null && answer.Id > 0;
+        }
+
         public async Task<int> GetUnRead(int customerId, int brokerId = 0)
         {
             var user = await this.accountService.GetUser();
