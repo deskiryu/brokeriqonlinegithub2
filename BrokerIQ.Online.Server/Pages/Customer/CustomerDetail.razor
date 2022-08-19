@@ -490,13 +490,22 @@ else if (!Saved)
 
                                         <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" accept="application/pdf"/>
                                         <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
-                                    </MudPaper>
+                                    </MudPaper>                      
+                                    @if(LoadedChatFiles.Any()){
+                                    var filename = LoadedChatFiles[0].Name;
+                                    <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())" class="btn btn-link">Remove @filename</MudButton>
+                                    }
                                 </div>
                             </div>
                         </div>
+  
+                    <div class="col-sm-6 mt-1">
+                    <div class="card">
+                    <div class="card-body">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewChat" class="btn btn-primary mb-2">
-                    Send Message
+                    Send Chat
                     </MudButton>
+                    </div></div></div>
                 }
                 else
                 {
@@ -523,7 +532,9 @@ else if (!Saved)
                     </div>                    
                 }
 
-
+                <div class="col-sm-6 mt-1">
+                <div class="card">
+                <div class="card-body">
                 @if (Chat != null && Chat.Messages.Any())
                 {                    
                     @if (IsAdmin)
@@ -546,26 +557,26 @@ else if (!Saved)
                             <MudCardHeader>
                                 <CardHeaderContent>
                                 <MudText Typo="Typo.body1">@message.Message</MudText>   
-                                        @if (message.ChatDocumentId > 0)
+
+                                    </CardHeaderContent>
+                            </MudCardHeader>
+                            <MudCardContent>                                           
+                                @if (message.ChatDocumentId > 0)
                                         {
+                                            <div>
                                             @if (message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.JPEG || message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.PNG)
                                             {
-                                                <p>Photo - </p>
+                                                <MudText>Photo Attachement- @message.ChatDocument.FileName</MudText>
                                             }
                                             else{
-                                                <p>Pdf - </p> 
-                                            }
-                                       
-                                            @message.ChatDocument.FileName
+                                                <MudText>Pdf Attachment- @message.ChatDocument.FileName</MudText> 
+                                            } 
 
                                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(message.ChatDocument)">
                                                 <i class="fas fa-eye"></i>
-                                            </MudButton>
+                                            </MudButton></div>
 
-                                        }
-                                    </CardHeaderContent>
-                            </MudCardHeader>
-                            <MudCardContent>        
+                                        }     
                             @if (message.BrokerSource)
                             {
                                 var combined = $"Sent from us at {@message.SentTime.ToString("dd/MM/yyyy hh:mm:ss")}";
@@ -585,7 +596,7 @@ else if (!Saved)
                     }
                     </div>
                 }
-
+                </div></div></div>
             </MudTabPanel>
         </MudTabs>
     </section>
