@@ -12,7 +12,7 @@ namespace BrokerIQ.Online.Models
     public class ChatDocument
     {
         [Key]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public int ChatId { get; set; }
 
@@ -23,5 +23,7 @@ namespace BrokerIQ.Online.Models
         public byte[] File { get; set; }
 
         public DateTime CreatedDate { get; set; }
+
+        public DocumentTypeEnum SupportingDocumentType { get; set; }
     }
 }

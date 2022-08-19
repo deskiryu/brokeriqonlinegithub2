@@ -713,7 +713,23 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.SentTime, opt => opt.MapFrom(r => r.SentTime))
                 .ForMember(p => p.Image, opt => opt.MapFrom(r => r.Image))
                 .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
-                .ForMember(p => p.ChatDocument, opt => opt.MapFrom(r => r.ChatDocument))
+                .ForMember(p => p.ChatDocumentId, opt => opt.MapFrom(r => r.ChatDocumentId))
+                .ForMember(d => d.ChatDocument, opt => opt.MapFrom((src, dest) =>
+                {
+                    var chatDocument = new ChatDocument();
+                    
+                    if (src.ChatDocumentId>0)
+                    {
+                        chatDocument.Id = src.ChatDocument.Id;
+                        chatDocument.ChatId = src.ChatDocument.ChatId;
+                        chatDocument.ChatMessageId = src.ChatDocument.ChatMessageId;
+                        chatDocument.FileName = src.ChatDocument.FileName;
+                        chatDocument.File = src.ChatDocument.File;
+                        chatDocument.CreatedDate = src.ChatDocument.CreatedDate;
+                        chatDocument.SupportingDocumentType = src.ChatDocument.SupportingDocumentType;
+                    }
+                    return chatDocument;
+                }))
                 .ForMember(p => p.BrokerSource, opt => opt.MapFrom(r => r.BrokerSource));
 
             CreateMap<ChatMessage, ChatMessageDto>()
@@ -724,14 +740,6 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
                 .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
                 .ForMember(p => p.BrokerSource, opt => opt.MapFrom(r => r.BrokerSource));
-
-            CreateMap<ChatDocumentDto, ChatDocument>()
-                .ForMember(p => p.Id, opt => opt.MapFrom(r => r.Id))
-                .ForMember(p => p.ChatId, opt => opt.MapFrom(r => r.ChatId))
-                .ForMember(p => p.ChatMessageId, opt => opt.MapFrom(r => r.ChatMessageId))
-                .ForMember(p => p.File, opt => opt.MapFrom(r => r.File))
-                .ForMember(p => p.FileName, opt => opt.MapFrom(r => r.FileName))
-                .ForMember(p => p.CreatedDate, opt => opt.MapFrom(r => r.CreatedDate));
         }
 
         private void AzureStorageMapper()

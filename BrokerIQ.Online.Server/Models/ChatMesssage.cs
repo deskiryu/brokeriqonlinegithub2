@@ -16,6 +16,8 @@ namespace BrokerIQ.Online.Models
 
         public bool IsRead { get; set; }
 
+        public int ChatDocumentId { get; set; }
+
         public virtual ChatDocument ChatDocument { get; set; }
     }
 }

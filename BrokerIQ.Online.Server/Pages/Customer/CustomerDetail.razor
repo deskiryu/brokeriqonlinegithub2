@@ -342,8 +342,8 @@ else if (!Saved)
                     </tbody>
                 </table>
                 @code{
-                
-                    protected async Task ViewDocumentUpload(CustomerDocumentDto doc)
+
+                protected async Task ViewDocumentUpload(CustomerDocumentDto doc)
                     {
                         if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
                         {
@@ -354,6 +354,17 @@ else if (!Saved)
                         {
                             await PreviewPdf(doc);
                         }
+                    }
+
+                    protected async Task ViewDocumentUpload(ChatDocument doc)
+                    {
+                        var converted = new CustomerDocumentDto
+                        {
+                            SupportingDocumentType = doc.SupportingDocumentType,
+                            File = doc.File,
+
+                        };
+                        ViewDocumentUpload(converted);
                     }
 
                     protected async Task SaveDocumentUpload(CustomerDocumentDto doc)
@@ -535,8 +546,24 @@ else if (!Saved)
                             <MudCardHeader>
                                 <CardHeaderContent>
                                 <MudText Typo="Typo.body1">@message.Message</MudText>   
+                                        @if (message.ChatDocumentId > 0)
+                                        {
+                                            @if (message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.JPEG || message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.PNG)
+                                            {
+                                                <p>Photo - </p>
+                                            }
+                                            else{
+                                                <p>Pdf - </p> 
+                                            }
+                                       
+                                            @message.ChatDocument.FileName
 
-                                </CardHeaderContent>
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(message.ChatDocument)">
+                                                <i class="fas fa-eye"></i>
+                                            </MudButton>
+
+                                        }
+                                    </CardHeaderContent>
                             </MudCardHeader>
                             <MudCardContent>        
                             @if (message.BrokerSource)
