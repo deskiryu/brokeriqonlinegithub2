@@ -58,7 +58,7 @@ else
                         <div class="col-sm-8">
                             @if (@Mortgage.EndDate.HasValue)
                             {
-                                <label type="text" readonly class="form-control-plaintext">@Mortgage.EndDate.Value.ToString("dd/MM/yyyy")</label>
+                                <label type="text" readonly class="form-control-plaintext">@Mortgage.EndDate.Value.ToBiqDateString()</label>
                             }
                         </div>
                     </div>
@@ -82,7 +82,7 @@ else
                         <div class="col-sm-8">
                             @if (@Mortgage.PromotionalEndDate.HasValue)
                             {
-                                <label type="text" readonly class="form-control-plaintext">@Mortgage.PromotionalEndDate.Value.ToString("dd/MM/yyyy")</label>
+                                <label type="text" readonly class="form-control-plaintext">@Mortgage.PromotionalEndDate.Value.ToBiqDateString()</label>
                             }
                         </div>
                     </div>
@@ -106,7 +106,7 @@ else
                         <div class="col-sm-8">
                             @if (@Mortgage.PotentialEndDate.HasValue)
                             {
-                                <label type="text" readonly class="form-control-plaintext">@Mortgage.PotentialEndDate.Value.ToString("dd/MM/yyyy")</label>
+                                <label type="text" readonly class="form-control-plaintext">@Mortgage.PotentialEndDate.Value.ToBiqDateString()</label>
                             }
                         </div>
                     </div>
