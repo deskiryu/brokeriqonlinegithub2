@@ -78,7 +78,7 @@ namespace BrokerIQ.Online.Pages
         {
             try
             {
-                Customers = (await CustomerService.GetAllCustomers(profilePictures:true)).ToList();
+                Customers = (await CustomerService.GetAllCustomers(profilePictures:true)).OrderByDescending(x => x.Id).ToList();
             }
             catch
             {
