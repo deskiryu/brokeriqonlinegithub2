@@ -93,7 +93,7 @@ else if (!Saved)
                         <div class="form-group row">
                             <label class="col-lg-2 col-form-label">Date Of Birth</label>
                             <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.DateOfBirth.ToString("dd/MM/yyyy")</label>
+                                <label type="text" readonly class="form-control-plaintext">@Customer.DateOfBirth.ToBiqDateString()</label>
                             </div>
 
                             <label class="col-lg-2 col-form-label">Employment</label>
@@ -231,7 +231,7 @@ else if (!Saved)
                                 <tr>
                                     <td>@insurance.InsType.GetDisplayName()</td>
                                     <td>@insurance.Name</td>
-                                    <td>@insurance.ExpiryDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@insurance.ExpiryDate.ToBiqDateString()</td>
                                     @if (IsAdmin)
                                     {
                                         <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
@@ -278,7 +278,7 @@ else if (!Saved)
 
                                 @if (mortgage.PromotionalEndDate.HasValue)
                                 {
-                                    <td>@mortgage.PromotionalEndDate.Value.ToString("dd/MM/yyyy")</td>
+                                    <td>@mortgage.PromotionalEndDate.Value.ToBiqDateString()</td>
                                 }
                                 @if (IsAdmin)
                                 {
@@ -302,6 +302,7 @@ else if (!Saved)
                     <thead>
                         <tr>
                             <th>Document</th>
+                            <th>Date</th>
                             <th>Type</th>
                             <th>Name</th>
                             <th></th>
@@ -316,6 +317,9 @@ else if (!Saved)
                                         DocumentTypeEnumValues.TryGetValue((int)doc.DocuVaultType, out strDocType);
                                         @strDocType
                                     }
+                                </td>
+                                <td>
+                                    @doc.CreatedDate.ToBiqDateTimeString()
                                 </td>
                                 <td>@if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
                                     {
@@ -416,7 +420,7 @@ else if (!Saved)
                                     <tr>
                                         <td>@insurance.InsType.GetDisplayName()</td>
                                         <td>@insurance.Name</td>
-                                        <td>@insurance.ExpiryDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@insurance.ExpiryDate.ToBiqDateString()</td>
                                         @if (IsAdmin)
                                         {
                                             <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
@@ -450,7 +454,7 @@ else if (!Saved)
                         <MudCard Class="col-sm-5 mb-1 ml-1" Style="background-color: lightgoldenrodyellow">
                             <MudCardHeader>
                                 <CardHeaderContent>
-                                    <MudText Typo="Typo.h6">@note.DateTaken.ToString("dd/MM/yyyy")</MudText>
+                                    <MudText Typo="Typo.h6">@note.DateTaken.ToBiqDateString()</MudText>
                                     @if (IsAdmin)
                                     {
                                         @if (note.BrokerId > 0)
@@ -579,7 +583,7 @@ else if (!Saved)
                                         }     
                             @if (message.BrokerSource)
                             {
-                                var combined = $"Sent from us at {@message.SentTime.ToString("dd/MM/yyyy hh:mm:ss")}";
+                                var combined = $"Sent from us at {@message.SentTime.ToBiqDateTimeString()}";
                                         <MudText Typo="Typo.body2">@combined</MudText>
                                 @if (message.IsRead)
                                 {
@@ -588,7 +592,7 @@ else if (!Saved)
                             }
                             else
                             {
-                                var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToString("dd/MM/yyyy hh:mm:ss")}";
+                                var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToBiqDateTimeString()}";
                                 <MudText Typo="Typo.body2">@combined</MudText>
                             }
                             </MudCardContent>

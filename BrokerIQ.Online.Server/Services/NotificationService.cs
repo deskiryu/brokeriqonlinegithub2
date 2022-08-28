@@ -28,7 +28,7 @@ namespace BrokerIQ.Online.Server.Services
             this.accountService = accountService;
         }
 
-        public async Task<bool> SendMessageNotification(string message, List<int> targets,int brokerId, bool sendAll = false, bool chat = false)
+        public async Task<bool> SendMessageNotification(string message, List<int> targets,int brokerId, bool sendAll = false, bool chat = false, bool updateAppAlert = true)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -43,6 +43,9 @@ namespace BrokerIQ.Online.Server.Services
                 BrokerStaffId = user.StaffBrokerId,
                 IsChat = chat
             };
+
+            var url = this.notificationUrl;
+            url += $"updateAppAlert={updateAppAlert}";
             var answer = await this.requestProviderService.Post<CreateNotificationDto, bool>(this.notificationUrl, notification);
             return answer;
         }
