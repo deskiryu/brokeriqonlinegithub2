@@ -291,40 +291,5 @@ namespace BrokerIQ.Online.Pages
             return messageToSend;
         }
 
-
-        private async Task SendMessageNotification(Customer customer, bool upload=false)
-        {
-             var brokerId = 0;
-             var brokerName = "";
-             var menuPlanName = "";
-
-            if (IsAdmin)
-            {
-                brokerName += Brokers.FirstOrDefault(x => x.Id == MenuPlan.BrokerId)?.Name ?? "";
-                brokerId = Brokers.FirstOrDefault(x => x.Id == MenuPlan.BrokerId)?.Id ?? 0;
-            }
-            else
-            {
-                brokerName += Broker?.Name ?? "";
-                brokerId = Broker?.Id??0;
-            }
-
-           if(MenuPlan!=null)
-            {
-                menuPlanName += MenuPlan.Name;
-            }
-
-            var messageToSend = GetMessageMenuPlanAdded(customer.FirstName,brokerName,menuPlanName);
-
-            try
-            {
-                await NotificationService.SendMessageNotification(messageToSend, new List<int> { customerId }, brokerId);
-            }
-            catch
-            {
-
-            }
-
-        }
     }
 }

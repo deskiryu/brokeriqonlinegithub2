@@ -642,7 +642,7 @@ namespace BrokerIQ.Online.Pages
 
             try
             {
-                await NotificationService.SendMessageNotification(messageToSend, new List<int> { customerId }, brokerId);
+                await NotificationService.SendMessageNotification(messageToSend, new List<int> { customerId }, brokerId, updateAppAlert:false);
             }
             catch
             {
