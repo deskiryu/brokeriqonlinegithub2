@@ -17,6 +17,8 @@ namespace BrokerIQ.Online.Pages
     using Microsoft.AspNetCore.Components.Forms;
     using Microsoft.Extensions.Options;
     using BrokerIQ.Online.Server.AppSettings;
+    using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Dto.CreateDto;
 
     public class CustomerDetailBase : ComponentBase
     {
@@ -40,6 +42,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IAlertService AlertService { get; set; }
+
+        [Inject]
+        public IDocumentsRequirementService DocumentsRequirementService { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -66,6 +71,8 @@ namespace BrokerIQ.Online.Pages
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
         public IEnumerable<CustomerDocumentDto> CustomerDocuments { get; set; }
+
+        public DocumentsRequirement DocumentsRequirement { get; set; }
 
         public IEnumerable<Note> Notes { get; set; }
 
@@ -103,6 +110,8 @@ namespace BrokerIQ.Online.Pages
 
         public Dictionary<int, string> DocumentTypeEnumValues = new Dictionary<int, string>();
 
+        public Dictionary<DocuVaultTypeEnum, int> RequestedDocuments = new Dictionary<DocuVaultTypeEnum, int>();
+
         protected override async Task OnInitializedAsync()
         {
             try
@@ -110,6 +119,7 @@ namespace BrokerIQ.Online.Pages
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
                 CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
+                DocumentsRequirement = await DocumentsRequirementService.Get(int.Parse(CustomerId));
                 Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
                 foreach (var item in Enum.GetValues(typeof(DocuVaultTypeEnum)).Cast<DocuVaultTypeEnum>())
                 {
@@ -118,6 +128,7 @@ namespace BrokerIQ.Online.Pages
                         continue;
                     }
                     DocumentTypeEnumValues.Add((int)item, item.GetDisplayName());
+                    RequestedDocuments.Add(item, 0);
                 }
             }
             catch
@@ -478,7 +489,7 @@ namespace BrokerIQ.Online.Pages
                             dialogParams.Add("Filenames", new List<string>{
                                 sdoc.FileName
                             });
-                            dialogParams.Add("MemoryStreams", new List<MemoryStream> { 
+                            dialogParams.Add("MemoryStreams", new List<MemoryStream> {
                                 memoryStream
                             });
                         }
@@ -627,5 +638,62 @@ namespace BrokerIQ.Online.Pages
             LoadedChatFiles.Clear();
         }
 
+        protected async Task SubmitDocumentRequirements()
+        {
+            List<CreateDocumentsCheckDto> documentsRequiredList = new List<CreateDocumentsCheckDto>();
+            bool requirementSet = false;
+            string requirementsString = String.Empty;
+            foreach (var req in RequestedDocuments)
+            {
+                if (req.Value > 0)
+                {
+                    CreateDocumentsCheckDto requirement = new CreateDocumentsCheckDto
+                    {
+                        DocuVaultType = req.Key,
+                        RequiredCount = req.Value
+                    };
+                    documentsRequiredList.Add(requirement);
+                    requirementSet = true;
+                    requirementsString += $"{req.Key.GetDisplayName()}: {req.Value}\n";
+                }
+            }
+
+            if (requirementSet)
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", $"Are you sure you want to set the document requirements as the following?\n{requirementsString}");
+                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+                if (!result.Cancelled)
+                {
+                    DocumentsRequirement = await DocumentsRequirementService.Create(int.Parse(CustomerId), documentsRequiredList);
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", "No document requirements have been set.");
+                var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+            }
+        }
+
+        protected async Task DeleteDocumentRequirements()
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"Are you sure you want to delete the document requirements currently set?");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                await DocumentsRequirementService.Delete(DocumentsRequirement.Id);
+                DocumentsRequirement = null;
+
+                // reset display
+                foreach (var key in RequestedDocuments.Keys.ToList())
+                {
+                    RequestedDocuments[key] = 0;
+                }
+                StateHasChanged();
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ namespace BrokerIQ.Online.Mapper
     using BrokerIQ.Dto.Response;
     using BrokerIQ.Online.Models.Account;
     using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Dto;
 
     public class ReviewItMapper : Profile
     {
@@ -28,6 +29,7 @@ namespace BrokerIQ.Online.Mapper
             NotesMapper();
             ChatMapper();
             AzureStorageMapper();
+            DocumentsRequirementMapper();
         }
         public void CustomerMapper()
         {
@@ -748,6 +750,12 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<AzureVideoDto, Video>();
             CreateMap<Audio, AudioDto>();
             CreateMap<AudioDto, Audio>();
+        }
+
+        public void DocumentsRequirementMapper()
+        {
+            CreateMap<DocumentsRequirementDto, DocumentsRequirement>();
+            CreateMap<DocumentsRequirement, DocumentsRequirementDto>();
         }
     }
 }

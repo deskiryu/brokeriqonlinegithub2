@@ -298,6 +298,76 @@ else if (!Saved)
                 </table>
             </MudTabPanel>
             <MudTabPanel Text="Uploads">
+                @if (DocumentsRequirement != null) {
+                    <h6 style="padding-bottom: 5px;">Client Documents Required</h6>
+                    <MudTable Style="padding-bottom: 5px;" Items="@DocumentsRequirement.DocumentChecks">
+                        <HeaderContent>
+                            <MudTh>Document Type</MudTh>
+                            <MudTh>Uploaded</MudTh>
+                            <MudTh>Required</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Type">@context.DocuVaultType.GetDisplayName()</MudTd>
+                            <MudTd DataLabel="Received">@context.TotalCount</MudTd>
+                            <MudTd DataLabel="Required">@context.RequiredCount</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center">Remove Requirements</MudButton>
+                }
+                else
+                {
+                    <h6 style="padding-bottom: 5px;">Select Client Document Requirements</h6>
+                    <MudSelect T="int" Label="Bank Statement" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.BankStatement]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="Credit Report" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Creditreport]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="Driving License" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.DrivingLicense]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="Payslip" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Payslip]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="Utility Bill" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.UtilityBill]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect Style="padding-bottom: 5px;" T="int" Label="Passport" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Passport]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await SubmitDocumentRequirements())" class="btn btn-secondary text-center">Submit Requirements</MudButton>
+                }
+                <h6 style="padding-top: 50px; padding-bottom: 5px;">Client Documents Uploaded</h6>
                 <table id="table-uploads" class="table  col-sm-12 table-striped ">
                     <thead>
                         <tr>
