@@ -9,7 +9,7 @@ namespace BrokerIQ.Online.Services.Interface
 
     public interface INotificationService
     {
-        Task<bool> SendMessageNotification(string message, List<int> targets, int brokerId, bool sendAll = false, bool chat = false);
+        Task<bool> SendMessageNotification(string message, List<int> targets, int brokerId, bool sendAll = false, bool chat = false, bool updateAppAlert = true);
 
         Task<bool> SendVideoNotification(string message, string videoUrl, List<int> targets, bool sendAll = false);
 
