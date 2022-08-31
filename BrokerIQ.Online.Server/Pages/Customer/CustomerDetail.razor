@@ -298,6 +298,8 @@ else if (!Saved)
                 </table>
             </MudTabPanel>
             <MudTabPanel Text="Uploads">
+                <div class = "row">
+                <div class = "col-sm-4">
                 @if (DocumentsRequirement != null) {
                     <h6 style="padding-bottom: 5px;">Client Documents Required</h6>
                     <MudTable Style="padding-bottom: 5px;" Items="@DocumentsRequirement.DocumentChecks">
@@ -312,7 +314,7 @@ else if (!Saved)
                             <MudTd DataLabel="Required">@context.RequiredCount</MudTd>
                         </RowTemplate>
                     </MudTable>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center">Remove Requirements</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center mt-1">Remove Requirements</MudButton>
                 }
                 else
                 {
@@ -367,7 +369,9 @@ else if (!Saved)
                     </MudSelect>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await SubmitDocumentRequirements())" class="btn btn-secondary text-center">Submit Requirements</MudButton>
                 }
-                <h6 style="padding-top: 50px; padding-bottom: 5px;">Client Documents Uploaded</h6>
+                </div>
+                <div class = "col-sm-8 border-left">
+                <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6>
                 <table id="table-uploads" class="table  col-sm-12 table-striped ">
                     <thead>
                         <tr>
@@ -415,6 +419,8 @@ else if (!Saved)
                         }
                     </tbody>
                 </table>
+                </div>
+                </div>
                 @code{
 
                 protected async Task ViewDocumentUpload(CustomerDocumentDto doc)
