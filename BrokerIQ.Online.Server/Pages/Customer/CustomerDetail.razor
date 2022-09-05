@@ -574,7 +574,7 @@ else if (!Saved)
                         </div>
                         <div class="col-lg-8 control_wrapper mb-5" style="display:flex; flex-direction: row;">
                             <MudDatePicker Label="Replace INSERT_DATE in template" style="width: 375;" @bind-Date="SelectedTemplateDateReplacement"/>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@("chattemplateedit")"  class="btn btn-primary mb-2">Edit Templates</MudButton>
+                            <MudSpacer />
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send Template</MudButton>
                         </div>
 

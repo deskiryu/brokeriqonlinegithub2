@@ -146,12 +146,6 @@ namespace BrokerIQ.Online.Pages
                 }
 
                 BrokerName = (await BrokerService.GetBroker(user.MasterBrokerId)).Name;
-                var brokerDefinedMessages = await BrokerDefinedMessageService.Get();
-                if (brokerDefinedMessages == null)
-                {
-                    // no messages exist for this broker yet, populate with defaults
-                    await BrokerDefinedMessageService.UpdateOrCreate(null);
-                }
                 await PopulateBrokerDefinedMessages();
             }
             catch
@@ -490,7 +484,7 @@ namespace BrokerIQ.Online.Pages
                     else
                     {
                         var dialogParams = new DialogParameters();
-                        dialogParams.Add("Message", "Template requires a DATE to be inserted into message. Please select one from the dropdown.");
+                        dialogParams.Add("Message", "Template requires a DATE to be inserted into message. Please select one from the date picker.");
                         var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
                         return;
                     }
@@ -500,13 +494,30 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (!string.IsNullOrEmpty(SelectedTemplateMessage))
                     {
-                        succeeded = (await ChatService.Send(messageToSend, Customer.Id));
+                        var dialogParams = new DialogParameters();
+                        dialogParams.Add("Message", messageToSend);
+                        var result = await DialogService.Show<ConfirmCancelDialog>("Send Chat Template", dialogParams).Result;
+                        if (!result.Cancelled)
+                        {
+                            succeeded = (await ChatService.Send(messageToSend, Customer.Id));
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     System.Console.WriteLine("InsertTemplateMessage: exception - " + ex.Message);
                 }
+            }
+            else
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", "Please select a template from the dropdown menu.");
+                var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+                return;
             }
 
             if (succeeded)
@@ -763,12 +774,28 @@ namespace BrokerIQ.Online.Pages
 
         private async Task PopulateBrokerDefinedMessages()
         {
-            BrokerDefinedMessage brokerDefinedMessages = await BrokerDefinedMessageService.Get();
             BrokerDefinedMessages = new List<string>();
-            foreach (var message in brokerDefinedMessages.BrokerDefinedMessages)
+            BrokerDefinedMessage brokerDefinedMessage = await BrokerDefinedMessageService.Get();
+            foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
             {
-                string messageToDisplay = message.BrokerDefinedMessage.Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName);
-                BrokerDefinedMessages.Add(messageToDisplay);
+                string message = String.Empty;
+                foreach (var item in brokerDefinedMessage.BrokerDefinedMessages.Where(
+                    b => b.BrokerDefinedMessageEnumValue == enumVal && !b.BrokerDefinedMessage.Equals(enumVal.GetDisplayName())))
+                {
+                        message = item.BrokerDefinedMessage;
+                        break;
+                }
+
+                if (message == String.Empty)
+                {
+                    // display default
+                    BrokerDefinedMessages.Add(enumVal.GetDisplayName().Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName));
+                }
+                else
+                {
+                    // display broker defined message
+                    BrokerDefinedMessages.Add(message.Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName));
+                }
             }
         }
     }

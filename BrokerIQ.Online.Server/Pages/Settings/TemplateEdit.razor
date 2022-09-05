@@ -1,7 +1,7 @@
-﻿@page "/chattemplateedit"  
+﻿@page "/templateedit"  
 @using Dto.Enum
 @using Dto.Models
-@inherits ChatTemplateEditBase
+@inherits TemplateEditBase
 
 <h3 class="page-title">Edit Templates</h3>
 <p><b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.</p>
@@ -52,10 +52,11 @@
     {
         // update defined messages in database
         List<DefinedMessagesDto> definedMessages = new List<DefinedMessagesDto>();
-        foreach (var messageElement in BrokerDefinedMessages)
+        definedMessages.Add(new DefinedMessagesDto
         {
-            definedMessages.Add(new DefinedMessagesDto { BrokerDefinedMessageEnumValue = (BrokerDefinedMessageEnum) messageElement.Index, BrokerDefinedMessage = messageElement.Message});
-        }
+            BrokerDefinedMessageEnumValue = (BrokerDefinedMessageEnum) ((MessageElement)element).Index,
+            BrokerDefinedMessage = ((MessageElement)element).Message
+        });
         await BrokerDefinedMessageService.UpdateOrCreate(definedMessages);
         await PopulateBrokerDefinedMessages();
     }
