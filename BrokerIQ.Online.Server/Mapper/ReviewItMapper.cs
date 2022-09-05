@@ -30,6 +30,7 @@ namespace BrokerIQ.Online.Mapper
             ChatMapper();
             AzureStorageMapper();
             DocumentsRequirementMapper();
+            BrokerDefinedMessageMapper();
         }
         public void CustomerMapper()
         {
@@ -756,6 +757,11 @@ namespace BrokerIQ.Online.Mapper
         {
             CreateMap<DocumentsRequirementDto, DocumentsRequirement>();
             CreateMap<DocumentsRequirement, DocumentsRequirementDto>();
+        }
+        public void BrokerDefinedMessageMapper()
+        {
+            CreateMap<BrokerDefinedMessageDto, BrokerDefinedMessage>();
+            CreateMap<BrokerDefinedMessage, BrokerDefinedMessageDto>();
         }
     }
 }

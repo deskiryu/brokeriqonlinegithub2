@@ -1,0 +1,69 @@
+﻿@page "/chattemplateedit"  
+@using Dto.Enum
+@using Dto.Models
+@inherits ChatTemplateEditBase
+
+<h3 class="page-title">Edit Templates</h3>
+<p><b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.</p>
+<p><b>INSERT_BROKER_NAME</b> is replaced in message by your brokerage name.</p>
+<p><b>INSERT_DATE</b> is be replaced by a date selected by you on the client chat page.</p>
+<MudTable Items="@BrokerDefinedMessages" Dense="@dense" Hover="@hover" ReadOnly="@ronly"
+          SortLabel="Sort By" CommitEditTooltip="Commit Edit"
+          RowEditPreview="BackupMessage" CanCancelEdit="@canCancelEdit" RowEditCancel="ResetMessage" RowEditCommit="CommitMessage">
+    <ColGroup>
+		<col style="width:50px;" />
+        <col />
+		<col style="width:50px;" />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>#</MudTh>
+        <MudTh>Template</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="#">@(context.Index)</MudTd>
+        <MudTd DataLabel="Name">@context.Message</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="#">@(context.Index)</MudTd>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="@context.Message" Required />
+        </MudTd>
+    </RowEditingTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+	private List<string> editEvents = new();
+	private bool dense = false;
+	private bool hover = true;
+	private bool ronly = false;
+	private bool canCancelEdit = true;
+	private MessageElement elementBeforeEdit;
+
+    private void BackupMessage(object element)
+    {
+        // required in case user cancels edit
+        elementBeforeEdit = new MessageElement(((MessageElement)element).Index, ((MessageElement)element).Message);
+    }
+
+    private async void CommitMessage(object element)
+    {
+        // update defined messages in database
+        List<DefinedMessagesDto> definedMessages = new List<DefinedMessagesDto>();
+        foreach (var messageElement in BrokerDefinedMessages)
+        {
+            definedMessages.Add(new DefinedMessagesDto { BrokerDefinedMessageEnumValue = (BrokerDefinedMessageEnum) messageElement.Index, BrokerDefinedMessage = messageElement.Message});
+        }
+        await BrokerDefinedMessageService.UpdateOrCreate(definedMessages);
+        await PopulateBrokerDefinedMessages();
+    }
+
+    private void ResetMessage(object element)
+    {
+        // on cancel edit, reset message
+        ((MessageElement)element).Index = elementBeforeEdit.Index;
+        ((MessageElement)element).Message = elementBeforeEdit.Message;
+    }
+}

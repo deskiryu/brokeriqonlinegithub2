@@ -59,6 +59,9 @@ namespace BrokerIQ.Online.Pages
         public IChatService ChatService { get; set; }
 
         [Inject]
+        public IBrokerDefinedMessageService BrokerDefinedMessageService { get; set; }
+
+        [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
         private FileUploadSettings fileUploadSettings { get; set; }
 
@@ -67,6 +70,8 @@ namespace BrokerIQ.Online.Pages
         public CustomerDocumentDto CustomerProfilePicture { get; set; }
 
         public IEnumerable<Broker> Brokers { get; set; }
+
+        public string BrokerName { get; set; }
 
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
@@ -112,8 +117,17 @@ namespace BrokerIQ.Online.Pages
 
         public Dictionary<DocuVaultTypeEnum, int> RequestedDocuments = new Dictionary<DocuVaultTypeEnum, int>();
 
+        public List<string> BrokerDefinedMessages = new List<string>();
+
+        public string SelectedTemplateMessage { get; set; }
+
+        public DateTime? SelectedTemplateDateReplacement { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
+            var user = await AccountService.GetUser();
+            IsAdmin = user.IsAdmin;
+
             try
             {
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
@@ -130,6 +144,15 @@ namespace BrokerIQ.Online.Pages
                     DocumentTypeEnumValues.Add((int)item, item.GetDisplayName());
                     RequestedDocuments.Add(item, 0);
                 }
+
+                BrokerName = (await BrokerService.GetBroker(user.MasterBrokerId)).Name;
+                var brokerDefinedMessages = await BrokerDefinedMessageService.Get();
+                if (brokerDefinedMessages == null)
+                {
+                    // no messages exist for this broker yet, populate with defaults
+                    await BrokerDefinedMessageService.UpdateOrCreate(null);
+                }
+                await PopulateBrokerDefinedMessages();
             }
             catch
             {
@@ -138,9 +161,6 @@ namespace BrokerIQ.Online.Pages
                 Saved = true;
             }
 
-
-            var user = await AccountService.GetUser();
-            IsAdmin = user.IsAdmin;
             if (IsAdmin)
             {
                 try
@@ -454,6 +474,51 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected async Task InsertTemplateMessage()
+        {
+            var succeeded = false;
+            if (SelectedTemplateMessage != null)
+            {
+                var messageToSend = SelectedTemplateMessage;
+                if (SelectedTemplateMessage.Contains("INSERT_DATE"))
+                {
+                    if (SelectedTemplateDateReplacement.HasValue)
+                    {
+                        DateTime value = SelectedTemplateDateReplacement.Value;
+                        messageToSend = SelectedTemplateMessage.Replace("INSERT_DATE", value.ToShortDateString());
+                    }
+                    else
+                    {
+                        var dialogParams = new DialogParameters();
+                        dialogParams.Add("Message", "Template requires a DATE to be inserted into message. Please select one from the dropdown.");
+                        var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+                        return;
+                    }
+                }
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(SelectedTemplateMessage))
+                    {
+                        succeeded = (await ChatService.Send(messageToSend, Customer.Id));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Console.WriteLine("InsertTemplateMessage: exception - " + ex.Message);
+                }
+            }
+
+            if (succeeded)
+            {
+                await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
+            }
+            else
+            {
+                await RefreshChatWithDialogMessage(succeeded, "Something went wrong sending the template message. Please try again.");
+            }
+        }
+
         protected async Task NewChat()
         {
             bool succeeded = false;
@@ -693,6 +758,17 @@ namespace BrokerIQ.Online.Pages
                     RequestedDocuments[key] = 0;
                 }
                 StateHasChanged();
+            }
+        }
+
+        private async Task PopulateBrokerDefinedMessages()
+        {
+            BrokerDefinedMessage brokerDefinedMessages = await BrokerDefinedMessageService.Get();
+            BrokerDefinedMessages = new List<string>();
+            foreach (var message in brokerDefinedMessages.BrokerDefinedMessages)
+            {
+                string messageToDisplay = message.BrokerDefinedMessage.Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName);
+                BrokerDefinedMessages.Add(messageToDisplay);
             }
         }
     }

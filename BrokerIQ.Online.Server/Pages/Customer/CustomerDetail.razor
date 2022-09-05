@@ -559,6 +559,25 @@ else if (!Saved)
             <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot'>
                 @if (!IsAdmin)
                 {
+                        <div class="col-lg-8 control_wrapper mb-5">
+                            <MudSelect T="string"
+                                    Label="Select Message Template"
+                                    Placeholder="Select Message Template"
+                                    Clearable="true"
+                                    @bind-Value="SelectedTemplateMessage"
+                                    AdornmentColor="Color.Primary">
+                                @foreach (string message in @BrokerDefinedMessages)
+                                {
+                                    <MudSelectItem Value="@message">@message</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
+                        <div class="col-lg-8 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                            <MudDatePicker Label="Replace INSERT_DATE in template" style="width: 375;" @bind-Date="SelectedTemplateDateReplacement"/>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@("chattemplateedit")"  class="btn btn-primary mb-2">Edit Templates</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send Template</MudButton>
+                        </div>
+
                         <div class="col-sm-6 mt-1">
                             <div class="card">
                                 <div class="card-body">
