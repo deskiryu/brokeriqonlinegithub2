@@ -65,6 +65,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<IMortgageDocumentService, MortgageDocumentService>();
             services.AddScoped<ICustomerDocumentService, CustomerDocumentService>();
             services.AddScoped<IDocumentsRequirementService, DocumentsRequirementService>();
+            services.AddScoped<IBrokerDefinedMessageService, BrokerDefinedMessageService>();
             services.AddScoped<IAlertService, AlertService>();
             services.AddScoped<ILocalStorageService, LocalStorageService>();
             services.AddScoped<IVideoService, VideoService>();
