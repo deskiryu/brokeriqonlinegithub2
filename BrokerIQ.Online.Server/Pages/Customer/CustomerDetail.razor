@@ -375,16 +375,13 @@ else if (!Saved)
                         <div class="col-sm-4">
                              <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6> 
                         </div>
-                        <div class = "col-sm-8">
+                        <div class = "col-sm-8" style="margin-top: -14px">
 
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewSelectedDocumentUpload()">
-                                <i class="fas fa-eye">View Selected</i>
-                            </MudButton>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()">
-                                <i class="fas fa-download">Download Selected</i>
+                                Download Selected
                             </MudButton>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()">
-                                <i class="fas fa-trash">Delete Selected</i>
+                                Delete Selected
                             </MudButton>
                         </div>
                     </div>
@@ -403,13 +400,7 @@ else if (!Saved)
                                         @strDocType
                                     }</MudTd>
                                     <MudTd DataLabel="Email">@context.CreatedDate</MudTd>
-                        <MudTd DataLabel="Type">if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
-                                    {
-                                        <p>Photo</p>
-                                    }
-                                    else{
-                                        <p>Pdf</p> 
-                                    }</MudTd>
+                        <MudTd DataLabel="Type">@context.TypeDesc</MudTd>
                         <MudTd DataLabel="Description">@context.Description</MudTd>
                         <MudTd>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(context)">
@@ -446,6 +437,7 @@ else if (!Saved)
                         {
                             await SaveDocumentUpload(custDoc);
                         }
+                        SelectedItemsCustomerDocuments.Clear();
                     }
 
                     protected async Task ViewDocumentUpload(CustomerDocument doc)
@@ -453,7 +445,7 @@ else if (!Saved)
                         if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
                         {
                             memoryStream = new MemoryStream(doc.File);
-                            PreviewImage();
+                            await PreviewImage();
                         }
                         else
                         {
@@ -469,7 +461,7 @@ else if (!Saved)
                             File = doc.File,
 
                         };
-                        ViewDocumentUpload(converted);
+                        await ViewDocumentUpload(converted);
                     }
 
                     protected async Task SaveDocumentUpload(CustomerDocument doc)
@@ -478,7 +470,7 @@ else if (!Saved)
                         {
                             imageFileName = doc.Description + ".jpeg";
                             imageData = doc.File;
-                            SaveImage();
+                            await SaveImage();
                         }
                         else
                         {

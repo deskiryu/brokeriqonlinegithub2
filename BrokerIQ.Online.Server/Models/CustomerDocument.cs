@@ -29,5 +29,7 @@ namespace BrokerIQ.Online.Models
         public DateTime CreatedDate { get; set; }
 
         public bool Selected { get; set; }
+
+        public string TypeDesc { get => (SupportingDocumentType == DocumentTypeEnum.JPEG || SupportingDocumentType == DocumentTypeEnum.PNG) ? "Photo" : "Pdf"; }
     }
 }
