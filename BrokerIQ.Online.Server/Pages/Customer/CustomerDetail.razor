@@ -23,11 +23,11 @@
         await Extensions.SaveAs(js, imageFileName, imageData);
     }
 
-    async Task DownloadPdf(CustomerDocumentDto sdoc)
+    async Task DownloadPdf(CustomerDocument sdoc)
     {
         await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
     }
-    async Task PreviewPdf(CustomerDocumentDto sdoc)
+    async Task PreviewPdf(CustomerDocument sdoc)
     {
         var memoryStream = new MemoryStream(sdoc.File);
         await Extensions.PreviewFile(js, memoryStream);
@@ -371,59 +371,84 @@ else if (!Saved)
                 }
                 </div>
                 <div class = "col-sm-8 border-left">
-                <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6>
-                <table id="table-uploads" class="table  col-sm-12 table-striped ">
-                    <thead>
-                        <tr>
-                            <th>Document</th>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Name</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var doc in CustomerDocuments)
-                        {
-                            <tr>
-                                <td>@{
+                    <div class="row">
+                        <div class="col-sm-4">
+                             <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6> 
+                        </div>
+                        <div class = "col-sm-8">
+
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewSelectedDocumentUpload()">
+                                <i class="fas fa-eye">View Selected</i>
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()">
+                                <i class="fas fa-download">Download Selected</i>
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()">
+                                <i class="fas fa-trash">Delete Selected</i>
+                            </MudButton>
+                        </div>
+                    </div>
+                <MudTable Items="@CustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
+                    <HeaderContent>
+                        <MudTh>Document</MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.CreatedDate)">Date</MudTableSortLabel></MudTh>
+                        <MudTh>Type</MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.FileName)">Name</MudTableSortLabel></MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Document">@{
                                         var strDocType = string.Empty;
-                                        DocumentTypeEnumValues.TryGetValue((int)doc.DocuVaultType, out strDocType);
+                                        DocumentTypeEnumValues.TryGetValue((int)context.DocuVaultType, out strDocType);
                                         @strDocType
-                                    }
-                                </td>
-                                <td>
-                                    @doc.CreatedDate.ToBiqDateTimeString()
-                                </td>
-                                <td>@if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
+                                    }</MudTd>
+                                    <MudTd DataLabel="Email">@context.CreatedDate</MudTd>
+                        <MudTd DataLabel="Type">if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
                                     {
                                         <p>Photo</p>
                                     }
                                     else{
                                         <p>Pdf</p> 
-                                    }
-                                </td>
-                                <td>@doc.Description</td>
-                                <td>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(doc)">
-                                        <i class="fas fa-eye"></i>
-                                    </MudButton>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveDocumentUpload(doc)">
-                                        <i class="fas fa-download"></i>
-                                    </MudButton>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteDocumentUpload(doc)">
-                                        <i class="fas fa-trash"></i>
-                                    </MudButton>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                                    }</MudTd>
+                        <MudTd DataLabel="Description">@context.Description</MudTd>
+                        <MudTd>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(context)">
+                                <i class="fas fa-eye"></i>
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveDocumentUpload(context)">
+                                <i class="fas fa-download"></i>
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteDocumentUpload(context)">
+                                <i class="fas fa-trash"></i>
+                            </MudButton>
+                        </MudTd>
+
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
+                    </PagerContent>
+                </MudTable>         
                 </div>
                 </div>
                 @code{
 
-                protected async Task ViewDocumentUpload(CustomerDocumentDto doc)
+                    protected async Task ViewSelectedDocumentUpload()
+                    {
+                        foreach(var custDoc in SelectedItemsCustomerDocuments)
+                        {
+                            await ViewDocumentUpload(custDoc);
+                        }
+                    }
+
+                    protected async Task SaveSelectedDocumentUpload()
+                    {
+                        foreach(var custDoc in SelectedItemsCustomerDocuments)
+                        {
+                            await SaveDocumentUpload(custDoc);
+                        }
+                    }
+
+                    protected async Task ViewDocumentUpload(CustomerDocument doc)
                     {
                         if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
                         {
@@ -438,7 +463,7 @@ else if (!Saved)
 
                     protected async Task ViewDocumentUpload(ChatDocument doc)
                     {
-                        var converted = new CustomerDocumentDto
+                        var converted = new CustomerDocument
                         {
                             SupportingDocumentType = doc.SupportingDocumentType,
                             File = doc.File,
@@ -447,7 +472,7 @@ else if (!Saved)
                         ViewDocumentUpload(converted);
                     }
 
-                    protected async Task SaveDocumentUpload(CustomerDocumentDto doc)
+                    protected async Task SaveDocumentUpload(CustomerDocument doc)
                     {
                         if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
                         {

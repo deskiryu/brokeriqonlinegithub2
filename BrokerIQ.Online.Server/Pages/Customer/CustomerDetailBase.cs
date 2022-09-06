@@ -70,7 +70,9 @@ namespace BrokerIQ.Online.Pages
 
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
-        public IEnumerable<CustomerDocumentDto> CustomerDocuments { get; set; }
+        public IEnumerable<CustomerDocument> CustomerDocuments { get; set; }
+
+        protected HashSet<CustomerDocument> SelectedItemsCustomerDocuments = new HashSet<CustomerDocument>();
 
         public DocumentsRequirement DocumentsRequirement { get; set; }
 
@@ -575,8 +577,21 @@ namespace BrokerIQ.Online.Pages
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
 
+        protected async Task DeleteSelectedDocumentUpload()
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"Are you sure you want to delete the selected client documents?");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                foreach (var custDoc in SelectedItemsCustomerDocuments)
+                {
+                    await DeleteDocumentUpload(custDoc);
+                }
+            }
+        }
 
-        protected async Task DeleteDocumentUpload(CustomerDocumentDto doc)
+        protected async Task DeleteDocumentUpload(CustomerDocument doc)
         {
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", $"Are you sure you want to delete this client document?");
