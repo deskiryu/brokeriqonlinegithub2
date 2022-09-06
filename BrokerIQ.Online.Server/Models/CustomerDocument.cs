@@ -21,5 +21,15 @@ namespace BrokerIQ.Online.Models
         public string FileName { get; set; }
 
         public byte[] File { get; set; }
+
+        public DocuVaultTypeEnum DocuVaultType { get; set; }
+
+        public string Description { get; set; }
+
+        public DateTime CreatedDate { get; set; }
+
+        public bool Selected { get; set; }
+
+        public string TypeDesc { get => (SupportingDocumentType == DocumentTypeEnum.JPEG || SupportingDocumentType == DocumentTypeEnum.PNG) ? "Photo" : "Pdf"; }
     }
 }

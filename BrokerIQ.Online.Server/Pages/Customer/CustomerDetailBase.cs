@@ -70,7 +70,9 @@ namespace BrokerIQ.Online.Pages
 
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
-        public IEnumerable<CustomerDocumentDto> CustomerDocuments { get; set; }
+        public IEnumerable<CustomerDocument> CustomerDocuments { get; set; }
+
+        protected HashSet<CustomerDocument> SelectedItemsCustomerDocuments = new HashSet<CustomerDocument>();
 
         public DocumentsRequirement DocumentsRequirement { get; set; }
 
@@ -575,30 +577,58 @@ namespace BrokerIQ.Online.Pages
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
 
-
-        protected async Task DeleteDocumentUpload(CustomerDocumentDto doc)
+        protected async Task DeleteSelectedDocumentUpload()
         {
             var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"Are you sure you want to delete this client document?");
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if(SelectedItemsCustomerDocuments.Any()){
+                dialogParams.Add("Message", $"Are you sure you want to delete the selected client documents?");
+                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+                if (!result.Cancelled)
+                {
+                    foreach (var custDoc in SelectedItemsCustomerDocuments)
+                    {
+                        await DeleteDocumentUpload(custDoc, showDialog:false);
+                    }
+
+                    CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                    SelectedItemsCustomerDocuments.Clear();
+                    StateHasChanged();    
+                }
+             
+            }
+        }
+
+        protected async Task DeleteDocumentUpload(CustomerDocument doc, bool showDialog=true)
+        {
+            var proceed = true;
+            if(showDialog){
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", $"Are you sure you want to delete this client document?");
+                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+                proceed = !result.Cancelled;
+            }
+            if(proceed)
             {
                 var deleted = await CustomerDocumentService.DeleteCustomerDocument(doc.Id);
                 if (deleted)
                 {
-                    var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "Deleted successfully");
-                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                    if(showDialog){
+                        var responseParams = new DialogParameters();
+                        responseParams.Add("Message", "Deleted successfully");
+                        await DialogService.Show<AlertDialog>("Information", responseParams).Result;           
 
-                    CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
-                    StateHasChanged();
+                       CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                        StateHasChanged();              
+                    }
 
                 }
                 else
                 {
-                    var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "The document did not delete.");
-                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                    if(showDialog){
+                        var responseParams = new DialogParameters();
+                        responseParams.Add("Message", "The document did not delete.");
+                        await DialogService.Show<AlertDialog>("Information", responseParams).Result;                        
+                    }
                 }
             }
         }
