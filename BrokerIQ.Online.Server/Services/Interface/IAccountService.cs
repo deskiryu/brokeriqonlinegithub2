@@ -21,5 +21,6 @@
         Task<User> GetById(string id);
         Task Update(string id, EditUser model);
         Task Delete(string id);
+        Task<bool> ResendEmail(string customerEmail);
     }
 }
