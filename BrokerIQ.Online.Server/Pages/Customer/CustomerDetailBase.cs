@@ -147,8 +147,11 @@ namespace BrokerIQ.Online.Pages
                     RequestedDocuments.Add(item, 0);
                 }
 
-                BrokerName = (await BrokerService.GetBroker(user.MasterBrokerId)).Name;
-                await PopulateBrokerDefinedMessages();
+                if (!IsAdmin)
+                {
+                    BrokerName = (await BrokerService.GetBroker(user.MasterBrokerId)).Name;
+                    await PopulateBrokerDefinedMessages();
+                }
             }
             catch
             {
@@ -361,6 +364,30 @@ namespace BrokerIQ.Online.Pages
                 {
                     var responseParams = new DialogParameters();
                     responseParams.Add("Message", "The client did not delete.");
+                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                }
+                NavigationManager.NavigateTo($"/clientlist");
+            }
+        }
+
+        protected async Task ResendEmailCustomer()
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"A verify email will be sent to {Customer.Name}. Continue? ");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                var resent = await AccountService.ResendEmail(Customer.EmailAddress);
+                if (resent)
+                {
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", "Resent successfully");
+                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                }
+                else
+                {
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", "The resend email failed.");
                     await DialogService.Show<AlertDialog>("Information", responseParams).Result;
                 }
                 NavigationManager.NavigateTo($"/clientlist");
