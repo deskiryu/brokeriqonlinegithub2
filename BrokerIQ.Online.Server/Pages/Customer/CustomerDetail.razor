@@ -580,7 +580,7 @@ else if (!Saved)
             <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot'>
                 @if (!IsAdmin)
                 {
-                        <div class="col-lg-8 control_wrapper mb-5">
+                        <div class="col-sm-6 control_wrapper mb-5">
                             <MudSelect T="string"
                                     Label="Select Message Template"
                                     Placeholder="Select Message Template"
@@ -593,10 +593,10 @@ else if (!Saved)
                                 }
                             </MudSelect>
                         </div>
-                        <div class="col-lg-8 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                            <MudDatePicker Label="Replace INSERT_DATE in template" style="width: 375;" @bind-Date="SelectedTemplateDateReplacement"/>
+                        <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                            <MudDatePicker Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement"/>
                             <MudSpacer />
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send Template</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
                         </div>
 
                         <div class="col-sm-6 mt-1">
@@ -622,8 +622,8 @@ else if (!Saved)
                     <div class="col-sm-6 mt-1">
                     <div class="card">
                     <div class="card-body">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewChat" class="btn btn-primary mb-2">
-                    Send Chat
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
+                    New Chat Message
                     </MudButton>
                     </div></div></div>
                 }

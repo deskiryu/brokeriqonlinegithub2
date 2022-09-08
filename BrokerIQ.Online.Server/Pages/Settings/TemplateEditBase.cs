@@ -13,14 +13,16 @@ namespace BrokerIQ.Online.Pages
 
     public class MessageElement
     {
-        public MessageElement(int index, string message)
+        public MessageElement(int index, string message, string prompt)
         {
             Index = index;
             Message = message;
+            Prompt = prompt;
         }
 
         public int Index { get; set; }
         public string Message { get; set; }
+        public string Prompt { get; set; }
     }
 
     public class TemplateEditBase : ComponentBase
@@ -43,22 +45,34 @@ namespace BrokerIQ.Online.Pages
             foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
             {
                 string message = String.Empty;
+
+                //Only 5 for now
+                if( enumVal != BrokerDefinedMessageEnum.TickBoxMessage1 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage2 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage3 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage4 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage5)
+                {
+                    continue;
+                }
+
                 foreach (var item in brokerDefinedMessage.BrokerDefinedMessages.Where(
                     b => b.BrokerDefinedMessageEnumValue == enumVal && !b.BrokerDefinedMessage.Equals(enumVal.GetDisplayName())))
                 {
                     message = item.BrokerDefinedMessage;
+                    
                     break;
                 }
 
                 if (message == String.Empty)
                 {
                     // display default
-                    BrokerDefinedMessages.Add(new MessageElement((int)enumVal, enumVal.GetDisplayName()));
+                    BrokerDefinedMessages.Add(new MessageElement((int)enumVal, enumVal.GetDisplayName(), enumVal.GetDisplayPrompt()));
                 }
                 else
                 {
                     // display broker defined message
-                    BrokerDefinedMessages.Add(new MessageElement((int)enumVal, message));
+                    BrokerDefinedMessages.Add(new MessageElement((int)enumVal, message, enumVal.GetDisplayPrompt()));
                 }
             }
 
