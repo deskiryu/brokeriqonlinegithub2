@@ -11,20 +11,20 @@
           SortLabel="Sort By" CommitEditTooltip="Commit Edit"
           RowEditPreview="BackupMessage" CanCancelEdit="@canCancelEdit" RowEditCancel="ResetMessage" RowEditCommit="CommitMessage">
     <ColGroup>
-		<col style="width:50px;" />
+		<col style="width:250px;" />
         <col />
-		<col style="width:50px;" />
+		<col style="width:250px;" />
     </ColGroup>
     <HeaderContent>
-        <MudTh>#</MudTh>
+        <MudTh>Type</MudTh>
         <MudTh>Template</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="#">@(context.Index)</MudTd>
+        <MudTd DataLabel="Type">@(context.Prompt)</MudTd>
         <MudTd DataLabel="Name">@context.Message</MudTd>
     </RowTemplate>
     <RowEditingTemplate>
-        <MudTd DataLabel="#">@(context.Index)</MudTd>
+        <MudTd DataLabel="Type">@context.Prompt</MudTd>
         <MudTd DataLabel="Name">
             <MudTextField @bind-Value="@context.Message" Required />
         </MudTd>
@@ -45,7 +45,7 @@
     private void BackupMessage(object element)
     {
         // required in case user cancels edit
-        elementBeforeEdit = new MessageElement(((MessageElement)element).Index, ((MessageElement)element).Message);
+        elementBeforeEdit = new MessageElement(((MessageElement)element).Index, ((MessageElement)element).Message, ((MessageElement)element).Prompt);
     }
 
     private async void CommitMessage(object element)

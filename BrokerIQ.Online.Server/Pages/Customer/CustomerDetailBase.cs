@@ -521,19 +521,9 @@ namespace BrokerIQ.Online.Pages
 
                 try
                 {
-                    if (!string.IsNullOrEmpty(SelectedTemplateMessage))
+                    if (!string.IsNullOrEmpty(messageToSend))
                     {
-                        var dialogParams = new DialogParameters();
-                        dialogParams.Add("Message", messageToSend);
-                        var result = await DialogService.Show<ConfirmCancelDialog>("Send Chat Template", dialogParams).Result;
-                        if (!result.Cancelled)
-                        {
-                            succeeded = (await ChatService.Send(messageToSend, Customer.Id));
-                        }
-                        else
-                        {
-                            return;
-                        }
+                        await NewChat(messageToSend);
                     }
                 }
                 catch (Exception ex)
@@ -548,18 +538,9 @@ namespace BrokerIQ.Online.Pages
                 var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
                 return;
             }
-
-            if (succeeded)
-            {
-                await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
-            }
-            else
-            {
-                await RefreshChatWithDialogMessage(succeeded, "Something went wrong sending the template message. Please try again.");
-            }
         }
 
-        protected async Task NewChat()
+        protected async Task NewChat(string messageToshow="")
         {
             bool succeeded = false;
 
@@ -605,6 +586,8 @@ namespace BrokerIQ.Online.Pages
             {
                 fileAttached = false;
             }
+
+            dialogParams.Add("PrePopulatedMessage", messageToshow);
 
             var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams).Result;
             if (!result.Cancelled)
@@ -835,6 +818,17 @@ namespace BrokerIQ.Online.Pages
             BrokerDefinedMessage brokerDefinedMessage = await BrokerDefinedMessageService.Get();
             foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
             {
+
+                //Only 5 for now
+                if (enumVal != BrokerDefinedMessageEnum.TickBoxMessage1 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage2 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage3 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage4 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage5)
+                {
+                    continue;
+                }
+
                 string message = String.Empty;
                 foreach (var item in brokerDefinedMessage.BrokerDefinedMessages.Where(
                     b => b.BrokerDefinedMessageEnumValue == enumVal && !b.BrokerDefinedMessage.Equals(enumVal.GetDisplayName())))

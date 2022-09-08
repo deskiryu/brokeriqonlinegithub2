@@ -58,6 +58,12 @@ namespace BrokerIQ.Online.Server.Extensions
                             .GetMember(enumValue.ToString())
                             .FirstOrDefault()?.GetCustomAttribute<DisplayAttribute>().GetName() ?? "";
         }
+        public static string GetDisplayPrompt(this Enum enumValue)
+        {
+            return enumValue.GetType()
+                            .GetMember(enumValue.ToString())
+                            .FirstOrDefault()?.GetCustomAttribute<DisplayAttribute>().GetPrompt() ?? "";
+        }
 
         public static TimeSpan TransformToTS(this RecentPeriodEnum rpe) => rpe switch
         {
