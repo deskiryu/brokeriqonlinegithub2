@@ -16,7 +16,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<CustomerDocumentDto> GetProfilePicture(int customerId);
 
-        Task<IEnumerable<CustomerDocumentDto>> Get(int customerId);
+        Task<IEnumerable<CustomerDocument>> Get(int customerId);
 
         Task<bool> DeleteCustomerDocument(Guid id);
 

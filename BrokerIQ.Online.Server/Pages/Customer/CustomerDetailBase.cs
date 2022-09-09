@@ -14,6 +14,11 @@ namespace BrokerIQ.Online.Pages
     using System.IO;
     using BrokerIQ.Online.Server.Shared;
     using BrokerIQ.Online.Server.Extensions;
+    using Microsoft.AspNetCore.Components.Forms;
+    using Microsoft.Extensions.Options;
+    using BrokerIQ.Online.Server.AppSettings;
+    using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Dto.CreateDto;
 
     public class CustomerDetailBase : ComponentBase
     {
@@ -39,6 +44,9 @@ namespace BrokerIQ.Online.Pages
         public IAlertService AlertService { get; set; }
 
         [Inject]
+        public IDocumentsRequirementService DocumentsRequirementService { get; set; }
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -50,19 +58,39 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IChatService ChatService { get; set; }
 
+        [Inject]
+        public IBrokerDefinedMessageService BrokerDefinedMessageService { get; set; }
+
+        [Inject]
+        public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
+        private FileUploadSettings fileUploadSettings { get; set; }
+
         public Customer Customer { get; set; }
 
         public CustomerDocumentDto CustomerProfilePicture { get; set; }
 
         public IEnumerable<Broker> Brokers { get; set; }
 
+        public string BrokerName { get; set; }
+
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
-        public IEnumerable<CustomerDocumentDto> CustomerDocuments { get; set; }
+        public IEnumerable<CustomerDocument> CustomerDocuments { get; set; }
+
+        protected HashSet<CustomerDocument> SelectedItemsCustomerDocuments = new HashSet<CustomerDocument>();
+
+        public DocumentsRequirement DocumentsRequirement { get; set; }
 
         public IEnumerable<Note> Notes { get; set; }
 
         public Chat Chat { get; set; }
+
+        public string DragEnterStyle { get; set; }
+
+        protected List<IBrowserFile> LoadedChatFiles = new();
+
+        public string SpinnerVisible { get; set; }
+        public string LoadFileStatus { get; set; }
 
         [Parameter]
         public string CustomerId { get; set; }
@@ -87,15 +115,27 @@ namespace BrokerIQ.Online.Pages
 
         public MudBlazor.Color ChatBadgeColour { get; set; }
 
-        public Dictionary<int,string> DocumentTypeEnumValues = new Dictionary<int, string>();
+        public Dictionary<int, string> DocumentTypeEnumValues = new Dictionary<int, string>();
+
+        public Dictionary<DocuVaultTypeEnum, int> RequestedDocuments = new Dictionary<DocuVaultTypeEnum, int>();
+
+        public List<string> BrokerDefinedMessages = new List<string>();
+
+        public string SelectedTemplateMessage { get; set; }
+
+        public DateTime? SelectedTemplateDateReplacement { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            var user = await AccountService.GetUser();
+            IsAdmin = user.IsAdmin;
+
             try
             {
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
                 CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
+                DocumentsRequirement = await DocumentsRequirementService.Get(int.Parse(CustomerId));
                 Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
                 foreach (var item in Enum.GetValues(typeof(DocuVaultTypeEnum)).Cast<DocuVaultTypeEnum>())
                 {
@@ -104,6 +144,13 @@ namespace BrokerIQ.Online.Pages
                         continue;
                     }
                     DocumentTypeEnumValues.Add((int)item, item.GetDisplayName());
+                    RequestedDocuments.Add(item, 0);
+                }
+
+                if (!IsAdmin)
+                {
+                    BrokerName = (await BrokerService.GetBroker(user.MasterBrokerId)).Name;
+                    await PopulateBrokerDefinedMessages();
                 }
             }
             catch
@@ -113,9 +160,6 @@ namespace BrokerIQ.Online.Pages
                 Saved = true;
             }
 
-
-            var user = await AccountService.GetUser();
-            IsAdmin = user.IsAdmin;
             if (IsAdmin)
             {
                 try
@@ -135,7 +179,7 @@ namespace BrokerIQ.Online.Pages
                 UnReadChat = await ChatService.GetUnRead(Customer.Id);
                 Chat = await ChatService.Get(Customer.Id);
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
-                BadgeDot = UnReadChat == 0 ;
+                BadgeDot = UnReadChat == 0;
             }
             else
             {
@@ -147,7 +191,7 @@ namespace BrokerIQ.Online.Pages
                     }
                 }
             }
-
+            fileUploadSettings = this.FileUploadSettingsOption.Value;
 
         }
 
@@ -165,7 +209,7 @@ namespace BrokerIQ.Online.Pages
         {
 
             if (Customer.EmailConfirmed)
-            {                
+            {
                 var dialogParams = new DialogParameters();
 
                 if (string.IsNullOrEmpty(selectedNotification))
@@ -204,7 +248,7 @@ namespace BrokerIQ.Online.Pages
                     var succeeded = false;
                     try
                     {
-                        succeeded = await NotificationService.SendMessageNotification(selectedNotification, targetsId,user.MasterBrokerId);
+                        succeeded = await NotificationService.SendMessageNotification(selectedNotification, targetsId, user.MasterBrokerId);
                     }
                     catch
                     {
@@ -326,11 +370,35 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected async Task ResendEmailCustomer()
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"A verify email will be sent to {Customer.Name}. Continue? ");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                var resent = await AccountService.ResendEmail(Customer.EmailAddress);
+                if (resent)
+                {
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", "Resent successfully");
+                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                }
+                else
+                {
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", "The resend email failed.");
+                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                }
+                NavigationManager.NavigateTo($"/clientlist");
+            }
+        }
+
         protected async Task NewNote()
         {
             bool succeeded = false;
             var result = await DialogService.Show<NoteEditDialog>("New Note").Result;
-            if(!result.Cancelled)
+            if (!result.Cancelled)
             {
                 var message = result.Data.ToString();
 
@@ -338,7 +406,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (!string.IsNullOrEmpty(message))
                     {
-                       succeeded = (await NoteService.SaveNote(message, Customer.Id)).Id>0;
+                        succeeded = (await NoteService.SaveNote(message, Customer.Id)).Id > 0;
                     }
                 }
                 catch
@@ -362,14 +430,14 @@ namespace BrokerIQ.Online.Pages
         }
 
         protected async Task EditNote(int id)
-        {                
+        {
             bool succeeded = false;
             var note = Notes.FirstOrDefault(x => x.Id == id);
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", note.Message);
-            
+
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
-            if(!result.Cancelled)
+            if (!result.Cancelled)
             {
                 var message = result.Data.ToString();
                 try
@@ -382,7 +450,7 @@ namespace BrokerIQ.Online.Pages
                         }
                         catch
                         {
-                            await RefreshNotesWithDialogMessage(false,"Something went wrong updating the Note. Please try again.");
+                            await RefreshNotesWithDialogMessage(false, "Something went wrong updating the Note. Please try again.");
                         }
                     }
                 }
@@ -429,10 +497,99 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task NewChat()
+        protected async Task InsertTemplateMessage()
+        {
+            var succeeded = false;
+            if (SelectedTemplateMessage != null)
+            {
+                var messageToSend = SelectedTemplateMessage;
+                if (SelectedTemplateMessage.Contains("INSERT_DATE"))
+                {
+                    if (SelectedTemplateDateReplacement.HasValue)
+                    {
+                        DateTime value = SelectedTemplateDateReplacement.Value;
+                        messageToSend = SelectedTemplateMessage.Replace("INSERT_DATE", value.ToShortDateString());
+                    }
+                    else
+                    {
+                        var dialogParams = new DialogParameters();
+                        dialogParams.Add("Message", "Template requires a DATE to be inserted into message. Please select one from the date picker.");
+                        var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+                        return;
+                    }
+                }
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(messageToSend))
+                    {
+                        await NewChat(messageToSend);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Console.WriteLine("InsertTemplateMessage: exception - " + ex.Message);
+                }
+            }
+            else
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", "Please select a template from the dropdown menu.");
+                var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+                return;
+            }
+        }
+
+        protected async Task NewChat(string messageToshow="")
         {
             bool succeeded = false;
-            var result = await DialogService.Show<MessageSendDialog>("Send Message").Result;
+
+            var fileAttached = false;
+            var sdoc = new ChatDocument();
+            var dialogParams = new DialogParameters();
+
+            try
+            {
+                if (LoadedChatFiles.Any())
+                {
+                    var fileName = "";
+                    var memoryStream = new MemoryStream();
+                    var file = LoadedChatFiles[0];
+                    if (file != null)
+                    {
+                        fileAttached = true;
+                        fileName = LoadedChatFiles[0].Name;
+
+                        if (file.Size > this.fileUploadSettings.MaxFileSize)
+                        {
+                            dialogParams.Add("Oversize", "true");
+                            fileAttached = false;
+                        }
+                        else
+                        {
+                            await file.OpenReadStream(this.fileUploadSettings.MaxFileSize).CopyToAsync(memoryStream);
+
+                            sdoc.FileName = fileName;
+                            sdoc.File = memoryStream.ToArray();
+
+                            dialogParams.Add("Filenames", new List<string>{
+                                sdoc.FileName
+                            });
+                            dialogParams.Add("MemoryStreams", new List<MemoryStream> {
+                                memoryStream
+                            });
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                fileAttached = false;
+            }
+
+            dialogParams.Add("PrePopulatedMessage", messageToshow);
+
+            var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams).Result;
             if (!result.Cancelled)
             {
                 var message = result.Data.ToString();
@@ -441,12 +598,19 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (!string.IsNullOrEmpty(message))
                     {
-                        succeeded = (await ChatService.Send(message, Customer.Id));
+                        if (fileAttached)
+                        {
+                            succeeded = (await ChatService.Send(message, Customer.Id, sdoc));
+                        }
+                        else
+                        {
+                            succeeded = (await ChatService.Send(message, Customer.Id));
+                        }
                     }
                 }
                 catch
                 {
-
+                    succeeded = false;
                 }
             }
             else
@@ -499,30 +663,189 @@ namespace BrokerIQ.Online.Pages
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
 
-
-        protected async Task DeleteDocumentUpload(CustomerDocumentDto doc)
+        protected async Task DeleteSelectedDocumentUpload()
         {
             var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"Are you sure you want to delete this client document?");
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if(SelectedItemsCustomerDocuments.Any()){
+                dialogParams.Add("Message", $"Are you sure you want to delete the selected client documents?");
+                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+                if (!result.Cancelled)
+                {
+                    foreach (var custDoc in SelectedItemsCustomerDocuments)
+                    {
+                        await DeleteDocumentUpload(custDoc, showDialog:false);
+                    }
+
+                    CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                    SelectedItemsCustomerDocuments.Clear();
+                    StateHasChanged();    
+                }
+             
+            }
+        }
+
+        protected async Task DeleteDocumentUpload(CustomerDocument doc, bool showDialog=true)
+        {
+            var proceed = true;
+            if(showDialog){
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", $"Are you sure you want to delete this client document?");
+                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+                proceed = !result.Cancelled;
+            }
+            if(proceed)
             {
                 var deleted = await CustomerDocumentService.DeleteCustomerDocument(doc.Id);
                 if (deleted)
                 {
-                    var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "Deleted successfully");
-                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                    if(showDialog){
+                        var responseParams = new DialogParameters();
+                        responseParams.Add("Message", "Deleted successfully");
+                        await DialogService.Show<AlertDialog>("Information", responseParams).Result;           
 
-                    CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
-                    StateHasChanged();
+                       CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                        StateHasChanged();              
+                    }
 
                 }
                 else
                 {
-                    var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "The document did not delete.");
-                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                    if(showDialog){
+                        var responseParams = new DialogParameters();
+                        responseParams.Add("Message", "The document did not delete.");
+                        await DialogService.Show<AlertDialog>("Information", responseParams).Result;                        
+                    }
+                }
+            }
+        }
+
+        protected async Task LoadFiles(InputFileChangeEventArgs e)
+        {
+            if (e.FileCount > 1)
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", $"Only one document per chat message");
+                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
+
+            }
+            LoadedChatFiles.Clear();
+            foreach (var file in e.GetMultipleFiles(1))
+            {
+                try
+                {
+                    var ext = Path.GetExtension(file.Name);
+                    if (ext != ".pdf")
+                    {
+                        throw new Exception("Pdf files only");
+                    }
+                    LoadedChatFiles.Add(file);
+                }
+                catch (Exception ex)
+                {
+                    LoadFileStatus = ex.Message;
+
+                    break;
+                }
+            }
+        }
+
+        protected async Task DeleteChatDocument()
+        {
+            LoadedChatFiles.Clear();
+        }
+
+        protected async Task SubmitDocumentRequirements()
+        {
+            List<CreateDocumentsCheckDto> documentsRequiredList = new List<CreateDocumentsCheckDto>();
+            bool requirementSet = false;
+            string requirementsString = String.Empty;
+            foreach (var req in RequestedDocuments)
+            {
+                if (req.Value > 0)
+                {
+                    CreateDocumentsCheckDto requirement = new CreateDocumentsCheckDto
+                    {
+                        DocuVaultType = req.Key,
+                        RequiredCount = req.Value
+                    };
+                    documentsRequiredList.Add(requirement);
+                    requirementSet = true;
+                    requirementsString += $"{req.Key.GetDisplayName()}: {req.Value}\n";
+                }
+            }
+
+            if (requirementSet)
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", $"Are you sure you want to set the document requirements as the following?\n{requirementsString}");
+                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+                if (!result.Cancelled)
+                {
+                    DocumentsRequirement = await DocumentsRequirementService.Create(int.Parse(CustomerId), documentsRequiredList);
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", "No document requirements have been set.");
+                var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+            }
+        }
+
+        protected async Task DeleteDocumentRequirements()
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"Are you sure you want to delete the document requirements currently set?");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                await DocumentsRequirementService.Delete(DocumentsRequirement.Id);
+                DocumentsRequirement = null;
+
+                // reset display
+                foreach (var key in RequestedDocuments.Keys.ToList())
+                {
+                    RequestedDocuments[key] = 0;
+                }
+                StateHasChanged();
+            }
+        }
+
+        private async Task PopulateBrokerDefinedMessages()
+        {
+            BrokerDefinedMessages = new List<string>();
+            BrokerDefinedMessage brokerDefinedMessage = await BrokerDefinedMessageService.Get();
+            foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
+            {
+
+                //Only 5 for now
+                if (enumVal != BrokerDefinedMessageEnum.TickBoxMessage1 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage2 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage3 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage4 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage5)
+                {
+                    continue;
+                }
+
+                string message = String.Empty;
+                foreach (var item in brokerDefinedMessage.BrokerDefinedMessages.Where(
+                    b => b.BrokerDefinedMessageEnumValue == enumVal && !b.BrokerDefinedMessage.Equals(enumVal.GetDisplayName())))
+                {
+                        message = item.BrokerDefinedMessage;
+                        break;
+                }
+
+                if (message == String.Empty)
+                {
+                    // display default
+                    BrokerDefinedMessages.Add(enumVal.GetDisplayName().Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName));
+                }
+                else
+                {
+                    // display broker defined message
+                    BrokerDefinedMessages.Add(message.Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName));
                 }
             }
         }

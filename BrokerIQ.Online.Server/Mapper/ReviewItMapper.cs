@@ -8,6 +8,7 @@ namespace BrokerIQ.Online.Mapper
     using BrokerIQ.Dto.Response;
     using BrokerIQ.Online.Models.Account;
     using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Dto;
 
     public class ReviewItMapper : Profile
     {
@@ -28,6 +29,8 @@ namespace BrokerIQ.Online.Mapper
             NotesMapper();
             ChatMapper();
             AzureStorageMapper();
+            DocumentsRequirementMapper();
+            BrokerDefinedMessageMapper();
         }
         public void CustomerMapper()
         {
@@ -713,6 +716,23 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.SentTime, opt => opt.MapFrom(r => r.SentTime))
                 .ForMember(p => p.Image, opt => opt.MapFrom(r => r.Image))
                 .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
+                .ForMember(p => p.ChatDocumentId, opt => opt.MapFrom(r => r.ChatDocumentId))
+                .ForMember(d => d.ChatDocument, opt => opt.MapFrom((src, dest) =>
+                {
+                    var chatDocument = new ChatDocument();
+                    
+                    if (src.ChatDocumentId>0)
+                    {
+                        chatDocument.Id = src.ChatDocument.Id;
+                        chatDocument.ChatId = src.ChatDocument.ChatId;
+                        chatDocument.ChatMessageId = src.ChatDocument.ChatMessageId;
+                        chatDocument.FileName = src.ChatDocument.FileName;
+                        chatDocument.File = src.ChatDocument.File;
+                        chatDocument.CreatedDate = src.ChatDocument.CreatedDate;
+                        chatDocument.SupportingDocumentType = src.ChatDocument.SupportingDocumentType;
+                    }
+                    return chatDocument;
+                }))
                 .ForMember(p => p.BrokerSource, opt => opt.MapFrom(r => r.BrokerSource));
 
             CreateMap<ChatMessage, ChatMessageDto>()
@@ -720,6 +740,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.Message, opt => opt.MapFrom(r => r.Message))
                 .ForMember(p => p.SentTime, opt => opt.MapFrom(r => r.SentTime))
                 .ForMember(p => p.Image, opt => opt.MapFrom(r => r.Image))
+                .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
                 .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
                 .ForMember(p => p.BrokerSource, opt => opt.MapFrom(r => r.BrokerSource));
         }
@@ -730,6 +751,17 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<AzureVideoDto, Video>();
             CreateMap<Audio, AudioDto>();
             CreateMap<AudioDto, Audio>();
+        }
+
+        public void DocumentsRequirementMapper()
+        {
+            CreateMap<DocumentsRequirementDto, DocumentsRequirement>();
+            CreateMap<DocumentsRequirement, DocumentsRequirementDto>();
+        }
+        public void BrokerDefinedMessageMapper()
+        {
+            CreateMap<BrokerDefinedMessageDto, BrokerDefinedMessage>();
+            CreateMap<BrokerDefinedMessage, BrokerDefinedMessageDto>();
         }
     }
 }

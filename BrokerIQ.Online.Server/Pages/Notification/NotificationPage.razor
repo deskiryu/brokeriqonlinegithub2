@@ -1,5 +1,6 @@
 ﻿@page "/notifications"
 @inherits NotificationPageBase
+@using BrokerIQ.Online.Server.Extensions
 @using BrokerIQ.Online.Services.Interface
 @using System
 @inject NavigationManager NavigationManager
@@ -98,7 +99,7 @@ else
 
                 <MudTd DataLabel="Last name">@customersAsName</MudTd>
              }
-            <MudTd DataLabel="Last name">@context.SentDate.ToString("dd/MM/yyyy hh:mm:ss")</MudTd>
+            <MudTd DataLabel="Last name">@context.SentDate.ToBiqDateTimeString()</MudTd>
             @if (ShowBroker)
             {
                 <MudTd DataLabel="Telephone">@context.BrokerName</MudTd>           

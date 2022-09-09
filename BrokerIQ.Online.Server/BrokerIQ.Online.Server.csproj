@@ -6,7 +6,7 @@
 		<OutputType>Library</OutputType>
 		<StartupObject />
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-		<Version>1.0.13</Version>
+		<Version>1.0.15</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -15,6 +15,7 @@
 
 
 	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
 		<PackageReference Include="Azure.Core" Version="1.21.0" />
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
@@ -24,13 +25,12 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-rc1.20223.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.4" />
-		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="6.0.0" />
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.0" />
 		<PackageReference Include="MudBlazor" Version="6.0.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="BrokerIQ.Dto" Version="1.0.14" />
+		<PackageReference Include="BrokerIQ.Dto" Version="1.0.42" />
 		<PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
 		<PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
 	</ItemGroup>

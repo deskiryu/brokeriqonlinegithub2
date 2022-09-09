@@ -23,11 +23,11 @@
         await Extensions.SaveAs(js, imageFileName, imageData);
     }
 
-    async Task DownloadPdf(CustomerDocumentDto sdoc)
+    async Task DownloadPdf(CustomerDocument sdoc)
     {
         await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
     }
-    async Task PreviewPdf(CustomerDocumentDto sdoc)
+    async Task PreviewPdf(CustomerDocument sdoc)
     {
         var memoryStream = new MemoryStream(sdoc.File);
         await Extensions.PreviewFile(js, memoryStream);
@@ -93,7 +93,7 @@ else if (!Saved)
                         <div class="form-group row">
                             <label class="col-lg-2 col-form-label">Date Of Birth</label>
                             <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.DateOfBirth.ToString("dd/MM/yyyy")</label>
+                                <label type="text" readonly class="form-control-plaintext">@Customer.DateOfBirth.ToBiqDateString()</label>
                             </div>
 
                             <label class="col-lg-2 col-form-label">Employment</label>
@@ -192,6 +192,10 @@ else if (!Saved)
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="DeleteCustomer">
                                 Delete Client
                             </MudButton>
+
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="ResendEmailCustomer">
+                                Resend Verify Email
+                            </MudButton>
                         }
 
 
@@ -231,7 +235,7 @@ else if (!Saved)
                                 <tr>
                                     <td>@insurance.InsType.GetDisplayName()</td>
                                     <td>@insurance.Name</td>
-                                    <td>@insurance.ExpiryDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@insurance.ExpiryDate.ToBiqDateString()</td>
                                     @if (IsAdmin)
                                     {
                                         <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
@@ -278,7 +282,7 @@ else if (!Saved)
 
                                 @if (mortgage.PromotionalEndDate.HasValue)
                                 {
-                                    <td>@mortgage.PromotionalEndDate.Value.ToString("dd/MM/yyyy")</td>
+                                    <td>@mortgage.PromotionalEndDate.Value.ToBiqDateString()</td>
                                 }
                                 @if (IsAdmin)
                                 {
@@ -298,57 +302,154 @@ else if (!Saved)
                 </table>
             </MudTabPanel>
             <MudTabPanel Text="Uploads">
-                <table id="table-uploads" class="table  col-sm-12 table-striped ">
-                    <thead>
-                        <tr>
-                            <th>Document</th>
-                            <th>Type</th>
-                            <th>Name</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var doc in CustomerDocuments)
-                        {
-                            <tr>
-                                <td>@{
+                <div class = "row">
+                <div class = "col-sm-4">
+                @if (DocumentsRequirement != null) {
+                    <h6 style="padding-bottom: 5px;">Client Documents Required</h6>
+                    <MudTable Style="padding-bottom: 5px;" Items="@DocumentsRequirement.DocumentChecks">
+                        <HeaderContent>
+                            <MudTh>Document Type</MudTh>
+                            <MudTh>Uploaded</MudTh>
+                            <MudTh>Required</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Type">@context.DocuVaultType.GetDisplayName()</MudTd>
+                            <MudTd DataLabel="Received">@context.TotalCount</MudTd>
+                            <MudTd DataLabel="Required">@context.RequiredCount</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center mt-1">Remove Requirements</MudButton>
+                }
+                else
+                {
+                    <h6 style="padding-bottom: 5px;">Select Client Document Requirements</h6>
+                    <MudSelect T="int" Label="Bank Statement" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.BankStatement]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="Credit Report" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Creditreport]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="Driving License" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.DrivingLicense]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="Payslip" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Payslip]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="Utility Bill" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.UtilityBill]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect Style="padding-bottom: 5px;" T="int" Label="Passport" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Passport]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await SubmitDocumentRequirements())" class="btn btn-secondary text-center">Submit Requirements</MudButton>
+                }
+                </div>
+                <div class = "col-sm-8 border-left">
+                    <div class="row">
+                        <div class="col-sm-4">
+                             <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6> 
+                        </div>
+                        <div class = "col-sm-8" style="margin-top: -14px">
+
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()">
+                                Download Selected
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()">
+                                Delete Selected
+                            </MudButton>
+                        </div>
+                    </div>
+                <MudTable Items="@CustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
+                    <HeaderContent>
+                        <MudTh>Document</MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.CreatedDate)">Date</MudTableSortLabel></MudTh>
+                        <MudTh>Type</MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.FileName)">Name</MudTableSortLabel></MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Document">@{
                                         var strDocType = string.Empty;
-                                        DocumentTypeEnumValues.TryGetValue((int)doc.DocuVaultType, out strDocType);
+                                        DocumentTypeEnumValues.TryGetValue((int)context.DocuVaultType, out strDocType);
                                         @strDocType
-                                    }
-                                </td>
-                                <td>@if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
-                                    {
-                                        <p>Photo</p>
-                                    }
-                                    else{
-                                        <p>Pdf</p> 
-                                    }
-                                </td>
-                                <td>@doc.Description</td>
-                                <td>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(doc)">
-                                        <i class="fas fa-eye"></i>
-                                    </MudButton>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveDocumentUpload(doc)">
-                                        <i class="fas fa-download"></i>
-                                    </MudButton>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteDocumentUpload(doc)">
-                                        <i class="fas fa-trash"></i>
-                                    </MudButton>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                                    }</MudTd>
+                                    <MudTd DataLabel="Email">@context.CreatedDate</MudTd>
+                        <MudTd DataLabel="Type">@context.TypeDesc</MudTd>
+                        <MudTd DataLabel="Description">@context.Description</MudTd>
+                        <MudTd>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(context)">
+                                <i class="fas fa-eye"></i>
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveDocumentUpload(context)">
+                                <i class="fas fa-download"></i>
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteDocumentUpload(context)">
+                                <i class="fas fa-trash"></i>
+                            </MudButton>
+                        </MudTd>
+
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
+                    </PagerContent>
+                </MudTable>         
+                </div>
+                </div>
                 @code{
-                
-                    protected async Task ViewDocumentUpload(CustomerDocumentDto doc)
+
+                    protected async Task ViewSelectedDocumentUpload()
+                    {
+                        foreach(var custDoc in SelectedItemsCustomerDocuments)
+                        {
+                            await ViewDocumentUpload(custDoc);
+                        }
+                    }
+
+                    protected async Task SaveSelectedDocumentUpload()
+                    {
+                        foreach(var custDoc in SelectedItemsCustomerDocuments)
+                        {
+                            await SaveDocumentUpload(custDoc);
+                        }
+                        SelectedItemsCustomerDocuments.Clear();
+                    }
+
+                    protected async Task ViewDocumentUpload(CustomerDocument doc)
                     {
                         if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
                         {
                             memoryStream = new MemoryStream(doc.File);
-                            PreviewImage();
+                            await PreviewImage();
                         }
                         else
                         {
@@ -356,13 +457,24 @@ else if (!Saved)
                         }
                     }
 
-                    protected async Task SaveDocumentUpload(CustomerDocumentDto doc)
+                    protected async Task ViewDocumentUpload(ChatDocument doc)
+                    {
+                        var converted = new CustomerDocument
+                        {
+                            SupportingDocumentType = doc.SupportingDocumentType,
+                            File = doc.File,
+
+                        };
+                        await ViewDocumentUpload(converted);
+                    }
+
+                    protected async Task SaveDocumentUpload(CustomerDocument doc)
                     {
                         if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
                         {
                             imageFileName = doc.Description + ".jpeg";
                             imageData = doc.File;
-                            SaveImage();
+                            await SaveImage();
                         }
                         else
                         {
@@ -405,7 +517,7 @@ else if (!Saved)
                                     <tr>
                                         <td>@insurance.InsType.GetDisplayName()</td>
                                         <td>@insurance.Name</td>
-                                        <td>@insurance.ExpiryDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@insurance.ExpiryDate.ToBiqDateString()</td>
                                         @if (IsAdmin)
                                         {
                                             <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
@@ -439,7 +551,7 @@ else if (!Saved)
                         <MudCard Class="col-sm-5 mb-1 ml-1" Style="background-color: lightgoldenrodyellow">
                             <MudCardHeader>
                                 <CardHeaderContent>
-                                    <MudText Typo="Typo.h6">@note.DateTaken.ToString("dd/MM/yyyy")</MudText>
+                                    <MudText Typo="Typo.h6">@note.DateTaken.ToBiqDateString()</MudText>
                                     @if (IsAdmin)
                                     {
                                         @if (note.BrokerId > 0)
@@ -468,9 +580,52 @@ else if (!Saved)
             <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot'>
                 @if (!IsAdmin)
                 {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewChat" class="btn btn-primary mb-2">
-                    Send Message
+                        <div class="col-sm-6 control_wrapper mb-5">
+                            <MudSelect T="string"
+                                    Label="Select Message Template"
+                                    Placeholder="Select Message Template"
+                                    Clearable="true"
+                                    @bind-Value="SelectedTemplateMessage"
+                                    AdornmentColor="Color.Primary">
+                                @foreach (string message in @BrokerDefinedMessages)
+                                {
+                                    <MudSelectItem Value="@message">@message</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
+                        <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                            <MudDatePicker Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement"/>
+                            <MudSpacer />
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
+                        </div>
+
+                        <div class="col-sm-6 mt-1">
+                            <div class="card">
+                                <div class="card-body">
+                                    <label class="card-title">Upload pdf files</label>
+                                    <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
+                                                @ondragleave="@(() => DragEnterStyle = null)"
+                                                @ondragend="@(() => DragEnterStyle = null)"
+                                                Class=@("drag-drop-zone " + DragEnterStyle)>
+
+                                        <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" accept="application/pdf"/>
+                                        <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
+                                    </MudPaper>                      
+                                    @if(LoadedChatFiles.Any()){
+                                    var filename = LoadedChatFiles[0].Name;
+                                    <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())" class="btn btn-link">Remove @filename</MudButton>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+  
+                    <div class="col-sm-6 mt-1">
+                    <div class="card">
+                    <div class="card-body">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
+                    New Chat Message
                     </MudButton>
+                    </div></div></div>
                 }
                 else
                 {
@@ -497,7 +652,9 @@ else if (!Saved)
                     </div>                    
                 }
 
-
+                <div class="col-sm-6 mt-1">
+                <div class="card">
+                <div class="card-body">
                 @if (Chat != null && Chat.Messages.Any())
                 {                    
                     @if (IsAdmin)
@@ -521,12 +678,28 @@ else if (!Saved)
                                 <CardHeaderContent>
                                 <MudText Typo="Typo.body1">@message.Message</MudText>   
 
-                                </CardHeaderContent>
+                                    </CardHeaderContent>
                             </MudCardHeader>
-                            <MudCardContent>        
+                            <MudCardContent>                                           
+                                @if (message.ChatDocumentId > 0)
+                                        {
+                                            <div>
+                                            @if (message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.JPEG || message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.PNG)
+                                            {
+                                                <MudText>Photo Attachement- @message.ChatDocument.FileName</MudText>
+                                            }
+                                            else{
+                                                <MudText>Pdf Attachment- @message.ChatDocument.FileName</MudText> 
+                                            } 
+
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(message.ChatDocument)">
+                                                <i class="fas fa-eye"></i>
+                                            </MudButton></div>
+
+                                        }     
                             @if (message.BrokerSource)
                             {
-                                var combined = $"Sent from us at {@message.SentTime.ToString("dd/MM/yyyy hh:mm:ss")}";
+                                var combined = $"Sent from us at {@message.SentTime.ToBiqDateTimeString()}";
                                         <MudText Typo="Typo.body2">@combined</MudText>
                                 @if (message.IsRead)
                                 {
@@ -535,7 +708,7 @@ else if (!Saved)
                             }
                             else
                             {
-                                var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToString("dd/MM/yyyy hh:mm:ss")}";
+                                var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToBiqDateTimeString()}";
                                 <MudText Typo="Typo.body2">@combined</MudText>
                             }
                             </MudCardContent>
@@ -543,7 +716,7 @@ else if (!Saved)
                     }
                     </div>
                 }
-
+                </div></div></div>
             </MudTabPanel>
         </MudTabs>
     </section>

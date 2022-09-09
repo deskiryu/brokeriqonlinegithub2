@@ -6,22 +6,17 @@ using Microsoft.Extensions.Hosting;
 
 namespace BrokerIQ.Online.ServerApplication
 {
-    using AutoMapper;
     using Blazored.SessionStorage;
     using Mapper;
-    using Microsoft.AspNetCore.Cors;
-    using Microsoft.AspNetCore.Identity;
     using MudBlazor.Services;
     using BrokerIQ.Online.AppSettings;
     using BrokerIQ.Online.Server.AppSettings;
     using BrokerIQ.Online.Server.Helper;
     using BrokerIQ.Online.Server.Services;
     using BrokerIQ.Online.Services.Interface;
-    using BrokerIQ.Online.Services.Mock;
     using Services;
     using Services.Abstract;
     using Services.Concrete;
-    using System.IO;
     using System.Text.Json;
 
     public class Startup
@@ -69,6 +64,8 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<IMortgageService, MortgageService>();
             services.AddScoped<IMortgageDocumentService, MortgageDocumentService>();
             services.AddScoped<ICustomerDocumentService, CustomerDocumentService>();
+            services.AddScoped<IDocumentsRequirementService, DocumentsRequirementService>();
+            services.AddScoped<IBrokerDefinedMessageService, BrokerDefinedMessageService>();
             services.AddScoped<IAlertService, AlertService>();
             services.AddScoped<ILocalStorageService, LocalStorageService>();
             services.AddScoped<IVideoService, VideoService>();

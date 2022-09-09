@@ -135,5 +135,10 @@ namespace BrokerIQ.Online.Services
                 await Logout();
         }
 
+        public async Task<bool> ResendEmail(string customerEmail)
+        {
+            return await _requestProviderService.Post<bool>($"Auth/resend?EmailAddress={customerEmail}");
+        }
+
     }
 }

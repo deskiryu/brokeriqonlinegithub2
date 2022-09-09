@@ -2,6 +2,7 @@
 @inherits MessageListBase
 @using System.IO
 @using BrokerIQ.Dto.Models
+@using BrokerIQ.Online.Server.Extensions
 @using BrokerIQ.Online.Services.Interface
 @using BrokerIQ.Online.Server.Helper
 @inject IEmailService EmailService
@@ -45,7 +46,7 @@
                     }
 
                 </MudTd>
-                <MudTd DataLabel="Sent">@context.SentDate</MudTd>   
+                <MudTd DataLabel="Sent">@context.SentDate.ToBiqDateTimeString()</MudTd>   
                 @if (IsAdmin)
                 {
                     <MudTd>@Brokers.FirstOrDefault(x => x.Id == context.BrokerId)?.Name</MudTd>
