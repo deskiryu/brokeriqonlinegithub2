@@ -303,6 +303,36 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected async Task SetVetted(string name)
+        {
+            await VerifyAccess();
+
+            if (!(await CheckIsAdmin()))
+            {
+                await RefreshVideosWithDialogMessage(true, "Only admin can vet");
+                return;
+            }
+
+            var dialogParams = new DialogParameters();
+            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Name == name);
+            bool alreadyChecked = false;
+            if (videoAlreadyChecked != null)
+            {
+                alreadyChecked = videoAlreadyChecked.Vetted;
+            }
+
+            var returned = await VideoService.SetVetted(name, !alreadyChecked);
+
+            if (returned.Item1)
+            {
+                await RefreshVideos();
+            }
+            else
+            {
+                await RefreshVideosWithDialogMessage(false, "Something went wrong setting vetted. Please try again.");
+            }
+
+        }
         /// <summary>
         /// Uploads a file to the OPSWAT service which scans the file for viruses.
         /// Once uploaded, probes the OPSWAT service for the result of the scan.
@@ -547,20 +577,26 @@ namespace BrokerIQ.Online.Pages
         {
             if (refresh)
             {
-                Videos.Clear();
-                Videos = (await VideoService.GetVideos(BrokerId)).ToList();
-                if (IsAdmin){
-                    foreach (Video video in Videos)
-                    {
-                        video.Broker = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
-                    }
-                }
-                StateHasChanged();
+                RefreshVideos();
             }
 
             var responseParams = new DialogParameters();
             responseParams.Add("Message", message);
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+        }
+
+        private async Task RefreshVideos()
+        {
+            Videos.Clear();
+            Videos = (await VideoService.GetVideos(BrokerId)).ToList();
+            if (IsAdmin)
+            {
+                foreach (Video video in Videos)
+                {
+                    video.Broker = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
+                }
+            }
+            StateHasChanged();
         }
 
         /// <summary>

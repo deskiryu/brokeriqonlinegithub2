@@ -213,5 +213,39 @@ namespace BrokerIQ.Online.Server.Services
             }
             return answer;
         }
+
+        public async Task<(bool, string)> SetVetted(string fileName, bool value)
+        {
+            var answer = (false, string.Empty);
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/vetted?fileName={fileName}&vetted={value}";
+            try
+            {
+                answer = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetVetted: exception {ex.Message}");
+            }
+            return answer;
+        }
+
+        public async Task<(bool, string)> SetBroker(string fileName, int brokerId)
+        {
+            var answer = (false, string.Empty);
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/brokerid?brokerId={brokerId}&fileName={fileName}";
+            try
+            {
+                answer = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetBrokerId: exception {ex.Message}");
+            }
+            return answer;
+        }
     }
 }
