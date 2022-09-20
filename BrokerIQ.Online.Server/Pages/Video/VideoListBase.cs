@@ -437,9 +437,32 @@ namespace BrokerIQ.Online.Pages
                         {
                             localBrokerId = BrokerListId;
                         }
-                        bool succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, memoryStream, localBrokerId);
 
-                        status = $"Finished loading {fileListEntry.Size} bytes from {fileListEntry.Name}";
+                        var succeeded = true;
+                        try
+                        {
+                            var cddto = new CustomerDocumentDto();
+                            cddto = await this.VideoService.ConvertVideo($"{fileName}", memoryStream, BrokerId);
+                            if (cddto.File != null)
+                            {
+                                await memoryStream.WriteAsync(cddto.File);
+                            }
+                            else
+                            {
+                                succeeded=false;
+                            }
+                        }
+                        catch
+                        {
+                            succeeded = false;
+                        }
+
+                        if (succeeded)
+                        {
+                            succeeded = await VideoService.UploadVideo(VideoName + ExtensionName, memoryStream, localBrokerId);
+
+                            status = $"Finished loading {fileListEntry.Size} bytes from {fileListEntry.Name}";
+                        }
 
                         if (succeeded)
                         {

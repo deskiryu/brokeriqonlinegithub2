@@ -32,6 +32,8 @@
 
         Task<bool> Delete(string url, Guid id);
 
+        Task<TReturn> PostVideoApi<T, TReturn>(string url, MemoryStream data, string mediaType);
+
         public string Token { get; set; }
     }
 }

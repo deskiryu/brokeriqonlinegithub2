@@ -93,6 +93,21 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
+        public async Task<CustomerDocumentDto> ConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
+        {
+            var url = $"VideoConvert?brokerId={brokerId}&fileName={fileName}";
+            var answer = new CustomerDocumentDto();
+            try
+            {
+                answer = await this.requestProviderService.PostVideoApi<MemoryStream, CustomerDocumentDto>(url, videoStream, "application/octet-stream");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ConvertVideo: exception {ex.Message}");
+            }
+            return answer;
+        }
+
         public async Task<bool> DeleteVideo(string fileName, int brokerId)
         {
             var user = await this.accountService.GetUser();

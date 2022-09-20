@@ -9,5 +9,7 @@
         public string WS { get; set; }
 
         public int AutoLogoutTimeMs { get; set; }
+
+        public string VideoConvertUrl { get; set; }
     }
 }

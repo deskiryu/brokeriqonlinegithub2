@@ -6,6 +6,7 @@ namespace BrokerIQ.Online.Services.Interface
 {
     using System.IO;
     using System.Threading.Tasks;
+    using BrokerIQ.Dto.Models;
     using BrokerIQ.Online.Server.Models;
 
     public interface IVideoService
@@ -35,6 +36,8 @@ namespace BrokerIQ.Online.Services.Interface
         Task<(bool, string)> SetVetted(string fileName, bool value);
 
         Task<(bool, string)> SetBroker(string fileName, int brokerId);
+
+        Task<CustomerDocumentDto> ConvertVideo(string fileName, MemoryStream videoStream, int brokerId);
 
     }
 }

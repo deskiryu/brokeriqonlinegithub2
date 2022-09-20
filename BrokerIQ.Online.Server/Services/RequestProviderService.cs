@@ -17,6 +17,7 @@
         protected ReviewItAPIDetails api;
 
         protected string BaseUrl => $"{this.api.Url}api";
+        protected string VideoConvertUrl => $"{this.api.VideoConvertUrl}";
 
         public string Token { get; set; }
 
@@ -132,6 +133,16 @@
         {
             string newUrl = $"{url}/{id}";
             return await Delete(newUrl);
+        }
+
+        public async Task<TReturn> PostVideoApi<T, TReturn>(string url, MemoryStream data, string mediaType)
+        {
+            HttpClient httpClient = CreateHttpClient();
+            var content = new ByteArrayContent(data.ToArray());
+            content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
+
+            HttpResponseMessage response = await httpClient.PostAsync($"{this.VideoConvertUrl}/{url}", content);
+            return ConsumeResponse<TReturn>(response);
         }
 
         private HttpClient CreateHttpClient()
