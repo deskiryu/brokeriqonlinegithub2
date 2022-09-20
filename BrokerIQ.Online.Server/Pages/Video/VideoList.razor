@@ -93,6 +93,9 @@
                     {
                         <MudTh class="">
                             <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.Broker)">Broker</MudTableSortLabel>
+                        </MudTh>    
+                        <MudTh class="">
+                            Vetted
                         </MudTh>      
                     }
 
@@ -157,7 +160,8 @@
                         </MudTd>
                         @if (IsAdmin)
                         {
-                            <MudTd DataLabel="Broker">@context.Broker</MudTd>              
+                            <MudTd DataLabel="Broker">@context.Broker</MudTd> 
+                            <MudTd><MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Name)" /></MudTd>
                         }
                         <MudTd DataLabel="Birthday"><MudCheckBox Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Name)" /></MudTd>
                         <MudTd DataLabel="Send">
