@@ -46,12 +46,17 @@ namespace BrokerIQ.Online.Pages
             {
                 string message = String.Empty;
 
-                //Only 5 for now
-                if( enumVal != BrokerDefinedMessageEnum.TickBoxMessage1 &&
+                //Only 10 for now
+                if (enumVal != BrokerDefinedMessageEnum.TickBoxMessage1 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage2 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage3 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage4 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage5)
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage5 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage6 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage7 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage8 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage9 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage10)
                 {
                     continue;
                 }
