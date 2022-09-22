@@ -451,4 +451,46 @@ app {
     margin-right: 15px;
 }
 
+#components-reconnect-modal {
+    display: flex !important;
+    opacity: 1 !important;
+    background-color: rgb(255 255 255 / 80%) !important;
+}
+
+    #components-reconnect-modal::before {
+        content: '';
+        width: 300px;
+        height: 65px;
+        background: #fff3cd;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: block;
+    }
+
+    #components-reconnect-modal h5 {
+        margin-top: 50px !important;
+        padding: .75rem 1.25rem;
+        width: 300px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1050;
+        color: #856404;
+        background-color: #fff3cd;
+        box-shadow: 0px 10px 10px 0px hsl(0deg 0% 0% / 20%);
+    }
+
+    #components-reconnect-modal div {
+        border-color: rgb(133 100 4) rgb(212 188 118) rgb(230 218 178) !important;
+        margin: auto;
+        z-index: 1050;
+    }
+
+    #components-reconnect-modal h5 a {
+        color: #092464 !important;
+    }
+
 

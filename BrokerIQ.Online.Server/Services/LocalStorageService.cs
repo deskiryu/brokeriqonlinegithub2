@@ -2,7 +2,6 @@
 
 namespace BrokerIQ.Online.Services
 {
-    using Microsoft.JSInterop;
     using System.Text.Json;
     using System.Threading.Tasks;
     using BrokerIQ.Online.Services.Interface;
@@ -13,7 +12,7 @@ namespace BrokerIQ.Online.Services
     {
 
         ISessionStorageService sessionStorage;
-        public LocalStorageService(IJSRuntime jsRuntime, ISessionStorageService sessionStorage)
+        public LocalStorageService(ISessionStorageService sessionStorage)
         {
             this.sessionStorage = sessionStorage;
         }

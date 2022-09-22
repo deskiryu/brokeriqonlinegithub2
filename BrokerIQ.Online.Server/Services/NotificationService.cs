@@ -93,12 +93,14 @@ namespace BrokerIQ.Online.Server.Services
             bool sent = true;
             foreach(var target in targets)
             {
-                var notification = new CreateNotificationDto
+                var notification = new CreateBrokerNotificationDto
                 {
                     Message = message,
-                    BrokerId = target
+                    BrokerId = target,
+                    SendBrokerNotificationToPhone = true,               
+                    
                 };
-                sent = await this.requestProviderService.Post<CreateNotificationDto, bool>(this.notificationUrl+"/broker", notification);
+                sent = await this.requestProviderService.Post<CreateBrokerNotificationDto, bool>(this.notificationUrl+"/broker", notification);
                 if (!sent)
                     break;
             }
