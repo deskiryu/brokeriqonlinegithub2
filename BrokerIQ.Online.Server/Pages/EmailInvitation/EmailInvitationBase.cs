@@ -25,6 +25,9 @@ namespace BrokerIQ.Online.Pages
         public IEmailInviteService EmailInviteService { get; set; }
 
         [Inject]
+        public ITelephoneInviteService TelephoneInviteService { get; set; }
+
+        [Inject]
         public IEmailService EmailService { get; set; }
 
         [Inject]
@@ -49,9 +52,19 @@ namespace BrokerIQ.Online.Pages
 
         public List<EmailInvite> EmailInvitesSentBase { get; set; }
 
+        public List<TelephoneInvite> TelephoneInvitesSent { get; set; }
+
+        public List<TelephoneInvite> TelephoneInvitesSentBase { get; set; }
+
         public List<BrokerStaff> BrokerStaff { get; set; }
 
         public List<string> EmailTargets { get; set; }
+
+        public string CustomerName { get; set; }
+
+        public string TelephoneNumber { get; set; }
+
+
         public string Email { get; set; }
         public string DragEnterStyle { get; set; }
 
@@ -68,6 +81,8 @@ namespace BrokerIQ.Online.Pages
         //filter
         public List<EmailInvite> FilteredEmailInvites => EmailInvitesSent.Where(i => i.EmailAddress.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
+        public List<TelephoneInvite> FilteredTelephoneInvites => TelephoneInvitesSent.Where(i => i.CustomerName.ToLower().Contains(SearchTerm.ToLower())).ToList();
+
         public bool ShowEmployee { get; set; }
 
         public bool ShowBroker { get; set; }
@@ -77,6 +92,7 @@ namespace BrokerIQ.Online.Pages
         protected bool Saved;
 
         private const string EmailAddressRegex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+        private const string TelephoneRegex = @"^\+(?:[0-9]●?){6,14}[0-9]$";
 
         [Required]
         public int BrokerListId = 0;
@@ -96,6 +112,7 @@ namespace BrokerIQ.Online.Pages
         private async Task FillDetails()
         {
             EmailTargets = new List<string>();
+
             IsAdmin = false;
             var user = await this.AccountService.GetUser();
             ShowEmployee = false;
@@ -116,8 +133,10 @@ namespace BrokerIQ.Online.Pages
                 }
 
                 EmailInvitesSentBase = (await EmailInviteService.GetEmailInvitesByBrokerId(user.MasterBrokerId)).ToList();
+                TelephoneInvitesSentBase = (await TelephoneInviteService.GetTelephoneInvitesByBrokerId(user.MasterBrokerId)).ToList();
                 FillBrokerStaff();
                 EmailInvitesSent = EmailInvitesSentBase;
+                TelephoneInvitesSent = TelephoneInvitesSentBase;
                 Brokers = new List<Broker>();
             }
             else if (user.IsAdmin)
@@ -127,8 +146,10 @@ namespace BrokerIQ.Online.Pages
                 Brokers = (await BrokerService.GetBrokers()).ToList();
                 BrokerStaff = (await BrokerStaffService.GetBrokerStaff()).ToList();
                 EmailInvitesSentBase = (await EmailInviteService.GetEmailInvites()).ToList();
+                TelephoneInvitesSentBase = (await TelephoneInviteService.GetTelephoneInvites()).ToList();
                 FillBrokerStaff();
                 EmailInvitesSent = EmailInvitesSentBase;
+                TelephoneInvitesSent = TelephoneInvitesSentBase;
             }
             else
             {
@@ -183,7 +204,28 @@ namespace BrokerIQ.Online.Pages
                         notif.BrokerName = foundBroker.Name;
                     }
                 }
+            }
 
+            foreach (var notif in TelephoneInvitesSentBase)
+            {
+                notif.BrokerStaffName = "-";
+                notif.BrokerName = "-";
+                if (notif.BrokerStaffId != null && BrokerStaff != null && BrokerStaff.Count > 0)
+                {
+                    var foundStaff = BrokerStaff.FirstOrDefault(x => x.Id == notif.BrokerStaffId);
+                    if (foundStaff != null)
+                    {
+                        notif.BrokerStaffName = foundStaff.FirstName + " " + foundStaff.LastName;
+                    }
+                }
+                if (IsAdmin)
+                {
+                    var foundBroker = Brokers.FirstOrDefault(x => x.Id == notif.BrokerId);
+                    if (foundBroker != null)
+                    {
+                        notif.BrokerName = foundBroker.Name;
+                    }
+                }
             }
         }
 
@@ -333,7 +375,7 @@ namespace BrokerIQ.Online.Pages
 
                     if (succeeded)
                     {
-                        await RefreshInvitationsWithDialogMessage(succeeded, "Email request sent successfully");
+                        await RefreshInvitationsWithDialogMessage(succeeded, "Email connection made successfully");
                     }
                     else
                     {
@@ -343,6 +385,75 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        public async Task SendTelephoneInvites()
+        {
+            var dialogParams = new DialogParameters();
+            var NameTelephoneTargets = new List<(string, string)>() { ( CustomerName, TelephoneNumber) };
+
+            bool validTelephones = true;
+            foreach (var item in NameTelephoneTargets)
+            {
+                validTelephones &= Regex.IsMatch(item.Item2,
+                                    TelephoneRegex,
+                                    RegexOptions.IgnoreCase,
+                                    TimeSpan.FromMilliseconds(250));
+            }
+
+            if (!validTelephones)
+            {
+                dialogParams.Add("Message", $"Please use valid telephone numbers starting with country code e.g +44");
+                await DialogService.Show<AlertDialog>("Invite Connections", dialogParams).Result;
+                NameTelephoneTargets.Clear();
+            }
+            else
+            {
+                var createTelephone = new CreateTelephoneInviteDto
+                {
+                    BrokerId = BrokerId,
+                    BrokerStaffId = BrokerStaffId,
+                    TelphoneNumbers = NameTelephoneTargets.Select(x => x.Item2).ToList(),
+                    CustomerNames = NameTelephoneTargets.Select(x => x.Item1).ToList(),
+                };
+
+                if (IsAdmin)
+                {
+                    if (BrokerListId <= 0)
+                    {
+                        dialogParams.Add("Message", $"Please choose a broker");
+                        await DialogService.Show<AlertDialog>("Invite Connections", dialogParams).Result;
+                        return;
+                    }
+                    createTelephone.BrokerId = BrokerListId;
+                    createTelephone.BrokerStaffId = null;
+                }
+
+                dialogParams.Add("Customers", NameTelephoneTargets.Select(x => x.Item1).ToList());
+                dialogParams.Add("Heading", "The invitation connection with your brokerage will be made to ");
+                var result = await DialogService.Show<ScrollableEmailDialog>("Make Connections", dialogParams).Result;
+
+                if (!result.Cancelled)
+                {
+                    bool succeeded = false;
+                    try
+                    {
+                        succeeded = await TelephoneInviteService.AddTelephoneInvites(createTelephone);
+                    }
+                    catch
+                    {
+
+                    }
+
+                    if (succeeded)
+                    {
+                        await RefreshInvitationsWithDialogMessage(succeeded, "Telephone connection made successfully");
+                    }
+                    else
+                    {
+                        await RefreshInvitationsWithDialogMessage(succeeded, "Some or all of the Telephones did not add, they may be associated with another broker, check your invite list");
+                    }
+                }
+            }
+        }
         protected async Task DeleteLink(int id)
         {
             bool succeeded = false;
