@@ -54,7 +54,7 @@ else
 
 
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Mortgage End Date</label>
+                        <label class="col-sm-4 col-form-label">Mortgage Term Date</label>
                         <div class="col-sm-8">
                             @if (@Mortgage.EndDate.HasValue)
                             {
@@ -78,7 +78,7 @@ else
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Promotional End Date</label>
+                        <label class="col-sm-4 col-form-label">Fixed Rate End Date</label>
                         <div class="col-sm-8">
                             @if (@Mortgage.PromotionalEndDate.HasValue)
                             {
@@ -98,16 +98,6 @@ else
                         <label class="col-sm-4 col-form-label">Potential Interest Rate</label>
                         <div class="col-sm-8">
                             <label type="text" readonly class="form-control-plaintext">@Mortgage.PotentialInterestRate</label>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Potential End Date</label>
-                        <div class="col-sm-8">
-                            @if (@Mortgage.PotentialEndDate.HasValue)
-                            {
-                                <label type="text" readonly class="form-control-plaintext">@Mortgage.PotentialEndDate.Value.ToBiqDateString()</label>
-                            }
                         </div>
                     </div>
 

@@ -93,6 +93,21 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
+        public async Task<CustomerDocumentDto> ConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
+        {
+            var url = $"VideoConvert?brokerId={brokerId}&fileName={fileName}";
+            var answer = new CustomerDocumentDto();
+            try
+            {
+                answer = await this.requestProviderService.PostVideoApi<MemoryStream, CustomerDocumentDto>(url, videoStream, "application/octet-stream");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ConvertVideo: exception {ex.Message}");
+            }
+            return answer;
+        }
+
         public async Task<bool> DeleteVideo(string fileName, int brokerId)
         {
             var user = await this.accountService.GetUser();
@@ -210,6 +225,40 @@ namespace BrokerIQ.Online.Server.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"SetVideoSendDateTick: exception {ex.Message}");
+            }
+            return answer;
+        }
+
+        public async Task<(bool, string)> SetVetted(string fileName, bool value)
+        {
+            var answer = (false, string.Empty);
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/vetted?fileName={fileName}&vetted={value}";
+            try
+            {
+                answer = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetVetted: exception {ex.Message}");
+            }
+            return answer;
+        }
+
+        public async Task<(bool, string)> SetBroker(string fileName, int brokerId)
+        {
+            var answer = (false, string.Empty);
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/brokerid?brokerId={brokerId}&fileName={fileName}";
+            try
+            {
+                answer = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetBrokerId: exception {ex.Message}");
             }
             return answer;
         }
