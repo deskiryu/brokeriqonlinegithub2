@@ -25,6 +25,7 @@ namespace BrokerIQ.Online.Mapper
             NotificationMapper();
             BrokerStaffMapper();
             EmailInviteMapper();
+            TelephoneInviteMapper();
             MenuPlanMapper();
             NotesMapper();
             ChatMapper();
@@ -626,6 +627,21 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.Converted, opt => opt.MapFrom(s => s.Converted))
                 .ForMember(d => d.Selected, opt => opt.MapFrom(s => !s.Converted))
                 .ForMember(d => d.InvitationCount, opt => opt.MapFrom(s => s.InvitationCount))
+                .ForAllOtherMembers(opt => opt.Ignore());
+        }
+
+        private void TelephoneInviteMapper()
+        {
+            CreateMap<TelephoneInviteDto, TelephoneInvite>()
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                .ForMember(d => d.CustomerName, opt => opt.MapFrom(s => s.CustomerName))
+                .ForMember(d => d.BrokerId, opt => opt.MapFrom(s => s.BrokerId))
+                .ForMember(d => d.BrokerStaffId, opt => opt.MapFrom(s => s.BrokerStaffId))
+                .ForMember(d => d.CreatedDate, opt => opt.MapFrom(s => s.Date))
+                .ForMember(d => d.Converted, opt => opt.MapFrom(s => s.Converted))
+                .ForMember(d => d.Selected, opt => opt.MapFrom(s => !s.Converted))
+                .ForMember(d => d.InvitationCountTelephone, opt => opt.MapFrom(s => s.InvitationCount))
+                .ForMember(d => d.TelephoneNumber, opt => opt.MapFrom(s => s.TelephoneNumber))
                 .ForAllOtherMembers(opt => opt.Ignore());
         }
 
