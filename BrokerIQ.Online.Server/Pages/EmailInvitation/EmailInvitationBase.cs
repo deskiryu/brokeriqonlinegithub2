@@ -445,6 +445,8 @@ namespace BrokerIQ.Online.Pages
 
                     if (succeeded)
                     {
+                        CustomerName = string.Empty;
+                        TelephoneNumber = string.Empty;
                         await RefreshInvitationsWithDialogMessage(succeeded, "Telephone connection made successfully");
                     }
                     else

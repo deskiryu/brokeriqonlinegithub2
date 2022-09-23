@@ -194,40 +194,46 @@
             </MudTabPanel>
             <MudTabPanel Text="By Phone">
                 <div class="card-body">
-                <div class="row">
+                <div class="card-body">
                         <div >
                             <div>
-                                <div class="col-sm-6">
-                                    <div class ="row">
-                                        <MudInput class="form-control col-sm-4" @bind-Value="@CustomerName" placeholder="Enter customer name">
-
-                                        </MudInput>
-                                        <MudInput class="form-control col-sm-4"  @bind-Value="@TelephoneNumber" placeholder="Enter phone number">
-                                        
-
-                                        </MudInput>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="col-sm-2" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@SendTelephoneInvites" >Make connection</MudButton>
-                                    </div>
-
-                                    @if (IsAdmin)
+                                     @if (!IsAdmin)
                                     {
-                                        <label style="margin-top: 5px">Choose Broker</label>
-                                        <div>
+                                        <div class="col-sm-6">
+                                            <div class ="row">
+                                                <MudInput class="form-control ml-2 " @bind-Value="@CustomerName" placeholder="Enter customer name">
 
-                                            <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId" style="width:max-content">
+                                                </MudInput>
+                                                <MudInput class="form-control mt-2 mb-2 ml-2"  @bind-Value="@TelephoneNumber" placeholder="Enter phone number">
 
-                                                @foreach (var broker in @Brokers)
-                                                            {
-                                                    <option value=@broker.Id>@broker.Name</option>
-                                                            }
-                                            </InputSelect>
+
+                                                </MudInput>
+
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 ml-2" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@SendTelephoneInvites" >Make connection</MudButton>
+                                            </div>
+
+@*                                            @if (IsAdmin)
+                                            {
+                                                <label style="margin-top: 5px">Choose Broker</label>
+                                                <div>
+
+                                                    <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId" style="width:max-content">
+
+                                                        @foreach (var broker in @Brokers)
+                                                        {
+                                            <option value=@broker.Id>@broker.Name</option>
+                                                        }
+                                    </InputSelect>
+                                </div>
+                                            }*@
                                         </div>
                                     }
                                 </div>
-                            </div>
                         </div>
+
                 </div>
-                <div class="row">
+                <div></div>
+                <div class="row mt-5">
                     <div class="col-lg-8 control_wrapper mb-5">
                         <label>Filter the list below by customer name</label>
                         <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type email" class="filter_customerBroker" />
