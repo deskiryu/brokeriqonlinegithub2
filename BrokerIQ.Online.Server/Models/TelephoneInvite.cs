@@ -24,6 +24,6 @@ namespace BrokerIQ.Online.Models
 
         public string BrokerName { get; set; }
 
-        public bool Selected { get; set; }
+        public bool Selected { get; set; }    
     }
 }

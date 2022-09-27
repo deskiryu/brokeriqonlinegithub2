@@ -45,7 +45,7 @@ namespace BrokerIQ.Online.Services
             return (answer);
 #endif
         }
-        public async Task<List<(DateTime, int, int, int)>> GetInvitesSentAndConvertedSequence(int brokerId)
+        public async Task<List<(DateTime, int, int, int, int, int)>> GetInvitesSentAndConvertedSequence(int brokerId)
         {
 #if FALSE
             var response = new List<(DateTime, int, int)>
@@ -68,18 +68,18 @@ namespace BrokerIQ.Online.Services
             this.requestProviderService.Token = user?.Token;
             var url = this.statsUrl + $"/sequence/{brokerId}?sequenceType=1&noelements=10";
             var answer = await this.requestProviderService.Get<AppConversionSequenceDto>(url);
-            var response = new List<(DateTime, int, int, int)>
+            var response = new List<(DateTime, int, int, int, int, int)>
             {
-                (DateTime.Now.AddDays( -9),answer.Sequence[9].TotalEmailInvites,answer.Sequence[9].TotalConvertedLogins,answer.Sequence[9].TotalUnConvertedLogins),
-                (DateTime.Now.AddDays( -8),answer.Sequence[8].TotalEmailInvites,answer.Sequence[8].TotalConvertedLogins,answer.Sequence[8].TotalUnConvertedLogins),
-                (DateTime.Now.AddDays( -7),answer.Sequence[7].TotalEmailInvites,answer.Sequence[7].TotalConvertedLogins,answer.Sequence[7].TotalUnConvertedLogins),
-                (DateTime.Now.AddDays( -6),answer.Sequence[6].TotalEmailInvites,answer.Sequence[6].TotalConvertedLogins,answer.Sequence[6].TotalUnConvertedLogins),
-                (DateTime.Now.AddDays( -5),answer.Sequence[5].TotalEmailInvites,answer.Sequence[5].TotalConvertedLogins,answer.Sequence[5].TotalUnConvertedLogins),
-                (DateTime.Now.AddDays( -4),answer.Sequence[4].TotalEmailInvites,answer.Sequence[4].TotalConvertedLogins,answer.Sequence[4].TotalUnConvertedLogins),
-                (DateTime.Now.AddDays( -3),answer.Sequence[3].TotalEmailInvites,answer.Sequence[3].TotalConvertedLogins,answer.Sequence[3].TotalUnConvertedLogins),
-                (DateTime.Now.AddDays( -2),answer.Sequence[2].TotalEmailInvites,answer.Sequence[2].TotalConvertedLogins,answer.Sequence[2].TotalUnConvertedLogins),
-                (DateTime.Now.AddDays( -1),answer.Sequence[1].TotalEmailInvites,answer.Sequence[1].TotalConvertedLogins,answer.Sequence[1].TotalUnConvertedLogins),
-                (DateTime.Now.AddDays(  0),answer.Sequence[0].TotalEmailInvites,answer.Sequence[0].TotalConvertedLogins,answer.Sequence[0].TotalUnConvertedLogins),
+                (DateTime.Now.AddDays( -9),answer.Sequence[9].TotalEmailInvites,answer.Sequence[9].TotalTelephoneInvites,answer.Sequence[9].TotalConvertedLoginsEmail,answer.Sequence[9].TotalConvertedLoginsTelephone,answer.Sequence[9].TotalUnConvertedLogins),
+                (DateTime.Now.AddDays( -8),answer.Sequence[8].TotalEmailInvites,answer.Sequence[8].TotalTelephoneInvites,answer.Sequence[8].TotalConvertedLoginsEmail,answer.Sequence[8].TotalConvertedLoginsTelephone,answer.Sequence[8].TotalUnConvertedLogins),
+                (DateTime.Now.AddDays( -7),answer.Sequence[7].TotalEmailInvites,answer.Sequence[7].TotalTelephoneInvites,answer.Sequence[7].TotalConvertedLoginsEmail,answer.Sequence[7].TotalConvertedLoginsTelephone,answer.Sequence[7].TotalUnConvertedLogins),
+                (DateTime.Now.AddDays( -6),answer.Sequence[6].TotalEmailInvites,answer.Sequence[6].TotalTelephoneInvites,answer.Sequence[6].TotalConvertedLoginsEmail,answer.Sequence[6].TotalConvertedLoginsTelephone,answer.Sequence[6].TotalUnConvertedLogins),
+                (DateTime.Now.AddDays( -5),answer.Sequence[5].TotalEmailInvites,answer.Sequence[5].TotalTelephoneInvites,answer.Sequence[5].TotalConvertedLoginsEmail,answer.Sequence[5].TotalConvertedLoginsTelephone,answer.Sequence[5].TotalUnConvertedLogins),
+                (DateTime.Now.AddDays( -4),answer.Sequence[4].TotalEmailInvites,answer.Sequence[4].TotalTelephoneInvites,answer.Sequence[4].TotalConvertedLoginsEmail,answer.Sequence[4].TotalConvertedLoginsTelephone,answer.Sequence[4].TotalUnConvertedLogins),
+                (DateTime.Now.AddDays( -3),answer.Sequence[3].TotalEmailInvites,answer.Sequence[3].TotalTelephoneInvites,answer.Sequence[3].TotalConvertedLoginsEmail,answer.Sequence[3].TotalConvertedLoginsTelephone,answer.Sequence[3].TotalUnConvertedLogins),
+                (DateTime.Now.AddDays( -2),answer.Sequence[2].TotalEmailInvites,answer.Sequence[2].TotalTelephoneInvites,answer.Sequence[2].TotalConvertedLoginsEmail,answer.Sequence[2].TotalConvertedLoginsTelephone,answer.Sequence[2].TotalUnConvertedLogins),
+                (DateTime.Now.AddDays( -1),answer.Sequence[1].TotalEmailInvites,answer.Sequence[1].TotalTelephoneInvites,answer.Sequence[1].TotalConvertedLoginsEmail,answer.Sequence[1].TotalConvertedLoginsTelephone,answer.Sequence[1].TotalUnConvertedLogins),
+                (DateTime.Now.AddDays(  0),answer.Sequence[0].TotalEmailInvites,answer.Sequence[0].TotalTelephoneInvites,answer.Sequence[0].TotalConvertedLoginsEmail,answer.Sequence[0].TotalConvertedLoginsTelephone,answer.Sequence[0].TotalUnConvertedLogins),
             };
             return (response);
 #endif
@@ -148,7 +148,7 @@ namespace BrokerIQ.Online.Services
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.statsUrl + $"/logins/{brokerId}?noelements=10";
+            var url = this.statsUrl + $"/logins/{brokerId}?noelements=5";
             var answer = await this.requestProviderService.Get<AppLoginsDto>(url);
             var response = new List<(string, int)>
             {
