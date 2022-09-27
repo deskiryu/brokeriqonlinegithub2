@@ -11,7 +11,7 @@ namespace BrokerIQ.Online.Services.Interface
     {
         Task<AppConversionDto> GetInvitesSentAndConverted(int brokerId);
 
-        Task<List<(DateTime, int, int, int)>> GetInvitesSentAndConvertedSequence(int brokerId);
+        Task<List<(DateTime, int, int, int, int, int)>> GetInvitesSentAndConvertedSequence(int brokerId);
 
         List<(DateTime, int, int)> GetNotificationsSent();
 
