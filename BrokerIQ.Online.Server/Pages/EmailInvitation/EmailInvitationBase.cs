@@ -70,9 +70,13 @@ namespace BrokerIQ.Online.Pages
 
         public string SearchTerm { get; set; } = "";
 
+        public string SearchTermPhone { get; set; } = "";
+
         public bool IsAdmin { get; set; }
 
         public int BrokerId { get; set; }
+
+        public int BrokerIdPhone { get; set; }
 
         public int? BrokerStaffId { get; set; }
 
@@ -81,7 +85,7 @@ namespace BrokerIQ.Online.Pages
         //filter
         public List<EmailInvite> FilteredEmailInvites => EmailInvitesSent.Where(i => i.EmailAddress.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
-        public List<TelephoneInvite> FilteredTelephoneInvites => TelephoneInvitesSent.Where(i => i.CustomerName.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        public List<TelephoneInvite> FilteredTelephoneInvites => TelephoneInvitesSent.Where(i => i.CustomerName.ToLower().Contains(SearchTermPhone.ToLower())).ToList();
 
         public bool ShowEmployee { get; set; }
 
@@ -169,17 +173,17 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        public async Task AutoCompleteClick()
-        {
-            try
-            {
-                EmailInvitesSent = EmailInvitesSentBase.Where(x => x.EmailAddress.Contains(SearchTerm)).ToList();
-            }
-            catch
-            {
-                AlertService.Error("Get EmailInvites failed");
-            }
 
+        protected async Task AutoCompleteClickBrokerPhone()
+        {
+            if (BrokerIdPhone == 0)
+            {
+                TelephoneInvitesSent = TelephoneInvitesSentBase;
+            }
+            else if (BrokerIdPhone > 0)
+            {
+                TelephoneInvitesSent = TelephoneInvitesSent.Where(x => x.BrokerId == BrokerIdPhone).ToList();
+            }
         }
 
         private void FillBrokerStaff()
