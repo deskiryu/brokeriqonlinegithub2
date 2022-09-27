@@ -236,7 +236,7 @@
                 <div class="row mt-5">
                     <div class="col-lg-8 control_wrapper mb-5">
                         <label>Filter the list below by customer name</label>
-                        <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type email" class="filter_customerBroker" />
+                        <input @bind-value="SearchTermPhone" @bind-value:event="oninput" placeholder="Type email" class="filter_customerBroker" />
                     </div>
                 </div>
             
@@ -250,8 +250,8 @@
                                         Label="Filter By Broker"
                                         Placeholder="Select"
                                         Clearable="true"
-                                        @bind-Value="BrokerId"
-                                        SelectedValuesChanged="@AutoCompleteClickBroker"
+                                        @bind-Value="BrokerIdPhone"
+                                        SelectedValuesChanged="@AutoCompleteClickBrokerPhone"
                                         AdornmentColor="Color.Primary">
                                 <MudSelectItem Value="0">Select</MudSelectItem>
                                 @foreach (var item in @Brokers)
