@@ -292,27 +292,43 @@ namespace BrokerIQ.Online.Pages
                 var datesNotifs = new List<string>();
                 datesNotifs = invitesSentAndConverted.Select(x => x.Item1.ToShortDateString()).ToList();
                 var emailInvitesSent = new List<int>();
-                var appConversionsLogin = new List<int>();
+                var telephoneInvitesSent = new List<int>();
+                var appConversionsLoginEmail = new List<int>();
+                var appConversionsLoginTelephone = new List<int>(); 
                 var unconvertedList = new List<int>();
                 emailInvitesSent = invitesSentAndConverted.Select(x => x.Item2).ToList();
-                appConversionsLogin = invitesSentAndConverted.Select(x => x.Item3).ToList();
-                unconvertedList = invitesSentAndConverted.Select(x => x.Item4).ToList();
+                telephoneInvitesSent = invitesSentAndConverted.Select(x => x.Item3).ToList(); 
+                appConversionsLoginEmail = invitesSentAndConverted.Select(x => x.Item4).ToList();
+                appConversionsLoginTelephone = invitesSentAndConverted.Select(x => x.Item5).ToList(); 
+                unconvertedList = invitesSentAndConverted.Select(x => x.Item6).ToList();
 
-                var _IosDataSet = new BarDataset<int>(emailInvitesSent)
+                var EmailDataSet = new BarDataset<int>(emailInvitesSent)
                 {
-                    Label = "Invites Sent Today",
+                    Label = "Email Invites Sent Today",
                     BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.BIQYellow)
                 };
 
-                var _AndroidDataSet = new BarDataset<int>(appConversionsLogin)
+                var TelephoneDataSet = new BarDataset<int>(telephoneInvitesSent)
                 {
-                    Label = "Sign up after invite",
+                    Label = "Telephone Invites Sent Today",
                     BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.BIQLightGray)
                 };
 
+                var SignupAfterInviteDataSetEmail = new BarDataset<int>(appConversionsLoginEmail)
+                {
+                    Label = "Sign up after invite email",
+                    BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.BIQLightGray)
+                };
+
+                var SignupAfterInviteDataSetTelephone = new BarDataset<int>(appConversionsLoginTelephone)
+                {
+                    Label = "Sign up after invite telephone",
+                    BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.BIQLightGray)
+                }; 
+
                 var unconverted = new BarDataset<int>(unconvertedList)
                 {
-                    Label = "Signup not invited or used a different email",
+                    Label = "Signup not invited or used a different email/ telephone",
                     BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.Black)
                 };
 
@@ -321,31 +337,35 @@ namespace BrokerIQ.Online.Pages
                     _barConfig.Data.Labels.Add(date);
                 }
 
-                _barConfig.Data.Datasets.Add(_IosDataSet);
-                _barConfig.Data.Datasets.Add(_AndroidDataSet);
+                _barConfig.Data.Datasets.Add(EmailDataSet);
+                _barConfig.Data.Datasets.Add(TelephoneDataSet);
+                _barConfig.Data.Datasets.Add(SignupAfterInviteDataSetEmail);
+                _barConfig.Data.Datasets.Add(SignupAfterInviteDataSetTelephone); 
                 _barConfig.Data.Datasets.Add(unconverted);
 
 
                 var totals = await this.ChartDataService.GetInvitesSentAndConverted(_brokerId);
 
-                _PieDataSet = new PieDataset<int>(new List<int> { totals.TotalConvertedLogins, totals.TotalUnConvertedLogins })
+                _PieDataSet = new PieDataset<int>(new List<int> { totals.TotalConvertedLoginsEmail, totals.TotalConvertedLoginsTelephone, totals.TotalUnConvertedLogins })
                 {
-                    BackgroundColor = SampleUtils.ChartColors.All.Take(2).Select(ColorUtil.FromDrawingColor).ToArray(),
+                    BackgroundColor = SampleUtils.ChartColors.All.Take(3).Select(ColorUtil.FromDrawingColor).ToArray(),
 
                 };
 
                 _pieConfig.Data.Datasets.Add(_PieDataSet);
                 _pieConfig.Data.Labels.Add("Converted from email");
+                _pieConfig.Data.Labels.Add("Converted from telephone"); 
                 _pieConfig.Data.Labels.Add("Chose broker");
 
-                _PieDataSet2 = new PieDataset<int>(new List<int> { totals.TotalConvertedLogins, totals.TotalEmailInvites - totals.TotalConvertedLogins })
+                _PieDataSet2 = new PieDataset<int>(new List<int> { totals.TotalConvertedLoginsEmail, totals.TotalConvertedLoginsTelephone, totals.TotalEmailInvites + totals.TotalTelephoneInvites - totals.TotalConvertedLoginsEmail - totals.TotalConvertedLoginsTelephone })
                 {
                     BackgroundColor = SampleUtils.ChartColors.All.Take(2).Select(ColorUtil.FromDrawingColor).ToArray(),
 
                 };
 
                 _pieConfig2.Data.Datasets.Add(_PieDataSet2);
-                _pieConfig2.Data.Labels.Add("Loggged in after invite");
+                _pieConfig2.Data.Labels.Add("Loggged in after email invite");
+                _pieConfig2.Data.Labels.Add("Loggged in after telephone invite");
                 _pieConfig2.Data.Labels.Add("Not logged in yet");
 
             }

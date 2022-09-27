@@ -10,25 +10,7 @@ namespace BrokerIQ.Online.Services.Mock
 {
     public class MockChartDataService : IChartDataService
     {
-        public async Task<List<(DateTime, int, int, int)>> GetInvitesSentAndConverted(int brokerId)
-        {
-            var response = new List<(DateTime, int, int, int)>
-            {
-                //(DateTime.Now.AddDays(-10),50,12),
-                //(DateTime.Now.AddDays(-9),100,22),
-                //(DateTime.Now.AddDays(-8),75,3),
-                //(DateTime.Now.AddDays(-7),25,14),
-                //(DateTime.Now.AddDays(-6),50,11),
-                //(DateTime.Now.AddDays(-5),100,34),
-                //(DateTime.Now.AddDays(-4),50,12),
-                //(DateTime.Now.AddDays(-3),20,9),
-                //(DateTime.Now.AddDays(-2),10,4),
-                //(DateTime.Now.AddDays(-1),30,15),
-                //(DateTime.Now.AddDays(0),50,12)
-            };
-            return response;
-        }
-
+ 
         public List<(DateTime, int, int)> GetNotificationsSent()
         {
             //Date, ios, android
@@ -93,12 +75,13 @@ namespace BrokerIQ.Online.Services.Mock
             throw new NotImplementedException();
         }
 
-        public Task<List<(DateTime, int, int, int)>> GetInvitesSentAndConvertedSequence(int brokerId)
+
+        public Task<List<(string, int)>> GetTotalLogins(int brokerId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<(string, int)>> GetTotalLogins(int brokerId)
+        public Task<List<(DateTime, int, int, int, int, int)>> GetInvitesSentAndConvertedSequence(int brokerId)
         {
             throw new NotImplementedException();
         }
