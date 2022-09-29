@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace BrokerIQ.Online.Services.Interface
 {
+    using BrokerIQ.Dto.Enum;
     using Dto.Models;
     using Models;
 
@@ -21,5 +22,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> DeleteCustomer(int id);
 
         Task<int> GetCustomerCount(int brokerId = 0);
+
+        Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory);
     }
 }

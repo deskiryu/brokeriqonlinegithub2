@@ -12,6 +12,7 @@ namespace BrokerIQ.Online.Services
     using Models;
     using BrokerIQ.Online.Server.Extensions;
     using BrokerIQ.Dto.Enum;
+    using Microsoft.AspNetCore.JsonPatch;
 
     public class CustomerService : ICustomerService
     {
@@ -122,6 +123,17 @@ namespace BrokerIQ.Online.Services
             return (await GetAllCustomers(brokerId)).Count();
 
             throw new UnauthorizedAccessException();
+        }
+
+        public async Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var patchDoc = new JsonPatchDocument<Customer>();
+            patchDoc.Replace(x => (int)x.CustomerCategory, (int)customerCategory);
+
+            var answer = await this.requestProviderService.Patch<JsonPatchDocument<Customer>,CustomerDto>(this.customerUrl+$"/patch?customerid={customerid}", patchDoc);
+            return answer.CustomerCategory;
         }
 
     }

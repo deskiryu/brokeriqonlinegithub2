@@ -255,6 +255,46 @@ else if (!Saved)
                 </table>
             </MudTabPanel>
             <MudTabPanel Text="Mortgages">
+                @* <EditForm Model="@CustomerCategory" OnValidSubmit="@HandleValidCustomerCategory" OnInvalidSubmit="@HandleInvalidCustomerCategory"> *@
+                                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Customer Category</label>
+                        <div class="col-sm-4">
+                                     <MudSelect T="int"
+                                            Label="Customer Category"
+                                            Placeholder="None chosen"
+                                            Disabled="false"                           
+                                            @bind-Value="CustomerCategory"
+                                            SelectedValuesChanged="@HandleValidCustomerCategory"
+                                            AdornmentColor="Color.Primary">
+                                    <MudSelectItem Value="0">Select</MudSelectItem>
+                                    @if (true)
+                                        {
+                                            var names = Enum.GetNames(typeof(CustomerCategoryEnum));
+                                            @for (int i = 0; i <= names.Length; i++)
+                                                {
+                                                    CustomerCategoryEnum looped = (CustomerCategoryEnum)i;
+                                                    <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                                }
+                                        }
+
+                                </MudSelect> 
+
+                            @* <InputSelect id="customerCategory" class="form-control" @bind-Value="@CustomerCategory" >
+
+                                    @if (true)
+                                        {
+                                            var names = Enum.GetNames(typeof(CustomerCategoryEnum));
+                                            @for (int i = 0; i <= names.Length; i++)
+                                                {
+                                                    CustomerCategoryEnum looped = (CustomerCategoryEnum)i;
+                                                <option value=@i>@looped.GetDisplayName()</option>
+                                                }
+                                        }
+                            </InputSelect> *@
+
+                        </div>
+                    </div>
+                @* </EditForm> *@
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/0/{Customer.Id}")" class="btn btn-primary mb-2">
                     Add New Mortgage
                 </MudButton>
