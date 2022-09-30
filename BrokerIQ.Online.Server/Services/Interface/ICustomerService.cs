@@ -11,7 +11,7 @@ namespace BrokerIQ.Online.Services.Interface
 
     public interface ICustomerService
     {
-        Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int filterRecent = 0, int filterPeriod = 0, bool profilePictures = false);
+        Task<IEnumerable<Customer>> GetAllCustomers(int brokerId=0, int filterRecent=0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures=false);
 
         Task<Customer> GetCustomer(int id);
 

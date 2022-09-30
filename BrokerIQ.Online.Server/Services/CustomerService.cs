@@ -28,7 +28,7 @@ namespace BrokerIQ.Online.Services
             this.accountService = accountService;
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId=0, int filterRecent=0, int filterPeriod = 0, bool profilePictures=false)
+        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId=0, int filterRecent=0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures=false)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -39,7 +39,9 @@ namespace BrokerIQ.Online.Services
                 InsuranceEndingSoon = option==RecentEnum.RecentInsurance,
                 MortgagePromotionEndingSoon = option == RecentEnum.RecentMortgage,
                 InsuranceRecentPeriod = ts,
-                MortgagePromotionRecentPeriod = ts
+                MortgagePromotionRecentPeriod = ts,
+                CustomerCategory = (CustomerCategoryEnum)filterCategory,
+                AgeRange = (AgeRangeEnum)filterAgeRange
             };
 
             var url = this.customerUrl;

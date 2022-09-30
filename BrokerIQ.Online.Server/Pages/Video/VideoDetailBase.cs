@@ -59,6 +59,9 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
         protected bool IsAdmin { get; set; }
 
+        public int CustomerCategory { get; set; }
+        public int AgeRange { get; set; }         
+
         //filter
         protected List<Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
@@ -232,5 +235,11 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 };
             }
         }
+        protected async Task RecentFilterSelect()
+        {
+            Customers.Clear();
+            Customers = null;
+            Customers = (await CustomerService.GetAllCustomers(BrokerId, filterCategory:CustomerCategory, filterAgeRange:AgeRange, profilePictures: false)).ToList();
+        } 
     }
 }
