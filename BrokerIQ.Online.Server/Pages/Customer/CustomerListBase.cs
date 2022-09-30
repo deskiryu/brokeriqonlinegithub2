@@ -50,6 +50,8 @@ namespace BrokerIQ.Online.Pages
         protected bool IsAdmin { get; set; }
         public int FilterRecent { get; set; }
         public int FilterPeriod { get; set; }
+        public int CustomerCategory { get; set; }
+        public int AgeRange { get; set; } 
 
         protected async Task GetCustomersInit()
         {
@@ -147,15 +149,17 @@ namespace BrokerIQ.Online.Pages
         {
             Customers.Clear();
             Customers = null;
-            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, profilePictures:true)).ToList();
+            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures:true)).ToList();
         }
 
         protected async Task RecentFilterSelect()
         {
             Customers.Clear();
             Customers = null;
-            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, profilePictures: true)).ToList();
+            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
         }
+
+        
 
         protected async Task SendNotificationToAll()
         {

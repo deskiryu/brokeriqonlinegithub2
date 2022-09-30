@@ -12,6 +12,7 @@ namespace BrokerIQ.Online.Services
     using Models;
     using BrokerIQ.Online.Server.Extensions;
     using BrokerIQ.Dto.Enum;
+    using Microsoft.AspNetCore.JsonPatch;
 
     public class CustomerService : ICustomerService
     {
@@ -27,7 +28,7 @@ namespace BrokerIQ.Online.Services
             this.accountService = accountService;
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId=0, int filterRecent=0, int filterPeriod = 0, bool profilePictures=false)
+        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId=0, int filterRecent=0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures=false)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -38,7 +39,9 @@ namespace BrokerIQ.Online.Services
                 InsuranceEndingSoon = option==RecentEnum.RecentInsurance,
                 MortgagePromotionEndingSoon = option == RecentEnum.RecentMortgage,
                 InsuranceRecentPeriod = ts,
-                MortgagePromotionRecentPeriod = ts
+                MortgagePromotionRecentPeriod = ts,
+                CustomerCategory = (CustomerCategoryEnum)filterCategory,
+                AgeRange = (AgeRangeEnum)filterAgeRange
             };
 
             var url = this.customerUrl;
@@ -122,6 +125,17 @@ namespace BrokerIQ.Online.Services
             return (await GetAllCustomers(brokerId)).Count();
 
             throw new UnauthorizedAccessException();
+        }
+
+        public async Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var patchDoc = new JsonPatchDocument<Customer>();
+            patchDoc.Replace(x => (int)x.CustomerCategory, (int)customerCategory);
+
+            var answer = await this.requestProviderService.Patch<JsonPatchDocument<Customer>,CustomerDto>(this.customerUrl+$"/patch?customerid={customerid}", patchDoc);
+            return answer.CustomerCategory;
         }
 
     }
