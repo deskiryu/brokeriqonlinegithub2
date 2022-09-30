@@ -67,6 +67,8 @@ namespace BrokerIQ.Online.Pages
 
         public Customer Customer { get; set; }
 
+        public int CustomerCategory { get; set; }
+
         public CustomerDocumentDto CustomerProfilePicture { get; set; }
 
         public IEnumerable<Broker> Brokers { get; set; }
@@ -133,6 +135,7 @@ namespace BrokerIQ.Online.Pages
             try
             {
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
+                CustomerCategory =  (int)Customer.CustomerCategory;
                 CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
                 DocumentsRequirement = await DocumentsRequirementService.Get(int.Parse(CustomerId));
@@ -854,5 +857,26 @@ namespace BrokerIQ.Online.Pages
                 }
             }
         }
+
+        protected void HandleInvalidCustomerCategory()
+        {
+
+        }
+
+        protected async Task HandleValidCustomerCategory()
+        {
+            try
+            {
+                await CustomerService.SetCustomerCategory(Customer.Id, (CustomerCategoryEnum)CustomerCategory );
+            }
+            catch
+            {
+                StatusClass = "alert-danger";
+                Message = "Something went wrong setting the category. Please try again.";
+                Saved = true;
+                return;
+            }
+        }
+
     }
 }

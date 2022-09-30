@@ -1,6 +1,7 @@
 ﻿@page "/clientlist"
 @using BrokerIQ.Online.Server.Extensions
 @using BrokerIQ.Online.Services.Interface
+@using Dto.Enum
 @using Microsoft.AspNetCore.Components
 
 @inherits CustomerListBase
@@ -67,27 +68,45 @@ else
                         </MudSelect>
                 </div>
             </div>
-
             <div class="row">
-
-                <div class="col-lg-8 control_wrapper">
-                    @if (IsAdmin)
-                    {
+                 <div class="col-lg-4">
+                    <MudSelect T="int"
+                                Label="Mortgage Category"
+                                Placeholder="Select"
+                                Clearable="true"
+                                @bind-Value="CustomerCategory"
+                                SelectedValuesChanged="@RecentFilterSelect"
+                                AdornmentColor="Color.Primary">
+                                    @if (true)
+                                        {
+                                            var names = Enum.GetNames(typeof(CustomerCategoryEnum));
+                                            @for (int i = 0; i <= names.Length; i++)
+                                                {
+                                                    CustomerCategoryEnum looped = (CustomerCategoryEnum)i;
+                                                    <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                                }
+                                        }
+                    </MudSelect>
+                    </div>
+                    <div class="col-lg-4">
                         <MudSelect T="int"
-                                    Label="Filter By Broker"
+                                    Label="Age Range"
                                     Placeholder="Select"
                                     Clearable="true"
-                                    @bind-Value="BrokerId"
-                                    SelectedValuesChanged="@AutoCompleteClickBroker"
+                                    @bind-Value="AgeRange"
+                                    SelectedValuesChanged="@RecentFilterSelect"
                                     AdornmentColor="Color.Primary">
-                            <MudSelectItem Value="0">Select</MudSelectItem>
-                            @foreach (var item in @Brokers)
-                            {
-                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                            }
-                        </MudSelect>            
-                    }
-                </div>
+                                        @if (true)
+                                            {
+                                                var names = Enum.GetNames(typeof(AgeRangeEnum));
+                                                @for (int i = 0; i <= names.Length; i++)
+                                                    {
+                                                        AgeRangeEnum looped = (AgeRangeEnum)i;
+                                                        <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                                    }
+                                            }
+                        </MudSelect> 
+                    </div> 
                 <div class="col-lg-4">
                     <MudSelect T="int"
                                 Label="Time Period"
@@ -101,8 +120,29 @@ else
                         <MudSelectItem Value="2">3 months</MudSelectItem>
                         <MudSelectItem Value="3">6 months</MudSelectItem>
                     </MudSelect>
-                </div>
+                </div>                    
             </div>
+            @if (IsAdmin)
+            {   
+                <div class="row">
+                    <div class="col-lg-8 control_wrapper">
+                        <MudSelect T="int"
+                                    Label="Filter By Broker"
+                                    Placeholder="Select"
+                                    Clearable="true"
+                                    @bind-Value="BrokerId"
+                                    SelectedValuesChanged="@AutoCompleteClickBroker"
+                                    AdornmentColor="Color.Primary">
+                            <MudSelectItem Value="0">Select</MudSelectItem>
+                            @foreach (var item in @Brokers)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>                   
+                    </div>
+                </div>            
+            }
+         
         </div>
     </div>
 

@@ -1,4 +1,6 @@
 ﻿@page "/videodetail"
+@using Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
 @inherits VideoDetailBase
 
 @if (Customers == null)
@@ -52,9 +54,51 @@ else
             </div>
         </div>
     </div>
-    <div>
-        Filter customers: <input @bind-value="SearchTerm" @bind-value:event="oninput" class="mt-1 mb-1" />
-    </div>
+            <div class="row">
+                 <div class="col-lg-4">
+                    <label>Filter the list below by name</label>
+                    <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name" class="filter_customerBroker" />
+                </div> 
+                 <div class="col-lg-4">
+                    <MudSelect T="int"
+                                Label="Mortgage Category"
+                                Placeholder="Select"
+                                Clearable="true"
+                                @bind-Value="CustomerCategory"
+                                SelectedValuesChanged="@RecentFilterSelect"
+                                AdornmentColor="Color.Primary">
+                                    @if (true)
+                                        {
+                                            var names = Enum.GetNames(typeof(CustomerCategoryEnum));
+                                            @for (int i = 0; i <= names.Length; i++)
+                                                {
+                                                    CustomerCategoryEnum looped = (CustomerCategoryEnum)i;
+                                                    <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                                }
+                                        }
+                    </MudSelect>
+                    </div>
+                    <div class="col-lg-4">
+                        <MudSelect T="int"
+                                    Label="Age Range"
+                                    Placeholder="Select"
+                                    Clearable="true"
+                                    @bind-Value="AgeRange"
+                                    SelectedValuesChanged="@RecentFilterSelect"
+                                    AdornmentColor="Color.Primary">
+                                        @if (true)
+                                            {
+                                                var names = Enum.GetNames(typeof(AgeRangeEnum));
+                                                @for (int i = 0; i <= names.Length; i++)
+                                                    {
+                                                        AgeRangeEnum looped = (AgeRangeEnum)i;
+                                                        <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                                    }
+                                            }
+                        </MudSelect> 
+                    </div>                    
+            </div>    
+
     <div class="col-lg-8 control_wrapper">
         @if (IsAdmin)
         {

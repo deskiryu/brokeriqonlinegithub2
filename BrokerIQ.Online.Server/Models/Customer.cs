@@ -76,6 +76,8 @@ namespace BrokerIQ.Online.Models
 
         public virtual CustomerDocument ProfilePicture { get; set; }
 
+        public CustomerCategoryEnum CustomerCategory { get; set; }
+
         public bool Selected { get; set; }
 
         public string Name => Salutation + ' ' + FirstName + ' ' + LastName;
