@@ -58,7 +58,22 @@ namespace BrokerIQ.Online.Services
         public async Task<LoginResponseDto> Login(Login model)
         {
             var loginDto = _mapper.Map<LoginDto>(model);
-            var response = await _requestProviderService.Post<Login, LoginResponseDto>("Auth/SignIn", model);
+
+            var response = await _requestProviderService.FirstFactorPost<Login, LoginResponseDto>("Auth/SignIn", model);
+            _user = _mapper.Map<User>(response);
+            await _localStorageService.SetItem(_userKey, _user);
+            if (_user.RequiresTwoFactor == false)
+            {
+                _requestProviderService.DisposeClient();
+            }
+            return response;
+
+        }
+
+        public async Task<LoginResponseDto> LoginTwoFactor(Login model)
+        {
+            var loginDto = _mapper.Map<LoginDto>(model);
+            var response = await _requestProviderService.SecondFactorPost<Login, LoginResponseDto>("Auth/SignInTwofactor", model);
             _user = _mapper.Map<User>(response);
             await _localStorageService.SetItem(_userKey, _user);
             return response;
