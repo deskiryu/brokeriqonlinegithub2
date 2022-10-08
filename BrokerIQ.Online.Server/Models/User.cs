@@ -14,5 +14,6 @@ namespace BrokerIQ.Online.Models
         public bool IsBrokerStaff { get; set; }
         public int MasterBrokerId { get; set; }
         public int? StaffBrokerId { get; set; }
+        public bool RequiresTwoFactor { get; set; }
     }
 }

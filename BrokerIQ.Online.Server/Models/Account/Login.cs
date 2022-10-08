@@ -9,5 +9,7 @@ namespace BrokerIQ.Online.Models.Account
 
         [Required]
         public string Password { get; set; }
+
+        public string TwoFactorCode { get; set; }
     }
 }
