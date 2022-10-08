@@ -19,6 +19,8 @@
         protected string BaseUrl => $"{this.api.Url}api";
         protected string VideoConvertUrl => $"{this.api.VideoConvertUrl}";
 
+        HttpClient _rememberhttpClient;
+
         public string Token { get; set; }
 
         public RequestProviderService(IOptions<ReviewItAPIDetails> api)
@@ -46,6 +48,34 @@
 
             HttpResponseMessage response = await httpClient.PostAsync($"{this.BaseUrl}/{url}", content);
             return ConsumeResponse<TReturn>(response);
+        }
+
+        public async Task<TReturn> FirstFactorPost<T, TReturn>(string url, T data)
+        {
+            HttpClient httpClient = CreateHttpClient();
+            _rememberhttpClient = httpClient;
+
+            var content = new StringContent(JsonConvert.SerializeObject(data));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            HttpResponseMessage response = await _rememberhttpClient.PostAsync($"{this.BaseUrl}/{url}", content);
+            return ConsumeResponse<TReturn>(response);
+        }
+
+        public async Task<TReturn> SecondFactorPost<T, TReturn>(string url, T data)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(data));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            HttpResponseMessage response = await _rememberhttpClient.PostAsync($"{this.BaseUrl}/{url}", content);
+            DisposeClient();
+            return ConsumeResponse<TReturn>(response);
+        }
+
+        public void DisposeClient()
+        {
+            _rememberhttpClient?.Dispose();
+            _rememberhttpClient = null;
         }
 
         public async Task<TReturn> Post<T, TReturn>(string url, MemoryStream data, string mediaType)
@@ -154,7 +184,7 @@
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             }
-
+            
             return httpClient;
         }
 

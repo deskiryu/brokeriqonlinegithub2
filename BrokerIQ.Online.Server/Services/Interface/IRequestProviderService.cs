@@ -9,7 +9,10 @@
         Task<bool> Post<T>(string url, T data);
 
         Task<TReturn> Post<T, TReturn>(string url, T data);
-        
+        Task<TReturn> FirstFactorPost<T, TReturn>(string url, T data);
+        Task<TReturn> SecondFactorPost<T, TReturn>(string url, T data);
+        void DisposeClient();
+
         Task<TReturn> Post<T, TReturn>(string url, MemoryStream data, string mediaType);
 
         Task<TReturn> Post<TReturn>(string url);

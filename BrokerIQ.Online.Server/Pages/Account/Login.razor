@@ -35,6 +35,13 @@
 
                 <MudTextField @bind-Value="model.Password" Label="Password" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPassword" AdornmentAriaLabel="Show Password"/>
                 <ValidationMessage For="@(() => model.Password)" />
+
+                @if (ShowVerifyCode)
+                    {
+                     <MudTextField @bind-Value="model.TwoFactorCode" Label="Two factor code" Variant="Variant.Text" Margin="Margin.Dense" />
+                <ValidationMessage For="@(() => model.TwoFactorCode)" />                       
+                    }
+
             </MudCardContent>
             <MudCardActions>
                 <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Class="ml-auto" Disabled="@Loading">Login</MudButton>
@@ -51,6 +58,8 @@
     private BrokerIQ.Online.Models.Account.Login model = new BrokerIQ.Online.Models.Account.Login();
 
     public bool Loading { get; set; }
+
+    public bool ShowVerifyCode{ get; set; }
 
     bool isShow; InputType PasswordInput = InputType.Password;string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
@@ -71,15 +80,33 @@
 
         try
         {
-            response = await AccountService.Login(model);
+            if(!ShowVerifyCode)
+            {
+                response = await AccountService.Login(model);               
+            }
+            else
+            {
+                response = await AccountService.LoginTwoFactor(model);              
+            }
+
         }
         catch (Exception ex)
         {
             Success = false;
         }
 
-        if (Success && response.LoggedIn && !response.IsCustomer)
+
+        if (Success && !response.LoggedIn && response.RequiresTwoFactor)
         {
+            if (Success && response.RequiresTwoFactor)
+            {
+                ShowVerifyCode = true;
+                AlertService.Error($"Check your email for two factor code");
+            }
+        }
+        else if (Success && response.LoggedIn && !response.IsCustomer)
+        {
+            ShowVerifyCode = false;
             if (Success && !response.EmailConfirmed)
             {
                 AlertService.Error("Please check your email for the link to verify your account.");
@@ -109,10 +136,12 @@
         }
         else if (Success && !response.LoggedIn && response.IsLockedOut)
         {
+            ShowVerifyCode = false;
             AlertService.Error($"Your account has been locked from too many login attempts. Please try again in {response.LockoutMinutes} minutes.");
         }
         else
         {
+            ShowVerifyCode = false;
             AlertService.Error("Could not log on the user with this email address / password");
             Success = false;
         }
