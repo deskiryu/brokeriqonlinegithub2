@@ -32,7 +32,6 @@ namespace BrokerIQ.Online.Server.Services
             var brokerId = user.MasterBrokerId;
 
             var url = this.brokerDefinedMessageUrl + $"/{brokerId}";
-            var answer = new List<AudioDto>();
             try
             {
                 var messagesDto = await requestProviderService.Get<BrokerDefinedMessageDto>(url);
