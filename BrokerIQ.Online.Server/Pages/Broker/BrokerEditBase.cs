@@ -45,9 +45,12 @@
         [Parameter]
         public string BrokerId { get; set; }
 
+        public bool NavigateAdmin { get; set; }
+
         public BrokerEditBase()
         {
             Broker = new Broker();
+            NavigateAdmin = false;
         }
 
         protected override async Task OnInitializedAsync()
@@ -57,6 +60,7 @@
                 var user = await AccountService.GetUser();
                 if (user.IsAdmin)
                 {
+                    NavigateAdmin = true;
                     id = Int32.Parse(BrokerId);
                     if (id > 0)
                     {
@@ -65,7 +69,11 @@
                 }
                 else
                 {
-                    throw new Exception("Bad user");
+                    NavigateAdmin= false;
+                    if (user.MasterBrokerId > 0)
+                    {
+                        Broker = (await BrokerService.GetBroker(user.MasterBrokerId));
+                    }
                 }
             }
             catch
@@ -100,9 +108,19 @@
             }
         }
 
-        protected void NavigateToOverview()
+        protected async void NavigateToOverview()
         {
-            NavigationManager.NavigateTo($"/brokerlist");
+            var user = await AccountService.GetUser();
+            if (NavigateAdmin)
+            {
+                NavigationManager.NavigateTo($"/brokerlist");
+            }
+            else
+            {
+                Saved= false;
+                StateHasChanged();
+            }
+            
         }
 
         public async Task LoadFiles(InputFileChangeEventArgs e)
