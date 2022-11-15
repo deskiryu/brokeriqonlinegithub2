@@ -15,7 +15,7 @@
 {
     <section class="Broker-detail">
 
-        <h4 class="page-title">Add or edit Broker</h4>
+        <h4 class="page-title">Edit Broker</h4>
 
         <EditForm Model="@Broker" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
 
@@ -97,13 +97,15 @@
                         </div>
                     </div>
 
-
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Identifier</label>
-                        <div class="col-sm-8">
-                            <label>@Broker.Identifier</label>
+                    @if (NavigateAdmin)
+                    {
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Identifier</label>
+                            <div class="col-sm-8">
+                                <label>@Broker.Identifier</label>
+                            </div>
                         </div>
-                    </div>
+                    }
 
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Company Logo </label>
@@ -134,7 +136,11 @@
 
                     <div class="form-group row">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Update Broker</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>
+                        @if (NavigateAdmin)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>           
+                        }
+                        
 
                     </div>
 
@@ -144,9 +150,13 @@
                 </div>
 
         </EditForm>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mt-1" @onclick="DeleteBroker">
-            Delete Broker
-        </MudButton>
+        @if (NavigateAdmin)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mt-1" @onclick="DeleteBroker">
+                Delete Broker
+            </MudButton>            
+        }
+
     </section>
 
 
@@ -154,5 +164,5 @@
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to Broker list</a>
+    <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to Broker(s)</a>
 }

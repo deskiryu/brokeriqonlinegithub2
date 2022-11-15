@@ -264,6 +264,8 @@ namespace BrokerIQ.Online.Pages
                         To = longlistEmails.Select(x => x.Item1).ToList(),
                         BrokerId = BrokerId,
                         InvitationCount = longlistEmails.Select(x => x.Item2).ToList(),
+                        Subject = "Subject",
+                        Content = "Content"
                     };
 
                     succeeded = await EmailService.SendInviteEmails(emailsToSend);
