@@ -16,6 +16,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BrokerIQ.Online.Server.Shared;
+using Microsoft.JSInterop;
+using BrokerIQ.Online.Server.Extensions;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -47,6 +49,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject] 
+        public IJSRuntime js { get; set; }
 
         public List<EmailInvite> EmailInvitesSent { get; set; }
 
@@ -443,6 +448,16 @@ namespace BrokerIQ.Online.Pages
                     try
                     {
                         succeeded = await TelephoneInviteService.AddTelephoneInvites(createTelephone);
+
+                        var phone = $"{createTelephone.TelphoneNumbers.First()}";
+                        var secondurl = @"whatsapp://send?phone={" + phone +"}"; //nowork
+                        var thirdurl = "https://web.whatsapp.com/send?phone=" + phone; //nowork
+
+                                            string message = $"Hi its {Brokers.First().BrokerFirstName} from {Brokers.First().Name}, we have a new app called {Brokers.First()}. We will be using the app to communicate with you, collect information and share important updates about your case. \n\n";
+                    message += $"Please download the app for your device.\n\niOS:\n\n{appStore}\n\nAndroid:\n\n{playstore}";
+                        var url = $"https://wa.me/{phone}/?text={message}";
+                        await Extensions.NavigateToNewTab(js,url);
+
                     }
                     catch
                     {

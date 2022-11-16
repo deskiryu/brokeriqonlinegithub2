@@ -22,6 +22,11 @@ namespace BrokerIQ.Online.Server.Extensions
                 Convert.ToBase64String(data));
         }
 
+           public async static Task NavigateToNewTab(IJSRuntime js, string url)
+            {
+                await js.InvokeAsync<object>("open", url, "_blank");
+            } 
+
         public async static Task PreviewFile(IJSRuntime js, MemoryStream memoryStream, bool isJpeg=false)
         {
             var converted = Convert.ToBase64String(memoryStream.ToArray());
