@@ -429,9 +429,10 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
+                var brokerId = BrokerStaffId > 0 ? 0 : BrokerId;
                 var createTelephone = new CreateTelephoneInviteDto
                 {
-                    BrokerId = BrokerId,
+                    BrokerId = brokerId,
                     BrokerStaffId = BrokerStaffId,
                     TelphoneNumbers = NameTelephoneTargets.Select(x => x.Item2).ToList(),
                     CustomerNames = NameTelephoneTargets.Select(x => x.Item1).ToList(),
