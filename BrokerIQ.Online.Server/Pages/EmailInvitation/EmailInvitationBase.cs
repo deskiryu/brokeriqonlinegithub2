@@ -51,7 +51,7 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        [Inject] 
+        [Inject]
         public IJSRuntime js { get; set; }
 
         public List<EmailInvite> EmailInvitesSent { get; set; }
@@ -146,9 +146,9 @@ namespace BrokerIQ.Online.Pages
                 }
                 else
                 {
-                    var brokerStaff = await BrokerStaffService.GetBrokerStaff(user.StaffBrokerId.Value);
-                    BrokerStaffFirstName = brokerStaff.FirstName;
                     BrokerStaffId = Int32.Parse(user.Id);
+                    var brokerStaff = await BrokerStaffService.GetBrokerStaff(BrokerStaffId.Value);
+                    BrokerStaffFirstName = brokerStaff.FirstName;
                 }
 
                 EmailInvitesSentBase = (await EmailInviteService.GetEmailInvitesByBrokerId(user.MasterBrokerId)).ToList();
@@ -157,7 +157,7 @@ namespace BrokerIQ.Online.Pages
                 EmailInvitesSent = EmailInvitesSentBase;
                 TelephoneInvitesSent = TelephoneInvitesSentBase;
                 Brokers = new List<Broker>();
-                Broker = (await BrokerService.GetBroker(user.MasterBrokerId, eagerload:true));
+                Broker = (await BrokerService.GetBroker(user.MasterBrokerId, eagerload: true));
             }
             else if (user.IsAdmin)
             {
@@ -257,20 +257,20 @@ namespace BrokerIQ.Online.Pages
         public async Task ShowSecondEmailList()
         {
             var dialogParams = new DialogParameters();
-            var longlistEmails = new List<(string,int)>();
+            var longlistEmails = new List<(string, int)>();
 
             foreach (var item in EmailInvitesSent)
             {
-               if(item.Selected == true)
+                if (item.Selected == true)
                 {
-                    longlistEmails.Add((item.EmailAddress,item.InvitationCount));   
+                    longlistEmails.Add((item.EmailAddress, item.InvitationCount));
                 }
             }
 
             dialogParams.Add("EmailInvitation", longlistEmails);
             dialogParams.Add("Heading", "Broker IQ will send an invite email to these email addresses : ");
             var response = await DialogService.Show<ScrollableEmailDialog>("Send Reminder Emails", dialogParams).Result;
-            if(!response.Cancelled)
+            if (!response.Cancelled)
             {
                 bool succeeded = false;
                 try
@@ -342,7 +342,7 @@ namespace BrokerIQ.Online.Pages
         public async Task SendInvites()
         {
             var dialogParams = new DialogParameters();
-            
+
 
             bool validEmails = true;
             foreach (var item in EmailTargets)
@@ -353,7 +353,8 @@ namespace BrokerIQ.Online.Pages
                                     TimeSpan.FromMilliseconds(250));
             }
 
-            if (!validEmails){
+            if (!validEmails)
+            {
                 dialogParams.Add("Message", $"Please use valid email addresses");
                 await DialogService.Show<AlertDialog>("Invite Connections", dialogParams).Result;
                 EmailTargets.Clear();
@@ -410,7 +411,7 @@ namespace BrokerIQ.Online.Pages
         public async Task SendTelephoneInvites()
         {
             var dialogParams = new DialogParameters();
-            var NameTelephoneTargets = new List<(string, string)>() { ( CustomerName, TelephoneNumber) };
+            var NameTelephoneTargets = new List<(string, string)>() { (CustomerName, TelephoneNumber) };
 
             bool validTelephones = true;
             foreach (var item in NameTelephoneTargets)
@@ -501,7 +502,7 @@ namespace BrokerIQ.Online.Pages
                 var appName = "BrokerIQ";
                 var playstore = Urls.PlayStoreLink;
                 var appStore = Urls.AppStoreLink;
-                var brokerName = Broker.Name.Replace("&","%26");
+                var brokerName = Broker.Name.Replace("&", "%26");
                 var brokerFirstName = Broker.BrokerFirstName;
 
                 if (Broker.BrokerIdentifier.IdentifierFound)
@@ -509,12 +510,12 @@ namespace BrokerIQ.Online.Pages
                     appStore = Broker.BrokerIdentifier.AppStoreLink;
                     playstore = Broker.BrokerIdentifier.PlayStoreLink;
                     appName = Broker.BrokerIdentifier.AppName;
-                    if (BrokerStaffId > 0)
-                    {
-                        brokerFirstName = BrokerStaffFirstName;
-                    }
                 }
 
+                if (BrokerStaffId > 0)
+                {
+                    brokerFirstName = BrokerStaffFirstName;
+                }
 
                 string message = $"Hi its {brokerFirstName} from {brokerName}, we have a new app called {appName}. We will be using the app to communicate with you, collect information and share important updates about your case. %0a";
                 message += $"Please download the app for your device.%0aiOS:%0a{appStore}%0aAndroid:%0a{playstore}";
