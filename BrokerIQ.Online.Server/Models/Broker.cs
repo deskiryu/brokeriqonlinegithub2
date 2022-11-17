@@ -59,5 +59,7 @@ namespace BrokerIQ.Online.Models
         public bool Selected { get; set; }
 
         public virtual ICollection<BrokerStaff> BrokerStaff { get; set; }
+
+        public BrokerIdentifier BrokerIdentifier { get; set; }
     }
 }

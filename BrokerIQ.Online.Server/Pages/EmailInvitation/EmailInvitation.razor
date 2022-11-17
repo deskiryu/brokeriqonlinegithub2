@@ -197,8 +197,7 @@
                 <div class="card-body">
                         <div >
                             <div>
-                                     @if (!IsAdmin)
-                                    {
+
                                         <div class="col-sm-6">
                                             <div class ="row">
                                                 <MudInput class="form-control ml-2 " @bind-Value="@CustomerName" placeholder="Enter customer name">
@@ -210,24 +209,31 @@
                                                 </MudInput>
 
                                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 ml-2" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@SendTelephoneInvites" >Make connection</MudButton>
-                                            </div>
-
-@*                                            @if (IsAdmin)
+                                            @if (IsAdmin)
                                             {
-                                                <label style="margin-top: 5px">Choose Broker</label>
-                                                <div>
+                                                <div class="col-sm-6">
+                                                 <MudSelect T="int"
+                                                        Label="Choose Broker"
+                                                        Placeholder="None chosen"
+                                                        Disabled="false"                           
+                                                        @bind-Value="BrokerListIdTelephone"
+                                                        
+                                                        AdornmentColor="Color.Primary">
 
-                                                    <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId" style="width:max-content">
-
+                                                        <MudSelectItem Value="0">Select</MudSelectItem>
                                                         @foreach (var broker in @Brokers)
                                                         {
-                                            <option value=@broker.Id>@broker.Name</option>
+                                                            <MudSelectItem Value=@broker.Id>@broker.Name</MudSelectItem>
                                                         }
-                                    </InputSelect>
-                                </div>
-                                            }*@
+                                                    </MudSelect>
+                                                </div>
+                                            }
+                                            
+                                            </div>
+
+
                                         </div>
-                                    }
+  
                                 </div>
                         </div>
 
@@ -262,24 +268,15 @@
                         </div>
                     </div>
                 }
-            <div class="row">
-                <div class="col-lg-8 control_wrapper mb-5">
-                            @if (BrokerId > 0)
-                            {
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@ShowSecondEmailList" >Send Reminder Emails</MudButton>                          
-                            }
-                </div>
-                </div>
                 <table class="table table-striped " style=" table-layout: fixed; word-wrap: break-word;">
                     <thead>
                         <tr>
-                            <th style="width:8%">Select</th>
                             <th style="width:27%">Name</th>
                             <th style="width:27%">Telephone</th>
-                            <th style="width:10%">Sent Date</th>
-                            <th style="width:10%">Invite count</th>
+                            <th style="width:10%">Connection Date</th>
                             <th style="width:10%">Converted</th>
-                            <th style="width:10%">Delete</th>
+                            <th style="width:9%">WhatsApp</th>
+                            <th style="width:9%">Delete</th>
                             @if (ShowEmployee)
                             {
                                 <th style="width:20%">Employee</th>
@@ -294,11 +291,9 @@
                     @foreach (var Item in FilteredTelephoneInvites)
                     {
                         <tr>
-                            <td><MudCheckBox @bind-Checked="@Item.Selected" disabled="@Item.Converted"/></td>
                             <td style="padding-right:20px;">@(Item.CustomerName)</td>
                             <td style="padding-right:20px;">@(Item.TelephoneNumber)</td>
                             <td style="padding-right:10px">@(Item.CreatedDate.ToBiqDateTimeString())</td>
-                            <td style="padding-right:10px;">@(Item.InvitationCountTelephone)</td>
                             <td>
                                 @if (Item.Converted)
                                 {
@@ -308,6 +303,11 @@
                                 {
                                     <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
                                 }
+                            </td>
+                            <td>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"  OnClick="() => WhatsApp(Item.TelephoneNumber)" class="btn btn-primary table-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </MudButton>
                             </td>
                             <td>
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"  OnClick="() => DeleteLink(Item.Id)" class="btn btn-primary table-btn">
