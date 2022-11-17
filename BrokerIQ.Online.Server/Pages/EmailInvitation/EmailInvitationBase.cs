@@ -16,6 +16,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BrokerIQ.Online.Server.Shared;
+using Microsoft.JSInterop;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Data;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -47,6 +50,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject] 
+        public IJSRuntime js { get; set; }
 
         public List<EmailInvite> EmailInvitesSent { get; set; }
 
@@ -82,6 +88,8 @@ namespace BrokerIQ.Online.Pages
 
         public List<Broker> Brokers { get; set; }
 
+        public Broker Broker { get; set; }
+
         //filter
         public List<EmailInvite> FilteredEmailInvites => EmailInvitesSent.Where(i => i.EmailAddress.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
@@ -100,6 +108,11 @@ namespace BrokerIQ.Online.Pages
 
         [Required]
         public int BrokerListId = 0;
+
+        [Required]
+        public int BrokerListIdTelephone = 0;
+
+        public string BrokerStaffFirstName { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -133,6 +146,8 @@ namespace BrokerIQ.Online.Pages
                 }
                 else
                 {
+                    var brokerStaff = await BrokerStaffService.GetBrokerStaff(user.StaffBrokerId.Value);
+                    BrokerStaffFirstName = brokerStaff.FirstName;
                     BrokerStaffId = Int32.Parse(user.Id);
                 }
 
@@ -142,6 +157,7 @@ namespace BrokerIQ.Online.Pages
                 EmailInvitesSent = EmailInvitesSentBase;
                 TelephoneInvitesSent = TelephoneInvitesSentBase;
                 Brokers = new List<Broker>();
+                Broker = (await BrokerService.GetBroker(user.MasterBrokerId, eagerload:true));
             }
             else if (user.IsAdmin)
             {
@@ -264,6 +280,8 @@ namespace BrokerIQ.Online.Pages
                         To = longlistEmails.Select(x => x.Item1).ToList(),
                         BrokerId = BrokerId,
                         InvitationCount = longlistEmails.Select(x => x.Item2).ToList(),
+                        Subject = "Subject",
+                        Content = "Content"
                     };
 
                     succeeded = await EmailService.SendInviteEmails(emailsToSend);
@@ -405,15 +423,16 @@ namespace BrokerIQ.Online.Pages
 
             if (!validTelephones)
             {
-                dialogParams.Add("Message", $"Please use valid telephone numbers starting with country code e.g +44");
+                dialogParams.Add("Message", $"Please use valid telephone numbers starting with country code and no spaces e.g +447812345678");
                 await DialogService.Show<AlertDialog>("Invite Connections", dialogParams).Result;
                 NameTelephoneTargets.Clear();
             }
             else
             {
+                var brokerId = BrokerStaffId > 0 ? 0 : BrokerId;
                 var createTelephone = new CreateTelephoneInviteDto
                 {
-                    BrokerId = BrokerId,
+                    BrokerId = brokerId,
                     BrokerStaffId = BrokerStaffId,
                     TelphoneNumbers = NameTelephoneTargets.Select(x => x.Item2).ToList(),
                     CustomerNames = NameTelephoneTargets.Select(x => x.Item1).ToList(),
@@ -421,14 +440,15 @@ namespace BrokerIQ.Online.Pages
 
                 if (IsAdmin)
                 {
-                    if (BrokerListId <= 0)
+                    if (BrokerListIdTelephone <= 0)
                     {
                         dialogParams.Add("Message", $"Please choose a broker");
                         await DialogService.Show<AlertDialog>("Invite Connections", dialogParams).Result;
                         return;
                     }
-                    createTelephone.BrokerId = BrokerListId;
+                    createTelephone.BrokerId = BrokerListIdTelephone;
                     createTelephone.BrokerStaffId = null;
+                    Broker = await this.BrokerService.GetBroker(BrokerListIdTelephone);
                 }
 
                 dialogParams.Add("Customers", NameTelephoneTargets.Select(x => x.Item1).ToList());
@@ -460,6 +480,55 @@ namespace BrokerIQ.Online.Pages
                 }
             }
         }
+
+        protected async Task WhatsApp(string telephoneNumber)
+        {
+            var dialogParams = new DialogParameters();
+            bool succeeded = false;
+            try
+            {
+                if (IsAdmin)
+                {
+                    if (BrokerListIdTelephone <= 0)
+                    {
+                        dialogParams.Add("Message", $"Please choose a broker");
+                        await DialogService.Show<AlertDialog>("Invite Connections", dialogParams).Result;
+                        return;
+                    }
+                    Broker = await this.BrokerService.GetBroker(BrokerListIdTelephone);
+                }
+
+                var appName = "BrokerIQ";
+                var playstore = Urls.PlayStoreLink;
+                var appStore = Urls.AppStoreLink;
+                var brokerName = Broker.Name.Replace("&","%26");
+                var brokerFirstName = Broker.BrokerFirstName;
+
+                if (Broker.BrokerIdentifier.IdentifierFound)
+                {
+                    appStore = Broker.BrokerIdentifier.AppStoreLink;
+                    playstore = Broker.BrokerIdentifier.PlayStoreLink;
+                    appName = Broker.BrokerIdentifier.AppName;
+                    if (BrokerStaffId > 0)
+                    {
+                        brokerFirstName = BrokerStaffFirstName;
+                    }
+                }
+
+
+                string message = $"Hi its {brokerFirstName} from {brokerName}, we have a new app called {appName}. We will be using the app to communicate with you, collect information and share important updates about your case. %0a";
+                message += $"Please download the app for your device.%0aiOS:%0a{appStore}%0aAndroid:%0a{playstore}";
+
+                var url = $"https://wa.me/{telephoneNumber}/?text={message}";
+                await Extensions.NavigateToNewTab(js, url);
+
+            }
+            catch
+            {
+
+            }
+        }
+
         protected async Task DeleteLink(int id)
         {
             bool succeeded = false;
@@ -472,7 +541,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     succeeded = await this.EmailInviteService.DeleteEmailInvite(id);
                 }
-                
+
             }
             catch
             {
@@ -488,6 +557,8 @@ namespace BrokerIQ.Online.Pages
                 await RefreshInvitationsWithDialogMessage(succeeded, "The invite connection did not delete, check your invite list");
             }
         }
+
+
 
         protected void NavigateToOverview()
         {

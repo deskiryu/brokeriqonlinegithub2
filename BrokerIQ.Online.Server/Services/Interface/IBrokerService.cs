@@ -11,7 +11,7 @@ namespace BrokerIQ.Online.Services.Interface
 
     public interface IBrokerService
     {
-        Task<Broker> GetBroker(int id);
+        Task<Broker> GetBroker(int id, bool eagerload = false);
 
         Task<IEnumerable<Broker>> GetBrokers();
 

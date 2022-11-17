@@ -32,11 +32,11 @@ namespace BrokerIQ.Online.Services
             this.accountService = accountService;
         }
 
-        public async Task<Broker> GetBroker(int id)
+        public async Task<Broker> GetBroker(int id, bool eagerload=false)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var answer = await this.requestProviderService.Get<BrokerDto>(this.BrokerUrl, id, false);
+            var answer = await this.requestProviderService.Get<BrokerDto>(this.BrokerUrl, id, eagerload);
             return this.mapper.Map<Broker>(answer);
         }
 

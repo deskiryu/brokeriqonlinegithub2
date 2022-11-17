@@ -97,7 +97,8 @@ namespace BrokerIQ.Online.Server.Services
                 {
                     Message = message,
                     BrokerId = target,
-                    SendBrokerNotificationToPhone = true,               
+                    SendBrokerNotificationToPhone = true,  
+                    SendBrokerNotificationToStaffPhone = true,
                     
                 };
                 sent = await this.requestProviderService.Post<CreateBrokerNotificationDto, bool>(this.notificationUrl+"/broker", notification);
