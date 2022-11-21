@@ -18,6 +18,7 @@ namespace BrokerIQ.Online.ServerApplication
     using Services.Abstract;
     using Services.Concrete;
     using System.Text.Json;
+    using Microsoft.Extensions.Logging;
 
     public class Startup
     {
@@ -112,6 +113,14 @@ namespace BrokerIQ.Online.ServerApplication
                 config.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 config.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
                 config.JsonSerializerOptions.WriteIndented = false;
+            });
+
+            services.AddLogging(
+            builder =>
+            {
+                builder.AddFilter("Microsoft", LogLevel.Warning)
+                       .AddFilter("System", LogLevel.Information)
+                       .AddConsole();
             });
 
             services.AddHealthChecks()
