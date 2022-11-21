@@ -709,7 +709,7 @@ else if (!Saved)
                     </div>                    
                 }
 
-                <div class="col-sm-6 mt-1">
+                <div class="col-sm-8 mt-1">
                 <div class="card">
                 <div class="card-body">
                 @if (Chat != null && Chat.Messages.Any())
@@ -726,10 +726,10 @@ else if (!Saved)
                             </div>
                         }
                     }
-                    <div class = "row col-sm-12">
+                    <div class = "row col-sm-8">
                     @foreach (var message in Chat.Messages)
                     {
-                            var advancedClass = $"col-sm-6 mb-1 {message.Style}";
+                            var advancedClass = $"col-sm-10 mb-1 {message.Style}";
                             <MudCard Class="@advancedClass">
                             <MudCardHeader>
                                 <CardHeaderContent>

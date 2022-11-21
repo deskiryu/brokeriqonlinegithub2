@@ -13,7 +13,7 @@ namespace BrokerIQ.Online.Server.Extensions
             var sourceUtc = DateTime.SpecifyKind(dateIn, DateTimeKind.Utc);
             var destinationTimezoneId = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
             var sourceLocalTime = TimeZoneInfo.ConvertTimeFromUtc(sourceUtc, destinationTimezoneId);
-            return sourceLocalTime.ToString("dd/MM/yyyy hh:mm:ss");
+            return sourceLocalTime.ToString("dd/MM/yyyy h:mm:ss tt");
         }
 
         public static string ToBiqDateString(this DateTime dateIn)
