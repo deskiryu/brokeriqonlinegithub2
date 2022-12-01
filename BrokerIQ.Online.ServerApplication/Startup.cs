@@ -19,6 +19,8 @@ namespace BrokerIQ.Online.ServerApplication
     using Services.Concrete;
     using System.Text.Json;
     using Microsoft.Extensions.Logging;
+    using System;
+    using Microsoft.Extensions.Options;
 
     public class Startup
     {
@@ -97,11 +99,17 @@ namespace BrokerIQ.Online.ServerApplication
                 services.AddSignalR().AddAzureSignalR(options =>
                 {
                     options.ServerStickyMode = Microsoft.Azure.SignalR.ServerStickyMode.Required;
+                    options.MaxPollIntervalInSeconds = 300;
                 });
             }
             services.AddServerSideBlazor().AddCircuitOptions(o =>
             {
                 o.DetailedErrors = true;
+            }).AddHubOptions(h =>
+            { 
+                h.ClientTimeoutInterval = TimeSpan.FromMinutes(10);
+                h.KeepAliveInterval = TimeSpan.FromSeconds(3);
+                h.HandshakeTimeout = TimeSpan.FromMinutes(10); 
             });
 
             services.AddBlazoredSessionStorage(config =>
