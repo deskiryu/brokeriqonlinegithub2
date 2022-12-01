@@ -581,6 +581,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.AddressLine3, action => action.MapFrom(s => s.AddressLine3))
                 .ForMember(d => d.Postcode, action => action.MapFrom(s => s.Postcode))
                 .ForMember(d => d.LogoImage, action => action.MapFrom(s => s.LogoImage))
+                .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.Password, action => action.MapFrom(s => s.Password));
             CreateMap<BrokerDto, Broker>();
             CreateMap<Broker, BrokerDto>();
@@ -593,6 +594,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.AddressLine2, action => action.MapFrom(s => s.AddressLine2))
                 .ForMember(d => d.AddressLine3, action => action.MapFrom(s => s.AddressLine3))
                 .ForMember(d => d.Postcode, action => action.MapFrom(s => s.Postcode))
+                .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.LogoImage, action => action.MapFrom(s => s.LogoImage));
             CreateMap<BrokerIdentifierDto, BrokerIdentifier>();
         }

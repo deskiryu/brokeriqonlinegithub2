@@ -51,6 +51,13 @@ namespace BrokerIQ.Online.Models.Account
 
         public byte[] LogoImage { get; set; }
 
+        [Required]
+        [MaxLength(15, ErrorMessage = "The phone number must be 15 letters or less")]
+        [Phone]
+        public string TwoFactorPhoneNumber { get; set; }
+
+        public bool TwoFactorUseBrokerPhoneNumber { get; set; }
+
         [CompareProperty("Password")]
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }

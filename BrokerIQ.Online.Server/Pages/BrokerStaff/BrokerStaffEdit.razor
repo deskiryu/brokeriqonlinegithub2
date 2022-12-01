@@ -42,12 +42,22 @@
                     </div>
                 </div>
 
+                <div class="form-group row" style="padding-left:15px">
+                    <div class="form-group col-6">
+                        <label>Two Factor SMS Phone Number</label>
+                        <InputText @bind-Value="_brokerStaff.TwoFactorPhoneNumber" class="form-control" />
+                        <ValidationMessage For="@(() => _brokerStaff.TwoFactorPhoneNumber)" />
+                    </div>
+                </div>
+
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Email Address</label>
                     <div class="col-sm-8">
                         <label type="text" readonly class="form-control-plaintext">@_brokerStaff.EmailAddress</label>
                     </div>
                 </div>
+
+     
 
 
                 <div class="form-group row">

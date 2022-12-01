@@ -24,6 +24,11 @@ namespace BrokerIQ.Online.Models
         [MaxLength(30, ErrorMessage = "The broker staff name must be 30 letters or less")]
         public string LastName { get; set; }
 
+        [Required]
+        [MaxLength(15, ErrorMessage = "The phone number must be 15 letters or less")]
+        [Phone]
+        public string TwoFactorPhoneNumber { get; set; }
+
         public int BrokerId { get; set; }
     }
 }
