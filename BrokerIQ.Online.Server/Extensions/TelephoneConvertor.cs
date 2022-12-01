@@ -11,6 +11,11 @@ namespace BrokerIQ.Online.Server.Extensions
 
         public static string GetFormattedPhoneNumber(this string rawPhoneNumber)
         {
+            if (string.IsNullOrEmpty(rawPhoneNumber))
+            {
+                return string.Empty;
+            }
+
             // remove characters from number that WhatsApp doesn't process
             string formattedNumber = rawPhoneNumber.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
 

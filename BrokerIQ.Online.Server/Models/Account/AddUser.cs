@@ -51,9 +51,9 @@ namespace BrokerIQ.Online.Models.Account
 
         public byte[] LogoImage { get; set; }
 
-        [Required]
         [MaxLength(15, ErrorMessage = "The phone number must be 15 letters or less")]
-        [Phone]
+        [Required(ErrorMessage = "Mobile no. is required in format +4407xxxxxxxxx")]
+        [RegularExpression("^((\\+447)) ?\\d{9}$", ErrorMessage = "Please enter valid phone no in format +447xxxxxxxx")]
         public string TwoFactorPhoneNumber { get; set; }
 
         public bool TwoFactorUseBrokerPhoneNumber { get; set; }

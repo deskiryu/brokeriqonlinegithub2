@@ -583,8 +583,22 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.LogoImage, action => action.MapFrom(s => s.LogoImage))
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.Password, action => action.MapFrom(s => s.Password));
-            CreateMap<BrokerDto, Broker>();
+            CreateMap<BrokerDto, Broker>()
+                .ForMember(d => d.TwoFactorUseBrokerPhoneNumber, action => action.MapFrom((src, dest) =>
+            {
+                var matched = false;
+                if (!string.IsNullOrEmpty(src.TwoFactorPhoneNumber))
+                {
+                    var last10TwoFac = src.TwoFactorPhoneNumber.Length > 10 ? src.TwoFactorPhoneNumber.Substring(src.TwoFactorPhoneNumber.Length - 10) : ""; 
+                    if (!string.IsNullOrEmpty(last10TwoFac) && last10TwoFac.Length==10 && dest.TelephoneNumber.Contains(last10TwoFac))
+                    {
+                        matched = true;
+                    }
+                }
+                return matched;
+            }));
             CreateMap<Broker, BrokerDto>();
+                
             CreateMap<Broker, UpdateBrokerDto>()
                 .ForMember(d => d.Name, action => action.MapFrom(s => s.Name))
                 .ForMember(d => d.BrokerFirstName, action => action.MapFrom(s => s.BrokerFirstName))
@@ -605,11 +619,13 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.EmailAddress, action => action.MapFrom(s => s.EmailAddress))
                 .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
                 .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName))
+                .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.Password, action => action.MapFrom(s => s.Password));
             CreateMap<BrokerStaffDto, BrokerStaff>();
             CreateMap<BrokerStaff, BrokerStaffDto>();
             CreateMap<BrokerStaff, UpdateBrokerStaffDto>()
                 .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
+                .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName));
         }
 
