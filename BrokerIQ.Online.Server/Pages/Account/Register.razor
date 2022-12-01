@@ -1,6 +1,7 @@
 ﻿@page "/account/register"
 @using System.IO;
 @using BrokerIQ.Online.Models
+@using BrokerIQ.Online.Server.Extensions;
 @using BrokerIQ.Online.Services.Interface
 @using BrokerIQ.Online.Models.Account
 @using AutoMapper
@@ -94,6 +95,20 @@
                     </MudSelect>
                 </div>
 
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Two Factor SMS Phone Number</label>
+                <div class="col-sm-8">
+
+                    <InputText @bind-Value="model.TwoFactorPhoneNumber" class="form-control col-sm-8" />
+                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => model.TwoFactorPhoneNumber)" />
+
+                </div>
+                <label class="col-sm-4 col-form-label">Use broker telephone</label>
+                <div class="col-sm-8">
+                    <MudCheckBox @bind-Checked="@model.TwoFactorUseBrokerPhoneNumber" @onclick="async f => await SetUseBrokerPhoneNumber()" Style="margin-left: -15px" />
+                </div>
             </div>
             <div class="form-group row" style="padding-left:15px">
                 <label class="form-group col-6">Company Logo </label>
@@ -284,5 +299,17 @@
     protected void NavigateToOverview()
     {
         NavigationManager.NavigateTo($"/account/login");
+    }
+
+    protected async Task SetUseBrokerPhoneNumber()
+    {
+        if (!model.TwoFactorUseBrokerPhoneNumber)
+        {
+            model.TwoFactorPhoneNumber = model.TelephoneNumber.GetFormattedPhoneNumber();
+        }
+        else
+        {
+            model.TwoFactorPhoneNumber = "";
+        }
     }
 }

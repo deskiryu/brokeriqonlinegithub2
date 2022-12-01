@@ -4,6 +4,9 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using BrokerIQ.Online.Server.Extensions;
+    using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Online.Server.Services;
     using BrokerIQ.Online.Server.Shared;
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;
@@ -175,6 +178,18 @@
                     await DialogService.Show<AlertDialog>("Information", responseParams).Result;
                 }
                 NavigationManager.NavigateTo($"/brokerlist");
+            }
+        }
+
+        protected async Task SetUseBrokerPhoneNumber()
+        {
+            if(!Broker.TwoFactorUseBrokerPhoneNumber)
+            {
+                Broker.TwoFactorPhoneNumber = Broker.TelephoneNumber.GetFormattedPhoneNumber();
+            }
+            else
+            {
+                Broker.TwoFactorPhoneNumber = "";
             }
         }
     }

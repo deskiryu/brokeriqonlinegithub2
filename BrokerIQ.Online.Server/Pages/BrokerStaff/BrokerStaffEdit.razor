@@ -42,6 +42,14 @@
                     </div>
                 </div>
 
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Two Factor SMS Phone Number</label>
+                        <div class="col-sm-8">
+                            <InputText @bind-Value="_brokerStaff.TwoFactorPhoneNumber" class="form-control col-sm-8" />
+                        <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => _brokerStaff.TwoFactorPhoneNumber)" />
+                    </div>
+                </div>
+
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Email Address</label>
                     <div class="col-sm-8">
@@ -49,10 +57,12 @@
                     </div>
                 </div>
 
+     
+
 
                 <div class="form-group row">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Update employee</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" class="btn btn-outline-primary edit-outline-btn" OnClick="@NavigateToOverview">Cancel</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Update employee</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-outline-primary edit-outline-btn" OnClick="@NavigateToOverview">Cancel</MudButton>
                 </div>
 
 
@@ -66,7 +76,7 @@
 
     </EditForm>
     <div class="row col-6 mt-1">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteCustomer">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteCustomer">
             Delete Employee
         </MudButton>
     </div>
