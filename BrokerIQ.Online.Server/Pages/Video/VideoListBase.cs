@@ -421,7 +421,8 @@ namespace BrokerIQ.Online.Pages
                     await fileListEntry.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
 
                     string fileName = $"{VideoName}{ExtensionName}";
-                    bool scanPass = await ScanVideo(fileName, memoryStream);
+                    //REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE//REMOVE
+                    bool scanPass = true;// await ScanVideo(fileName, memoryStream);
 
                     VideoScanning = false;
                     StateHasChanged();

@@ -1,27 +1,28 @@
 ﻿@inherits LayoutComponentBase
 @inject IDialogService DialogService
-
-<div class="sidebar">
-    <NavMenu />
-</div>
-
-<div class="main">
-    <div class="top-row px-4" style="background-color:black">
-        <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Variant="Variant.Text" @onclick="OpenDialog" class="float-right" >About</MudButton>
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
     </div>
 
-    <div class="content px-4">
-        <Alert />
-        @Body
+    <div class="main">
+        <div class="top-row px-4" style="background-color:black">
+            <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Variant="Variant.Text" @onclick="OpenDialog" class="float-right" >About</MudButton>
+        </div>
+
+        <div class="content px-4">
+            <Alert />
+            @Body
+        </div>
     </div>
-</div>
+    </div>
 
 <MudDialogProvider />
-<MudThemeProvider Theme="MyCustomTheme" />
+<MudThemeProvider Theme="MyCustomTheme2" />
 
 
 @code{
-    MudTheme MyCustomTheme = new MudTheme()
+    MudTheme MyCustomTheme2 = new MudTheme()
     {
         Palette = new Palette()
         {
