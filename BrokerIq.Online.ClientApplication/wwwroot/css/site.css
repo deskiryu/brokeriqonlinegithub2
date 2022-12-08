@@ -4,7 +4,7 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-/*.page {
+.page {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@ page {
     position: relative;
     display: flex;
     flex-direction: column;
-}*/
+}
 
 app {
     position: relative;
@@ -159,17 +159,17 @@ app {
         flex-direction: row;
     }
 
-/*    .page {
+    .page {
         flex-direction: row;
-    }*/
+    }
 
     app {
         flex-direction: row;
     }
-/*
+
     page {
         flex-direction: row;
-    }*/
+    }
 
     .sidebar {
         width: 250px;
