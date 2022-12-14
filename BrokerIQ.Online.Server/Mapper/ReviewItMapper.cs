@@ -310,8 +310,7 @@ namespace BrokerIQ.Online.Mapper
                     return pir;
                 }))
                 .ForMember(d => d.MortgageNumber, action => action.MapFrom(s => s.MortgageNumber))
-                .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber));
 
 
             CreateMap<Mortgage, UpdateMortgageDto>()
@@ -414,8 +413,7 @@ namespace BrokerIQ.Online.Mapper
                     return ir;
                 }))
                 .ForMember(d => d.MortgageNumber, action => action.MapFrom(s => s.MortgageNumber))
-                .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber));
 
 
 
@@ -518,8 +516,7 @@ namespace BrokerIQ.Online.Mapper
                     return ir;
                 }))
                 .ForMember(d => d.MortgageNumber, action => action.MapFrom(s => s.MortgageNumber))
-                .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber));
         }
 
         public void MortgageDocumentMapper()
@@ -645,8 +642,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.CreatedDate, opt => opt.MapFrom(s => s.Date))
                 .ForMember(d => d.Converted, opt => opt.MapFrom(s => s.Converted))
                 .ForMember(d => d.Selected, opt => opt.MapFrom(s => !s.Converted))
-                .ForMember(d => d.InvitationCount, opt => opt.MapFrom(s => s.InvitationCount))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(d => d.InvitationCount, opt => opt.MapFrom(s => s.InvitationCount));
         }
 
         private void TelephoneInviteMapper()
@@ -661,8 +657,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.Selected, opt => opt.MapFrom(s => !s.Converted))
                 .ForMember(d => d.InvitationCountTelephone, opt => opt.MapFrom(s => s.InvitationCount))
                 .ForMember(d => d.TelephoneNumber, opt => opt.MapFrom(s => s.TelephoneNumber))
-                .ForMember(d => d.Converted, opt => opt.MapFrom(s => s.Converted)) 
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(d => d.Converted, opt => opt.MapFrom(s => s.Converted));
         }
 
         public void MenuPlanMapper()

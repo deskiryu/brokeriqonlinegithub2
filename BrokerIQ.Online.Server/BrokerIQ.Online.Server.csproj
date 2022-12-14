@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<ApplicationIcon />
 		<OutputType>Library</OutputType>
 		<StartupObject />
@@ -15,20 +15,20 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="10.1.1" />
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+		<PackageReference Include="AutoMapper" Version="12.0.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
 		<PackageReference Include="Azure.Core" Version="1.21.0" />
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
 		<PackageReference Include="Azure.Storage.Queues" Version="12.8.0" />
 		<PackageReference Include="BlazorDateRangePicker" Version="4.0.0" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-rc1.20223.4" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.4" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.4" />
-		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="7.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="7.0.1" />
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.0" />
 		<PackageReference Include="MudBlazor" Version="6.0.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
