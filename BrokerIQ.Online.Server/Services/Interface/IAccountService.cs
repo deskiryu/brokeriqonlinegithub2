@@ -22,6 +22,8 @@
         Task Update(string id, EditUser model);
         Task Delete(string id);
         Task<bool> ResendEmail(string customerEmail);
+
+        Task<bool> ResendEmailBroker(string brokerEmail);
         Task<LoginResponseDto> LoginTwoFactor(Login model);
     }
 }
