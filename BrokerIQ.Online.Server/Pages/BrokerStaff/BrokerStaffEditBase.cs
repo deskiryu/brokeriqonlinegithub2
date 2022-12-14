@@ -107,5 +107,29 @@
             }
 
         }
+
+        protected async Task ResendEmailBrokerStaff()
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"A verify email will be sent to {_brokerStaff.EmailAddress}. Continue? ");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                var resent = await AccountService.ResendEmailBroker(_brokerStaff.EmailAddress);
+                if (resent)
+                {
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", "Resent successfully");
+                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                }
+                else
+                {
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", "The resend email failed.");
+                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                }
+                NavigationManager.NavigateTo($"/clientlist");
+            }
+        }
     }
 }
