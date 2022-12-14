@@ -192,5 +192,29 @@
                 Broker.TwoFactorPhoneNumber = "";
             }
         }
+
+        protected async Task ResendEmailBroker()
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"A verify email will be sent to {Broker.EmailAddress}. Continue? ");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                var resent = await AccountService.ResendEmailBroker(Broker.EmailAddress);
+                if (resent)
+                {
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", "Resent successfully");
+                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                }
+                else
+                {
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", "The resend email failed.");
+                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+                }
+                NavigationManager.NavigateTo($"/clientlist");
+            }
+        }
     }
 }
