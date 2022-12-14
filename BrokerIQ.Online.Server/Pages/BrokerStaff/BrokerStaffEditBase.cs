@@ -128,7 +128,7 @@
                     responseParams.Add("Message", "The resend email failed.");
                     await DialogService.Show<AlertDialog>("Information", responseParams).Result;
                 }
-                NavigationManager.NavigateTo($"/clientlist");
+                NavigationManager.NavigateTo($"/brokerstafflist");
             }
         }
     }
