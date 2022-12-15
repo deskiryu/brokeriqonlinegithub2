@@ -96,6 +96,20 @@
         }
 
 
+
+#if !DEBUG        
+        var isRunningWasm = await RunningWasm.IsWebAssembly(js);
+
+        if (isRunningWasm && Success && response.IsAdmin)
+        {
+            AlertService.Error($"Admin users may only use the main site.");
+        }
+        else if (isRunningWasm && Success && response.RequiresTwoFactor == false && ShowVerifyCode == false)
+        {
+            AlertService.Error($"Two factor authentication required for this site, contact admin@brokeriq.co.uk to activate.");
+        } 
+        else 
+#endif  
         if (Success && !response.LoggedIn && response.RequiresTwoFactor)
         {
             if (Success && response.RequiresTwoFactor)
