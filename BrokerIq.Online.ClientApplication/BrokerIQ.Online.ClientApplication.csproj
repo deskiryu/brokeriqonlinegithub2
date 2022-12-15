@@ -16,9 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <None Include="C:\Users\Livingroom\.nuget\packages\chartjs.blazor.fork\2.0.2\contentFiles\any\netstandard2.1\wwwroot\ChartJsBlazorInterop.js">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	  <None Include="wwwroot\js\AudioRecord.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
