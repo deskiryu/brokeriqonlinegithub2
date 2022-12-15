@@ -115,7 +115,7 @@
             if (Success && response.RequiresTwoFactor)
             {
                 ShowVerifyCode = true;
-                AlertService.Error($"Check your email for two factor code");
+                AlertService.Error($"Please enter the code we sent you");
             }
         }
         else if (Success && response.LoggedIn && !response.IsCustomer)

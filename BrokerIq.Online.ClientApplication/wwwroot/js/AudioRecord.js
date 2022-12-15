@@ -4,10 +4,10 @@ let onSuccess = function (stream) {
     let recorder;
     let context;
     let audio = document.querySelector('audio');
-    let stop  = document.querySelector('#StopButton');
-    let stopJ  = $('#StopButton');
-    let record  = $('#RecordButton');
-    let save  = document.querySelector('#SaveButton');
+    let stop = document.querySelector('#StopButton');
+    let stopJ = $('#StopButton');
+    let record = $('#RecordButton');
+    let save = document.querySelector('#SaveButton');
     stop.disabled = false;
     stopJ.removeClass("grey-text");
     stopJ.addClass("blue-text");
@@ -31,7 +31,7 @@ let onSuccess = function (stream) {
         record.removeClass("blink");
         stopJ.removeClass("blue-text");
         stopJ.addClass("grey-text");
-        
+
         recorder.exportWAV(function (s) {
             wav = window.URL.createObjectURL(s);
             audio.src = window.URL.createObjectURL(s);
@@ -46,7 +46,7 @@ let onSuccess = function (stream) {
             reader.onloadend = function () {
                 copyS = reader.result;
                 copyS = copyS.slice(22);
-}
+            }
             // let xhr = new XMLHttpRequest();
             // xhr.addEventListener("load", transferComplete);
             // xhr.addEventListener("error", transferFailed)
@@ -75,40 +75,23 @@ let onSuccess = function (stream) {
 
 window.MyJSMethods = {
 
-startRecording: function () {
+    startRecording: function () {
         navigator.mediaDevices.getUserMedia({ audio: true })
-        .then((stream) => onSuccess(stream))
-        .catch((err) => onError(err));
-},
+            .then((stream) => onSuccess(stream))
+            .catch((err) => onError(err));
+    },
 
 
 
-saveRecording: function () {
-
-    var lengthCopyS = copyS.length;
-    var toSave="";
-    var constructed="";
-    if(lengthCopyS < 16000)
-    {
-        toSave =  copyS;    
-        remaining = 0;    
-    }
-
-    else{
-        toSave = copyS.slice(0,16000);
-        copyS = copyS.slice(16000);
-        remaining= copyS.length;  
-    } 
-    var constructed = '{"data":"' + toSave + '"}'
-    window.sessionStorage.setItem("audiorecording",constructed);
-    return remaining;
-},
+    saveRecording: function () {
+        return copyS;
+    },
 
 }
 
 var copyS = [];
-var pos=0;
+var pos = 0;
 
 let onError = function (err) {
-alert('We need access to your microphone to record your audio ' + err);
+    alert('We need access to your microphone to record your audio ' + err);
 };
