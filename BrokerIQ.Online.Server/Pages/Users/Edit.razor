@@ -1,6 +1,7 @@
 ﻿@page "/users/edit/{Id}"
 @using BrokerIQ.Online.Services.Interface
 @using BrokerIQ.Online.Models.Account
+@using Microsoft.AspNetCore.Authorization;
 @attribute [Authorize]
 @inject IAlertService AlertService
 @inject IAccountService AccountService

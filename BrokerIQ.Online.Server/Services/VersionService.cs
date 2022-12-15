@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace BrokerIQ.Online.Server.Services
 {
@@ -22,9 +23,10 @@ namespace BrokerIQ.Online.Server.Services
 
         public String GetVersion()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fileVersionInfo.ProductVersion;
+            var asm = System.Reflection.Assembly.GetExecutingAssembly();
+            var version = asm.GetName().Version;
+
+            return version.ToString();
         }
     }
 }

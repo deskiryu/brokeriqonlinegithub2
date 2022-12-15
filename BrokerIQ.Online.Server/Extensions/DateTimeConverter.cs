@@ -11,7 +11,7 @@ namespace BrokerIQ.Online.Server.Extensions
         public static string ToBiqDateTimeString( this DateTime dateIn)
         {
             var sourceUtc = DateTime.SpecifyKind(dateIn, DateTimeKind.Utc);
-            var destinationTimezoneId = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+            var destinationTimezoneId = TimeZoneInfo.FindSystemTimeZoneById("Europe/London");
             var sourceLocalTime = TimeZoneInfo.ConvertTimeFromUtc(sourceUtc, destinationTimezoneId);
             return sourceLocalTime.ToString("dd/MM/yyyy h:mm:ss tt");
         }
@@ -19,7 +19,7 @@ namespace BrokerIQ.Online.Server.Extensions
         public static string ToBiqDateString(this DateTime dateIn)
         {
             var sourceUtc = DateTime.SpecifyKind(dateIn, DateTimeKind.Utc);
-            var destinationTimezoneId = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+            var destinationTimezoneId = TimeZoneInfo.FindSystemTimeZoneById("Europe/London");
             var sourceLocalTime = TimeZoneInfo.ConvertTimeFromUtc(sourceUtc, destinationTimezoneId);
             return sourceLocalTime.ToString("dd/MM/yyyy");
         }

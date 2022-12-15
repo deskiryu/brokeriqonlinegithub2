@@ -11,12 +11,14 @@
     using Newtonsoft.Json;
     using BrokerIQ.Online.Services.Interface;
     using System.IO;
+    using Microsoft.AspNetCore.Components;
 
     public class RequestProviderService : IRequestProviderService
     {
-        protected ReviewItAPIDetails api;
+        protected ReviewItAPIDetails api { get; set; }
 
         protected string BaseUrl => $"{this.api.Url}api";
+
         protected string VideoConvertUrl => $"{this.api.VideoConvertUrl}";
 
         HttpClient _rememberhttpClient;
@@ -68,8 +70,10 @@
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             HttpResponseMessage response = await _rememberhttpClient.PostAsync($"{this.BaseUrl}/{url}", content);
+            
+            var consumed = ConsumeResponse<TReturn>(response);
             DisposeClient();
-            return ConsumeResponse<TReturn>(response);
+            return (consumed);
         }
 
         public void DisposeClient()

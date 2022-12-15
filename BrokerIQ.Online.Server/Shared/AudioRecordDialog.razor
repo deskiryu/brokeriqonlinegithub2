@@ -1,4 +1,5 @@
 
+@using BrokerIQ.Online.Server.Helper;
 @using BrokerIQ.Online.Services.Interface
 @using System.IO
 @inject IAudioService AudioService
@@ -7,6 +8,7 @@
 @inject IAudioRecordingService AudioRecordingService
 @inject IMetaDefenderCoreService MetaDefenderCoreService
 @inject IJSRuntime jsRuntime
+@inject IVideoService VideoService
 
 <MudDialog Style="@($"background:{Colors.Grey.Lighten4};")">
     <DialogContent>
@@ -126,15 +128,23 @@
             AudioSaving = true;
             StateHasChanged();
 
-            var remaining = 100;
+            var isRunningWasm = await RunningWasm.IsWebAssembly(jsRuntime);
             string completeString = "";
-
-            while (remaining > 0)
+            if(isRunningWasm)
             {
-                remaining = await jsRuntime.InvokeAsync<int>("MyJSMethods.saveRecording");
-                completeString += await AudioRecordingService.GetAudioRecordingAsBase64();
-
+                completeString = await jsRuntime.InvokeAsync<string>("MyJSMethods.saveRecording");
             }
+            else
+            {
+                var remaining = 100;
+                while (remaining > 0)
+                {
+                    remaining = await jsRuntime.InvokeAsync<int>("MyJSMethods.saveRecording");
+                    completeString += await AudioRecordingService.GetAudioRecordingAsBase64();
+
+                }               
+            }
+
 
             await AudioRecordingService.Delete();
             AudioSaving = false;
