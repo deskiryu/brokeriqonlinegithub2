@@ -30,21 +30,9 @@ namespace BrokerIQ.Online.Server
 
             builder.Services.AddBlazoredSessionStorage();
 
-            builder.Services.Configure<ReviewItAPIDetails>((options) =>
-            {
-                var rpi = (ReviewItAPIDetails)builder.Configuration.GetSection(typeof(ReviewItAPIDetails).Name);
-                options = rpi;
-            });
-            builder.Services.Configure<FileUploadSettings>((options) =>
-            {
-                var rpi = (FileUploadSettings)builder.Configuration.GetSection(typeof(FileUploadSettings).Name);
-                options = rpi;
-            });
-            builder.Services.Configure<MetaDefenderCoreDetails>((options) =>
-            {
-                var rpi = (MetaDefenderCoreDetails)builder.Configuration.GetSection(typeof(MetaDefenderCoreDetails).Name);
-                options = rpi;
-            });
+            builder.Services.Configure<ReviewItAPIDetails>(builder.Configuration.GetSection(typeof(ReviewItAPIDetails).Name));
+            builder.Services.Configure<FileUploadSettings>(builder.Configuration.GetSection(typeof(FileUploadSettings).Name));
+            builder.Services.Configure<MetaDefenderCoreDetails>(builder.Configuration.GetSection(typeof(MetaDefenderCoreDetails).Name));
 
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
