@@ -39,5 +39,9 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<CustomerDocumentDto> ConvertVideo(string fileName, MemoryStream videoStream, int brokerId);
 
+        Task<string> MetaDefenderAnalyseFile(string fileName, MemoryStream videoStream);
+
+        Task<object> MetaDefenderFetchAnalysisResult(string dataId);
+
     }
 }

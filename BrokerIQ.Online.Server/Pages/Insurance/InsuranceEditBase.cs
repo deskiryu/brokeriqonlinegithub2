@@ -8,7 +8,7 @@ namespace BrokerIQ.Online.Pages
     using System.ComponentModel.DataAnnotations;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
-    using AutoMapper.Mappers;
+    using AutoMapper;
     using Microsoft.AspNetCore.Components;
     using Models;
     using MudBlazor;

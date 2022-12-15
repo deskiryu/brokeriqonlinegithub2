@@ -2,6 +2,7 @@
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Online.Server.Shared
 @using BrokerIQ.Online.Services.Interface
+@using Microsoft.AspNetCore.Authorization;
 @attribute [Authorize]
 @inject IAccountService AccountService
 @inject IDialogService DialogService
