@@ -97,8 +97,8 @@
 		<GenerateDebug>false</GenerateDebug>
 		<GenerateMapOutFile>false</GenerateMapOutFile>
 		<DetectIfObfuscated>exit</DetectIfObfuscated>
-		<Obfuscate1Dir>$(SolutionDir)/BrokerIq.Online.Server/bin/$(Configuration)/net6.0/</Obfuscate1Dir>
-		<Obfuscate2Dir>$(SolutionDir)/BrokerIq.Online.Server/obj/$(Configuration)/net6.0/</Obfuscate2Dir>
+		<Obfuscate1Dir>$(SolutionDir)/BrokerIq.Online.ClientApplication/bin/$(Configuration)/net6.0/</Obfuscate1Dir>
+		<Obfuscate2Dir>$(SolutionDir)/BrokerIq.Online.ClientApplication/obj/$(Configuration)/net6.0/</Obfuscate2Dir>
 	</PropertyGroup>
 	<ItemGroup>
 		<SearchDirectory Remove="@(SearchDirectory)" />
