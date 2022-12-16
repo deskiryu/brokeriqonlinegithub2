@@ -47,7 +47,7 @@ let onSuccess = function (stream) {
                 copyS = reader.result;
                 copyS = copyS.slice(22);
             }
-            // Here
+            // Here Client
 
         });
 

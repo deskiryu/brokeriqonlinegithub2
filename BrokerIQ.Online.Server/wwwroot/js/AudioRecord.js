@@ -47,12 +47,8 @@ let onSuccess = function (stream) {
                 copyS = reader.result;
                 copyS = copyS.slice(22);
 }
-            // let xhr = new XMLHttpRequest();
-            // xhr.addEventListener("load", transferComplete);
-            // xhr.addEventListener("error", transferFailed)
-            // xhr.addEventListener("abort", transferFailed)
-            // xhr.open("POST", "api/SaveAudio/Save/", true);
-            // xhr.send(fd);
+
+            //HERE Server
 
         });
 
