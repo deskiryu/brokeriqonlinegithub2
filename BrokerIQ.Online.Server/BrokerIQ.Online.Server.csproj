@@ -43,5 +43,35 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
-
+	<UsingTask TaskName="Babel" AssemblyName="Babel.Build, Version=9.8.0.0, Culture=neutral, PublicKeyToken=138d17b5bd621ab7" />
+	<PropertyGroup>
+		<NameLength>3</NameLength>
+		<ObfuscateEvents>true</ObfuscateEvents>
+		<ObfuscateFields>true</ObfuscateFields>
+		<ObfuscateMethods>true</ObfuscateMethods>
+		<ObfuscateParameters>true</ObfuscateParameters>
+		<ObfuscateProperties>true</ObfuscateProperties>
+		<ObfuscateTypes>true</ObfuscateTypes>
+		<StringEncryption>hash</StringEncryption>
+		<ControlFlowObfuscation>goto=on;if=on;switch=on;call=on</ControlFlowObfuscation>
+		<ShowStatistics>true</ShowStatistics>
+		<SuppressIldasm>false</SuppressIldasm>
+		<UnicodeNormalization>false</UnicodeNormalization>
+		<OverloadedRenaming>true</OverloadedRenaming>
+		<FlattenNamespaces>true</FlattenNamespaces>
+		<VerboseLevel>10</VerboseLevel>
+		<VirtualFunctions>true</VirtualFunctions>
+		<GenerateDebug>false</GenerateDebug>
+		<GenerateMapOutFile>false</GenerateMapOutFile>
+		<DetectIfObfuscated>exit</DetectIfObfuscated>
+		<Obfuscate1Dir>$(SolutionDir)/BrokerIq.Online.Server/bin/$(Configuration)/net7.0/</Obfuscate1Dir>
+		<Obfuscate2Dir>$(SolutionDir)/BrokerIq.Online.Server/obj/$(Configuration)/net7.0/</Obfuscate2Dir>
+	</PropertyGroup>
+	<ItemGroup>
+		<SearchDirectory Remove="@(SearchDirectory)" />
+		<SearchDirectory Include="$(Obfuscate1Dir)" />
+	</ItemGroup>
+	<Target Name="Obfuscate1" AfterTargets="CoreCompile">
+		<Babel SearchDirectories="@(SearchDirectory)" DetectIfObfuscated="$(DetectIfObfuscated)" ModuleVersionId="false" InputFile="$(Obfuscate1Dir)/BrokerIQ.Online.Server.dll" OutputFile="$(Obfuscate2Dir)/BrokerIQ.Online.Server.dll" GenerateDebug="$(GenerateDebug)" GenerateMapOutFile="$(GenerateMapOutFile)" ObfuscateEvents="$(ObfuscateEvents)" ObfuscateFields="$(ObfuscateFields)" ObfuscateMethods="$(ObfuscateMethods)" ObfuscateParameters="$(ObfuscateParameters)" ObfuscateProperties="$(ObfuscateProperties)" ObfuscateTypes="$(ObfuscateTypes)" OverloadedRenaming="$(OverloadedRenaming)" VirtualFunctions="$(VirtualFunctions)" FlattenNamespaces="$(FlattenNamespaces)" ShowStatistics="$(ShowStatistics)" StringEncryption="$(StringEncryption)" ControlFlowObfuscation="$(ControlFlowObfuscation)" SuppressIldasm="$(SuppressIldasm)" UnicodeNormalization="$(UnicodeNormalization)" VerboseLevel="$(VerboseLevel)" />
+	</Target>
 </Project>
