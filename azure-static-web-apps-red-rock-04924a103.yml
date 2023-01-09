@@ -17,7 +17,6 @@ pool:
   vmImage: windows-2022
   demands:
   - msbuild
-  - visualstudio
   variables:
   - group: Azure-Static-Web-Apps-red-rock-04924a103-variable-group
   
