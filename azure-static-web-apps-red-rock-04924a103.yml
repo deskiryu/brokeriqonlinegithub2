@@ -22,6 +22,11 @@ jobs:
   - checkout: self
     submodules: true
   - task: NuGetToolInstaller@1
+
+  - task: UseDotNet@2
+    displayName: 'Install .NET Core SDK 7.x'
+    inputs:
+      version: 7.x
   - task: NuGetCommand@2
     inputs:
       restoreSolution: '**/*.sln'
