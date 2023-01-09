@@ -17,7 +17,6 @@ pool:
   vmImage: ubuntu-latest
   variables:
   - group: Azure-Static-Web-Apps-red-rock-04924a103-variable-group
-  
   steps:
   - checkout: self
     submodules: true
