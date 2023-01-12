@@ -76,11 +76,11 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<bool> UploadVideo(string fileName, MemoryStream videoStream, int brokerId)
+        public async Task<bool> UploadAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"?brokerId={brokerId}&fileName={fileName}";
+            var url = this.videoUrl + $"/UploadAndConvertVideo?brokerId={brokerId}&fileName={fileName}";
             var answer = false;
             try
             {
@@ -117,21 +117,6 @@ namespace BrokerIQ.Online.Server.Services
             try
             {
                 answer = await this.requestProviderService.Get<object>(url);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"ConvertVideo: exception {ex.Message}");
-            }
-            return answer;
-        }
-
-        public async Task<CustomerDocumentDto> ConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
-        {
-            var url = $"VideoConvert?brokerId={brokerId}&fileName={fileName}";
-            var answer = new CustomerDocumentDto();
-            try
-            {
-                answer = await this.requestProviderService.PostVideoApi<MemoryStream, CustomerDocumentDto>(url, videoStream, "application/octet-stream");
             }
             catch (Exception ex)
             {
