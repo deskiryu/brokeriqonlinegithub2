@@ -606,6 +606,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.AddressLine3, action => action.MapFrom(s => s.AddressLine3))
                 .ForMember(d => d.Postcode, action => action.MapFrom(s => s.Postcode))
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
+                .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
                 .ForMember(d => d.LogoImage, action => action.MapFrom(s => s.LogoImage));
             CreateMap<BrokerIdentifierDto, BrokerIdentifier>();
         }
