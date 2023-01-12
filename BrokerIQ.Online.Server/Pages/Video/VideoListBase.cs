@@ -488,17 +488,17 @@ namespace BrokerIQ.Online.Pages
                     string fileName = $"{VideoName}{ExtensionName}";
 
                     var succeeded = true;
-                    //var isRunningWasm = await RunningWasm.IsWebAssembly(js);
+                    var isRunningWasm = await RunningWasm.IsWebAssembly(js);
 
-                    //if (isRunningWasm)
-                    //{
-                    //    succeeded = await ScanVideoWasm(fileName, memoryStream);
-                    //}
-                    //else
-                    //{
-                    //    succeeded = await ScanVideo(fileName, memoryStream);
-                    //}
-                        
+                    if (isRunningWasm)
+                    {
+                        succeeded = await ScanVideoWasm(fileName, memoryStream);
+                    }
+                    else
+                    {
+                        succeeded = await ScanVideo(fileName, memoryStream);
+                    }
+
 
                     VideoScanning = false;
                     StateHasChanged();
