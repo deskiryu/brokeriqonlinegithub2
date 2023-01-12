@@ -579,6 +579,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.Postcode, action => action.MapFrom(s => s.Postcode))
                 .ForMember(d => d.LogoImage, action => action.MapFrom(s => s.LogoImage))
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
+                .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
                 .ForMember(d => d.Password, action => action.MapFrom(s => s.Password));
             CreateMap<BrokerDto, Broker>()
                 .ForMember(d => d.TwoFactorUseBrokerPhoneNumber, action => action.MapFrom((src, dest) =>
@@ -618,12 +619,14 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
                 .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName))
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
+                .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
                 .ForMember(d => d.Password, action => action.MapFrom(s => s.Password));
             CreateMap<BrokerStaffDto, BrokerStaff>();
             CreateMap<BrokerStaff, BrokerStaffDto>();
             CreateMap<BrokerStaff, UpdateBrokerStaffDto>()
                 .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
+                .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
                 .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName));
         }
 

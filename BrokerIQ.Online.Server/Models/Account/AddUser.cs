@@ -1,3 +1,4 @@
+using BrokerIQ.Dto.Enum;
 using System.ComponentModel.DataAnnotations;
 
 namespace BrokerIQ.Online.Models.Account
@@ -57,6 +58,8 @@ namespace BrokerIQ.Online.Models.Account
         public string TwoFactorPhoneNumber { get; set; }
 
         public bool TwoFactorUseBrokerPhoneNumber { get; set; }
+
+        public TwoFactorEnum TwoFactorType { get; set; }
 
         [CompareProperty("Password")]
         [Display(Name = "Confirm Password")]

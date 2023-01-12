@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrokerIQ.Dto.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -28,6 +29,8 @@ namespace BrokerIQ.Online.Models
         [Required(ErrorMessage = "Mobile no. is required in format +4407xxxxxxxxx")]
         [RegularExpression("^((\\+447)) ?\\d{9}$", ErrorMessage = "Please enter valid phone no in format +447xxxxxxxx")]
         public string TwoFactorPhoneNumber { get; set; }
+
+        public TwoFactorEnum TwoFactorType { get; set; }
 
         public int BrokerId { get; set; }
     }
