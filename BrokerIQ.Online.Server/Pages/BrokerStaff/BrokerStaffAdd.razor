@@ -46,6 +46,14 @@
                             </div>
                         </div>
 
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Two Factor Type</label>
+                                <MudRadioGroup class="col-sm-4" @bind-SelectedOption="@BrokerStaff.TwoFactorType">
+                                    <MudRadio Option="@TwoFactorEnum.Email">Email</MudRadio>
+                                    <MudRadio Option="@TwoFactorEnum.Sms">Mobile Phone</MudRadio>
+                                </MudRadioGroup>
+                            </div>
+
                         <div class="form-group row" style="padding-left:15px">
                             <div class="form-group col-6">
                                 <label>Two Factor SMS Phone Number</label>
