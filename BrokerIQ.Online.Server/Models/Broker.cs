@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace BrokerIQ.Online.Models
 {
+    using BrokerIQ.Dto.Enum;
     using BrokerIQ.Online.Server.Models;
     using System.ComponentModel.DataAnnotations;
 
@@ -65,6 +66,8 @@ namespace BrokerIQ.Online.Models
         public string TwoFactorPhoneNumber { get; set; }
 
         public bool TwoFactorUseBrokerPhoneNumber { get; set; }
+
+        public TwoFactorEnum TwoFactorType { get; set; }
 
         public virtual ICollection<BrokerStaff> BrokerStaff { get; set; }
 
