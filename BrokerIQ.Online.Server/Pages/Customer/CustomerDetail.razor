@@ -728,7 +728,7 @@ else if (!Saved)
                         }
                     }
                     <div class = "row col-sm-8">
-                    @foreach (var message in Chat.Messages)
+                    @foreach (var message in Chat.Messages.OrderByDescending(x => x.Id))
                     {
                             var advancedClass = $"col-sm-10 mb-1 {message.Style}";
                             <MudCard Class="@advancedClass">
