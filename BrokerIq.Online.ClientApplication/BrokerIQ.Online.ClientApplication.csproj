@@ -4,9 +4,9 @@
 		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
 
-	<PropertyGroup>
+	<!--<PropertyGroup> Size of components too large compared to speed benefit
 		<RunAOTCompilation>true</RunAOTCompilation>
-	</PropertyGroup>	
+	</PropertyGroup>-->	
 
 	  <ItemGroup>
     <Content Remove="appsettings.json" />
