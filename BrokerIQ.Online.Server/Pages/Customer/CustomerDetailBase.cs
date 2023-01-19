@@ -822,7 +822,7 @@ namespace BrokerIQ.Online.Pages
             foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
             {
 
-                //Only 10 for now
+                //Only 15 for now
                 if (enumVal != BrokerDefinedMessageEnum.TickBoxMessage1 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage2 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage3 &&
@@ -832,7 +832,12 @@ namespace BrokerIQ.Online.Pages
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage7 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage8 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage9 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage10)
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage10 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage11 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage12 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage13 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage14 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage15)
                 {
                     continue;
                 }
