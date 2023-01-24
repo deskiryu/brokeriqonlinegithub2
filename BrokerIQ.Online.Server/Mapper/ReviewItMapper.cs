@@ -645,7 +645,6 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.BrokerStaffId, opt => opt.MapFrom(s => s.BrokerStaffId))
                 .ForMember(d => d.CreatedDate, opt => opt.MapFrom(s => s.Date))
                 .ForMember(d => d.Converted, opt => opt.MapFrom(s => s.Converted))
-                .ForMember(d => d.Selected, opt => opt.MapFrom(s => !s.Converted))
                 .ForMember(d => d.InvitationCount, opt => opt.MapFrom(s => s.InvitationCount));
         }
 
