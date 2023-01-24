@@ -44,7 +44,7 @@ else
                     </div>
                     <div class="col-sm-3 mt-1">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Video Notification to selected users</MudButton>
-            </div>
+                    </div>
                 }
                 else
                 {
@@ -55,95 +55,98 @@ else
             </div>
         </div>
     </div>
+    <div class="card ">
+        <div class="card-header">Filters</div>
+        <div class="card-body">
+
             <div class="row">
-                 <div class="col-lg-4">
+                <div class="col-lg-4">
                     <label>Filter the list below by name</label>
                     <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name" class="filter_customerBroker" />
-                </div> 
-                 <div class="col-lg-4">
+                </div>
+                <div class="col-lg-4">
                     <MudSelect T="int"
-                                Label="Mortgage Category"
-                                Placeholder="Select"
-                                Clearable="true"
-                                @bind-Value="CustomerCategory"
-                                SelectedValuesChanged="@RecentFilterSelect"
-                                AdornmentColor="Color.Primary">
-                                    @if (true)
-                                        {
-                                            var names = Enum.GetNames(typeof(CustomerCategoryEnum));
-                                            @for (int i = 0; i <= names.Length; i++)
-                                                {
-                                                    CustomerCategoryEnum looped = (CustomerCategoryEnum)i;
-                                                    <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
-                                                }
-                                        }
+                           Label="Mortgage Category"
+                           Placeholder="Select"
+                           Clearable="true"
+                           @bind-Value="CustomerCategory"
+                           SelectedValuesChanged="@RecentFilterSelect"
+                           AdornmentColor="Color.Primary">
+                        @if (true)
+                        {
+                            var names = Enum.GetNames(typeof(CustomerCategoryEnum));
+                            @for (int i = 0; i <= names.Length; i++)
+                            {
+                                CustomerCategoryEnum looped = (CustomerCategoryEnum)i;
+                                <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                            }
+                        }
                     </MudSelect>
-                    </div>
-                    <div class="col-lg-4">
-                        <MudSelect T="int"
-                                    Label="Age Range"
-                                    Placeholder="Select"
-                                    Clearable="true"
-                                    @bind-Value="AgeRange"
-                                    SelectedValuesChanged="@RecentFilterSelect"
-                                    AdornmentColor="Color.Primary">
-                                        @if (true)
-                                            {
-                                                var names = Enum.GetNames(typeof(AgeRangeEnum));
-                                                @for (int i = 0; i <= names.Length; i++)
-                                                    {
-                                                        AgeRangeEnum looped = (AgeRangeEnum)i;
-                                                        <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
-                                                    }
-                                            }
-                        </MudSelect> 
-                    </div>                    
-            </div>    
-
-    <div class="col-lg-8 control_wrapper">
-        @if (IsAdmin)
-        {
-            <MudSelect T="int"
-                        Label="Filter By Broker"
-                        Placeholder="Select"
-                        Clearable="true"
-                        @bind-Value="BrokerId"
-                        SelectedValuesChanged="@AutoCompleteClickBroker"
-                        AdornmentColor="Color.Primary">
-                <MudSelectItem Value="0">Select</MudSelectItem>
-                @foreach (var item in @Brokers)
-                {
-                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                }
-            </MudSelect>            
-        }
+                </div>
+                <div class="col-lg-4">
+                    <MudSelect T="int"
+                           Label="Age Range"
+                           Placeholder="Select"
+                           Clearable="true"
+                           @bind-Value="AgeRange"
+                           SelectedValuesChanged="@RecentFilterSelect"
+                           AdornmentColor="Color.Primary">
+                        @if (true)
+                        {
+                            var names = Enum.GetNames(typeof(AgeRangeEnum));
+                            @for (int i = 0; i <= names.Length; i++)
+                            {
+                                AgeRangeEnum looped = (AgeRangeEnum)i;
+                                <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </div>
+            </div>
+        </div>
     </div>
-    <table id="table-video-customer" class="table col-sm-12 table-striped ">
-        <thead>
-            <tr>
-                <th>Select</th>
-                <th>Name</th>
-                <th>Verified</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var customer in FilteredCustomers)
-            {
-                <tr>
-                    <td><MudCheckBox @bind-Checked="@customer.Selected" /></td>
-                    <td>@customer.Name</td>
-                    <td>
-                        @if (customer.EmailConfirmed)
-                        {
-                            <i class="fa fa-check-circle font_awesome_table_checks success"></i>
-                        }
-                        else
-                        {
-                            <i class="fa fa-times-circle  font_awesome_table_checks fail"></i>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+
+    @if (IsAdmin)
+    {
+        <div class="card ">
+            <div class="card-header">Filters</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-8 control_wrapper">
+                        <MudSelect T="int"
+                           Label="Filter By Broker"
+                           Placeholder="Select"
+                           Clearable="true"
+                           @bind-Value="BrokerId"
+                           SelectedValuesChanged="@AutoCompleteClickBroker"
+                           AdornmentColor="Color.Primary">
+                            <MudSelectItem Value="0">Select</MudSelectItem>
+                            @foreach (var item in @Brokers)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <MudTable Items="@FilteredCustomers" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedCustomers">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
+            <MudTh>Verified</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="First name">@context.FirstName</MudTd>
+            <MudTd DataLabel="Last name">@context.LastName</MudTd>
+            <MudTd DataLabel="Email">@context.EmailAddress</MudTd>
+            <MudTd DataLabel="Verified"><MudCheckBox @bind-Checked="@context.EmailConfirmed" Disabled="true"></MudCheckBox></MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
+        </PagerContent>
+    </MudTable>
 }

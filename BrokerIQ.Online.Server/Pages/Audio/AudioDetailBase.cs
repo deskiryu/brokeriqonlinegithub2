@@ -13,6 +13,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
     using Microsoft.AspNetCore.WebUtilities;
     using System.IO;
     using BrokerIQ.Online.Server.Shared;
+    using BrokerIQ.Online.Services;
 
     public class AudioDetailBase : ComponentBase
     {
@@ -32,11 +33,19 @@ namespace BrokerIQ.Online.Server.Pages.Audio
 
         [Inject]
         public IAudioService AudioService { get; set; }
-    
+
+        [Inject]
+        public IAccountService AccountService { get; set; }
+
+        [Inject]
+        public IBrokerService BrokerService { get; set; }
+
 
         protected Audio Audio { get; set; }
 
         protected List<Customer> Customers { get; set; }
+
+        protected HashSet<Customer> SelectedCustomers { get; set; }
 
         protected string Url { get; set; }
         protected string AudioName { get; set; }
@@ -47,8 +56,14 @@ namespace BrokerIQ.Online.Server.Pages.Audio
 
         protected bool Vetted { get; set; }
 
+        public List<Broker> Brokers { get; set; }
+
+        public int BrokerId { get; set; }
+
+        protected bool IsAdmin { get; set; }
+
         //filter
-         protected List<Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        protected List<Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         protected override async Task OnInitializedAsync()
         {
@@ -70,7 +85,18 @@ namespace BrokerIQ.Online.Server.Pages.Audio
                 }
 
             }
-            
+
+            var user = await AccountService.GetUser();
+            IsAdmin = user.IsAdmin;
+            if (IsAdmin)
+            {
+                Brokers = (await BrokerService.GetBrokers()).ToList();
+            }
+            else
+            {
+                Brokers = new List<Broker>();
+            }
+
             try
             {
                 Vetted = true;//await AudioService.IsVetted(AudioName);
@@ -92,6 +118,13 @@ namespace BrokerIQ.Online.Server.Pages.Audio
         protected async Task SendNotificationToSelected(bool sendAll = false)
         {
             await OpenNotificationDialog(false);
+        }
+
+        protected async Task AutoCompleteClickBroker()
+        {
+            Customers.Clear();
+            Customers = null;
+            Customers = (await CustomerService.GetAllCustomers(BrokerId)).ToList();
         }
 
         protected async Task OpenNotificationDialog(bool sendAll = false)
@@ -119,7 +152,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
             }
             else
             {
-                targetsName = Customers.Where(x => x.Selected == true && x.EmailConfirmed == true).Select(x => x.Name).ToList();
+                targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
             }
 
 
@@ -132,11 +165,11 @@ namespace BrokerIQ.Online.Server.Pages.Audio
                 var targets = new List<int>();
                 if (sendAll)
                 {
-                    targets = Customers.Select(x => x.Id).ToList();
+                    targets = Customers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
                 }
                 else
                 {
-                    targets = Customers.Where(x => x.Selected == true).Select(x => x.Id).ToList();
+                    targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
                 }
 
                 if (targets != null && targets.Any())
