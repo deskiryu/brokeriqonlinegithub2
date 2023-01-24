@@ -37,6 +37,8 @@
 
     [Parameter] public List<(string, int)> EmailInvitation { get; set; }
 
+    [Parameter] public bool Delete { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -47,7 +49,15 @@
             Customers = new List<string>();
             foreach(var invite in EmailInvitation)
             {
-                Customers.Add($"Invite {invite.Item2+1} will be sent to {invite.Item1}");
+                if (Delete)
+                {
+                    Customers.Add($"Connection to {invite.Item1} will be deleted");
+                }
+                else
+                {
+                    Customers.Add($"Invite {invite.Item2+1} will be sent to {invite.Item1}");                  
+                }
+ 
             }
         }
 

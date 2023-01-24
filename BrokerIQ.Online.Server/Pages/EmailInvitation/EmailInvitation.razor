@@ -18,208 +18,184 @@
     }
     else
     {
-<div class="row">
-        <div class="col-sm-6">
-            <div class="card">
-                <div class="card-body">
-                    <label class="card-title">Add Email Addresses</label>
-                    <MudItem>
-                        <MudTextField @bind-Value="@Email" HelperText="Enter email address" />
-                    </MudItem>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="AddEmail">
-                        <i class="fas fa-plus"></i>
-                    </MudButton>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="card">
-                <div class="card-body">
-                    <label class="card-title">Upload invite file</label>
-                    <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
-                              @ondragleave="@(() => DragEnterStyle = null)"
-                              @ondragend="@(() => DragEnterStyle = null)"
-                              Class=@("drag-drop-zone " + DragEnterStyle)>
-
-                        <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" />
-                        <MudText Typo="Typo.subtitle1">Drag and drop text files here or click to browse</MudText>
-                    </MudPaper>
-                    <div>
-                        <p>Text files should have a seperate email address on each line</p>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <label class="card-title">Add Email Addresses</label>
+                        <MudItem>
+                            <MudTextField @bind-Value="@Email" HelperText="Enter email address" />
+                        </MudItem>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="AddEmail">
+                            <i class="fas fa-plus"></i>
+                        </MudButton>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">New connection list</div>
-                <div class="card-body">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <label class="card-title">Upload invite file</label>
+                        <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
+                          @ondragleave="@(() => DragEnterStyle = null)"
+                          @ondragend="@(() => DragEnterStyle = null)"
+                          Class=@("drag-drop-zone " + DragEnterStyle)>
 
-                    <div class="row">
-                        <table class="col-sm-6 ml-4">
-                            @foreach (var item in EmailTargets)
-                            {
-                                <tr>@item</tr>
-                            }
-                        </table>
-                        <EditForm Model="@EmailTargets" OnValidSubmit="@SendInvites">
-                            <div>
-                                <div class="col-sm-6">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" ButtonType="ButtonType.Submit" >Make connections</MudButton>
-                                    @if (IsAdmin)
-                                    {
-                                        <label style="margin-top: 5px">Choose Broker</label>
-                                        <div>
-
-                                            <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId" style="width:max-content">
-
-                                                @foreach (var broker in @Brokers)
-                                                            {
-                                                    <option value=@broker.Id>@broker.Name</option>
-                                                            }
-                                            </InputSelect>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </EditForm>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="card">
-        <div class="card-header">
-            <h5 class="mb-0">
-                Broker Connections
-            </h5>
-        </div>
-        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
-            <MudTabPanel Text="By email">
-                <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-8 control_wrapper mb-5">
-                        <label>Filter the list below by email address</label>
-                        <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type email" class="filter_customerBroker" />
-                    </div>
-                </div>
-            
-        
-                @if (IsAdmin)
-                {
-                    <div class="row mt-1">
-
-                        <div class="col-lg-8 control_wrapper mb-5">
-                            <MudSelect T="int"
-                                        Label="Filter By Broker"
-                                        Placeholder="Select"
-                                        Clearable="true"
-                                        @bind-Value="BrokerId"
-                                        SelectedValuesChanged="@AutoCompleteClickBroker"
-                                        AdornmentColor="Color.Primary">
-                                <MudSelectItem Value="0">Select</MudSelectItem>
-                                @foreach (var item in @Brokers)
-                                {
-                                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                                }
-                            </MudSelect>
+                            <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" />
+                            <MudText Typo="Typo.subtitle1">Drag and drop text files here or click to browse</MudText>
+                        </MudPaper>
+                        <div>
+                            <p>Text files should have a seperate email address on each line</p>
                         </div>
                     </div>
-                }
-            <div class="row">
-                <div class="col-lg-8 control_wrapper mb-5">
-                            @if (BrokerId > 0)
-                            {
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@ShowSecondEmailList" >Send Reminder Emails</MudButton>                          
-                            }
                 </div>
-                </div>
-                <table class="table table-striped " style=" table-layout: fixed; word-wrap: break-word;">
-                    <thead>
-                        <tr>
-                            <th style="width:8%">Select</th>
-                            <th style="width:27%">Email</th>
-                            <th style="width:10%">Sent Date</th>
-                            <th style="width:10%">Invites</th>
-                            <th style="width:10%">Converted</th>
-                            <th style="width:10%">Delete</th>
-                            @if (ShowEmployee)
-                            {
-                                <th style="width:20%">Employee</th>
-                            }
-                            @if (ShowBroker)
-                            {
-                                <th style="width:20%">Broker</th>
-                            }
-
-                        </tr>
-                    </thead>
-                    @foreach (var Item in FilteredEmailInvites)
-                    {
-                        <tr>
-                            <td><MudCheckBox @bind-Checked="@Item.Selected" disabled="@Item.Converted"/></td>
-                            <td style="padding-right:20px;">@(Item.EmailAddress)</td>
-                            <td style="padding-right:10px">@(Item.CreatedDate.ToBiqDateTimeString())</td>
-                            <td style="padding-right:10px;">@(Item.InvitationCount)</td>
-                            <td>
-                                @if (Item.Converted)
-                                {
-                                    <i class="fa fa-check-circle font_awesome_table_checks success"></i>
-                                }
-                                else
-                                {
-                                    <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
-                                }
-                            </td>
-                            <td>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"  OnClick="() => DeleteLink(Item.Id)" class="btn btn-primary table-btn">
-                                    <i class="fas fa-trash"></i>
-                                </MudButton>
-                            </td>
-                            @if (ShowEmployee)
-                            {
-                                <td style="padding-right:20px">@(Item.BrokerStaffName)</td>
-                            }
-                            @if (ShowBroker)
-                            {
-                                <td style="padding-right:20px">@(Item.BrokerName)</td>
-                            }
-                        </tr>
-                    }
-                </table>
             </div>
-            </MudTabPanel>
-            <MudTabPanel Text="By Phone">
-                <div class="card-body">
-                <div class="card-body">
-                        <div >
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">New connection list</div>
+                    <div class="card-body">
+
+                        <div class="row">
+                            <table class="col-sm-6 ml-4">
+                                @foreach (var item in EmailTargets)
+                                {
+                                    <tr>@item</tr>
+                                }
+                            </table>
+                            <EditForm Model="@EmailTargets" OnValidSubmit="@SendInvites">
+                                <div>
+                                    <div class="col-sm-6">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" ButtonType="ButtonType.Submit">Make connections</MudButton>
+                                        @if (IsAdmin)
+                                        {
+                                            <label style="margin-top: 5px">Choose Broker</label>
+                                            <div>
+
+                                                <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId" style="width:max-content">
+
+                                                    @foreach (var broker in @Brokers)
+                                                    {
+                                                        <option value=@broker.Id>@broker.Name</option>
+                                                    }
+                                                </InputSelect>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </EditForm>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    Broker Connections
+                </h5>
+            </div>
+            <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+                <MudTabPanel Text="By email">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-8 control_wrapper mb-5">
+                                <label>Filter the list below by email address</label>
+                                <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type email" class="filter_customerBroker" />
+                            </div>
+                        </div>
+
+
+                        @if (IsAdmin)
+                        {
+                            <div class="row mt-1">
+
+                                <div class="col-lg-8 control_wrapper mb-5">
+                                    <MudSelect T="int"
+                                   Label="Filter By Broker"
+                                   Placeholder="Select"
+                                   Clearable="true"
+                                   @bind-Value="BrokerId"
+                                   SelectedValuesChanged="@AutoCompleteClickBroker"
+                                   AdornmentColor="Color.Primary">
+                                        <MudSelectItem Value="0">Select</MudSelectItem>
+                                        @foreach (var item in @Brokers)
+                                        {
+                                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </div>
+                            </div>
+                        }
+                        <div class="row">
+                            <div class="col-lg-8 control_wrapper mb-5">
+                                @if (BrokerId > 0)
+                                {
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@ShowSecondEmailList">Send Reminder Emails</MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@DeleteSelectedInviteList">Delete selected connections</MudButton>
+                                }
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Email Invites</div>
+                            <div class="card-body">
+                                <MudTable Items="@FilteredEmailInvites" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="EmailInvitesSelected">
+                                    <HeaderContent>
+                                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.EmailInvite, object>(x=>x.EmailAddress)">Email</MudTableSortLabel></MudTh>
+                                        <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.EmailInvite, object>(x=>x.CreatedDate)">Sent Date</MudTableSortLabel></MudTh>
+                                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.EmailInvite, object>(x=>x.InvitationCount)">Invites</MudTableSortLabel></MudTh>
+                                        <MudTh>Converted</MudTh>
+                                        <MudTh>Delete</MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate>
+                                        <MudTd DataLabel="Email">@context.EmailAddress</MudTd>
+                                        <MudTd DataLabel="SentDate">@context.CreatedDate</MudTd>
+                                        <MudTd DataLabel="Email">@context.InvitationCount</MudTd>
+                                        <MudTd DataLabel="Converted"><MudCheckBox @bind-Checked="@context.Converted" Disabled="true"></MudCheckBox></MudTd>
+                                        <MudTd DataLabel="">
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteLink(context.Id))">
+                                                <i class="fas fa-trash"></i>
+                                            </MudButton>
+                                        </MudTd>
+                                    </RowTemplate>
+                                    <PagerContent>
+                                        <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
+                                    </PagerContent>
+                                </MudTable>
+                            </div>
+                        </div>
+                    </div>
+                </MudTabPanel>
+                <MudTabPanel Text="By Phone">
+                    <div class="card-body">
+                        <div class="card-body">
                             <div>
+                                <div>
 
-                                        <div class="col-sm-6">
-                                            <div class ="row">
-                                                <MudInput class="form-control ml-2 " @bind-Value="@CustomerName" placeholder="Enter customer name">
+                                    <div class="col-sm-6">
+                                        <div class="row">
+                                            <MudInput class="form-control ml-2 " @bind-Value="@CustomerName" placeholder="Enter customer name">
 
-                                                </MudInput>
-                                                <MudInput class="form-control mt-2 mb-2 ml-2"  @bind-Value="@TelephoneNumber" placeholder="Enter phone number">
+                                            </MudInput>
+                                            <MudInput class="form-control mt-2 mb-2 ml-2" @bind-Value="@TelephoneNumber" placeholder="Enter phone number">
 
 
-                                                </MudInput>
+                                            </MudInput>
 
-                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 ml-2" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@SendTelephoneInvites" >Make connection</MudButton>
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 ml-2" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@SendTelephoneInvites">Make connection</MudButton>
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 ml-2" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@DeleteSelectedInviteListTelephone">Delete selected connections</MudButton>
                                             @if (IsAdmin)
                                             {
                                                 <div class="col-sm-6">
-                                                 <MudSelect T="int"
-                                                        Label="Choose Broker"
-                                                        Placeholder="None chosen"
-                                                        Disabled="false"                           
-                                                        @bind-Value="BrokerListIdTelephone"
-                                                        
-                                                        AdornmentColor="Color.Primary">
+                                                    <MudSelect T="int"
+                                                   Label="Choose Broker"
+                                                   Placeholder="None chosen"
+                                                   Disabled="false"
+                                                   @bind-Value="BrokerListIdTelephone"
+                                                   AdornmentColor="Color.Primary">
 
                                                         <MudSelectItem Value="0">Select</MudSelectItem>
                                                         @foreach (var broker in @Brokers)
@@ -229,112 +205,82 @@
                                                     </MudSelect>
                                                 </div>
                                             }
-                                            
-                                            </div>
-
 
                                         </div>
-  
+
+
+                                    </div>
+
                                 </div>
+                            </div>
+
                         </div>
-
-                </div>
-                <div></div>
-                <div class="row mt-5">
-                    <div class="col-lg-8 control_wrapper mb-5">
-                        <label>Filter the list below by customer name</label>
-                        <input @bind-value="SearchTermPhone" @bind-value:event="oninput" placeholder="Type email" class="filter_customerBroker" />
-                    </div>
-                </div>
-            
-        
-                @if (IsAdmin)
-                {
-                    <div class="row mt-1">
-
-                        <div class="col-lg-8 control_wrapper mb-5">
-                            <MudSelect T="int"
-                                        Label="Filter By Broker"
-                                        Placeholder="Select"
-                                        Clearable="true"
-                                        @bind-Value="BrokerIdPhone"
-                                        SelectedValuesChanged="@AutoCompleteClickBrokerPhone"
-                                        AdornmentColor="Color.Primary">
-                                <MudSelectItem Value="0">Select</MudSelectItem>
-                                @foreach (var item in @Brokers)
-                                {
-                                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                                }
-                            </MudSelect>
+                        <div class="row mt-5">
+                            <div class="col-lg-8 control_wrapper mb-5">
+                                <label>Filter the list below by customer name</label>
+                                <input @bind-value="SearchTermPhone" @bind-value:event="oninput" placeholder="Type email" class="filter_customerBroker" />
+                            </div>
                         </div>
-                    </div>
-                }
-                <table class="table table-striped " style=" table-layout: fixed; word-wrap: break-word;">
-                    <thead>
-                        <tr>
-                            <th style="width:27%">Name</th>
-                            <th style="width:27%">Telephone</th>
-                            <th style="width:10%">Connection Date</th>
-                            <th style="width:10%">Converted</th>
-                            <th style="width:9%">WhatsApp</th>
-                            <th style="width:9%">Delete</th>
-                            @if (ShowEmployee)
-                            {
-                                <th style="width:20%">Employee</th>
-                            }
-                            @if (ShowBroker)
-                            {
-                                <th style="width:20%">Broker</th>
-                            }
+                        @if (IsAdmin)
+                        {
+                            <div class="row mt-1">
 
-                        </tr>
-                    </thead>
-                    @foreach (var Item in FilteredTelephoneInvites)
-                    {
-                        <tr>
-                            <td style="padding-right:20px;">@(Item.CustomerName)</td>
-                            <td style="padding-right:20px;">@(Item.TelephoneNumber)</td>
-                            <td style="padding-right:10px">@(Item.CreatedDate.ToBiqDateTimeString())</td>
-                            <td>
-                                @if (Item.Converted)
-                                {
-                                    <i class="fa fa-check-circle font_awesome_table_checks success"></i>
-                                }
-                                else
-                                {
-                                    <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
-                                }
-                            </td>
-                            <td>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"  OnClick="() => WhatsApp(Item.TelephoneNumber)" class="btn btn-primary table-btn">
-                                    <i class="fas fa-paper-plane"></i>
-                                </MudButton>
-                            </td>
-                            <td>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"  OnClick="() => DeleteLink(Item.Id)" class="btn btn-primary table-btn">
-                                    <i class="fas fa-trash"></i>
-                                </MudButton>
-                            </td>
-                            @if (ShowEmployee)
-                            {
-                                <td style="padding-right:20px">@(Item.BrokerStaffName)</td>
-                            }
-                            @if (ShowBroker)
-                            {
-                                <td style="padding-right:20px">@(Item.BrokerName)</td>
-                            }
-                        </tr>
-                    }
-                </table>
-            </div>
-            </MudTabPanel>
+                                <div class="col-lg-8 control_wrapper mb-5">
+                                    <MudSelect T="int"
+                                   Label="Filter By Broker"
+                                   Placeholder="Select"
+                                   Clearable="true"
+                                   @bind-Value="BrokerIdPhone"
+                                   SelectedValuesChanged="@AutoCompleteClickBrokerPhone"
+                                   AdornmentColor="Color.Primary">
+                                        <MudSelectItem Value="0">Select</MudSelectItem>
+                                        @foreach (var item in @Brokers)
+                                        {
+                                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </div>
+                            </div>
+                        }
+                        <MudTable Items="@FilteredTelephoneInvites" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="TelephoneInvitesSelected">
+                            <HeaderContent>
+                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.TelephoneInvite, object>(x=>x.CustomerName)">Name</MudTableSortLabel></MudTh>
+                                <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.TelephoneInvite, object>(x=>x.TelephoneNumber)">Telephone</MudTableSortLabel></MudTh>
+                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.TelephoneInvite, object>(x=>x.CreatedDate)">Connection Date</MudTableSortLabel></MudTh>
+                                <MudTh>Converted</MudTh>
+                                <MudTh>Whats App</MudTh>
+                                <MudTh>Delete</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Name">@context.CustomerName</MudTd>
+                                <MudTd DataLabel="Telephone">@context.TelephoneNumber</MudTd>
+                                <MudTd DataLabel="Connection date">@context.CreatedDate</MudTd>
+                                <MudTd DataLabel="Converted"><MudCheckBox @bind-Checked="@context.Converted" Disabled="true"></MudCheckBox></MudTd>
+                                <MudTd DataLabel="WhatsApp">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="() => WhatsApp(context.TelephoneNumber)" class="btn btn-primary table-btn">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </MudButton>
+                                </MudTd>
+                                <MudTd DataLabel="Delete">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="() => DeleteLink(context.Id)" class="btn btn-primary table-btn">
+                                        <i class="fas fa-trash"></i>
+                                    </MudButton>
+                                </MudTd>
+                            </RowTemplate>
+                            <PagerContent>
+                                <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
+                            </PagerContent>
+                        </MudTable>
+
+                    </div>
+                </MudTabPanel>
             </MudTabs>
-     </div>
+        </div>
     }
 }
 else
 {
-<div class="alert @StatusClass">@Message</div>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to invite list</MudButton>
+    <div class="alert @StatusClass">@Message</div>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to invite list</MudButton>
 }
 
