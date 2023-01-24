@@ -165,10 +165,9 @@ else
     <div class="card">
         <div class="card-header">Clients</div>
         <div class="card-body">
-<MudTable Items="@FilteredCustomers" Hover="true" SortLabel="Sort By" >
+                <MudTable Items="@FilteredCustomers" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedCustomers">
     <HeaderContent>
         <MudTh></MudTh>
-        <MudTh>Select</MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>
@@ -179,7 +178,6 @@ else
     </HeaderContent>
     <RowTemplate>
         <MudTd><td><img src="@context.PPAsImage" class="rounded-pill" style="width:30px;"/></td></MudTd>
-        <MudTd DataLabel="Select"><MudCheckBox @bind-Checked="@context.Selected" ></MudCheckBox></MudTd>
         <MudTd DataLabel="First name">@context.FirstName</MudTd>
         <MudTd DataLabel="Last name">@context.LastName</MudTd>
         <MudTd DataLabel="Telephone">@context.TelephoneNumber</MudTd>
