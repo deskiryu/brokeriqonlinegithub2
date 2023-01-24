@@ -199,11 +199,11 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 var targets = new List<int>();
                 if (sendAll)
                 {
-                    targets = Customers.Select(x => x.Id).ToList();
+                    targets = Customers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
                 }
                 else
                 {
-                    targets = SelectedCustomers.Select(x => x.Id).ToList();
+                    targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
                 }
 
                 if (targets != null && targets.Any())
