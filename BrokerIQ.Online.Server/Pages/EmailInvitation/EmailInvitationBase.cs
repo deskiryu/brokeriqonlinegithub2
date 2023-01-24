@@ -19,6 +19,7 @@ using BrokerIQ.Online.Server.Shared;
 using Microsoft.JSInterop;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Data;
+using BrokerIQ.Online.Services;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -58,9 +59,13 @@ namespace BrokerIQ.Online.Pages
 
         public List<EmailInvite> EmailInvitesSentBase { get; set; }
 
+        public HashSet<EmailInvite> EmailInvitesSelected { get; set; }
+
         public List<TelephoneInvite> TelephoneInvitesSent { get; set; }
 
         public List<TelephoneInvite> TelephoneInvitesSentBase { get; set; }
+
+        public HashSet<TelephoneInvite> TelephoneInvitesSelected { get; set; }
 
         public List<BrokerStaff> BrokerStaff { get; set; }
 
@@ -254,14 +259,64 @@ namespace BrokerIQ.Online.Pages
             EmailTargets.Add(Email);
         }
 
+        
+        public async Task DeleteSelectedInviteList()
+        {
+            var dialogParams = new DialogParameters();
+            var longlistEmails = new List<(string, int)>();
+
+            foreach (var item in EmailInvitesSelected)
+            {
+                if (item.Converted == false)
+                {
+                    longlistEmails.Add((item.EmailAddress, item.Id));
+                }
+            }
+
+            dialogParams.Add("EmailInvitation", longlistEmails);
+            dialogParams.Add("Heading", "Broker IQ will delete these connections ");
+            dialogParams.Add("Delete", true);
+            var response = await DialogService.Show<ScrollableEmailDialog>("Delete invitations", dialogParams).Result;
+            if (!response.Cancelled)
+            {
+                bool succeeded = false;
+
+                try
+                {
+                    foreach (var item in longlistEmails)
+                    {
+                        succeeded = await this.EmailInviteService.DeleteEmailInvite(item.Item2);
+                    }
+                }
+                catch
+                {
+                    succeeded = false;
+                }
+
+                if (succeeded)
+                {
+                    StatusClass = "alert-success";
+                    Message = "Connections deleted successfully";
+                }
+                else
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Some or all of the connections did not delete, check your invite list";
+                }
+
+                Saved = true;
+            }
+        }
+
+
         public async Task ShowSecondEmailList()
         {
             var dialogParams = new DialogParameters();
             var longlistEmails = new List<(string, int)>();
 
-            foreach (var item in EmailInvitesSent)
+            foreach (var item in EmailInvitesSelected)
             {
-                if (item.Selected == true)
+                if (item.Converted == false)
                 {
                     longlistEmails.Add((item.EmailAddress, item.InvitationCount));
                 }
@@ -269,6 +324,7 @@ namespace BrokerIQ.Online.Pages
 
             dialogParams.Add("EmailInvitation", longlistEmails);
             dialogParams.Add("Heading", "Broker IQ will send an invite email to these email addresses : ");
+            dialogParams.Add("Delete", false);
             var response = await DialogService.Show<ScrollableEmailDialog>("Send Reminder Emails", dialogParams).Result;
             if (!response.Cancelled)
             {
@@ -408,6 +464,55 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        public async Task DeleteSelectedInviteListTelephone()
+        {
+            var dialogParams = new DialogParameters();
+            var longlistEmails = new List<(string, int)>();
+
+            foreach (var item in TelephoneInvitesSelected)
+            {
+                if (item.Converted == false)
+                {
+                    longlistEmails.Add((item.CustomerName, item.Id));
+                }
+            }
+
+            dialogParams.Add("EmailInvitation", longlistEmails);
+            dialogParams.Add("Heading", "Broker IQ will delete these connections ");
+            dialogParams.Add("Delete", true);
+            var response = await DialogService.Show<ScrollableEmailDialog>("Delete invitations", dialogParams).Result;
+            if (!response.Cancelled)
+            {
+                bool succeeded = false;
+
+                try
+                {
+                    foreach (var item in longlistEmails)
+                    {
+                        succeeded = await this.EmailInviteService.DeleteEmailInvite(item.Item2);
+                    }
+                }
+                catch
+                {
+                    succeeded = false;
+                }
+
+                if (succeeded)
+                {
+                    StatusClass = "alert-success";
+                    Message = "Connections deleted successfully";
+                }
+                else
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Some or all of the connections did not delete, check your invite list";
+                }
+
+                Saved = true;
+            }
+        }
+
+
         public async Task SendTelephoneInvites()
         {
             var dialogParams = new DialogParameters();
@@ -454,6 +559,7 @@ namespace BrokerIQ.Online.Pages
 
                 dialogParams.Add("Customers", NameTelephoneTargets.Select(x => x.Item1).ToList());
                 dialogParams.Add("Heading", "The invitation connection with your brokerage will be made to ");
+                dialogParams.Add("Delete", false);
                 var result = await DialogService.Show<ScrollableEmailDialog>("Make Connections", dialogParams).Result;
 
                 if (!result.Cancelled)

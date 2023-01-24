@@ -39,6 +39,8 @@ namespace BrokerIQ.Online.Pages
 
         public List<Broker> Brokers { get; set; }
 
+        public HashSet<Customer> SelectedCustomers { get; set; }
+
         public int BrokerId { get; set; }
 
         public bool SelectFilled { get; set; }
@@ -196,7 +198,7 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
-                targetsName = Customers.Where(x => x.Selected == true && x.EmailConfirmed == true).Select(x => x.Name).ToList();
+                targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
             }
             //var longlist = string.Join(",", targets);
 
@@ -209,11 +211,11 @@ namespace BrokerIQ.Online.Pages
                 var targets = new List<int>();
                 if (sendAll)
                 {
-                    targets = Customers.Select(x => x.Id).ToList();
+                    targets = Customers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
                 }
                 else
                 {
-                    targets = Customers.Where(x => x.Selected == true).Select(x => x.Id).ToList();
+                    targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
                 }
 
                 if (targets != null && targets.Any())
