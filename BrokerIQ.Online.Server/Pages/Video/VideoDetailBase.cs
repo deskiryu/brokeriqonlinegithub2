@@ -44,6 +44,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
         protected List<Customer> Customers { get; set; }
 
+        protected HashSet<Customer> SelectedCustomers { get; set; }
+
         public List<Broker> Brokers { get; set; }
 
         public int BrokerId { get; set; }
@@ -184,7 +186,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
             }
             else
             {
-                targetsName = Customers.Where(x => x.Selected == true && x.EmailConfirmed == true).Select(x => x.Name).ToList();
+                targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
             }
 
 
@@ -201,7 +203,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 }
                 else
                 {
-                    targets = Customers.Where(x => x.Selected == true).Select(x => x.Id).ToList();
+                    targets = SelectedCustomers.Select(x => x.Id).ToList();
                 }
 
                 if (targets != null && targets.Any())
