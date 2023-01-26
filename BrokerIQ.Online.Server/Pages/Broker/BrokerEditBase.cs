@@ -193,6 +193,24 @@
             }
         }
 
+        protected async Task SetTwoFactorEnabled()
+        {
+            bool success = await AccountService.ToggleTwoFactor(Broker.EmailAddress, !Broker.TwoFactorEnabled);
+            if (success)
+            {
+                var responseParams = new DialogParameters();
+                responseParams.Add("Message", "Two factor set successfully");
+                await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+            }
+            else
+            {
+                var responseParams = new DialogParameters();
+                responseParams.Add("Message", "The two factor did not set.");
+                await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+            }
+            NavigationManager.NavigateTo($"/brokerlist");
+        }
+
         protected async Task ResendEmailBroker()
         {
             var dialogParams = new DialogParameters();
