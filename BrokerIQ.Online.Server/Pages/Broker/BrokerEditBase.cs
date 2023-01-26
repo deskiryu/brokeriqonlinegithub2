@@ -199,13 +199,13 @@
             if (success)
             {
                 var responseParams = new DialogParameters();
-                responseParams.Add("Message", "Two factor set successfully");
+                responseParams.Add("Message", "Two factor set/cleared successfully");
                 await DialogService.Show<AlertDialog>("Information", responseParams).Result;
             }
             else
             {
                 var responseParams = new DialogParameters();
-                responseParams.Add("Message", "The two factor did not set.");
+                responseParams.Add("Message", "The two factor was not changed.");
                 await DialogService.Show<AlertDialog>("Information", responseParams).Result;
             }
             NavigationManager.NavigateTo($"/brokerlist");
