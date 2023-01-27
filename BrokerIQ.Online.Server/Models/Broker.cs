@@ -67,6 +67,8 @@ namespace BrokerIQ.Online.Models
 
         public bool TwoFactorUseBrokerPhoneNumber { get; set; }
 
+        public bool TwoFactorEnabled { get; set; }
+
         public TwoFactorEnum TwoFactorType { get; set; }
 
         public virtual ICollection<BrokerStaff> BrokerStaff { get; set; }

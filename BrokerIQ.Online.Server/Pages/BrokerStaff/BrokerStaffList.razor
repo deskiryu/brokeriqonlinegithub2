@@ -25,43 +25,45 @@
             Add New Employee
         </MudButton>
 
-        <div class="table-responsive">
-            <table id="table-broker" class="table col-sm-12 table-striped ">
-                <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
+
+        <div class="card">
+            <div class="card-header">Employees</div>
+            <div class="card-body">
+                <MudTable Items="@BrokerStaff" Hover="true" SortLabel="Sort By">
+                    <HeaderContent>
+                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
                         @if (IsAdmin)
                         {
-                            <th>Broker</th>
+                            <MudTh>Broker</MudTh>
+                            <MudTh>Two Factor</MudTh>                
                         }
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var bStaff in BrokerStaff)
-                    {
-                        <tr>
-                            <td>@bStaff.FirstName</td>
-                            <td>@bStaff.LastName</td>
-                            <td>@bStaff.EmailAddress</td>
-                            @if (IsAdmin)
-                            {
-                                var broker = @Brokers.FirstOrDefault(x => x.Id == bStaff.BrokerId);
-                                <td>@broker.Name</td>
-                            }
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"brokerStaffedit/{bStaff.Id}")" class="btn btn-primary table-btn">
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="First Name">@context.FirstName</MudTd>
+                        <MudTd DataLabel="Last Name">@context.LastName</MudTd>
+                        <MudTd DataLabel="Email">@context.EmailAddress</MudTd>
+                        @if (IsAdmin)
+                        {
+                            var broker = @Brokers.FirstOrDefault(x => x.Id == @context.BrokerId);
+                            <MudTd>@broker.Name</MudTd>
+                            <MudTd DataLabel="Two Factor"><MudCheckBox @bind-Checked="@context.TwoFactorEnabled" Disabled="true"></MudCheckBox></MudTd>                        
+                        }
+
+                        <MudTd>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"brokerstaffedit/{context.Id}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-edit"></i>
                             </MudButton>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                        </MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
+                    </PagerContent>
+                </MudTable>
+            </div>
         </div>
-        @code {
-
-        }
     }
 }
 else
