@@ -25,5 +25,6 @@
 
         Task<bool> ResendEmailBroker(string brokerEmail);
         Task<LoginResponseDto> LoginTwoFactor(Login model);
+        Task<bool> ToggleTwoFactor(string emailAddress, bool enable);
     }
 }

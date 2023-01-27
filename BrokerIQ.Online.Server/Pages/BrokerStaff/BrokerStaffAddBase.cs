@@ -12,6 +12,8 @@
     using BrokerIQ.Online.Models.Account;
     using BrokerIQ.Online.Server.Models;
     using Services.Interface;
+    using BrokerIQ.Online.Server.Helper;
+    using Microsoft.JSInterop;
 
     public class BrokerStaffAddBase : ComponentBase
     {
@@ -33,6 +35,9 @@
 
         [Inject]
         public IMapper mapper { get; set; }
+
+        [Inject]
+        protected IJSRuntime js { get; set; }
 
         public AddStaff BrokerStaff { get; set; }
 
@@ -84,9 +89,18 @@
                     throw new Exception("No broker found");
                 }
 
-                var createBroker = mapper.Map<CreateBrokerStaffDto>(BrokerStaff);
-                createBroker.BrokerId = brokerId;
-                brokerReturned = await AccountService.RegisterStaff(createBroker);
+                var createBrokerStaff = mapper.Map<CreateBrokerStaffDto>(BrokerStaff);
+                createBrokerStaff.BrokerId = brokerId;
+                var isRunningWasm = await RunningWasm.IsWebAssembly(js);
+                if (isRunningWasm)
+                {
+                    createBrokerStaff.TurnOnTwoFactor = true;
+                }
+                else
+                {
+                    createBrokerStaff.TurnOnTwoFactor = false;
+                }
+                brokerReturned = await AccountService.RegisterStaff(createBrokerStaff);
                 if (brokerReturned == null || string.IsNullOrEmpty(brokerReturned.EmailAddress))
                 {
                     throw new Exception("Registration failed");

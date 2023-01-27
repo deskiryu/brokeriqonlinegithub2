@@ -74,9 +74,17 @@
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-outline-primary edit-outline-btn" OnClick="@NavigateToOverview">Cancel</MudButton>
                 </div>
 
+                    @if (IsAdmin)
+                    {
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Two Factor Enabled</label>
+                            <div class="col-sm-8">
 
+                                <MudCheckBox @bind-Checked="@_brokerStaff.TwoFactorEnabled" @onclick="async f => await SetTwoFactorEnabled()" Style="margin-left: -15px" />
 
-
+                            </div>
+                        </div>                        
+                    }
 
 
             </div>
@@ -91,6 +99,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="ResendEmailBrokerStaff">
                 Resend Verify Email
             </MudButton>
+
     </div>
 </section>
 

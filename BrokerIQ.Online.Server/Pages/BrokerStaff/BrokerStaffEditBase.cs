@@ -38,6 +38,8 @@
         [Parameter]
         public string BrokerStaffId { get; set; }
 
+        public bool IsAdmin { get; set; }
+
         public BrokerStaffEditBase()
         {
             _brokerStaff = new BrokerStaff();
@@ -50,6 +52,7 @@
                 var user = await AccountService.GetUser();
                 BrokerId = 0;                    
                 id = Int32.Parse(BrokerStaffId);
+                IsAdmin = user.IsAdmin;
 
                 if (user.IsBroker || user.IsAdmin)
                 {
@@ -130,6 +133,24 @@
                 }
                 NavigationManager.NavigateTo($"/brokerstafflist");
             }
+        }
+
+        protected async Task SetTwoFactorEnabled()
+        {
+            bool success = await AccountService.ToggleTwoFactor(_brokerStaff.EmailAddress, !_brokerStaff.TwoFactorEnabled);
+            if (success)
+            {
+                var responseParams = new DialogParameters();
+                responseParams.Add("Message", "Two factor set/cleared successfully");
+                await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+            }
+            else
+            {
+                var responseParams = new DialogParameters();
+                responseParams.Add("Message", "The two factor was not changed.");
+                await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+            }
+            NavigationManager.NavigateTo($"/brokerstafflist");
         }
     }
 }
