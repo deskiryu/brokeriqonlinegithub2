@@ -32,6 +32,8 @@ namespace BrokerIQ.Online.Models
 
         public TwoFactorEnum TwoFactorType { get; set; }
 
+        public bool TwoFactorEnabled { get; set; }
+
         public int BrokerId { get; set; }
     }
 }

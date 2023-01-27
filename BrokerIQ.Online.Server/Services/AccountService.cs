@@ -116,6 +116,11 @@ namespace BrokerIQ.Online.Services
             return await _requestProviderService.Post<CreateBrokerStaffDto, BrokerStaffDto>("BrokerAuth/signupstaff", model);
         }
 
+        public async Task<bool> ToggleTwoFactor(string emailAddress, bool enable)
+        {
+            return await _requestProviderService.Post<bool>($"BrokerAuth/twofactorenable?emailaddress={emailAddress}&enable={enable}");
+        }
+
         public async Task<IList<User>> GetAll()
         {
             return await _requestProviderService.Get<IList<User>>("/users");

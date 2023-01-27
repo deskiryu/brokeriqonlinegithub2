@@ -8,12 +8,14 @@
 @using AutoMapper
 @using BrokerIQ.Dto.Models
 @using BrokerIQ.Online.Server.Shared
+@using BrokerIQ.Online.Server.Helper;
 @inject IAccountService AccountService
 @inject IDialogService DialogService
 @inject ILogoService LogoService
 @inject IAddressService AddressService
 @inject NavigationManager NavigationManager
 @inject IMapper mapper
+@inject IJSRuntime jsRuntime
 
 
 <div class="card">
@@ -210,6 +212,16 @@
         try
         {
             var createBroker = mapper.Map<CreateBrokerDto>(model);
+            var isRunningWasm = await RunningWasm.IsWebAssembly(jsRuntime);
+            if (isRunningWasm)
+            {
+                createBroker.TurnOnTwoFactor = true;
+            }
+            else
+            {
+                createBroker.TurnOnTwoFactor = false;
+            }
+
             brokerReturned = await AccountService.Register(createBroker);
             if (brokerReturned == null || string.IsNullOrEmpty(brokerReturned.EmailAddress))
             {
