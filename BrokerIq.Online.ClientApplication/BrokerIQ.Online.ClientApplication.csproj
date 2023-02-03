@@ -33,7 +33,6 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BrokerIQ.Dto" Version="1.0.66" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.1" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />

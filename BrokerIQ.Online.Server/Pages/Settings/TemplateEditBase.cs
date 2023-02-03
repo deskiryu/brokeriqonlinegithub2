@@ -46,7 +46,7 @@ namespace BrokerIQ.Online.Pages
             {
                 string message = String.Empty;
 
-                //Only 15 for now
+                //Only 20 for now
                 if (enumVal != BrokerDefinedMessageEnum.TickBoxMessage1 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage2 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage3 &&
@@ -61,7 +61,12 @@ namespace BrokerIQ.Online.Pages
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage12 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage13 &&
                     enumVal != BrokerDefinedMessageEnum.TickBoxMessage14 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage15 )
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage15 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage16 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage17 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage18 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage19 &&
+                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage20)
                 {
                     continue;
                 }
