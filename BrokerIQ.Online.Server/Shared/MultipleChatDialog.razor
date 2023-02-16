@@ -1,0 +1,341 @@
+﻿@using System.Net
+@using System.Text
+@using BrokerIQ.Dto.Enum;
+@using BrokerIQ.Online.Models;
+@using BrokerIQ.Online.Server.Extensions;
+@using BrokerIQ.Online.Server.Models;
+@using BrokerIQ.Online.Services.Interface;
+@using System.IO;
+@using Microsoft.Extensions.Options;
+@using BrokerIQ.Online.Server.AppSettings;
+
+@inject IBrokerDefinedMessageService BrokerDefinedMessageService
+@inject IDialogService DialogService
+@inject IOptions<FileUploadSettings> FileUploadSettingsOption;
+@inject IChatService ChatService;
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer Style="max-height: 800px; overflow-y: scroll">
+            <div class="control_wrapper mb-5">
+                <MudSelect T="string"
+                           Label="Select Message Template"
+                           Placeholder="Select Message Template"
+                           Clearable="true"
+                           @bind-Value="SelectedTemplateMessage"
+                           AdornmentColor="Color.Primary">
+                    @foreach (string message in @BrokerDefinedMessages)
+                    {
+                        <MudSelectItem Value="@message">@message</MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
+            <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                <MudDatePicker Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
+                <MudSpacer />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
+            </div>
+
+            <div class="col-sm-6 mt-1">
+                <div class="card">
+                    <div class="card-body">
+                        <label class="card-title">Upload pdf files</label>
+                        <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
+                                  @ondragleave="@(() => DragEnterStyle = null)"
+                                  @ondragend="@(() => DragEnterStyle = null)"
+                                  Class=@("drag-drop-zone " + DragEnterStyle)>
+
+                            <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" accept="application/pdf" />
+                            <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
+                        </MudPaper>
+                        @if (LoadedChatFiles.Any())
+                        {
+                            var filename = LoadedChatFiles[0].Name;
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())" class="btn btn-link">Remove @filename</MudButton>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 mt-1">
+                <div class="card">
+                    <div class="card-body">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
+                            New Chat Message
+                        </MudButton>
+                    </div>
+                </div>
+            </div>
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"  OnClick="Ok">Send</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code 
+{
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public List<(string, int)> Customers { get; set; }
+
+    public string SelectedTemplateMessage { get; set; }
+
+    public List<string> BrokerDefinedMessages = new List<string>();
+
+    public DateTime? SelectedTemplateDateReplacement { get; set; }
+
+    protected List<IBrowserFile> LoadedChatFiles = new();
+
+    public string LoadFileStatus { get; set; }
+
+    private FileUploadSettings fileUploadSettings { get; set; }
+
+    public string DragEnterStyle { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Loading = false;
+
+        PopulateBrokerDefinedMessages();
+
+@*        if(EmailInvitation!=null && EmailInvitation.Count > 0)
+        {
+            Customers = new List<string>();
+            foreach(var invite in EmailInvitation)
+            {
+                if (Delete)
+                {
+                    Customers.Add($"Connection to {invite.Item1} will be deleted");
+                }
+                else
+                {
+                    Customers.Add($"Invite {invite.Item2+1} will be sent to {invite.Item1}");                  
+                }
+
+            }
+        }*@
+        fileUploadSettings = this.FileUploadSettingsOption.Value;
+
+    }
+
+
+    private bool Loading = false;
+
+    private void Ok()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private async Task PopulateBrokerDefinedMessages()
+    {
+        BrokerDefinedMessages = new List<string>();
+        BrokerDefinedMessage brokerDefinedMessage = await BrokerDefinedMessageService.Get();
+        foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
+        {
+
+            //Only 20 for now
+            if (enumVal != BrokerDefinedMessageEnum.TickBoxMessage1 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage2 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage3 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage4 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage5 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage6 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage7 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage8 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage9 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage10 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage11 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage12 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage13 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage14 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage15 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage16 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage17 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage18 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage19 &&
+                enumVal != BrokerDefinedMessageEnum.TickBoxMessage20)
+            {
+                continue;
+            }
+
+            string message = String.Empty;
+            foreach (var item in brokerDefinedMessage.BrokerDefinedMessages.Where(
+                b => b.BrokerDefinedMessageEnumValue == enumVal && !b.BrokerDefinedMessage.Equals(enumVal.GetDisplayName())))
+            {
+                message = item.BrokerDefinedMessage;
+                break;
+            }
+
+            if (message == String.Empty)
+            {
+                // display default
+                BrokerDefinedMessages.Add(enumVal.GetDisplayName().Replace("INSERT_CLIENT_NAME", "Customer Name").Replace("INSERT_BROKER_NAME", "Broker Name"));
+            }
+        }
+    }
+
+    private async Task InsertTemplateMessage()
+    {
+        var succeeded = false;
+        if (SelectedTemplateMessage != null)
+        {
+            var messageToSend = SelectedTemplateMessage;
+            if (SelectedTemplateMessage.Contains("INSERT_DATE"))
+            {
+                if (SelectedTemplateDateReplacement.HasValue)
+                {
+                    DateTime value = SelectedTemplateDateReplacement.Value;
+                    messageToSend = SelectedTemplateMessage.Replace("INSERT_DATE", value.ToShortDateString());
+                }
+                else
+                {
+                    var dialogParams = new DialogParameters();
+                    dialogParams.Add("Message", "Template requires a DATE to be inserted into message. Please select one from the date picker.");
+                    var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+                    return;
+                }
+            }
+
+            try
+            {
+                if (!string.IsNullOrEmpty(messageToSend))
+                {
+                    await NewChat(messageToSend);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("InsertTemplateMessage: exception - " + ex.Message);
+            }
+        }
+        else
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", "Please select a template from the dropdown menu.");
+            var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+            return;
+        }
+    }
+
+    protected async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        if (e.FileCount > 1)
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"Only one document per chat message");
+            await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
+
+        }
+        LoadedChatFiles.Clear();
+        foreach (var file in e.GetMultipleFiles(1))
+        {
+            try
+            {
+                var ext = Path.GetExtension(file.Name);
+                if (ext != ".pdf")
+                {
+                    throw new Exception("Pdf files only");
+                }
+                LoadedChatFiles.Add(file);
+            }
+            catch (Exception ex)
+            {
+                LoadFileStatus = ex.Message;
+
+                break;
+            }
+        }
+    }
+
+    protected async Task DeleteChatDocument()
+    {
+        LoadedChatFiles.Clear();
+    }
+
+    protected async Task NewChat(string messageToshow = "")
+    {
+        bool succeeded = false;
+
+        var fileAttached = false;
+        var sdoc = new ChatDocument();
+        var dialogParams = new DialogParameters();
+
+        try
+        {
+            if (LoadedChatFiles.Any())
+            {
+                var fileName = "";
+                var memoryStream = new MemoryStream();
+                var file = LoadedChatFiles[0];
+                if (file != null)
+                {
+                    fileAttached = true;
+                    fileName = LoadedChatFiles[0].Name;
+
+                    if (file.Size > this.fileUploadSettings.MaxFileSize)
+                    {
+                        dialogParams.Add("Oversize", "true");
+                        fileAttached = false;
+                    }
+                    else
+                    {
+                        await file.OpenReadStream(this.fileUploadSettings.MaxFileSize).CopyToAsync(memoryStream);
+
+                        sdoc.FileName = fileName;
+                        sdoc.File = memoryStream.ToArray();
+
+                        dialogParams.Add("Filenames", new List<string>{
+                            sdoc.FileName
+                        });
+                        dialogParams.Add("MemoryStreams", new List<MemoryStream> {
+                            memoryStream
+                        });
+                    }
+                }
+            }
+        }
+        catch
+        {
+            fileAttached = false;
+        }
+
+        dialogParams.Add("PrePopulatedMessage", messageToshow);
+
+        var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams).Result;
+        if (!result.Cancelled)
+        {
+            var message = result.Data.ToString();
+
+            try
+            {
+                if (!string.IsNullOrEmpty(message))
+                {
+                    if (fileAttached)
+                    {
+                       // succeeded = (await ChatService.Send(message, Customer.Id, sdoc));
+                    }
+                    else
+                    {
+                       // succeeded = (await ChatService.Send(message, Customer.Id));
+                    }
+                }
+            }
+            catch
+            {
+                succeeded = false;
+            }
+        }
+
+        return;
+    }
+
+}

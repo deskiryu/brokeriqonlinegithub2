@@ -11,6 +11,7 @@ namespace BrokerIQ.Online.Pages
     using Models;
     using MudBlazor;
     using Services.Interface;
+    using System.Globalization;
 
     public class CustomerListBase : ComponentBase
     {
@@ -163,17 +164,38 @@ namespace BrokerIQ.Online.Pages
 
         
 
-        protected async Task SendNotificationToAll()
+        protected async Task SendChatMessageToSelected()
         {
-            await OpenNotificationDialog(true);
+            var dialogParams = new DialogParameters();
+
+            var targets = new List<(string,int)>();
+            targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => (x.Name,x.Id)).ToList();
+            dialogParams.Add("Customers", targets);
+
+            var dialogOptions = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true
+            };
+
+            var result = await DialogService.Show<MultipleChatDialog>("Send Chat To Multiple", dialogParams, dialogOptions).Result;
+
+            if (!result.Cancelled)
+            {
+                AlertService.Alert(new AlertBIQ
+                {
+                    AutoClose = true,
+                    Message = "Chat Message Sent"
+              });
+            }
+            else
+            {
+                AlertService.Error("Chat Message sending failed");
+            }
         }
 
-        protected async Task SendNotificationToSelected(bool sendAll = false)
-        {
-            await OpenNotificationDialog(false);
-        }
 
-        protected async Task OpenNotificationDialog(bool sendAll = false)
+        protected async Task SendNotificationToSelected()
         {
             var dialogParams = new DialogParameters();
             if (string.IsNullOrEmpty(selectedNotification))
@@ -191,15 +213,7 @@ namespace BrokerIQ.Online.Pages
             }
             dialogParams.Add("Notification", selectedNotification);
 
-            var targetsName = new List<string>();
-            if (sendAll)
-            {
-                targetsName = Customers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
-            }
-            else
-            {
-                targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
-            }
+            var targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
             //var longlist = string.Join(",", targets);
 
             dialogParams.Add("Users", targetsName);
@@ -208,15 +222,7 @@ namespace BrokerIQ.Online.Pages
 
             if (!result.Cancelled)
             {
-                var targets = new List<int>();
-                if (sendAll)
-                {
-                    targets = Customers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
-                }
-                else
-                {
-                    targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
-                }
+                var targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
 
                 if (targets != null && targets.Any())
                 {
@@ -225,13 +231,12 @@ namespace BrokerIQ.Online.Pages
                     var succeeded = false;
                     try
                     {
-                        succeeded = await NotificationService.SendMessageNotification(selectedNotification, targets, user.MasterBrokerId, sendAll);
+                        succeeded = await NotificationService.SendMessageNotification(selectedNotification, targets, user.MasterBrokerId);
                     }
                     catch
                     {
 
                     }
-
 
                     if (succeeded)
                     {
