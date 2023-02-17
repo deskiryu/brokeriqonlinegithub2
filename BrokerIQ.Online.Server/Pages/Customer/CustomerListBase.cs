@@ -71,6 +71,7 @@ namespace BrokerIQ.Online.Pages
                 else
                 {
                     Brokers = new List<Broker>();
+                    BrokerId = user.MasterBrokerId;
                 }
             }
             catch
@@ -153,6 +154,8 @@ namespace BrokerIQ.Online.Pages
             Customers.Clear();
             Customers = null;
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures:true)).ToList();
+            SelectedCustomers.Clear();
+            StateHasChanged();
         }
 
         protected async Task RecentFilterSelect()
@@ -160,6 +163,8 @@ namespace BrokerIQ.Online.Pages
             Customers.Clear();
             Customers = null;
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
+            SelectedCustomers.Clear();
+            StateHasChanged();
         }
 
         
@@ -169,7 +174,26 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
 
             var targets = new List<(string,int)>();
-            targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => (x.Name,x.Id)).ToList();
+            if(SelectedCustomers != null && SelectedCustomers.Any())
+            {
+                targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => (x.Name,x.Id)).ToList();
+            }
+
+            if (targets==null || !targets.Any())
+            {
+                AlertService.Error("No targets chosen");
+                return;
+            }
+
+            if (IsAdmin)
+            {
+                if (BrokerId <= 0) {
+                    AlertService.Error("Please filter by broker first");
+                    return;
+                }
+            }
+
+            dialogParams.Add("BrokerId", BrokerId);
             dialogParams.Add("Customers", targets);
 
             var dialogOptions = new DialogOptions()
@@ -178,20 +202,7 @@ namespace BrokerIQ.Online.Pages
                 FullWidth = true
             };
 
-            var result = await DialogService.Show<MultipleChatDialog>("Send Chat To Multiple", dialogParams, dialogOptions).Result;
-
-            if (!result.Cancelled)
-            {
-                AlertService.Alert(new AlertBIQ
-                {
-                    AutoClose = true,
-                    Message = "Chat Message Sent"
-              });
-            }
-            else
-            {
-                AlertService.Error("Chat Message sending failed");
-            }
+            await DialogService.Show<MultipleChatDialog>("Send Chat To Multiple", dialogParams, dialogOptions).Result;
         }
 
 
@@ -213,7 +224,17 @@ namespace BrokerIQ.Online.Pages
             }
             dialogParams.Add("Notification", selectedNotification);
 
-            var targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
+            var targetsName = new List<string>();
+            if (SelectedCustomers != null && SelectedCustomers.Any())
+            {
+                targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
+            }
+
+            if (targetsName == null && !targetsName.Any())
+            {
+                AlertService.Error("No targets chosen");
+            };
+
             //var longlist = string.Join(",", targets);
 
             dialogParams.Add("Users", targetsName);
@@ -222,7 +243,11 @@ namespace BrokerIQ.Online.Pages
 
             if (!result.Cancelled)
             {
-                var targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
+                var targets = new List<int>();
+                if (SelectedCustomers != null && SelectedCustomers.Any())
+                {
+                    targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
+                }
 
                 if (targets != null && targets.Any())
                 {

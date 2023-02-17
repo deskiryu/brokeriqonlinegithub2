@@ -29,11 +29,12 @@ else
                     <MudInputString @bind-Value="selectedNotification" Placeholder="Type a notification message" Style="width:100%" />
                 </div>
                 <div class="col-sm-3 mt-1">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendChatMessageToSelected())">Send chat message to selected clients</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendNotificationToSelected())">Send Notification to selected clients</MudButton>
                 </div>
                 <div class="col-sm-3 mt-1">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendNotificationToSelected())" >Send Notification to selected clients</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendChatMessageToSelected())">Send chat message to selected clients</MudButton>
                 </div>
+
             </div>
         </div>
     </div>

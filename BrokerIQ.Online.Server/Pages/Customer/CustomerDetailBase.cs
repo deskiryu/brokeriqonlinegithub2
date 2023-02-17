@@ -603,7 +603,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         if (fileAttached)
                         {
-                            succeeded = (await ChatService.Send(message, Customer.Id, sdoc));
+                            succeeded = (await ChatService.SendWithDoc(message, Customer.Id, sdoc));
                         }
                         else
                         {
