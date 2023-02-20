@@ -154,7 +154,11 @@ namespace BrokerIQ.Online.Pages
             Customers.Clear();
             Customers = null;
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures:true)).ToList();
-            SelectedCustomers.Clear();
+            if(SelectedCustomers!=null && SelectedCustomers.Any())
+            {
+                SelectedCustomers.Clear();
+            }
+
             StateHasChanged();
         }
 
@@ -163,7 +167,10 @@ namespace BrokerIQ.Online.Pages
             Customers.Clear();
             Customers = null;
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
-            SelectedCustomers.Clear();
+            if (SelectedCustomers != null && SelectedCustomers.Any())
+            {
+                SelectedCustomers.Clear();
+            }
             StateHasChanged();
         }
 
