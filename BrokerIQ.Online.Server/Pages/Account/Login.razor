@@ -97,7 +97,7 @@
 
 
 
-#if !DEBUG        
+#if !DEBUG   
         var isRunningWasm = await RunningWasm.IsWebAssembly(js);
 
         if (isRunningWasm && Success && response.IsAdmin)
@@ -106,7 +106,14 @@
         }
         else if (isRunningWasm && Success && response.RequiresTwoFactor == false && ShowVerifyCode == false)
         {
-            AlertService.Error($"Two factor authentication required for this site, contact admin@brokeriq.co.uk to activate.");
+            if(!response.LoggedIn)
+            {
+                AlertService.Error("Could not log on the user with this email address / password");
+            }
+            else
+            {
+                AlertService.Error($"Two factor authentication required for this site, contact admin@brokeriq.co.uk to activate.");               
+            }
         } 
         else 
 #endif  
