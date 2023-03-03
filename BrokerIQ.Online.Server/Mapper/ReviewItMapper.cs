@@ -580,6 +580,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.LogoImage, action => action.MapFrom(s => s.LogoImage))
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
+                .ForMember(d => d.TurnOnTwoFactor, action => action.MapFrom(s => true))
                 .ForMember(d => d.Password, action => action.MapFrom(s => s.Password));
             CreateMap<BrokerDto, Broker>()
                 .ForMember(d => d.TwoFactorUseBrokerPhoneNumber, action => action.MapFrom((src, dest) =>
