@@ -97,7 +97,7 @@
 
 
 
-#if TRUE   
+#if !DEBUG   
         var isRunningWasm = await RunningWasm.IsWebAssembly(js);
 
         if (isRunningWasm && Success && response.IsAdmin)
