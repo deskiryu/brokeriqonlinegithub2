@@ -212,15 +212,6 @@
         try
         {
             var createBroker = mapper.Map<CreateBrokerDto>(model);
-            var isRunningWasm = await RunningWasm.IsWebAssembly(jsRuntime);
-            if (isRunningWasm)
-            {
-                createBroker.TurnOnTwoFactor = true;
-            }
-            else
-            {
-                createBroker.TurnOnTwoFactor = false;
-            }
 
             brokerReturned = await AccountService.Register(createBroker);
             if (brokerReturned == null || string.IsNullOrEmpty(brokerReturned.EmailAddress))
