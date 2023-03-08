@@ -90,6 +90,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<IMetaDefenderCoreService, MetaDefenderCoreService>();
             services.AddScoped<IVersionService, VersionService>();
             services.AddScoped<ITelephoneInviteService, TelephoneInviteService>();
+            services.AddScoped<IBrokerIdentifierService, BrokerIdentifierService>();
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
             services.AddScoped<MessageCountState>();

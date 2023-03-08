@@ -25,6 +25,9 @@
         public IBrokerService BrokerService { get; set; }
 
         [Inject]
+        public IBrokerIdentifierService BrokerIdentifierService { get; set; }
+
+        [Inject]
         public IAccountService AccountService { get; set; }
 
         [Inject]
@@ -41,6 +44,8 @@
 
         public Broker Broker { get; set; }
 
+        public BrokerIdentifier BrokerIdentifier { get; set; }
+
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
         protected bool Saved;
@@ -53,6 +58,10 @@
         public BrokerEditBase()
         {
             Broker = new Broker();
+            BrokerIdentifier = new BrokerIdentifier
+            {
+                IdentifierFound = false
+            };
             NavigateAdmin = false;
         }
 
@@ -68,6 +77,10 @@
                     if (id > 0)
                     {
                         Broker = (await BrokerService.GetBroker(id));
+                        if(Broker.BrokerIdentifier !=null && Broker.BrokerIdentifier.IdentifierFound)
+                        {
+                            BrokerIdentifier = Broker.BrokerIdentifier;
+                        }
                     }
                 }
                 else
@@ -111,6 +124,71 @@
             }
         }
 
+
+        protected void HandleInvalidSubmitIdentifier()
+        {
+            StatusClass = "alert-danger";
+            Message = "There are some validation errors. Please try again.";
+        }
+
+        protected async Task HandleValidSubmitIdentifier()
+        {
+            StatusClass = "alert-success";
+            Message = "Broker identifier updated successfully.";
+            try
+            {
+                await BrokerIdentifierService.UpdateBrokerIdentifier(BrokerIdentifier);
+            }
+            catch
+            {
+                StatusClass = "alert-danger";
+                Message = "Something went wrong updating the Broker Identifier. Please try again.";
+
+            }
+            finally
+            {
+                Saved = true;
+            }
+        }
+
+        protected async Task AddIdentifier()
+        {
+            StatusClass = "alert-success";
+            Message = "Broker identifier added successfully.";
+            try
+            {
+                await BrokerIdentifierService.AddBrokerIdentifier(Broker.Id);
+            }
+            catch
+            {
+                StatusClass = "alert-danger";
+                Message = "Something went wrong adding the Broker Identifier. Please try again.";
+
+            }
+            finally
+            {
+                Saved = true;
+            }
+        }
+        protected async Task DeleteIdentifier()
+        {
+            StatusClass = "alert-success";
+            Message = "Broker identifier deleted successfully.";
+            try
+            {
+                await BrokerIdentifierService.DeleteBrokerIdentifier(BrokerIdentifier.Id);
+            }
+            catch
+            {
+                StatusClass = "alert-danger";
+                Message = "Something went wrong deleting the Broker Identifier. Please try again.";
+
+            }
+            finally
+            {
+                Saved = true;
+            }
+        }
         protected async void NavigateToOverview()
         {
             var user = await AccountService.GetUser();
