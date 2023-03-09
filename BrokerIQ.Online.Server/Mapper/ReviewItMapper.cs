@@ -611,6 +611,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
                 .ForMember(d => d.LogoImage, action => action.MapFrom(s => s.LogoImage));
             CreateMap<BrokerIdentifierDto, BrokerIdentifier>();
+
+            CreateMap<BrokerIdentifier, UpdateBrokerIdentifierDto>();
         }
 
         public void BrokerStaffMapper()
