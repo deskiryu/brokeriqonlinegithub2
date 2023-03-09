@@ -12,7 +12,7 @@
     using Microsoft.AspNetCore.Components.Forms;
     using Models;
     using MudBlazor;
-    
+
     using Services.Interface;
 
     public class BrokerEditBase : ComponentBase
@@ -36,7 +36,7 @@
         [Inject]
         public IInsuranceDocumentService SupportingDocumentService { get; set; }
 
-        [Inject] 
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -77,7 +77,7 @@
                     if (id > 0)
                     {
                         Broker = (await BrokerService.GetBroker(id));
-                        if(Broker.BrokerIdentifier !=null && Broker.BrokerIdentifier.IdentifierFound)
+                        if (Broker.BrokerIdentifier != null && Broker.BrokerIdentifier.IdentifierFound)
                         {
                             BrokerIdentifier = Broker.BrokerIdentifier;
                         }
@@ -85,7 +85,7 @@
                 }
                 else
                 {
-                    NavigateAdmin= false;
+                    NavigateAdmin = false;
                     if (user.MasterBrokerId > 0)
                     {
                         Broker = (await BrokerService.GetBroker(user.MasterBrokerId));
@@ -106,6 +106,7 @@
 
         protected async Task HandleValidSubmit()
         {
+
             StatusClass = "alert-success";
             Message = "Broker updated successfully.";
             try
@@ -135,59 +136,80 @@
         {
             StatusClass = "alert-success";
             Message = "Broker identifier updated successfully.";
-            try
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"Are you absolutely sure you want to change white label settings for {Broker.Name}? This changes can affect app, email and notifications!!!!");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
             {
-                await BrokerIdentifierService.UpdateBrokerIdentifier(BrokerIdentifier);
-            }
-            catch
-            {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong updating the Broker Identifier. Please try again.";
+                try
+                {
+                    await BrokerIdentifierService.UpdateBrokerIdentifier(BrokerIdentifier);
+                }
+                catch
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong updating the Broker Identifier. Please try again.";
 
+                }
+                finally
+                {
+                    Saved = true;
+                }
             }
-            finally
-            {
-                Saved = true;
-            }
+
         }
 
         protected async Task AddIdentifier()
         {
             StatusClass = "alert-success";
             Message = "Broker identifier added successfully.";
-            try
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"Are you absolutely sure you want to add white label settings for {Broker.Name}? This changes can SERIOUSLY affect app, email and notifications!!!!");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
             {
-                await BrokerIdentifierService.AddBrokerIdentifier(Broker.Id);
-            }
-            catch
-            {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong adding the Broker Identifier. Please try again.";
+                try
+                {
+                    await BrokerIdentifierService.AddBrokerIdentifier(Broker.Id);
+                }
+                catch
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong adding the Broker Identifier. Please try again.";
 
+                }
+                finally
+                {
+                    Saved = true;
+                }
             }
-            finally
-            {
-                Saved = true;
-            }
+
         }
         protected async Task DeleteIdentifier()
         {
             StatusClass = "alert-success";
             Message = "Broker identifier deleted successfully.";
-            try
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"Are you absolutely sure you want to delete white label settings for {Broker.Name}? This changes can SERIOUSLY affect app, email and notifications!!!!");
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
             {
-                await BrokerIdentifierService.DeleteBrokerIdentifier(BrokerIdentifier.Id);
-            }
-            catch
-            {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong deleting the Broker Identifier. Please try again.";
+                try
+                {
+                    await BrokerIdentifierService.DeleteBrokerIdentifier(BrokerIdentifier.Id);
+                }
+                catch
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong deleting the Broker Identifier. Please try again.";
 
+                }
+                finally
+                {
+                    Saved = true;
+                }
             }
-            finally
-            {
-                Saved = true;
-            }
+
         }
         protected async void NavigateToOverview()
         {
@@ -198,10 +220,10 @@
             }
             else
             {
-                Saved= false;
+                Saved = false;
                 StateHasChanged();
             }
-            
+
         }
 
         public async Task LoadFiles(InputFileChangeEventArgs e)
@@ -261,7 +283,7 @@
 
         protected async Task SetUseBrokerPhoneNumber()
         {
-            if(!Broker.TwoFactorUseBrokerPhoneNumber)
+            if (!Broker.TwoFactorUseBrokerPhoneNumber)
             {
                 Broker.TwoFactorPhoneNumber = Broker.TelephoneNumber.GetFormattedPhoneNumber();
             }
