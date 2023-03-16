@@ -75,6 +75,8 @@ namespace BrokerIQ.Online.Pages
 
         public string BrokerName { get; set; }
 
+        public bool BrokerHasWhiteLabel { get; set; }
+
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
         public IEnumerable<CustomerDocument> CustomerDocuments { get; set; }
@@ -150,10 +152,17 @@ namespace BrokerIQ.Online.Pages
                     RequestedDocuments.Add(item, 0);
                 }
 
+                BrokerHasWhiteLabel = false;
                 if (!IsAdmin)
                 {
-                    BrokerName = (await BrokerService.GetBroker(user.MasterBrokerId)).Name;
+                    var broker = await BrokerService.GetBroker(user.MasterBrokerId);
+                    BrokerName = broker.Name;
+                    BrokerHasWhiteLabel = broker.BrokerIdentifier!= null && broker.BrokerIdentifier.IdentifierFound;
                     await PopulateBrokerDefinedMessages();
+                }
+                else
+                {
+                    BrokerHasWhiteLabel= true;
                 }
             }
             catch

@@ -138,16 +138,38 @@ else if (!Saved)
 
                         <div class="form-group row">
                             <label class="col-lg-2 col-form-label">Address</label>
-                            <div class="col-8">
+                            <div class="col-lg-4">
                                 <label type="text" readonly class="form-control-plaintext">@Customer.Address</label>
                             </div>
-                        </div>
 
-                        <div class="form-group row">
                             <label class="col-lg-2 ">Business Name</label>
                             <div class="col-lg-4">
                                 <label type="text" readonly class="form-control-plaintext">@Customer.BusinessName</label>
                             </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">App Version</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.AppVersion</label>
+                            </div>
+                            @if(BrokerHasWhiteLabel){
+                                <label class="col-lg-2 ">Using Branded App</label>
+                                @if (Customer.IsWhiteLabel)
+                                {
+                                    <div class="col-lg-4">
+                                        <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-lg-4">
+                                        <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                                    </div>
+                                }                                
+                            }
+
                         </div>
 
                         @if (IsAdmin)
