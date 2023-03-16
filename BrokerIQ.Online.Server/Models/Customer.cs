@@ -64,6 +64,10 @@ namespace BrokerIQ.Online.Models
         [MaxLength(200)]
         public string BusinessName { get; set; }
 
+        public string AppVersion { get; set; }
+
+        public bool IsWhiteLabel { get; set; }
+
         public virtual ICollection<Insurance> Insurances { get; set; }
 
         public virtual ICollection<Mortgage> Mortgages { get; set; }
