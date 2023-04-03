@@ -39,6 +39,8 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsAdmin { get; set; }
 
+        public bool IsMinorAdmin { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             try
@@ -47,9 +49,10 @@ namespace BrokerIQ.Online.Pages
                 IsAdmin = false;
 
                 var user = await AccountService.GetUser();
-                if (user.IsAdmin)
+                if (user.IsAdmin || user.IsMinorAdmin)
                 {
-                    IsAdmin = true;
+                    IsAdmin = user.IsAdmin;
+                    IsMinorAdmin= user.IsMinorAdmin;
                     BrokerStaff = (await BrokerStaffService.GetBrokerStaff()).ToList();
                     Brokers = (await BrokerService.GetBrokers()).ToList();
                 }

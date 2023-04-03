@@ -39,6 +39,7 @@
         public string BrokerStaffId { get; set; }
 
         public bool IsAdmin { get; set; }
+        public bool IsMinorAdmin { get; set; }
 
         public BrokerStaffEditBase()
         {
@@ -53,8 +54,9 @@
                 BrokerId = 0;                    
                 id = Int32.Parse(BrokerStaffId);
                 IsAdmin = user.IsAdmin;
+                IsMinorAdmin = user.IsMinorAdmin;
 
-                if (user.IsBroker || user.IsAdmin)
+                if (user.IsBroker || user.IsAdmin || user.IsMinorAdmin)
                 {
                     if (id > 0)
                     {
