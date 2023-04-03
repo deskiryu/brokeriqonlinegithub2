@@ -123,7 +123,7 @@
                         </div>
                     </div>
 
-                    @if (NavigateAdmin)
+                    @if (IsAdmin)
                     {
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Identifier</label>
@@ -173,15 +173,15 @@
                     </div>
                     <div>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Update Broker</MudButton>
-                        @if (NavigateAdmin)
+                        @if (IsAdmin)
                         {
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-lg-2 mt-1">Cancel</MudButton>
                         }
-                        @if (NavigateAdmin && (BrokerIdentifier==null || BrokerIdentifier.IdentifierFound==false))
+                        @if (IsAdmin && (BrokerIdentifier==null || BrokerIdentifier.IdentifierFound==false))
                         {
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@AddIdentifier" class="btn btn-link ml-lg-2 mt-1">Add WhiteLabel Identifier</MudButton>
                         }
-                        @if (NavigateAdmin && BrokerIdentifier != null && BrokerIdentifier.IdentifierFound)
+                        @if (IsAdmin && BrokerIdentifier != null && BrokerIdentifier.IdentifierFound)
                         {
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteIdentifier" class="btn btn-link ml-lg-2 mt-1">Delete WhiteLabel Identifier</MudButton>
                         }
@@ -189,7 +189,7 @@
                 </EditForm>
 
                 </MudTabPanel>
-                 @if (NavigateAdmin && BrokerIdentifier!=null && BrokerIdentifier.IdentifierFound)
+                 @if (IsAdmin && BrokerIdentifier!=null && BrokerIdentifier.IdentifierFound)
                 {
                  <MudTabPanel Text="White Label">
                      <EditForm Model="@BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
@@ -334,7 +334,7 @@
                     </div>
                         <div>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Update Broker Identifier</MudButton>
-                            @if (NavigateAdmin)
+                            @if (IsAdmin)
                             {
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-lg-2 mt-1">Cancel Update Identifier</MudButton>
                             }
@@ -348,16 +348,18 @@
             </MudTabs>
 
        
-        @if (NavigateAdmin)
-        {
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mt-1" @onclick="DeleteBroker">
-                Delete Broker
-            </MudButton>
-
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="ResendEmailBroker">
-                Resend Verify Email
-            </MudButton>
-        }
+            @if (IsAdmin)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mt-1" @onclick="DeleteBroker">
+                    Delete Broker
+                </MudButton>
+            }
+            @if(IsAdmin || IsMinorAdmin)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="ResendEmailBroker">
+                    Resend Verify Email
+                </MudButton>            
+            }
 
     </section>
 
