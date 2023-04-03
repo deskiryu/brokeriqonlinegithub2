@@ -100,7 +100,7 @@
 #if !DEBUG   
         var isRunningWasm = await RunningWasm.IsWebAssembly(js);
 
-        if (isRunningWasm && Success && response.IsAdmin)
+        if (isRunningWasm && Success && (response.IsAdmin||response.IsMinorAdmin))
         {
             AlertService.Error($"Admin users may only use the main site.");
         }
