@@ -34,7 +34,7 @@
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
-                        @if (IsAdmin)
+                        @if (IsAdmin||IsMinorAdmin)
                         {
                             <MudTh>Broker</MudTh>
                             <MudTh>Two Factor</MudTh>                
@@ -45,7 +45,7 @@
                         <MudTd DataLabel="First Name">@context.FirstName</MudTd>
                         <MudTd DataLabel="Last Name">@context.LastName</MudTd>
                         <MudTd DataLabel="Email">@context.EmailAddress</MudTd>
-                        @if (IsAdmin)
+                        @if (IsAdmin || IsMinorAdmin)
                         {
                             var broker = @Brokers.FirstOrDefault(x => x.Id == @context.BrokerId);
                             <MudTd>@broker.Name</MudTd>

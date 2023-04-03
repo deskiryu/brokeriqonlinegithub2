@@ -101,7 +101,7 @@ else
             try
             {
                 var user = await AccountService.GetUser();
-                if (user.IsAdmin)
+                if (user.IsAdmin || user.IsMinorAdmin)
                 {
                     Brokers = (await BrokerService.GetBrokers()).ToList();
                 }
