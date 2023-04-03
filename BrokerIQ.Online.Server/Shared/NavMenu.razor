@@ -217,7 +217,7 @@
 
     private async Task UpdateMessageCount(bool refresh = false)
     {
-        if (MyLoggedInAppState.LoggedIn)
+        if (MyLoggedInAppState.LoggedIn && MyLoggedInAppState.IsBroker)
         {
             var count = await NotificationService.GetNewBrokerNotificationsCountByBrokerId();
             NewMessageCount = count;
