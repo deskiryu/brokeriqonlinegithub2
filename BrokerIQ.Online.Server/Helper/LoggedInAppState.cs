@@ -25,6 +25,8 @@ namespace BrokerIQ.Online.Server.Helper
 
         public bool IsBroker { get; set; }
 
+        public bool IsMinorAdmin { get; set; }
+
         private void NotifyStateChanged() => OnChange?.Invoke();
     }
 }

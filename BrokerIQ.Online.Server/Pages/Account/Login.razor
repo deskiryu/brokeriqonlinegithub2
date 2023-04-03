@@ -127,6 +127,7 @@
                 var user = await AccountService.GetUser();
                 MyLoggedInAppState.IsAdmin = user.IsAdmin;
                 MyLoggedInAppState.IsBroker = user.IsBroker;
+                MyLoggedInAppState.IsMinorAdmin = user.IsMinorAdmin;
 
                 try
                 {
