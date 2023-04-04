@@ -44,6 +44,9 @@ namespace BrokerIQ.Online.Server.Models
         [Url]
         public string WelcomeVideoUrl { get; set; }
         [Required]
+        public string EmailTagLine { get; set; }
+
+        [Required]
         public string HubClientConnectString { get; set; }
         [Required]
         public string HubClientName { get; set; }
