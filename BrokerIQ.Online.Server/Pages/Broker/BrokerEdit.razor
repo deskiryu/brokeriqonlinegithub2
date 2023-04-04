@@ -224,14 +224,14 @@
                             </div>
 
                             <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Http Link </label>
+                                    <label class="col-sm-2 col-form-label">Http Link {Not shown}</label>
                                 <div class="col-sm-10 ">
                                         <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.HttpLink" placeholder="Enter address for this Broker"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.HttpLink)" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Http Address </label>
+                                    <label class="col-sm-2 col-form-label">Http Address (Shown to client)</label>
                                 <div class="col-sm-10 ">
                                         <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.HttpAddress" placeholder="Enter address for this Broker"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.HttpAddress)" />
@@ -298,6 +298,14 @@
                                         <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.WelcomeVideoUrl" placeholder="Enter address for this Broker"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.WelcomeVideoUrl)" />
                                     </div> 
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Email Tag Line </label>
+                                    <div class="col-sm-10 ">
+                                        <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.EmailTagLine" placeholder="Enter address for this Broker"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.EmailTagLine)" />
+                                    </div>
                                 </div>
 
                                 <div class="form-group row">
