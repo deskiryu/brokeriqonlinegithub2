@@ -12,5 +12,7 @@ namespace BrokerIQ.Online.Services.Interface
     public interface IAdminService
     {
         Task<BoolResponseDto> VerifyAdmin();
+
+        Task<BoolResponseDto> VerifyMinorAdmin();
     }
 }
