@@ -41,17 +41,20 @@
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Clients
                     </NavLink>
                 </li>                
-
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="videolist">
-                        <span class="oi oi-monitor" aria-hidden="true"></span> Videos
-                    </NavLink>
-                </li>
+            }
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="videolist">
+                    <span class="oi oi-monitor" aria-hidden="true"></span> Videos
+                </NavLink>
+            </li>
+            @if (!MyLoggedInAppState.IsMinorAdmin)
+            {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="audiolist">
                         <span class="oi oi-bullhorn" aria-hidden="true"></span> Voice Recordings
                     </NavLink>
                 </li>
+
 
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="notifications">
