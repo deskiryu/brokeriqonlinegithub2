@@ -63,6 +63,7 @@ namespace BrokerIQ.Online.Server
             builder.Services.AddScoped<IChartDataService, ChartDataService>();
             builder.Services.AddScoped<INoteService, NoteService>();
             builder.Services.AddScoped<IChatService, ChatService>();
+            builder.Services.AddScoped<IBrokerIdentifierService, BrokerIdentifierService>();
             builder.Services.AddScoped<IMetaDefenderCoreService, MetaDefenderCoreService>();
             builder.Services.AddScoped<IVersionService, VersionService>();
             builder.Services.AddScoped<ITelephoneInviteService, TelephoneInviteService>();
