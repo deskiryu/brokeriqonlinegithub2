@@ -20,6 +20,7 @@ using Microsoft.JSInterop;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Data;
 using BrokerIQ.Online.Services;
+using BrokerIQ.Online.Server.Services;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -633,6 +634,50 @@ namespace BrokerIQ.Online.Pages
             catch
             {
 
+            }
+        }
+
+        protected async Task EditNote(string note, int id)
+        {
+            bool succeeded = false;
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", note);
+
+            var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                var message = result.Data.ToString();
+                try
+                {
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        try
+                        {
+                            succeeded = (await TelephoneInviteService.SaveTelephoneNotes(id, message));
+                        }
+                        catch
+                        {
+                            await RefreshInvitationsWithDialogMessage(false, "Something went wrong updating the Note. Please try again.");
+                        }
+                    }
+                }
+                catch
+                {
+
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            if (succeeded)
+            {
+                await RefreshInvitationsWithDialogMessage(succeeded, "Note updated successfully");
+            }
+            else
+            {
+                await RefreshInvitationsWithDialogMessage(succeeded, "Something went wrong updating the note. Please try again");
             }
         }
 

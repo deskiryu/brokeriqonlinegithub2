@@ -122,9 +122,10 @@ namespace BrokerIQ.Online.Services
 
         public async Task<int> GetCustomerCount(int brokerId = 0)
         {
-            return (await GetAllCustomers(brokerId)).Count();
-
-            throw new UnauthorizedAccessException();
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var answer = await this.requestProviderService.Get<int>(this.customerUrl+$"/count", brokerId);
+            return answer;
         }
 
         public async Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory)

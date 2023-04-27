@@ -53,7 +53,9 @@
         [Parameter]
         public string BrokerId { get; set; }
 
-        public bool NavigateAdmin { get; set; }
+        public bool IsAdmin { get; set; }
+
+        public bool IsMinorAdmin { get; set; }
 
         public BrokerEditBase()
         {
@@ -62,7 +64,8 @@
             {
                 IdentifierFound = false
             };
-            NavigateAdmin = false;
+            IsAdmin = false;
+            IsMinorAdmin = false;   
         }
 
         protected override async Task OnInitializedAsync()
@@ -70,9 +73,10 @@
             try
             {
                 var user = await AccountService.GetUser();
-                if (user.IsAdmin)
+                IsAdmin = user.IsAdmin;
+                IsMinorAdmin = user.IsMinorAdmin;
+                if (IsAdmin || IsMinorAdmin)
                 {
-                    NavigateAdmin = true;
                     id = Int32.Parse(BrokerId);
                     if (id > 0)
                     {
@@ -85,7 +89,6 @@
                 }
                 else
                 {
-                    NavigateAdmin = false;
                     if (user.MasterBrokerId > 0)
                     {
                         Broker = (await BrokerService.GetBroker(user.MasterBrokerId));
@@ -213,8 +216,7 @@
         }
         protected async void NavigateToOverview()
         {
-            var user = await AccountService.GetUser();
-            if (NavigateAdmin)
+            if (IsAdmin || IsMinorAdmin)
             {
                 NavigationManager.NavigateTo($"/brokerlist");
             }

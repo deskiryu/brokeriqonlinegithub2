@@ -77,8 +77,28 @@
 
         </MudDialog>
 
+        @if (IsAdmin)
+        {
+            <div class="row mt-1">
 
-        <MudTable Items="@Videos" id="table-video" class="table col-sm-12 table-striped ">
+                <div class="col-lg-8 control_wrapper mb-5">
+                    <MudSelect T="int"
+                   Label="Filter By Broker"
+                   Placeholder="Select"
+                   Clearable="true"
+                   @bind-Value="FilterBrokerId"
+                   AdornmentColor="Color.Primary">
+                        <MudSelectItem Value="0">Select</MudSelectItem>
+                        @foreach (var item in @Brokers)
+                        {
+                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+            </div>
+        }
+
+        <MudTable Items="@Videos" id="table-video" class="table col-sm-12 table-striped " Filter="x => FilterBrokerId>0 ? x.BrokerId==FilterBrokerId : true">
             <HeaderContent>
                     <MudTh class="video_table_col_width_parent">Watch</MudTh>
                     <MudTh class="">
@@ -166,9 +186,12 @@
                         }
                         <MudTd DataLabel="Birthday"><MudCheckBox Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Name)" /></MudTd>
                         <MudTd DataLabel="Send">
+                        @if (!IsMinorAdmin)
+                        {
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"videodetail?url={context.Url}")" >
                                 <i class="fas fa-paper-plane"></i>
                             </MudButton>
+                        }
                         </MudTd>
                         <MudTd DataLabel="Delete">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"class="btn btn-primary table-btn" @onclick="f => DeleteVideo(context.Name)">

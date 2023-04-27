@@ -93,9 +93,13 @@
 
     </EditForm>
     <div class="row col-6 mt-1">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteCustomer">
-            Delete Employee
-        </MudButton>
+            @if (!IsMinorAdmin)
+            {
+                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteCustomer">
+                Delete Employee
+            </MudButton>               
+            }
+
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="ResendEmailBrokerStaff">
                 Resend Verify Email
             </MudButton>

@@ -537,10 +537,11 @@ namespace BrokerIQ.Online.Mapper
         {
             CreateMap<Login, LoginDto>();
             CreateMap<LoginResponseDto, User>().ForMember(d => d.Token, action => action.MapFrom(s => s.Token))
-                            .ForMember(d => d.IsAdmin, action => action.MapFrom(s => s.IsAdmin))
+            .ForMember(d => d.IsAdmin, action => action.MapFrom(s => s.IsAdmin))
             .ForMember(d => d.IsBroker, action => action.MapFrom(s => s.IsBroker))
             .ForMember(d => d.IsCustomer, action => action.MapFrom(s => s.IsCustomer))
             .ForMember(d => d.IsBrokerStaff, action => action.MapFrom(s => s.IsBrokerStaff))
+            .ForMember(d => d.IsMinorAdmin, action => action.MapFrom(s => s.IsMinorAdmin))
             .ForMember(d => d.MasterBrokerId, opt => opt.MapFrom((src, dest) =>
             {
                 var masterBrokerId = 0;
@@ -665,6 +666,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.Selected, opt => opt.MapFrom(s => !s.Converted))
                 .ForMember(d => d.InvitationCountTelephone, opt => opt.MapFrom(s => s.InvitationCount))
                 .ForMember(d => d.TelephoneNumber, opt => opt.MapFrom(s => s.TelephoneNumber))
+                .ForMember(d => d.NotesTelephone, opt => opt.MapFrom(s => s.NotesTelephone))
                 .ForMember(d => d.Converted, opt => opt.MapFrom(s => s.Converted));
         }
 

@@ -72,6 +72,8 @@ namespace BrokerIQ.Online.Pages
 
         public int BrokerId { get; set; }
 
+        public int FilterBrokerId { get; set; }
+
         [Required]
         public int BrokerListId = 0;
 
@@ -89,6 +91,8 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsAdmin { get; set; }
 
+        public bool IsMinorAdmin { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
@@ -103,10 +107,12 @@ namespace BrokerIQ.Online.Pages
                 {
                     throw new Exception();
                 }
-                if (user.IsAdmin || user.MasterBrokerId == 0)
+                IsMinorAdmin = false;
+                if (user.IsAdmin || user.IsMinorAdmin || user.MasterBrokerId == 0)
                 {
                     await VerifyAdmin();
                     IsAdmin = true;
+                    IsMinorAdmin = user.IsMinorAdmin;
                     BrokerId = 0;
                     Brokers = (await BrokerService.GetBrokers()).ToList();
                 }
@@ -119,7 +125,7 @@ namespace BrokerIQ.Online.Pages
                     throw new Exception();
                 }
 
-                Videos = (await VideoService.GetVideos(BrokerId)).ToList();
+                Videos  = (await VideoService.GetVideos(BrokerId)).ToList();
                 VideoThumbnails = (await VideoService.GetVideoThumbnails(BrokerId));
                 DisplayEmbeddedVideo = new Dictionary<string, bool>();
                 foreach (Video video in Videos)
@@ -201,9 +207,9 @@ namespace BrokerIQ.Online.Pages
         {
             await VerifyAccess();
 
-            if (await CheckIsAdmin())
+            if (await CheckIsAdmin() && FilterBrokerId==0)
             {
-                await RefreshVideosWithDialogMessage(true, "Admin cannot set birthday video");
+                await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
                 return;
             }
 
@@ -223,14 +229,14 @@ namespace BrokerIQ.Online.Pages
                 dialogParams.Add("Message", "This video will be sent to clients on their birthday. Continue?");
             }
 
-
+            var brokerId = IsAdmin ? FilterBrokerId : BrokerId;
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
-                var returned = await VideoService.SetBirthdayVideo(name, BrokerId, !alreadyChecked);
+                var returned = await VideoService.SetBirthdayVideo(name, brokerId, !alreadyChecked);
                 if (returned.Item1)
                 {
-                    returned.Item1 = await BrokerService.UpdateBrokerBirthdayVideoUrl(BrokerId, returned.Item2);
+                    returned.Item1 = await BrokerService.UpdateBrokerBirthdayVideoUrl(brokerId, returned.Item2);
                 }
                 if (returned.Item1)
                 {
@@ -246,13 +252,14 @@ namespace BrokerIQ.Online.Pages
         protected async Task<bool> SetVideoSendDate(string name, DateTime? date)
         {
             await VerifyAccess();
-            if (await CheckIsAdmin())
+
+            if (await CheckIsAdmin() && FilterBrokerId == 0)
             {
-                await RefreshVideosWithDialogMessage(true, "Admin cannot set video date");
+                await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
                 return false;
             }
-
-            var returned = await VideoService.SetVideoSendDate(name, BrokerId, date);
+            var brokerId = IsAdmin ? FilterBrokerId : BrokerId;
+            var returned = await VideoService.SetVideoSendDate(name, brokerId, date);
 
             if (returned.Item1)
             {
@@ -270,9 +277,9 @@ namespace BrokerIQ.Online.Pages
         {
             await VerifyAccess();
 
-            if (await CheckIsAdmin())
+            if (await CheckIsAdmin() && FilterBrokerId == 0)
             {
-                await RefreshVideosWithDialogMessage(true, "Admin cannot set send date tick");
+                await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
                 return;
             }
 
@@ -292,11 +299,11 @@ namespace BrokerIQ.Online.Pages
                 dialogParams.Add("Message", "This video will be sent to all cilents on this date. Continue?");
             }
 
-
+            var brokerId = IsAdmin ? FilterBrokerId : BrokerId;
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
-                var returned = await VideoService.SetVideoSendDateTick(name, BrokerId, !alreadyChecked);
+                var returned = await VideoService.SetVideoSendDateTick(name, brokerId, !alreadyChecked);
 
                 if (returned.Item1)
                 {
@@ -627,6 +634,11 @@ namespace BrokerIQ.Online.Pages
             {
                 var response = await AdminService.VerifyAdmin();
                 verified = response.BoolResult;
+                if (!verified)
+                {
+                    response = await AdminService.VerifyMinorAdmin();
+                    verified = response.BoolResult;
+                }
                 IsAdmin = verified;
             }
             catch

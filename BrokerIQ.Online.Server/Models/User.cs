@@ -11,6 +11,7 @@ namespace BrokerIQ.Online.Models
         public bool IsBroker { get; set; }
         public bool IsCustomer { get; set; }
         public bool IsAdmin { get; set; }
+        public bool IsMinorAdmin { get; set; }
         public bool IsBrokerStaff { get; set; }
         public int MasterBrokerId { get; set; }
         public int? StaffBrokerId { get; set; }

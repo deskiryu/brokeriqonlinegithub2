@@ -243,7 +243,7 @@ namespace BrokerIQ.Online.Pages
             try
             {
                 var user = await AccountService.GetUser();
-                if (user!=null && user.IsAdmin)
+                if (user!=null && (user.IsAdmin||user.IsMinorAdmin))
                 {
                     BrokerName = (await BrokerService.GetBroker(_brokerId)).Name;
                     CustomerCount = await CustomerService.GetCustomerCount(_brokerId);

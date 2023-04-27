@@ -37,5 +37,13 @@ namespace BrokerIQ.Online.Services
             var urlToGo = "AdminAuth/verifyadmin";
             return await this.requestProviderService.Post<BoolResponseDto>(urlToGo);
         }
+
+        public async Task<BoolResponseDto> VerifyMinorAdmin()
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var urlToGo = "AdminAuth/verifyminoradmin";
+            return await this.requestProviderService.Post<BoolResponseDto>(urlToGo);
+        }
     }
 }
