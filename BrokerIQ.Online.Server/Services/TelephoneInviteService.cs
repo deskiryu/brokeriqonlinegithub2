@@ -62,5 +62,26 @@ namespace BrokerIQ.Online.Services
             var answer = await this.requestProviderService.Post<UpdateEmailInviteDto, bool>(this.TelephoneUrl + $"/update", updateTelephoneInviteDto);
             return answer;
         }
+
+        public async Task<bool> SaveTelephoneNotes(int invitationId, string notes)
+        {
+            var url = this.TelephoneUrl + "/update";
+            var telephoneInviteDto = new UpdateTelephoneInviteDto
+            {
+                Id = invitationId,
+                NotesTelphone = notes
+            };
+
+            var answer = false;
+            try
+            {
+                answer = await this.requestProviderService.Post<UpdateTelephoneInviteDto, bool>(url, telephoneInviteDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SaveTelephoneNotes: exception {ex.Message}");
+            }
+            return answer;
+        }
     }
 }

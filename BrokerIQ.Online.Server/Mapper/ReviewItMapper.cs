@@ -666,6 +666,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.Selected, opt => opt.MapFrom(s => !s.Converted))
                 .ForMember(d => d.InvitationCountTelephone, opt => opt.MapFrom(s => s.InvitationCount))
                 .ForMember(d => d.TelephoneNumber, opt => opt.MapFrom(s => s.TelephoneNumber))
+                .ForMember(d => d.NotesTelephone, opt => opt.MapFrom(s => s.NotesTelephone))
                 .ForMember(d => d.Converted, opt => opt.MapFrom(s => s.Converted));
         }
 
