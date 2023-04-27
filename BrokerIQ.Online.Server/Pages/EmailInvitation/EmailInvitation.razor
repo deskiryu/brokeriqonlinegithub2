@@ -248,6 +248,7 @@
                                 <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.TelephoneInvite, object>(x=>x.TelephoneNumber)">Telephone</MudTableSortLabel></MudTh>
                                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.TelephoneInvite, object>(x=>x.CreatedDate)">Connection Date</MudTableSortLabel></MudTh>
                                 <MudTh>Converted</MudTh>
+                                <MudTh>Notes</MudTh>
                                 <MudTh>Whats App</MudTh>
                                 <MudTh>Delete</MudTh>
                             </HeaderContent>
@@ -256,6 +257,11 @@
                                 <MudTd DataLabel="Telephone">@context.TelephoneNumber</MudTd>
                                 <MudTd DataLabel="Connection date">@context.CreatedDate</MudTd>
                                 <MudTd DataLabel="Converted"><MudCheckBox @bind-Checked="@context.Converted" Disabled="true"></MudCheckBox></MudTd>
+                                <MudTd DataLabel="WhatsApp">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="() => EditNote(context.NotesTelephone, context.Id)" class="btn btn-primary table-btn">
+                                        <i class="fas fa-sticky-note"></i>
+                                    </MudButton>
+                                </MudTd>
                                 <MudTd DataLabel="WhatsApp">
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="() => WhatsApp(context.TelephoneNumber)" class="btn btn-primary table-btn">
                                         <i class="fas fa-paper-plane"></i>

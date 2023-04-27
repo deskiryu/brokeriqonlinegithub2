@@ -16,5 +16,6 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> DeleteEmailInvite(int id);
 
         Task<bool> UpdateEmailInvites(UpdateEmailInviteDto updateEmailInviteDto);
+
     }
 }
