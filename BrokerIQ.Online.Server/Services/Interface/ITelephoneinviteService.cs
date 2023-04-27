@@ -16,5 +16,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> DeleteTelephoneInvite(int id);
 
         Task<bool> UpdateTelephoneInvites(UpdateEmailInviteDto updateTelephoneInviteDto);
+
+        Task<bool> SaveTelephoneNotes(int invitationId, string notes);
     }
 }

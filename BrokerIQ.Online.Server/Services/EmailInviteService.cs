@@ -5,6 +5,7 @@ namespace BrokerIQ.Online.Services
     using System.Threading.Tasks;
     using AutoMapper;
     using BrokerIQ.Dto.Models;
+    using BrokerIQ.Online.Data;
     using BrokerIQ.Online.Models;
     using BrokerIQ.Online.Services.Abstract;
     using BrokerIQ.Online.Services.Interface;
