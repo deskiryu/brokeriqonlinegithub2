@@ -161,10 +161,10 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Term Amount</label>
+                                <label class="col-sm-4 col-form-label">Benefit Amount</label>
                                 <div class="col-sm-5">
                                     <MudItem class="col" >
-                                        <MudTextField @bind-Value="@Insurance.TermAmount" HelperText="Enter a term amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                                        <MudTextField @bind-Value="@Insurance.TermAmount" HelperText="Enter a benefit amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
                                         <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.TermAmount)" />
                                     </MudItem>
                                 </div>
@@ -210,7 +210,15 @@
                             </div>
                         }
 
-                        <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save insurance</MudButton>
+                        @if(Insurance!=null && Insurance.Id>0){
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save insurance</MudButton>
+                        }
+                        else
+                        {
+                            <MudCheckBox @bind-Checked="@SendNotification" />
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add insurance</MudButton>
+                        }
+
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview">Cancel</MudButton>
                         @if (Insurance.Id > 0)
                         {

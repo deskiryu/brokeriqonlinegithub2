@@ -67,8 +67,8 @@ namespace BrokerIQ.Online.Models
 
         public bool ShowTermYears { get; set; }
 
-        [RequiredIf(nameof(ShowTermAmount), true, ErrorMessage = "Please enter a term amount")]
-        [Range(0.01, float.MaxValue, ErrorMessage = "Please enter a term amount")]
+        [RequiredIf(nameof(ShowTermAmount), true, ErrorMessage = "Please enter a benefit amount")]
+        [Range(0.01, float.MaxValue, ErrorMessage = "Please enter a benefit amount")]
         public decimal? TermAmount { get; set; }
 
         public bool ShowTermAmount { get; set; }
