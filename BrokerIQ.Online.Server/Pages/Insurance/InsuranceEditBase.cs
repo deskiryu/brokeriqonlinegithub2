@@ -307,7 +307,10 @@ namespace BrokerIQ.Online.Pages
 
                     try
                     {
-                        await SendMessageNotification(customer);
+                        if (SendNotification)
+                        {
+                            await SendMessageNotification(customer);
+                        }
                     }
                     catch
                     {

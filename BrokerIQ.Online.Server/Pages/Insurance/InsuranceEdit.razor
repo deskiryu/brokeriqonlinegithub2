@@ -209,30 +209,27 @@
                                 </div>
                             </div>
                         }
-                        <div class="form-group row">
+  
                         @if(Insurance!=null && Insurance.Id>0){
 
-                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Class="mr-1">Save insurance</MudButton>
-
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save insurance</MudButton>
                         }
                         else
                         {
-
-                                        <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add insurance</MudButton>
-                                        <MudCheckBox @bind-Checked="@SendNotification" />
-                                        <label>Send Notification</label>
-
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add insurance</MudButton>
+                            <MudCheckBox @bind-Checked="@SendNotification" Class="ml-1 mt-2" />
+                            <label class="mt-2">Send Notification</label>
                         }
 
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview">Cancel</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="ml-4">Cancel</MudButton>
 
                         @if (Insurance.Id > 0)
                         {
 
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteInsurance">Delete</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteInsurance" Class="ml-4">Delete</MudButton>
 
                         }
-                        </div>
+
                     </div>
 
                 </div>

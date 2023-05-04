@@ -209,11 +209,25 @@
                             </div>
                         }
 
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" >Save mortgage</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>
+                        @if (Mortgage != null && Mortgage.Id > 0)
+                        {
+
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save mortgage</MudButton>
+                        }
+                        else
+                        {
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add mortgage</MudButton>
+                            <MudCheckBox @bind-Checked="@SendNotification" Class="ml-1 mt-2" />
+                            <label class="mt-2">Send Notification</label>
+                        }
+
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="ml-4">Cancel</MudButton>
+
                         @if (Mortgage.Id > 0)
                         {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteMortgage">Delete</MudButton>
+
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteMortgage" Class="ml-4">Delete</MudButton>
+
                         }
 
                     </div>
