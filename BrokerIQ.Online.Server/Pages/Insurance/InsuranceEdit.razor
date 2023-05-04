@@ -209,22 +209,30 @@
                                 </div>
                             </div>
                         }
-
+                        <div class="form-group row">
                         @if(Insurance!=null && Insurance.Id>0){
-                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save insurance</MudButton>
+
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Class="mr-1">Save insurance</MudButton>
+
                         }
                         else
                         {
-                            <MudCheckBox @bind-Checked="@SendNotification" />
-                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add insurance</MudButton>
+
+                                        <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add insurance</MudButton>
+                                        <MudCheckBox @bind-Checked="@SendNotification" />
+                                        <label>Send Notification</label>
+
                         }
 
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview">Cancel</MudButton>
+
                         @if (Insurance.Id > 0)
                         {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteInsurance">Delete</MudButton>
-                        }
 
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteInsurance">Delete</MudButton>
+
+                        }
+                        </div>
                     </div>
 
                 </div>

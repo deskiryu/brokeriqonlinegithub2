@@ -181,7 +181,7 @@
     {
         MyLoggedInAppState.OnChange += OnMyChangeHandler;
         MyMessageCountState.OnMessageCountChange += OnMyMessageCountChangeHandler;
-#if !DEBUG
+#if TRUE// !DEBUG
         System.Timers.Timer t = new System.Timers.Timer();
         t.Elapsed += async (s, e) => 
         { 
@@ -220,7 +220,7 @@
 
     private async Task UpdateMessageCount(bool refresh = false)
     {
-        if (MyLoggedInAppState.LoggedIn && MyLoggedInAppState.IsBroker)
+        if (MyLoggedInAppState.LoggedIn && MyLoggedInAppState.IsAdmin==false && MyLoggedInAppState.IsMinorAdmin==false)
         {
             var count = await NotificationService.GetNewBrokerNotificationsCountByBrokerId();
             NewMessageCount = count;
