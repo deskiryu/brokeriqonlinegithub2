@@ -73,6 +73,15 @@
                         </div>
 
                         <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Notes (visible to client)</label>
+
+                            <div class="col-sm-5">
+                                <InputTextArea id="brokerNotes" cols="40" rows="5" @bind-Value="@Insurance.BrokerNotes" placeholder="Enter notes for this insurance which will be visible to the client"></InputTextArea>
+                                <ValidationMessage class="offset-sm-3" For="@(() => Insurance.BrokerNotes)" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Contact</label>
                             <div class="col-sm-5">
                                 <InputText id="lastName" class="form-control" @bind-Value="@Insurance.ContactNumber" placeholder="Enter telephone for this insurance"></InputText>

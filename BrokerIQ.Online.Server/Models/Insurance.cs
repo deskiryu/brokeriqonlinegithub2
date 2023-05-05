@@ -94,6 +94,8 @@ namespace BrokerIQ.Online.Models
             }
         }
 
+        public string BrokerNotes { get; set; }
+
         public virtual ICollection<InsuranceDocument> SupportingDocuments { get; set; }
     }
 }
