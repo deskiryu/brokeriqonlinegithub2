@@ -60,6 +60,15 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.ProfilePicture, action => action.MapFrom(s => s.ProfilePicture))
                 .ForMember(d => d.Mortgages, action => action.MapFrom(s => s.Mortgages))
                 .ForMember(d => d.AppVersion, action => action.MapFrom(s => s.AppVersion))
+                .ForMember(d => d.VideoNotificationsAllowed, opt => opt.MapFrom((src, dest) =>
+                {
+                    bool videoOptOut = true;
+                    if (src.VideoOptOut==null || src.VideoOptOut==false)
+                    {
+                        videoOptOut = false;
+                    }
+                    return !videoOptOut;
+                }))
                 .ForMember(d => d.IsWhiteLabel, action => action.MapFrom(s => s.IsWhiteLabel));
 
             CreateMap<Customer, UpdateCustomerDto>()
@@ -79,6 +88,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.PotentialBroker1, action => action.MapFrom(s => s.PotentialBroker1))
                 .ForMember(d => d.PotentialBroker2, action => action.MapFrom(s => s.PotentialBroker2))
                 .ForMember(d => d.PotentialBroker3, action => action.MapFrom(s => s.PotentialBroker3))
+                .ForMember(d => d.VideoOptOut, action => action.MapFrom(s => !s.VideoNotificationsAllowed))
                 .ForMember(d => d.BusinessName, action => action.MapFrom(s => s.BusinessName));
         }
 

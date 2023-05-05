@@ -107,7 +107,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 }
 
                 Vetted = await VideoService.IsVetted(VideoName, user.MasterBrokerId);
-                Customers = (await CustomerService.GetAllCustomers()).ToList();
+                var queryCust = await CustomerService.GetAllCustomers();
+                Customers = queryCust.Where(x =>x.VideoNotificationsAllowed==true).ToList();
             }
             catch
             {
