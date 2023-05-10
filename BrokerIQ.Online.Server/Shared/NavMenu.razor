@@ -181,7 +181,7 @@
     {
         MyLoggedInAppState.OnChange += OnMyChangeHandler;
         MyMessageCountState.OnMessageCountChange += OnMyMessageCountChangeHandler;
-#if TRUE// !DEBUG
+#if !DEBUG
         System.Timers.Timer t = new System.Timers.Timer();
         t.Elapsed += async (s, e) => 
         { 
