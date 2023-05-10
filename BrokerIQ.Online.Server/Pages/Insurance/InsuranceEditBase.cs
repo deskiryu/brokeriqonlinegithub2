@@ -106,6 +106,8 @@ namespace BrokerIQ.Online.Pages
         public string SpinnerVisible { get; set; }
         public string LoadFileStatus { get; set; }
 
+        public bool SendNotification { get; set; }
+
 
         public InsuranceEditBase()
         {
@@ -117,6 +119,7 @@ namespace BrokerIQ.Online.Pages
         {
             SpinnerVisible = "display:none";
             fileUploadSettings = this.FileUploadSettingsOption.Value;
+            SendNotification = true;
         }
 
         protected override async Task OnParametersSetAsync()
@@ -239,13 +242,17 @@ namespace BrokerIQ.Online.Pages
 
 
                 var dialogParams = new DialogParameters();
-                if (customer.EmailConfirmed)
+                if (customer.EmailConfirmed && SendNotification==true)
                 {
                     dialogParams.Add("Message", $"Insurance will be added and a notification will be sent to {customer.Name} about this new insurance.");
                 }
-                else
+                else if (!customer.EmailConfirmed)
                 {
                     dialogParams.Add("Message", $"Insurance will be added however a notification will be NOT be sent to {customer.Name} about this new insurance as their email address is not confirmed");
+                }
+                else 
+                {
+                    dialogParams.Add("Message", $"Insurance will be added however a notification will be NOT be sent to {customer.Name}.");
                 }
 
                 var fileNamesAndMemoryStreams = new List<(string, MemoryStream)>();
@@ -300,7 +307,10 @@ namespace BrokerIQ.Online.Pages
 
                     try
                     {
-                        await SendMessageNotification(customer);
+                        if (SendNotification)
+                        {
+                            await SendMessageNotification(customer);
+                        }
                     }
                     catch
                     {

@@ -93,6 +93,15 @@
                         </div>
 
                         <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Notes (visible to client)</label>
+
+                            <div class="col-sm-5">
+                                <InputTextArea id="brokerNotes" cols="40" rows="5" @bind-Value="@Mortgage.BrokerNotes" placeholder="Enter notes for this mortgage which will be visible to the client"></InputTextArea>
+                                <ValidationMessage class="offset-sm-3" For="@(() => Mortgage.BrokerNotes)" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label class="col-sm-4 col-form-label" style="font-size:large">Details</label>
                             <div class="col-sm-7">
 
@@ -209,11 +218,25 @@
                             </div>
                         }
 
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" >Save mortgage</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>
+                        @if (Mortgage != null && Mortgage.Id > 0)
+                        {
+
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save mortgage</MudButton>
+                        }
+                        else
+                        {
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add mortgage</MudButton>
+                            <MudCheckBox @bind-Checked="@SendNotification" Class="ml-1 mt-2" />
+                            <label class="mt-2">Send Notification</label>
+                        }
+
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="ml-4">Cancel</MudButton>
+
                         @if (Mortgage.Id > 0)
                         {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteMortgage">Delete</MudButton>
+
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteMortgage" Class="ml-4">Delete</MudButton>
+
                         }
 
                     </div>
@@ -226,7 +249,7 @@
     </section>
     
 
-        <h4 class ="col-sm-4">Supporting Documents</h4>
+        <h4 class ="col-sm-4 mt-5">Supporting Documents</h4>
 
         @if (Mortgage.SupportingDocuments != null)
         {
