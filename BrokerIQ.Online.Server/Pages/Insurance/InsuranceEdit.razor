@@ -73,6 +73,15 @@
                         </div>
 
                         <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Notes (visible to client)</label>
+
+                            <div class="col-sm-5">
+                                <InputTextArea id="brokerNotes" cols="40" rows="5" @bind-Value="@Insurance.BrokerNotes" placeholder="Enter notes for this insurance which will be visible to the client"></InputTextArea>
+                                <ValidationMessage class="offset-sm-3" For="@(() => Insurance.BrokerNotes)" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Contact</label>
                             <div class="col-sm-5">
                                 <InputText id="lastName" class="form-control" @bind-Value="@Insurance.ContactNumber" placeholder="Enter telephone for this insurance"></InputText>
@@ -161,10 +170,10 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Term Amount</label>
+                                <label class="col-sm-4 col-form-label">Benefit Amount</label>
                                 <div class="col-sm-5">
                                     <MudItem class="col" >
-                                        <MudTextField @bind-Value="@Insurance.TermAmount" HelperText="Enter a term amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                                        <MudTextField @bind-Value="@Insurance.TermAmount" HelperText="Enter a benefit amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
                                         <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.TermAmount)" />
                                     </MudItem>
                                 </div>
@@ -209,12 +218,25 @@
                                 </div>
                             </div>
                         }
+  
+                        @if(Insurance!=null && Insurance.Id>0){
 
-                        <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save insurance</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview">Cancel</MudButton>
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save insurance</MudButton>
+                        }
+                        else
+                        {
+                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add insurance</MudButton>
+                            <MudCheckBox @bind-Checked="@SendNotification" Class="ml-1 mt-2" />
+                            <label class="mt-2">Send Notification</label>
+                        }
+
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="ml-4">Cancel</MudButton>
+
                         @if (Insurance.Id > 0)
                         {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteInsurance">Delete</MudButton>
+
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteInsurance" Class="ml-4">Delete</MudButton>
+
                         }
 
                     </div>

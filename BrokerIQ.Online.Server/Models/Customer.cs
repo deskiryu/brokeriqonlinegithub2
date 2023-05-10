@@ -68,6 +68,8 @@ namespace BrokerIQ.Online.Models
 
         public bool IsWhiteLabel { get; set; }
 
+        public bool VideoNotificationsAllowed { get; set; }
+
         public virtual ICollection<Insurance> Insurances { get; set; }
 
         public virtual ICollection<Mortgage> Mortgages { get; set; }

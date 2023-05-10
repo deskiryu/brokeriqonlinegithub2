@@ -78,6 +78,8 @@ namespace BrokerIQ.Online.Models
 
         public bool ShowMortgageNumber { get; set; }
 
+        public string BrokerNotes { get; set; }
+
         public virtual ICollection<MortgageDocument> SupportingDocuments { get; set; }
     }
 }
