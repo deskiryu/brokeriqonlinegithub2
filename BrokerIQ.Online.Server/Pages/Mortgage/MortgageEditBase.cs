@@ -59,7 +59,7 @@ namespace BrokerIQ.Online.Pages
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
         private FileUploadSettings fileUploadSettings { get; set; }
 
-        protected List<IBrowserFile> LoadedFiles = new();
+        protected List<(IBrowserFile, byte[])> LoadedFiles = new();
 
         public Mortgage Mortgage { get; set; }
 
@@ -244,14 +244,13 @@ namespace BrokerIQ.Online.Pages
                 var fileNamesAndBytes = new List<(string, byte[])>();
                 foreach (var file in LoadedFiles)
                 {
-                    var loopMemoryStream = new MemoryStream();
-                    if (file.Size > this.fileUploadSettings.MaxFileSize)
+                    if (file.Item1.Size > this.fileUploadSettings.MaxFileSize)
                     {
                         dialogParams.Add("Oversize", "true");
                         continue;
                     }
-                    await file.OpenReadStream(this.fileUploadSettings.MaxFileSize).CopyToAsync(loopMemoryStream);
-                    fileNamesAndMemoryStreams.Add((file.Name, loopMemoryStream));
+                    var loopMemoryStream = new MemoryStream(file.Item2);
+                    fileNamesAndMemoryStreams.Add((file.Item1.Name, loopMemoryStream));
                 }
 
                 bool agreed;
@@ -406,9 +405,10 @@ namespace BrokerIQ.Online.Pages
         protected void DeleteMortgageFile(MortgageDocument doc)
         {
             Mortgage.SupportingDocuments.Remove(doc);
-            var loadedtoRemove = LoadedFiles.FirstOrDefault(x => x.Name == doc.FileName);
-            if (loadedtoRemove != null)
+            var loadedtoRemove = LoadedFiles.FirstOrDefault(x => x.Item1.Name == doc.FileName);
+            if (loadedtoRemove.Item1 != null && loadedtoRemove.Item2 != null)
             {
+                Array.Clear(loadedtoRemove.Item2, 0, loadedtoRemove.Item2.Length);
                 LoadedFiles.Remove(loadedtoRemove);
             }
         }
@@ -512,7 +512,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         throw new Exception("Pdf files only");
                     }
-                    LoadedFiles.Add(file);
+                    LoadedFiles.Add((file, await GetFileBytes(file)));
                 }
                 catch (Exception ex)
                 {
@@ -534,7 +534,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         Mortgage.SupportingDocuments.Add(new MortgageDocument
                         {
-                            FileName = file.Name,
+                            FileName = file.Item1.Name,
                             SupportingDocumentType = DocumentTypeEnum.PDF
                         });
                     }
@@ -560,14 +560,13 @@ namespace BrokerIQ.Online.Pages
 
                     foreach (var file in LoadedFiles)
                     {
-                        var loopMemoryStream = new MemoryStream();
-                        if (file.Size > this.fileUploadSettings.MaxFileSize)
+                        if (file.Item1.Size > this.fileUploadSettings.MaxFileSize)
                         {
                             dialogParams.Add("Oversize", "true");
                             continue;
                         }
-                        await file.OpenReadStream(this.fileUploadSettings.MaxFileSize).CopyToAsync(loopMemoryStream);
-                        fileNames.Add(file.Name);
+                        var loopMemoryStream = new MemoryStream(file.Item2);
+                        fileNames.Add(file.Item1.Name);
                         memoryStreams.Add(loopMemoryStream);
                     }
 
@@ -658,6 +657,19 @@ namespace BrokerIQ.Online.Pages
 
             }
 
+        }
+
+        private async Task<byte[]> GetFileBytes(IBrowserFile file)
+        {
+            var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            await using var fileStream = new FileStream(path, FileMode.Create);
+            await file.OpenReadStream(file.Size).CopyToAsync(fileStream);
+            var bytes = new byte[file.Size];
+            fileStream.Position = 0;
+            await fileStream.ReadAsync(bytes);
+            fileStream.Close();
+            File.Delete(path);
+            return bytes;
         }
     }
 }
