@@ -65,7 +65,7 @@ namespace BrokerIQ.Online.Pages
             try
             {
                 IsAdmin = false;
-                Customers = (await CustomerService.GetAllCustomers()).ToList();
+                Customers = (await CustomerService.GetAllCustomers(profilePictures:false)).ToList();
                 var user = await this.AccountService.GetUser();
                 ShowEmployee = false;
                 ShowBroker = false;
