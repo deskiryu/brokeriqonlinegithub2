@@ -95,8 +95,12 @@ else
             <MudTd DataLabel="First name">@context.Message</MudTd>
             @{
                 var customersAsName = string.Empty;
-                var customers = Customers.Where(x => context.Targets.Contains(x.Id)).Select(y => y.Name);
-                customersAsName = string.Join(", ", customers);
+                var customers = Customers.Where(x => context.Targets.Contains(x.Id)).Select(y => y.Name).ToList();
+                if(customers!=null && customers.Count() >= 1)
+                {
+                  customersAsName = string.Join(", ", customers);                  
+                }
+
 
                 <MudTd DataLabel="Last name">@customersAsName</MudTd>
              }
