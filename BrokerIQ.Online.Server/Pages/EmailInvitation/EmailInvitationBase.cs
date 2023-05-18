@@ -21,7 +21,6 @@ using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Data;
 using BrokerIQ.Online.Services;
 using BrokerIQ.Online.Server.Services;
-using System.Net.Mail;
 
 namespace BrokerIQ.Online.Pages
 {

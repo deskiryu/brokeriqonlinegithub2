@@ -175,14 +175,6 @@ namespace BrokerIQ.Online.Pages
                 {
                     Insurance = (await InsuranceService.GetInsurance(this.id));
                     InsuranceType = (int)Insurance.InsType;
-                    //if ((int)Insurance.InsType < 1000)
-                    //{
-                    //    ConsumerInsuranceType = (int)Insurance.InsType;
-                    //}
-                    //else
-                    //{
-                    //    BusinessInsuranceType = (int)Insurance.InsType;
-                    //}
                     
                     TermType = (int)Insurance.TermType;
                     BrokerListId = Insurance.BrokerId;
