@@ -21,6 +21,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Server.AppSettings;
     using Microsoft.Extensions.Options;
     using BrokerIQ.Online.Server.Shared;
+    using Newtonsoft.Json.Linq;
 
     public class InsuranceEditBase : ComponentBase
     {
@@ -77,6 +78,9 @@ namespace BrokerIQ.Online.Pages
         [Required]
         public int InsuranceType = 1;
 
+        public int ConsumerInsuranceType = 1;
+        public int BusinessInsuranceType = 1;
+
         [Required]
         public int TermType = 0;
 
@@ -108,11 +112,20 @@ namespace BrokerIQ.Online.Pages
 
         public bool SendNotification { get; set; }
 
+        public List<(int,string)> ConsumerInsurances { get; set; }
+
+        public List<(int, string)> BusinessInsurances { get; set; }
+
 
         public InsuranceEditBase()
         {
             Insurance = new Insurance();
             Insurance.SupportingDocuments = new List<InsuranceDocument>();
+            var insurancevalues = Enum.GetValues(typeof(InsuranceEnum)).Cast<InsuranceEnum>().ToList();
+            var consumerInsuranceValues = insurancevalues.Where(x => (int)x < 1000).ToList();
+            ConsumerInsurances = consumerInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();
+            var businessInsuranceValues = insurancevalues.Where(x => (int)x >= 1000).ToList();
+            BusinessInsurances = businessInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();
         }
 
         protected override async Task OnInitializedAsync()
@@ -161,7 +174,15 @@ namespace BrokerIQ.Online.Pages
                 if (this.id > 0)
                 {
                     Insurance = (await InsuranceService.GetInsurance(this.id));
-                    InsuranceType = (int)Insurance.InsType;
+                    if ((int)Insurance.InsType < 1000)
+                    {
+                        ConsumerInsuranceType = (int)Insurance.InsType;
+                    }
+                    else
+                    {
+                        BusinessInsuranceType = (int)Insurance.InsType;
+                    }
+                    
                     TermType = (int)Insurance.TermType;
                     BrokerListId = Insurance.BrokerId;
                 }
@@ -683,6 +704,8 @@ namespace BrokerIQ.Online.Pages
             }
             return Task.CompletedTask;
         }
+
+
 
         private async Task<byte[]> GetFileBytes(IBrowserFile file)
         {
