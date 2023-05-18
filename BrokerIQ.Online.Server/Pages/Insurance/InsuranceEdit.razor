@@ -50,9 +50,9 @@
                        <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Consumer Insurance</label>
                             <div class="col-sm-5">
-                                 <InputSelect id="consumerInsurance" class="form-control"
-                                 ValueExpression="@(()=>ConsumerInsuranceType)" 
-                                  Value="@ConsumerInsuranceType" 
+                                 <InputSelect id="consumerInsurance" class="form-control" 
+                                 ValueExpression="@(()=>InsuranceType)" 
+                                  Value="@InsuranceType" 
                                   ValueChanged="@((int value) => OnValueChanged(value))">
                                     @if (ConsumerInsurances!=null && ConsumerInsurances.Any())
                                     {
@@ -62,7 +62,7 @@
                                         }
                                     }
                                 </InputSelect>
-                                <ValidationMessage class="offset-sm-3" For="@(() => ConsumerInsuranceType)" />
+                                <ValidationMessage class="offset-sm-3" For="@(() => InsuranceType)" />
                             </div>
                         </div>
  
@@ -70,8 +70,8 @@
                             <label class="col-sm-3 col-form-label">Or Business Insurance</label>
                             <div class="col-sm-5">
                                  <InputSelect id="businessInsurance" class="form-control"
-                                 ValueExpression="@(()=>BusinessInsuranceType)" 
-                                  Value="@BusinessInsuranceType" 
+                                 ValueExpression="@(()=>InsuranceType)" 
+                                  Value="@InsuranceType" 
                                   ValueChanged="@((int value) => OnValueChanged(value))">
                                     @if (BusinessInsurances!=null && BusinessInsurances.Any())
                                     {
@@ -81,7 +81,7 @@
                                         }
                                     }
                                 </InputSelect>
-                                <ValidationMessage class="offset-sm-3" For="@(() => BusinessInsuranceType)" />
+                                <ValidationMessage class="offset-sm-3" For="@(() => InsuranceType)" />
                             </div>
                         </div>
 

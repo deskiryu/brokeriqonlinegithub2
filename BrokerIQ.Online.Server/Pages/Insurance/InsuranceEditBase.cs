@@ -78,8 +78,8 @@ namespace BrokerIQ.Online.Pages
         [Required]
         public int InsuranceType = 1;
 
-        public int ConsumerInsuranceType = 1;
-        public int BusinessInsuranceType = 1;
+        //public int ConsumerInsuranceType = 1;
+        //public int BusinessInsuranceType = 1;
 
         [Required]
         public int TermType = 0;
@@ -174,14 +174,15 @@ namespace BrokerIQ.Online.Pages
                 if (this.id > 0)
                 {
                     Insurance = (await InsuranceService.GetInsurance(this.id));
-                    if ((int)Insurance.InsType < 1000)
-                    {
-                        ConsumerInsuranceType = (int)Insurance.InsType;
-                    }
-                    else
-                    {
-                        BusinessInsuranceType = (int)Insurance.InsType;
-                    }
+                    InsuranceType = (int)Insurance.InsType;
+                    //if ((int)Insurance.InsType < 1000)
+                    //{
+                    //    ConsumerInsuranceType = (int)Insurance.InsType;
+                    //}
+                    //else
+                    //{
+                    //    BusinessInsuranceType = (int)Insurance.InsType;
+                    //}
                     
                     TermType = (int)Insurance.TermType;
                     BrokerListId = Insurance.BrokerId;
