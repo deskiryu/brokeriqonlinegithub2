@@ -99,7 +99,7 @@ namespace BrokerIQ.Online.Pages
         //filter
         public List<EmailInvite> FilteredEmailInvites => EmailInvitesSent.Where(i => i.EmailAddress.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
-        public List<TelephoneInvite> FilteredTelephoneInvites => TelephoneInvitesSent.Where(i => i.CustomerName.ToLower().Contains(SearchTermPhone.ToLower())).ToList();
+        public List<TelephoneInvite> FilteredTelephoneInvites => TelephoneInvitesSent.Where(i =>  string.IsNullOrEmpty(CustomerName) || i.CustomerName.ToLower().Contains(SearchTermPhone.ToLower())).ToList();
 
         public bool ShowEmployee { get; set; }
 
