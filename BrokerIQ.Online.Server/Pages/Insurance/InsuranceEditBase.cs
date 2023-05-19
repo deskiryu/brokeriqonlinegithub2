@@ -78,9 +78,6 @@ namespace BrokerIQ.Online.Pages
         [Required]
         public int InsuranceType = 1;
 
-        //public int ConsumerInsuranceType = 1;
-        //public int BusinessInsuranceType = 1;
-
         [Required]
         public int TermType = 0;
 
@@ -111,6 +108,7 @@ namespace BrokerIQ.Online.Pages
         public string LoadFileStatus { get; set; }
 
         public bool SendNotification { get; set; }
+        public bool BrokerHasWhiteLabelAndIsInsuranceOnly { get; set; }
 
         public List<(int,string)> ConsumerInsurances { get; set; }
 
@@ -141,12 +139,17 @@ namespace BrokerIQ.Online.Pages
             IsAdmin = user.IsAdmin;
             if (user.IsBroker || user.IsBrokerStaff)
             {
-                var broker = user.MasterBrokerId;
+                var brokerId = user.MasterBrokerId;
 
-                BrokerListId = broker;
+                BrokerListId = brokerId;
                 try
                 {
-                    Broker = await BrokerService.GetBroker(broker);
+                    Broker = await BrokerService.GetBroker(brokerId);
+                    BrokerHasWhiteLabelAndIsInsuranceOnly = false;
+                    if (!IsAdmin)
+                    {
+                        BrokerHasWhiteLabelAndIsInsuranceOnly = Broker.BrokerIdentifier != null && Broker.BrokerIdentifier.IdentifierFound && Broker.BrokerIdentifier.InsuranceOnly;
+                    }
                 }
                 catch
                 {
