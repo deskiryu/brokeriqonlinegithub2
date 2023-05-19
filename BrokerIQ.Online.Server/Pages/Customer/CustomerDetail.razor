@@ -300,78 +300,82 @@ else if (!Saved)
                     </tbody>
                 </table>
             </MudTabPanel>
-            <MudTabPanel Text="Mortgages">
-                     <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Customer Category</label>
-                        <div class="col-sm-4">
-                                     <MudSelect T="int"
-                                            Label="Customer Category"
-                                            Placeholder="None chosen"
-                                            Disabled="false"                           
-                                            @bind-Value="CustomerCategory"
-                                            SelectedValuesChanged="@HandleValidCustomerCategory"
-                                            AdornmentColor="Color.Primary">
-                                    @if (true)
-                                        {
-                                            var names = Enum.GetNames(typeof(CustomerCategoryEnum));
-                                            @for (int i = 0; i <= names.Length; i++)
-                                                {
-                                                    CustomerCategoryEnum looped = (CustomerCategoryEnum)i;
-                                                    <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
-                                                }
-                                        }
+            @if (BrokerHasWhiteLabelAndIsInsuranceOnly == false)
+            {
+                 <MudTabPanel Text="Mortgages">
+                         <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Customer Category</label>
+                            <div class="col-sm-4">
+                                         <MudSelect T="int"
+                                                Label="Customer Category"
+                                                Placeholder="None chosen"
+                                                Disabled="false"                           
+                                                @bind-Value="CustomerCategory"
+                                                SelectedValuesChanged="@HandleValidCustomerCategory"
+                                                AdornmentColor="Color.Primary">
+                                        @if (true)
+                                            {
+                                                var names = Enum.GetNames(typeof(CustomerCategoryEnum));
+                                                @for (int i = 0; i <= names.Length; i++)
+                                                    {
+                                                        CustomerCategoryEnum looped = (CustomerCategoryEnum)i;
+                                                        <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                                    }
+                                            }
 
-                                </MudSelect> 
+                                    </MudSelect> 
 
+                            </div>
                         </div>
-                    </div>
-                @* </EditForm> *@
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/0/{Customer.Id}")" class="btn btn-primary mb-2">
-                    Add New Mortgage
-                </MudButton>
-                <table id="table-mortgage" class="table  col-sm-12 table-striped ">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Type</th>
-                            <th>Rate</th>
-                            <th>Promotion End</th>
-                            @if (IsAdmin)
-                            {
-                                <th>Broker</th>
-                            }
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var mortgage in Customer.Mortgages)
-                        {
+                    @* </EditForm> *@
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/0/{Customer.Id}")" class="btn btn-primary mb-2">
+                        Add New Mortgage
+                    </MudButton>
+                    <table id="table-mortgage" class="table  col-sm-12 table-striped ">
+                        <thead>
                             <tr>
-                                <td>@mortgage.ProviderName</td>
-                                <td>@mortgage.MortgageType.GetDisplayName()</td>
-                                <td>@mortgage.MortgageRateType.GetDisplayName()</td>
-
-                                @if (mortgage.PromotionalEndDate.HasValue)
-                                {
-                                    <td>@mortgage.PromotionalEndDate.Value.ToBiqDateString()</td>
-                                }
+                                <th>Provider</th>
+                                <th>Type</th>
+                                <th>Rate</th>
+                                <th>Promotion End</th>
                                 @if (IsAdmin)
                                 {
-                                    <td>@Brokers.First(x => x.Id == mortgage.BrokerId)?.Name</td>
+                                    <th>Broker</th>
                                 }
-                                <td>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgagedetail/{mortgage.Id}")" class="btn btn-primary table-btn">
-                                        <i class="fas fa-info-circle"></i>
-                                    </MudButton>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/{mortgage.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
-                                        <i class="fas fa-edit"></i>
-                                    </MudButton>
-                                </td>
+                                <th></th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            </MudTabPanel>
+                        </thead>
+                        <tbody>
+                            @foreach (var mortgage in Customer.Mortgages)
+                            {
+                                <tr>
+                                    <td>@mortgage.ProviderName</td>
+                                    <td>@mortgage.MortgageType.GetDisplayName()</td>
+                                    <td>@mortgage.MortgageRateType.GetDisplayName()</td>
+
+                                    @if (mortgage.PromotionalEndDate.HasValue)
+                                    {
+                                        <td>@mortgage.PromotionalEndDate.Value.ToBiqDateString()</td>
+                                    }
+                                    @if (IsAdmin)
+                                    {
+                                        <td>@Brokers.First(x => x.Id == mortgage.BrokerId)?.Name</td>
+                                    }
+                                    <td>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgagedetail/{mortgage.Id}")" class="btn btn-primary table-btn">
+                                            <i class="fas fa-info-circle"></i>
+                                        </MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/{mortgage.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </MudButton>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </MudTabPanel>               
+            }
+
             <MudTabPanel Text="Uploads">
                 <div class = "row">
                 <div class = "col-sm-4">

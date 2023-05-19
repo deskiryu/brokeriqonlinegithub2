@@ -54,5 +54,7 @@ namespace BrokerIQ.Online.Server.Models
         public string FirebaseKey { get; set; }
         [Required]
         public string FirebaseClient { get; set; }
+        [Required]
+        public bool InsuranceOnly { get; set; }
     }
 }

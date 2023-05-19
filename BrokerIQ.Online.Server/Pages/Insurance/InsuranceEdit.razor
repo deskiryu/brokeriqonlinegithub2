@@ -47,31 +47,45 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Type of Insurance</label>
+                       <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Consumer Insurance</label>
                             <div class="col-sm-5">
-                                 <InputSelect id="insurance" class="form-control"
+                                 <InputSelect id="consumerInsurance" class="form-control" 
                                  ValueExpression="@(()=>InsuranceType)" 
                                   Value="@InsuranceType" 
-                                  ValueChanged="@((int value) => OnValueChanged(value ))">
-                                    @if (true)
+                                  ValueChanged="@((int value) => OnValueChanged(value))">
+                                    @if (ConsumerInsurances!=null && ConsumerInsurances.Any())
+                                    {
+                                        @foreach(var ci in ConsumerInsurances)
                                         {
-                                            var names = Enum.GetNames(typeof(InsuranceEnum));
-                                        @for (int i = 1; i <= names.Length; i++)
-                                            {
-                                                InsuranceEnum looped = (InsuranceEnum)i;
-                                            <option value=@i>@looped.GetDisplayName()</option>
-                                            }
+                                                <option value=@ci.Item1>@ci.Item2</option>
                                         }
-
-
-
+                                    }
                                 </InputSelect>
                                 <ValidationMessage class="offset-sm-3" For="@(() => InsuranceType)" />
-
                             </div>
                         </div>
-
+                        @if(BrokerHasWhiteLabelAndIsInsuranceOnly)
+                        {
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Or Business Insurance</label>
+                                <div class="col-sm-5">
+                                     <InputSelect id="businessInsurance" class="form-control"
+                                     ValueExpression="@(()=>InsuranceType)" 
+                                      Value="@InsuranceType" 
+                                      ValueChanged="@((int value) => OnValueChanged(value))">
+                                        @if (BusinessInsurances!=null && BusinessInsurances.Any())
+                                        {
+                                            @foreach(var bi in BusinessInsurances)
+                                            {
+                                                    <option value=@bi.Item1>@bi.Item2</option>
+                                            }
+                                        }
+                                    </InputSelect>
+                                    <ValidationMessage class="offset-sm-3" For="@(() => InsuranceType)" />
+                                </div>
+                            </div>
+                        }
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Notes (visible to client)</label>
 
