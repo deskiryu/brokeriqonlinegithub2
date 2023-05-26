@@ -227,55 +227,6 @@ namespace BrokerIQ.Online.Pages
         }
 
 
-        public async Task DeleteSelectedInviteList()
-        {
-            //var dialogParams = new DialogParameters();
-            //var longlistEmails = new List<(string, int)>();
-
-            //foreach (var item in ClientReferralsSelected)
-            //{
-            //    if (item.Converted == false)
-            //    {
-            //        longlistEmails.Add((item.EmailAddress, item.Id));
-            //    }
-            //}
-
-            //dialogParams.Add("ClientReferral", longlistEmails);
-            //dialogParams.Add("Heading", "Broker IQ will delete these connections ");
-            //dialogParams.Add("Delete", true);
-            //var response = await DialogService.Show<ScrollableEmailDialog>("Delete invitations", dialogParams).Result;
-            //if (!response.Cancelled)
-            //{
-            //    bool succeeded = false;
-
-            //    try
-            //    {
-            //        foreach (var item in longlistEmails)
-            //        {
-            //            succeeded = await this.ClientReferralService.DeleteClientReferral(item.Item2);
-            //        }
-            //    }
-            //    catch
-            //    {
-            //        succeeded = false;
-            //    }
-
-            //    if (succeeded)
-            //    {
-            //        StatusClass = "alert-success";
-            //        Message = "Connections deleted successfully";
-            //    }
-            //    else
-            //    {
-            //        StatusClass = "alert-danger";
-            //        Message = "Some or all of the connections did not delete, check your invite list";
-            //    }
-
-            //    Saved = true;
-            //}
-        }
-
-
         protected async Task DeleteLink(int id)
         {
             bool succeeded = false;
