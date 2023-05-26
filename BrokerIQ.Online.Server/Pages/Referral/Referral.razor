@@ -6,7 +6,7 @@
 @using System
 @inject NavigationManager NavigationManager
 
-<h3>Invitations</h3>
+<h3>Referrals</h3>
 
 @if (!Saved)
 {
@@ -54,14 +54,6 @@
                         </div>
                     </div>
                 }
-                <div class="row">
-                    <div class="col-lg-8 control_wrapper mb-5">
-                        @if (BrokerId > 0)
-                        {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@DeleteSelectedInviteList">Delete selected connections</MudButton>
-                        }
-                    </div>
-                </div>
                 <div class="card">
                     <div class="card-header">Email Invites</div>
                     <div class="card-body">
