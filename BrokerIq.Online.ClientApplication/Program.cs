@@ -67,6 +67,7 @@ namespace BrokerIQ.Online.Server
             builder.Services.AddScoped<IMetaDefenderCoreService, MetaDefenderCoreService>();
             builder.Services.AddScoped<IVersionService, VersionService>();
             builder.Services.AddScoped<ITelephoneInviteService, TelephoneInviteService>();
+            builder.Services.AddScoped<IClientReferralService, ClientReferralService>();
             builder.Services.AddAutoMapper(typeof(ReviewItMapper));
             builder.Services.AddScoped<LoggedInAppState>();
             builder.Services.AddScoped<MessageCountState>();

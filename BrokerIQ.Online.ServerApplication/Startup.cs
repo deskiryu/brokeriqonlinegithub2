@@ -91,6 +91,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<IVersionService, VersionService>();
             services.AddScoped<ITelephoneInviteService, TelephoneInviteService>();
             services.AddScoped<IBrokerIdentifierService, BrokerIdentifierService>();
+            services.AddScoped<IClientReferralService, ClientReferralService>();
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
             services.AddScoped<MessageCountState>();
