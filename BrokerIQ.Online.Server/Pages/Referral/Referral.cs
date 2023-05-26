@@ -67,6 +67,9 @@ namespace BrokerIQ.Online.Pages
 
         public string TelephoneNumber { get; set; }
 
+        [Inject]
+        protected ICustomerService CustomerService { get; set; }
+
 
         public string Email { get; set; }
         public string DragEnterStyle { get; set; }
@@ -82,6 +85,8 @@ namespace BrokerIQ.Online.Pages
         public List<Broker> Brokers { get; set; }
 
         public Broker Broker { get; set; }
+
+        protected List<Customer> Customers { get; set; }
 
         //filter
         public List<ClientReferral> FilteredClientReferrals => ClientReferralsSent.Where(i => i.ReferralName.IsNullOrEmpty() ||  i.ReferralName.ToLower().Contains(SearchTerm.ToLower())).ToList();
@@ -123,6 +128,9 @@ namespace BrokerIQ.Online.Pages
             ShowBroker = false;
             BrokerStaffId = null;
 
+            var queryCust = await CustomerService.GetAllCustomers();
+            Customers = queryCust.ToList();
+
             if (user.IsBroker || user.IsBrokerStaff)
             {
                 BrokerId = user.MasterBrokerId;
@@ -140,6 +148,7 @@ namespace BrokerIQ.Online.Pages
 
                 ClientReferralsSentBase = (await ClientReferralService.GetReferralsByBrokerId(user.MasterBrokerId)).ToList();
                 FillBrokerStaff();
+                FillCustomer();
                 ClientReferralsSent = ClientReferralsSentBase;
                 Brokers = new List<Broker>();
                 Broker = (await BrokerService.GetBroker(user.MasterBrokerId, eagerload: true));
@@ -152,6 +161,7 @@ namespace BrokerIQ.Online.Pages
                 BrokerStaff = (await BrokerStaffService.GetBrokerStaff()).ToList();
                 ClientReferralsSentBase = (await ClientReferralService.GetReferralsByBrokerId(0)).ToList();
                 FillBrokerStaff();
+                FillCustomer();
                 ClientReferralsSent = ClientReferralsSentBase;
             }
             else
@@ -198,7 +208,25 @@ namespace BrokerIQ.Online.Pages
 
         }
 
-        
+        private void FillCustomer()
+        {
+            foreach (var notif in ClientReferralsSentBase)
+            {
+                notif.CustomerName = "-";
+
+                if (notif.CustomerId  > 0)
+                {
+                    var foundCust = Customers.FirstOrDefault(x => x.Id == notif.CustomerId);
+                    if (foundCust != null)
+                    {
+                        notif.CustomerName = foundCust.Name;
+                    }
+                }
+            }
+
+        }
+
+
         public async Task DeleteSelectedInviteList()
         {
             //var dialogParams = new DialogParameters();

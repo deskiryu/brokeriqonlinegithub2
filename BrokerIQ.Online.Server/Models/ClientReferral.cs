@@ -21,5 +21,6 @@ namespace BrokerIQ.Online.Models
         public bool PrizeAwarded { get; set; }
         public string BrokerStaffName { get; set; }
         public string BrokerName { get; set; }
+        public string CustomerName { get; set; }
     }
 }

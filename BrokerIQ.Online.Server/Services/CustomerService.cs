@@ -41,7 +41,9 @@ namespace BrokerIQ.Online.Services
                 InsuranceRecentPeriod = ts,
                 MortgagePromotionRecentPeriod = ts,
                 CustomerCategory = (CustomerCategoryEnum)filterCategory,
-                AgeRange = (AgeRangeEnum)filterAgeRange
+                AgeRange = (AgeRangeEnum)filterAgeRange,
+                SortBy = SortByEnum.Descending,
+                SortOrder = SortOrderEnum.Id
             };
 
             var url = this.customerUrl;

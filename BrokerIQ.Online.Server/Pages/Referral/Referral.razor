@@ -67,6 +67,7 @@
                     <div class="card-body">
                         <MudTable Items="@FilteredClientReferrals" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="ClientReferralsSelected">
                             <HeaderContent>
+                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralName)">Referred By</MudTableSortLabel></MudTh>
                                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralName)">Name</MudTableSortLabel></MudTh>
                                 <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralEmailAddress)">Email</MudTableSortLabel></MudTh>
                                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralTelephoneNumber)">Phone</MudTableSortLabel></MudTh>
@@ -77,6 +78,11 @@
                                 <MudTh>Delete</MudTh>
                             </HeaderContent>
                             <RowTemplate>
+                                <MudTd>
+                                <MudLink href="@($"clientdetail/{@context.CustomerId}")" Color="Color.Tertiary">
+                                        @context.CustomerName
+                                </MudLink>
+                                </MudTd>
                                 <MudTd DataLabel="Name">@context.ReferralName</MudTd>
                                 <MudTd DataLabel="Email">@context.ReferralEmailAddress</MudTd>
                                 <MudTd DataLabel="Phone">@context.ReferralTelephoneNumber</MudTd>
