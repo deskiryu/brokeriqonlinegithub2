@@ -256,7 +256,7 @@
                                 <MudTd DataLabel="Telephone">@context.TelephoneNumber</MudTd>
                                 <MudTd DataLabel="Connection date">@context.CreatedDate</MudTd>
                                 <MudTd DataLabel="Converted"><MudCheckBox @bind-Checked="@context.Converted" Disabled="true"></MudCheckBox></MudTd>
-                                <MudTd DataLabel="WhatsApp">
+                                <MudTd DataLabel="Notes">
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="() => EditNote(context.NotesTelephone, context.Id)" class="btn btn-primary table-btn">
                                         <i class="fas fa-sticky-note"></i>
                                     </MudButton>
