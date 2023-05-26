@@ -1,0 +1,112 @@
+﻿@page "/referrals"
+@inherits ClientReferralBase
+@using BrokerIQ.Online.Pages
+@using BrokerIQ.Online.Server.Extensions
+@using BrokerIQ.Online.Services.Interface
+@using System
+@inject NavigationManager NavigationManager
+
+<h3>Invitations</h3>
+
+@if (!Saved)
+{
+    @if (ClientReferralsSent == null)
+    {
+        <div>
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    Client referrals
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-8 control_wrapper mb-5">
+                        <label>Filter the list below by name</label>
+                        <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name" class="filter_customerBroker" />
+                    </div>
+                </div>
+
+
+                @if (IsAdmin)
+                {
+                    <div class="row mt-1">
+
+                        <div class="col-lg-8 control_wrapper mb-5">
+                            <MudSelect T="int"
+                            Label="Filter By Broker"
+                            Placeholder="Select"
+                            Clearable="true"
+                            @bind-Value="BrokerId"
+                            SelectedValuesChanged="@AutoCompleteClickBroker"
+                            AdornmentColor="Color.Primary">
+                                <MudSelectItem Value="0">Select</MudSelectItem>
+                                @foreach (var item in @Brokers)
+                                {
+                                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-lg-8 control_wrapper mb-5">
+                        @if (BrokerId > 0)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@DeleteSelectedInviteList">Delete selected connections</MudButton>
+                        }
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Email Invites</div>
+                    <div class="card-body">
+                        <MudTable Items="@FilteredClientReferrals" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="ClientReferralsSelected">
+                            <HeaderContent>
+                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralName)">Name</MudTableSortLabel></MudTh>
+                                <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralEmailAddress)">Email</MudTableSortLabel></MudTh>
+                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralTelephoneNumber)">Phone</MudTableSortLabel></MudTh>
+                                <MudTh>Converted</MudTh>
+                                <MudTh>Product Bought</MudTh>
+                                <MudTh>Prize Awarded</MudTh>
+                                <MudTh>Notes</MudTh>
+                                <MudTh>Delete</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Name">@context.ReferralName</MudTd>
+                                <MudTd DataLabel="Email">@context.ReferralEmailAddress</MudTd>
+                                <MudTd DataLabel="Phone">@context.ReferralTelephoneNumber</MudTd>
+                                <MudTd DataLabel="Converted"><MudCheckBox @bind-Checked="@context.ConvertedLoggedIn" Disabled="true"></MudCheckBox></MudTd>
+                                <MudTd DataLabel="Product bought"><MudCheckBox @bind-Checked="@context.ConvertedToProduct" @onclick="() => UpdateCR(context)"></MudCheckBox></MudTd>
+                                <MudTd DataLabel="Prize Awarded"><MudCheckBox @bind-Checked="@context.PrizeAwarded" @onclick="() => UpdateCR(context)"></MudCheckBox></MudTd>
+                                <MudTd DataLabel="Notes">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="() => EditNote(context.ReferralNote, context)" class="btn btn-primary table-btn">
+                                        <i class="fas fa-sticky-note"></i>
+                                    </MudButton>
+                                </MudTd>
+                                <MudTd DataLabel="">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteLink(context.Id))">
+                                        <i class="fas fa-trash"></i>
+                                    </MudButton>
+                                </MudTd>
+                            </RowTemplate>
+                            <PagerContent>
+                                <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
+                            </PagerContent>
+                        </MudTable>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to invite list</MudButton>
+}
+
