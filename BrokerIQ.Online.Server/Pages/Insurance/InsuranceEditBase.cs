@@ -160,6 +160,7 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
+                BrokerHasWhiteLabelAndIsInsuranceOnly = true;
                 try
                 {
                     Brokers = await BrokerService.GetBrokers();
