@@ -13,7 +13,6 @@ namespace BrokerIQ.Online.Server.Pages.Audio
     using Microsoft.AspNetCore.WebUtilities;
     using System.IO;
     using BrokerIQ.Online.Server.Shared;
-    using BrokerIQ.Online.Services;
 
     public class AudioDetailBase : ComponentBase
     {
@@ -21,15 +20,15 @@ namespace BrokerIQ.Online.Server.Pages.Audio
         protected ICustomerService CustomerService { get; set; }
 
         [Inject]
-        protected NavigationManager NavigationManager{ get; set; }
+        protected NavigationManager NavigationManager { get; set; }
         [Inject]
-        protected INotificationService NotificationService{ get; set; }
+        protected INotificationService NotificationService { get; set; }
 
         [Inject]
-        protected IAlertService AlertService{ get; set; }
+        protected IAlertService AlertService { get; set; }
 
         [Inject]
-        protected IDialogService DialogService{ get; set; }
+        protected IDialogService DialogService { get; set; }
 
         [Inject]
         public IAudioService AudioService { get; set; }
@@ -61,6 +60,9 @@ namespace BrokerIQ.Online.Server.Pages.Audio
         public int BrokerId { get; set; }
 
         protected bool IsAdmin { get; set; }
+
+        public int CustomerCategory { get; set; }
+        public int AgeRange { get; set; }
 
         //filter
         protected List<Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
@@ -204,5 +206,11 @@ namespace BrokerIQ.Online.Server.Pages.Audio
             }
         }
 
+        protected async Task RecentFilterSelect()
+        {
+            Customers.Clear();
+            Customers = null;
+            Customers = (await CustomerService.GetAllCustomers(BrokerId, filterCategory: CustomerCategory, filterAgeRange: AgeRange, profilePictures: false)).ToList();
+        }
     }
 }
