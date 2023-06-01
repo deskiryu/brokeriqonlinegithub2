@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace BrokerIQ.Online.Pages
 {
+    using BrokerIQ.Dto.Enum;
+    using BrokerIQ.Online.Server.Extensions;
     using BrokerIQ.Online.Server.Shared;
-    using Dto.Models;
     using Microsoft.AspNetCore.Components;
     using Models;
     using MudBlazor;
     using Services.Interface;
-    using System.Globalization;
 
     public class CustomerListBase : ComponentBase
     {
@@ -24,16 +23,16 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         INotificationService NotificationService { get; set; }
 
-        [Inject] 
+        [Inject]
         NavigationManager NavigationManager { get; set; }
 
-        [Inject] 
+        [Inject]
         IAlertService AlertService { get; set; }
 
-        [Inject] 
+        [Inject]
         IDialogService DialogService { get; set; }
 
-        [Inject] 
+        [Inject]
         IAccountService AccountService { get; set; }
 
         public List<Customer> Customers { get; set; }
@@ -54,7 +53,9 @@ namespace BrokerIQ.Online.Pages
         public int FilterRecent { get; set; }
         public int FilterPeriod { get; set; }
         public int CustomerCategory { get; set; }
-        public int AgeRange { get; set; } 
+        public int AgeRange { get; set; }
+
+        public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
         protected async Task GetCustomersInit()
         {
@@ -64,6 +65,9 @@ namespace BrokerIQ.Online.Pages
                 await GetCustomers();
                 var user = await AccountService.GetUser();
                 IsAdmin = user.IsAdmin;
+
+                CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
+
                 if (IsAdmin)
                 {
                     Brokers = (await BrokerService.GetBrokers()).ToList();
@@ -80,11 +84,11 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task GetCustomers(bool clear=false)
+        protected async Task GetCustomers(bool clear = false)
         {
             try
             {
-                Customers = (await CustomerService.GetAllCustomers(profilePictures:true)).OrderByDescending(x => x.Id).ToList();
+                Customers = (await CustomerService.GetAllCustomers(profilePictures: true)).OrderByDescending(x => x.Id).ToList();
             }
             catch
             {
@@ -153,8 +157,8 @@ namespace BrokerIQ.Online.Pages
         {
             Customers.Clear();
             Customers = null;
-            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures:true)).ToList();
-            if(SelectedCustomers!=null && SelectedCustomers.Any())
+            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
+            if (SelectedCustomers != null && SelectedCustomers.Any())
             {
                 SelectedCustomers.Clear();
             }
@@ -174,19 +178,19 @@ namespace BrokerIQ.Online.Pages
             StateHasChanged();
         }
 
-        
+
 
         protected async Task SendChatMessageToSelected()
         {
             var dialogParams = new DialogParameters();
 
-            var targets = new List<(string,int)>();
-            if(SelectedCustomers != null && SelectedCustomers.Any())
+            var targets = new List<(string, int)>();
+            if (SelectedCustomers != null && SelectedCustomers.Any())
             {
-                targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => (x.Name,x.Id)).ToList();
+                targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => (x.Name, x.Id)).ToList();
             }
 
-            if (targets==null || !targets.Any())
+            if (targets == null || !targets.Any())
             {
                 AlertService.Error("No targets chosen");
                 return;
@@ -194,7 +198,8 @@ namespace BrokerIQ.Online.Pages
 
             if (IsAdmin)
             {
-                if (BrokerId <= 0) {
+                if (BrokerId <= 0)
+                {
                     AlertService.Error("Please filter by broker first");
                     return;
                 }

@@ -132,26 +132,13 @@ namespace BrokerIQ.Online.Pages
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
-        private void BuildCustomerCategoriesByRelevance()
-        {
-            CustomerCategoriesByRelevance = new CustomerCategoryEnum[]{
-                CustomerCategoryEnum.None,
-                CustomerCategoryEnum.NewProspect
-            };
-
-            var remainingValues = Enum.GetValues(typeof(CustomerCategoryEnum))
-                .Cast<CustomerCategoryEnum>()
-                .Except(CustomerCategoriesByRelevance);
-
-            CustomerCategoriesByRelevance = CustomerCategoriesByRelevance.Concat(remainingValues).ToArray();
-        }
 
         protected override async Task OnInitializedAsync()
         {
             var user = await AccountService.GetUser();
             IsAdmin = user.IsAdmin;
 
-            BuildCustomerCategoriesByRelevance();
+            CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
 
             try
             {
