@@ -311,7 +311,8 @@ else if (!Saved)
                                                 Disabled="false"                           
                                                 @bind-Value="CustomerCategory"
                                                 SelectedValuesChanged="@HandleValidCustomerCategory"
-                                                AdornmentColor="Color.Primary">
+                                                AdornmentColor="Color.Primary"
+                                                MaxHeight="400">
                                                 @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
                                                     {
                                                         CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
