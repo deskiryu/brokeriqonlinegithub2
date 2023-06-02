@@ -86,12 +86,12 @@ namespace BrokerIQ.Online.Pages
 
                 if (!String.IsNullOrWhiteSpace(NameSearchTerm))
                 {
-                    result = result.Where(r => r.CustomerName.ToLower().Contains(NameSearchTerm.ToLower())).ToList();
+                    result = result.Where(r => !String.IsNullOrWhiteSpace(r.CustomerName) && r.CustomerName.ToLower().Contains(NameSearchTerm.ToLower())).ToList();
                 }
 
                 if (!String.IsNullOrWhiteSpace(ReferralSearchTerm))
                 {
-                    result = result.Where(r => r.ReferralName.ToLower().Contains(ReferralSearchTerm.ToLower())).ToList();
+                    result = result.Where(r => !String.IsNullOrWhiteSpace(r.ReferralName) && r.ReferralName.ToLower().Contains(ReferralSearchTerm.ToLower())).ToList();
                 }
 
                 return result;
