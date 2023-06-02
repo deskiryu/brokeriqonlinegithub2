@@ -56,7 +56,8 @@
                             <HeaderContent>
                                 @if (IsAdmin)
                                 {
-                                    <MudTh>Broker</MudTh>
+                                    <MudTh><MudTableSortLabel
+                                        SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.BrokerName)">Broker</MudTableSortLabel></MudTh>
                                 }
                                 <MudTh>
                                     <MudTableSortLabel
