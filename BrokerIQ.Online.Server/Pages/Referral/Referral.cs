@@ -1,27 +1,14 @@
-﻿
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using MudBlazor;
-using BrokerIQ.Dto.Models;
-using BrokerIQ.Online.Models;
-using BrokerIQ.Online.Server.Models;
-
-using BrokerIQ.Online.Services.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using BrokerIQ.Online.Server.Extensions;
-using BrokerIQ.Online.Data;
-using BrokerIQ.Online.Services;
-using BrokerIQ.Online.Server.Services;
-using Microsoft.IdentityModel.Tokens;
+using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -74,7 +61,9 @@ namespace BrokerIQ.Online.Pages
         public string Email { get; set; }
         public string DragEnterStyle { get; set; }
 
-        public string SearchTerm { get; set; } = "";
+        public string NameSearchTerm { get; set; } = string.Empty;
+
+        public string ReferralSearchTerm { get; set; } = string.Empty;
 
         public bool IsAdmin { get; set; }
 
@@ -89,7 +78,25 @@ namespace BrokerIQ.Online.Pages
         protected List<Customer> Customers { get; set; }
 
         //filter
-        public List<ClientReferral> FilteredClientReferrals => ClientReferralsSent.Where(i => i.ReferralName.IsNullOrEmpty() ||  i.ReferralName.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        public List<ClientReferral> FilteredClientReferrals
+        {
+            get
+            {
+                var result = ClientReferralsSent;
+
+                if (!String.IsNullOrWhiteSpace(NameSearchTerm))
+                {
+                    result = result.Where(r => r.CustomerName.ToLower().Contains(NameSearchTerm.ToLower())).ToList();
+                }
+
+                if (!String.IsNullOrWhiteSpace(ReferralSearchTerm))
+                {
+                    result = result.Where(r => r.ReferralName.ToLower().Contains(ReferralSearchTerm.ToLower())).ToList();
+                }
+
+                return result;
+            }
+        }
 
         public bool ShowEmployee { get; set; }
 
@@ -214,7 +221,7 @@ namespace BrokerIQ.Online.Pages
             {
                 notif.CustomerName = "-";
 
-                if (notif.CustomerId  > 0)
+                if (notif.CustomerId > 0)
                 {
                     var foundCust = Customers.FirstOrDefault(x => x.Id == notif.CustomerId);
                     if (foundCust != null)
@@ -315,7 +322,7 @@ namespace BrokerIQ.Online.Pages
             {
                 await RefreshInvitationsWithDialogMessage(false, "Something went wrong updating the referral. Please try again.");
             }
-   
+
 
             if (succeeded)
             {
@@ -327,7 +334,7 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        
+
         protected void NavigateToOverview()
         {
             NavigationManager.NavigateTo($"refresh");
