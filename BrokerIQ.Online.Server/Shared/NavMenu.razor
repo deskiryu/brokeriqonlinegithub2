@@ -18,7 +18,8 @@
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">
-    <img src="https://secureservercdn.net/160.153.137.91/84h.fdf.myftpupload.com/wp-content/uploads/2022/05/iq-test-logo.png?time=1658393204" width="" height="" alt="BrokerIQ" class="white-logo default-logo"></a>
+        <img src="https://secureservercdn.net/160.153.137.91/84h.fdf.myftpupload.com/wp-content/uploads/2022/05/iq-test-logo.png?time=1658393204"
+            width="" height="" alt="BrokerIQ" class="white-logo default-logo"></a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -40,7 +41,7 @@
                     <NavLink class="nav-link" href="clientlist">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Clients
                     </NavLink>
-                </li>                
+                </li>
             }
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="videolist">
@@ -120,14 +121,11 @@
                 </li>
             }
 
-            @if (MyLoggedInAppState.IsBroker)
-            {
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="templateedit">
-                        <span class="oi oi-cog" aria-hidden="true"></span> Settings
-                    </NavLink>
-                </li>
-            }
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="templateedit">
+                    <span class="oi oi-cog" aria-hidden="true"></span> Settings
+                </NavLink>
+            </li>
 
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="account/logout">
@@ -135,7 +133,7 @@
                 </NavLink>
             </li>
 
-            <li style="height:40px"/>
+            <li style="height:40px" />
 
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="https://brokeriq.co.uk/feedback" target="_blank">
@@ -189,10 +187,10 @@
         MyMessageCountState.OnMessageCountChange += OnMyMessageCountChangeHandler;
 #if !DEBUG
         System.Timers.Timer t = new System.Timers.Timer();
-        t.Elapsed += async (s, e) => 
-        { 
-           await UpdateMessageCount();
-           await InvokeAsync(StateHasChanged); 
+        t.Elapsed += async (s, e) =>
+        {
+            await UpdateMessageCount();
+            await InvokeAsync(StateHasChanged);
         };
         t.Interval = 10000;
         t.Start();
@@ -226,7 +224,7 @@
 
     private async Task UpdateMessageCount(bool refresh = false)
     {
-        if (MyLoggedInAppState.LoggedIn && MyLoggedInAppState.IsAdmin==false && MyLoggedInAppState.IsMinorAdmin==false)
+        if (MyLoggedInAppState.LoggedIn && MyLoggedInAppState.IsAdmin == false && MyLoggedInAppState.IsMinorAdmin == false)
         {
             var count = await NotificationService.GetNewBrokerNotificationsCountByBrokerId();
             NewMessageCount = count;
