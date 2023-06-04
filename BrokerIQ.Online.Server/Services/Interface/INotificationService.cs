@@ -17,6 +17,8 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<bool> SendBrokerNotification(string message, List<int> targets);
 
+        Task<bool> SendMortgageVideoNotification(int customerId, string message);
+
         Task<IEnumerable<Notification>> GetNotifications();
 
         Task<IEnumerable<Notification>> GetNotificationByCustomerId(int customerId);

@@ -86,6 +86,26 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
+        public async Task<bool> SendMortgageVideoNotification(int customerId, string message)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var notification = new CreateNotificationDto
+            {
+                Message = message,
+                SendAll = false,
+                Targets = new List<int> { customerId },
+                AudioContentUrl = string.Empty,
+                VideoContentUrl = string.Empty,
+                BrokerId = user.MasterBrokerId,
+                BrokerStaffId = user.StaffBrokerId,
+                IsChat = false
+            };
+            var answer = await this.requestProviderService.Post<CreateNotificationDto, bool>(this.notificationUrl+"/functionSendMortgageVideo", notification);
+            return answer;
+        }
+
         public async Task<bool> SendBrokerNotification(string message, List<int> targets)
         {
             var user = await this.accountService.GetUser();
