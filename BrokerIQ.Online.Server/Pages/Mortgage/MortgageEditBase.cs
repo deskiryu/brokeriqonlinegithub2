@@ -105,7 +105,7 @@ namespace BrokerIQ.Online.Pages
         public string SpinnerVisible { get; set; }
         public string LoadFileStatus { get; set; }
         public bool SendNotification { get; set; }
-
+        public bool SendVideoNotification { get; set; }
 
         public MortgageEditBase()
         {
@@ -118,6 +118,7 @@ namespace BrokerIQ.Online.Pages
             SpinnerVisible = "display:none";
             fileUploadSettings = this.FileUploadSettingsOption.Value;
             SendNotification = true;
+            SendVideoNotification = true;
         }
 
         protected override async Task OnParametersSetAsync()
@@ -227,9 +228,17 @@ namespace BrokerIQ.Online.Pages
 
 
                 var dialogParams = new DialogParameters();
-                if (customer.EmailConfirmed && SendNotification == true)
+                if (customer.EmailConfirmed && SendNotification == true && SendVideoNotification==true)
                 {
-                    dialogParams.Add("Message", $"Mortgage will be added and a notification will be sent to {customer.Name} about this new mortgage.");
+                    dialogParams.Add("Message", $"Mortgage will be added and a mortgage notification and a new mortgage video notification will be sent to {customer.Name} about this new mortgage.");
+                }
+                else if (customer.EmailConfirmed && SendNotification == true)
+                {
+                    dialogParams.Add("Message", $"Mortgage will be added and a mortgage notification will be sent to {customer.Name} about this new mortgage.");
+                }
+                else if (customer.EmailConfirmed && SendVideoNotification == true)
+                {
+                    dialogParams.Add("Message", $"Mortgage will be added and a new mortgage video notification will be sent to {customer.Name} about this new mortgage.");
                 }
                 else if (!customer.EmailConfirmed)
                 {
@@ -294,6 +303,11 @@ namespace BrokerIQ.Online.Pages
                         if (SendNotification)
                         {
                             await SendMessageNotification(customer);
+                        }
+
+                        if (SendVideoNotification)
+                        {
+                            await SendMessageNotification(customer,upload:false,mortgageVideo:true);
                         }
                     }
                     catch
@@ -615,8 +629,14 @@ namespace BrokerIQ.Online.Pages
             return messageToSend;
         }
 
+        private string GetMessageMortgageVideoAdded(string customerName, string brokerName, string mortgageName)
+        {
+            var messageToSend = $"Congratulation {customerName} on your new mortgage. Watch our celebration video.";
+            return messageToSend;
+        }
 
-        private async Task SendMessageNotification(Customer customer, bool upload=false)
+
+        private async Task SendMessageNotification(Customer customer, bool upload=false, bool mortgageVideo=false)
         {
              var brokerId = 0;
              var brokerName = "";
@@ -647,10 +667,22 @@ namespace BrokerIQ.Online.Pages
             {
                 messageToSend = GetMessageMortgageAdded(customer.FirstName,brokerName,mortgageName);
             }
+            if (mortgageVideo)
+            {
+                messageToSend = GetMessageMortgageVideoAdded(customer.FirstName, brokerName, mortgageName);
+            }
 
             try
             {
-                await NotificationService.SendMessageNotification(messageToSend, new List<int> { customerId }, brokerId, updateAppAlert:false);
+                if (mortgageVideo)
+                {
+                    await NotificationService.SendMortgageVideoNotification(customerId ,messageToSend);
+                }
+                else
+                {
+                    await NotificationService.SendMessageNotification(messageToSend, new List<int> { customerId }, brokerId, updateAppAlert:false);
+                }
+
             }
             catch
             {
