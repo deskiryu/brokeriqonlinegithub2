@@ -212,6 +212,26 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
+        public async Task<(bool, string)> SetMortgageVideo(string fileName, int brokerId, bool isMortgageVideo = true)
+        {
+            var result = (false, string.Empty);
+
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/setmortgagevideo?brokerId={brokerId}&fileName={fileName}&isMortgageVideo={isMortgageVideo}";
+
+            try
+            {
+                result = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetMortgageVideo: exception {ex.Message}");
+            }
+
+            return result;
+        }
+
         public async Task<(bool, string)> SetVideoSendDate(string fileName, int brokerId, DateTime? sendDate)
         {
             var answer = (false, string.Empty);

@@ -1,9 +1,7 @@
 ﻿@page "/clientdetail/{CustomerId}"
-@using BrokerIQ.Dto.Models
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
-@using BrokerIQ.Online.Services
 @using BrokerIQ.Online.Services.Interface
 @using System.IO
 @using BrokerIQ.Online.Server.Extensions
@@ -13,6 +11,7 @@
 @inject NavigationManager NavigationManager
 
 @inject IJSRuntime js
+
 @functions {
     async Task PreviewImage()
     {
@@ -312,17 +311,14 @@ else if (!Saved)
                                                 Disabled="false"                           
                                                 @bind-Value="CustomerCategory"
                                                 SelectedValuesChanged="@HandleValidCustomerCategory"
-                                                AdornmentColor="Color.Primary">
-                                        @if (true)
-                                            {
-                                                var names = Enum.GetNames(typeof(CustomerCategoryEnum));
-                                                @for (int i = 0; i <= names.Length; i++)
-                                                    {
-                                                        CustomerCategoryEnum looped = (CustomerCategoryEnum)i;
-                                                        <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
-                                                    }
-                                            }
-
+                                                AdornmentColor="Color.Primary"
+                                                MaxHeight="400">
+                                                @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
+                                                {
+                                                    CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
+                                                    int id = (int)looped;
+                                                    <MudSelectItem Value="@id">@looped.GetDisplayName()</MudSelectItem>
+                                                }
                                     </MudSelect> 
 
                             </div>

@@ -228,6 +228,8 @@
                             <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add mortgage</MudButton>
                             <MudCheckBox @bind-Checked="@SendNotification" Class="ml-1 mt-2" />
                             <label class="mt-2">Send Notification</label>
+                            <MudCheckBox @bind-Checked="@SendVideoNotification" Class="ml-1 mt-2" />
+                            <label class="mt-2">Send Video Notification</label>
                         }
 
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="ml-4">Cancel</MudButton>
