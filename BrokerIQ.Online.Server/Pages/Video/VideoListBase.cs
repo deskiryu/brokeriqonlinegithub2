@@ -8,7 +8,7 @@ using System.Globalization;
 
 namespace BrokerIQ.Online.Pages
 {
-    
+
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;
     using MudBlazor;
@@ -125,7 +125,7 @@ namespace BrokerIQ.Online.Pages
                     throw new Exception();
                 }
 
-                Videos  = (await VideoService.GetVideos(BrokerId)).ToList();
+                Videos = (await VideoService.GetVideos(BrokerId)).ToList();
                 VideoThumbnails = (await VideoService.GetVideoThumbnails(BrokerId));
                 DisplayEmbeddedVideo = new Dictionary<string, bool>();
                 foreach (Video video in Videos)
@@ -156,7 +156,8 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        public async Task OnCancelPushed(){
+        public async Task OnCancelPushed()
+        {
             RenameUploadVisibility = false;
         }
 
@@ -182,7 +183,7 @@ namespace BrokerIQ.Online.Pages
                             break;
                         }
                     }
-                    
+
                     string thumbnailName = $"{name}.jpeg";
                     bool thumbnail_deleted = await VideoService.DeleteVideoThumbnail(thumbnailName, BrokerId);
                     if (!thumbnail_deleted)
@@ -207,7 +208,7 @@ namespace BrokerIQ.Online.Pages
         {
             await VerifyAccess();
 
-            if (await CheckIsAdmin() && FilterBrokerId==0)
+            if (await CheckIsAdmin() && FilterBrokerId == 0)
             {
                 await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
                 return;
@@ -245,6 +246,44 @@ namespace BrokerIQ.Online.Pages
                 else
                 {
                     await RefreshVideosWithDialogMessage(false, "Something went wrong setting the birthday video. Please try again.");
+                }
+            }
+        }
+
+        protected async Task SetMortgageVideo(string name)
+        {
+            await VerifyAccess();
+
+            if (await CheckIsAdmin() && FilterBrokerId == 0)
+            {
+                await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
+                return;
+            }
+
+            var selectedVideo = Videos.FirstOrDefault(x => x.Name == name);
+            var isMortgageVideo = selectedVideo?.MortgageVideo ?? false;
+
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", isMortgageVideo ?
+                "There will be no mortgage video. Continue?" :
+                "This video will be sent to clients when a new mortgage is created. Continue?");
+
+            var brokerId = IsAdmin ? FilterBrokerId : BrokerId;
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                var returned = await VideoService.SetMortgageVideo(name, brokerId, !isMortgageVideo);
+                if (returned.Item1)
+                {
+                    returned.Item1 = await BrokerService.UpdateBrokerBirthdayVideoUrl(brokerId, returned.Item2);
+                }
+                if (returned.Item1)
+                {
+                    await RefreshVideosWithDialogMessage(true, "Mortgage video set successfully");
+                }
+                else
+                {
+                    await RefreshVideosWithDialogMessage(false, "Something went wrong setting the mortgage video. Please try again.");
                 }
             }
         }
@@ -381,7 +420,7 @@ namespace BrokerIQ.Online.Pages
                         {
                             string result = resultJson["process_info"]["result"];
                             string resultFiletype = resultJson["file_info"]["file_type_category"];
-                            if (result.Equals("Allowed")&& resultFiletype.Equals("M"))
+                            if (result.Equals("Allowed") && resultFiletype.Equals("M"))
                             {
                                 scanPass = true;
                             }

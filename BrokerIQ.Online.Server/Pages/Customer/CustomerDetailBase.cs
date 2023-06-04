@@ -5,20 +5,20 @@ using System.Threading.Tasks;
 
 namespace BrokerIQ.Online.Pages
 {
-    using Microsoft.AspNetCore.Components;
-    using Models;
+    using System.IO;
+    using BrokerIQ.Dto.CreateDto;
     using BrokerIQ.Dto.Enum;
     using BrokerIQ.Dto.Models;
-    using BrokerIQ.Online.Services.Interface;
-    using MudBlazor;
-    using System.IO;
-    using BrokerIQ.Online.Server.Shared;
+    using BrokerIQ.Online.Server.AppSettings;
     using BrokerIQ.Online.Server.Extensions;
+    using BrokerIQ.Online.Server.Models;
+    using BrokerIQ.Online.Server.Shared;
+    using BrokerIQ.Online.Services.Interface;
+    using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;
     using Microsoft.Extensions.Options;
-    using BrokerIQ.Online.Server.AppSettings;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Dto.CreateDto;
+    using Models;
+    using MudBlazor;
 
     public class CustomerDetailBase : ComponentBase
     {
@@ -130,15 +130,20 @@ namespace BrokerIQ.Online.Pages
 
         public DateTime? SelectedTemplateDateReplacement { get; set; }
 
+        public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
+
+
         protected override async Task OnInitializedAsync()
         {
             var user = await AccountService.GetUser();
             IsAdmin = user.IsAdmin;
 
+            CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
+
             try
             {
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
-                CustomerCategory =  (int)Customer.CustomerCategory;
+                CustomerCategory = (int)Customer.CustomerCategory;
                 CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
                 DocumentsRequirement = await DocumentsRequirementService.Get(int.Parse(CustomerId));
@@ -159,13 +164,13 @@ namespace BrokerIQ.Online.Pages
                 {
                     var broker = await BrokerService.GetBroker(user.MasterBrokerId);
                     BrokerName = broker.Name;
-                    BrokerHasWhiteLabel = broker.BrokerIdentifier!= null && broker.BrokerIdentifier.IdentifierFound;
+                    BrokerHasWhiteLabel = broker.BrokerIdentifier != null && broker.BrokerIdentifier.IdentifierFound;
                     BrokerHasWhiteLabelAndIsInsuranceOnly = BrokerHasWhiteLabel && broker.BrokerIdentifier != null && broker.BrokerIdentifier.InsuranceOnly;
                     await PopulateBrokerDefinedMessages();
                 }
                 else
                 {
-                    BrokerHasWhiteLabel= true;
+                    BrokerHasWhiteLabel = true;
                 }
             }
             catch
@@ -555,7 +560,7 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task NewChat(string messageToshow="")
+        protected async Task NewChat(string messageToshow = "")
         {
             bool succeeded = false;
 
@@ -681,54 +686,58 @@ namespace BrokerIQ.Online.Pages
         protected async Task DeleteSelectedDocumentUpload()
         {
             var dialogParams = new DialogParameters();
-            if(SelectedItemsCustomerDocuments.Any()){
+            if (SelectedItemsCustomerDocuments.Any())
+            {
                 dialogParams.Add("Message", $"Are you sure you want to delete the selected client documents?");
                 var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
                 if (!result.Cancelled)
                 {
                     foreach (var custDoc in SelectedItemsCustomerDocuments)
                     {
-                        await DeleteDocumentUpload(custDoc, showDialog:false);
+                        await DeleteDocumentUpload(custDoc, showDialog: false);
                     }
 
                     CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
                     SelectedItemsCustomerDocuments.Clear();
-                    StateHasChanged();    
+                    StateHasChanged();
                 }
-             
+
             }
         }
 
-        protected async Task DeleteDocumentUpload(CustomerDocument doc, bool showDialog=true)
+        protected async Task DeleteDocumentUpload(CustomerDocument doc, bool showDialog = true)
         {
             var proceed = true;
-            if(showDialog){
+            if (showDialog)
+            {
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", $"Are you sure you want to delete this client document?");
                 var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
                 proceed = !result.Cancelled;
             }
-            if(proceed)
+            if (proceed)
             {
                 var deleted = await CustomerDocumentService.DeleteCustomerDocument(doc.Id);
                 if (deleted)
                 {
-                    if(showDialog){
+                    if (showDialog)
+                    {
                         var responseParams = new DialogParameters();
                         responseParams.Add("Message", "Deleted successfully");
-                        await DialogService.Show<AlertDialog>("Information", responseParams).Result;           
+                        await DialogService.Show<AlertDialog>("Information", responseParams).Result;
 
-                       CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
-                        StateHasChanged();              
+                        CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                        StateHasChanged();
                     }
 
                 }
                 else
                 {
-                    if(showDialog){
+                    if (showDialog)
+                    {
                         var responseParams = new DialogParameters();
                         responseParams.Add("Message", "The document did not delete.");
-                        await DialogService.Show<AlertDialog>("Information", responseParams).Result;                        
+                        await DialogService.Show<AlertDialog>("Information", responseParams).Result;
                     }
                 }
             }
@@ -863,8 +872,8 @@ namespace BrokerIQ.Online.Pages
                 foreach (var item in brokerDefinedMessage.BrokerDefinedMessages.Where(
                     b => b.BrokerDefinedMessageEnumValue == enumVal && !b.BrokerDefinedMessage.Equals(enumVal.GetDisplayName())))
                 {
-                        message = item.BrokerDefinedMessage;
-                        break;
+                    message = item.BrokerDefinedMessage;
+                    break;
                 }
 
                 if (message == String.Empty)
@@ -889,7 +898,7 @@ namespace BrokerIQ.Online.Pages
         {
             try
             {
-                await CustomerService.SetCustomerCategory(Customer.Id, (CustomerCategoryEnum)CustomerCategory );
+                await CustomerService.SetCustomerCategory(Customer.Id, (CustomerCategoryEnum)CustomerCategory);
             }
             catch
             {
