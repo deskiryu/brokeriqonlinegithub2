@@ -97,7 +97,7 @@ namespace BrokerIQ.Online.Pages
         public Broker Broker { get; set; }
 
         //filter
-        public List<EmailInvite> FilteredEmailInvites => EmailInvitesSent.Where(i => i.EmailAddress.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        public List<EmailInvite> FilteredEmailInvites => EmailInvitesSent.Where(i => string.IsNullOrEmpty(i.EmailAddress) || i.EmailAddress.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         public List<TelephoneInvite> FilteredTelephoneInvites => TelephoneInvitesSent.Where(i =>  string.IsNullOrEmpty(CustomerName) || i.CustomerName.ToLower().Contains(SearchTermPhone.ToLower())).ToList();
 
