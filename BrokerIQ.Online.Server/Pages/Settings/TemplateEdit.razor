@@ -1,4 +1,4 @@
-﻿@page "/templateedit"  
+﻿@page "/templateedit"
 @using Dto.Enum
 @using Dto.Models
 @using BrokerIQ.Online.Pages
@@ -8,13 +8,13 @@
 <p><b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.</p>
 <p><b>INSERT_BROKER_NAME</b> is replaced in message by your brokerage name.</p>
 <p><b>INSERT_DATE</b> is be replaced by a date selected by you on the client chat page.</p>
-<MudTable Items="@BrokerDefinedMessages" Dense="@dense" Hover="@hover" ReadOnly="@ronly"
-          SortLabel="Sort By" CommitEditTooltip="Commit Edit"
-          RowEditPreview="BackupMessage" CanCancelEdit="@canCancelEdit" RowEditCancel="ResetMessage" RowEditCommit="CommitMessage">
+<MudTable Items="@BrokerDefinedMessages" Dense="@dense" Hover="@hover" ReadOnly="@ronly" SortLabel="Sort By"
+    CommitEditTooltip="Commit Edit" RowEditPreview="BackupMessage" CanCancelEdit="@canCancelEdit"
+    RowEditCancel="ResetMessage" RowEditCommit="CommitMessage">
     <ColGroup>
-		<col style="width:250px;" />
+        <col style="width:250px;" />
         <col />
-		<col style="width:250px;" />
+        <col style="width:250px;" />
     </ColGroup>
     <HeaderContent>
         <MudTh>Type</MudTh>
@@ -22,31 +22,32 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Type">@(context.Prompt)</MudTd>
-        <MudTd DataLabel="Name">@context.Message</MudTd>
-    </RowTemplate>
-    <RowEditingTemplate>
-        <MudTd DataLabel="Type">@context.Prompt</MudTd>
-        <MudTd DataLabel="Name">
-            <MudTextField @bind-Value="@context.Message" Required />
-        </MudTd>
-    </RowEditingTemplate>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-</MudTable>
+            <MudTd DataLabel="Name">@context.Message</MudTd>
+        </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd DataLabel="Type">@context.Prompt</MudTd>
+            <MudTd DataLabel="Name">
+                <MudTextField Lines="10" style="white-space: pre-line" @bind-Value="@context.Message" Required />
+         </MudTd>
+     </RowEditingTemplate>
+     <PagerContent>
+         <MudTablePager />
+     </PagerContent>
+ </MudTable>
 
-@code {
-	private List<string> editEvents = new();
-	private bool dense = false;
-	private bool hover = true;
-	private bool ronly = false;
-	private bool canCancelEdit = true;
-	private MessageElement elementBeforeEdit;
+ @code {
+    private List<string> editEvents = new();
+    private bool dense = false;
+    private bool hover = true;
+    private bool ronly = false;
+    private bool canCancelEdit = true;
+    private MessageElement elementBeforeEdit;
 
     private void BackupMessage(object element)
     {
         // required in case user cancels edit
-        elementBeforeEdit = new MessageElement(((MessageElement)element).Index, ((MessageElement)element).Message, ((MessageElement)element).Prompt);
+        elementBeforeEdit = new MessageElement(((MessageElement)element).Index, ((MessageElement)element).Message,
+        ((MessageElement)element).Prompt);
     }
 
     private async void CommitMessage(object element)
@@ -54,10 +55,10 @@
         // update defined messages in database
         List<DefinedMessagesDto> definedMessages = new List<DefinedMessagesDto>();
         definedMessages.Add(new DefinedMessagesDto
-        {
-            BrokerDefinedMessageEnumValue = (BrokerDefinedMessageEnum) ((MessageElement)element).Index,
-            BrokerDefinedMessage = ((MessageElement)element).Message
-        });
+            {
+                BrokerDefinedMessageEnumValue = (BrokerDefinedMessageEnum)((MessageElement)element).Index,
+                BrokerDefinedMessage = ((MessageElement)element).Message
+            });
         await BrokerDefinedMessageService.UpdateOrCreate(definedMessages);
         await PopulateBrokerDefinedMessages();
     }
