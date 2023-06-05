@@ -65,7 +65,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
         public int AgeRange { get; set; }
 
         //filter
-        protected List<Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         protected override async Task OnInitializedAsync()
         {
