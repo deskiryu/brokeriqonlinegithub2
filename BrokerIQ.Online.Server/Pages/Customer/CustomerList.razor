@@ -157,7 +157,7 @@ else
 
         //filter
         List<BrokerIQ.Online.Models.Customer>
-        FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) &&  i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
     }
     <div>
 

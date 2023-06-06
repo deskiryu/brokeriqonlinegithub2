@@ -106,9 +106,12 @@ namespace BrokerIQ.Online.Pages
             if (!string.IsNullOrEmpty(value) && Customers != null && Customers.Any())
             {
                 // In real life use an asynchronous function for fetching data from an api.
-                var filtered = Customers.Where(i => i.Name.ToLower().Contains(value.ToLower()) ||
-                i.EmailAddress.ToLower().Contains(value.ToLower()) ||
-                i.TelephoneNumber.ToLower().Contains(value.ToLower()));
+                var filtered = Customers
+                    .Where(
+                            i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(value.ToLower()) ||
+                                 !string.IsNullOrEmpty(i.EmailAddress) && i.EmailAddress.ToLower().Contains(value.ToLower()) ||
+                                 !string.IsNullOrEmpty(i.TelephoneNumber) && i.TelephoneNumber.ToLower().Contains(value.ToLower())
+                            );
                 var results = await Task.FromResult(filtered.Select(x => x.Name).Distinct().ToList());
                 return results;
             }
@@ -130,8 +133,8 @@ namespace BrokerIQ.Online.Pages
                 }
                 else
                 {
-                    filtered = Brokers.Where(i => i.Name.ToLower().Contains(value.ToLower()) ||
-                    i.EmailAddress.ToLower().Contains(value.ToLower()));
+                    filtered = Brokers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(value.ToLower()) ||
+                    !string.IsNullOrEmpty(i.EmailAddress) && i.EmailAddress.ToLower().Contains(value.ToLower()));
                 }
 
 
