@@ -35,5 +35,7 @@ namespace BrokerIQ.Online.Models
         public bool TwoFactorEnabled { get; set; }
 
         public int BrokerId { get; set; }
+
+        public string FullName { get => FirstName + ' ' + LastName; }
     }
 }

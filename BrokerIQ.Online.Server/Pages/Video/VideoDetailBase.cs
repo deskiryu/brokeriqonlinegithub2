@@ -65,7 +65,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
         public int AgeRange { get; set; }         
 
         //filter
-        protected List<Customer> FilteredCustomers => Customers.Where(i => i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         protected override async Task OnInitializedAsync()
         {
@@ -141,8 +141,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 }
                 else
                 {
-                    filtered = Brokers.Where(i => i.Name.ToLower().Contains(value.ToLower()) ||
-                    i.EmailAddress.ToLower().Contains(value.ToLower()));
+                    filtered = Brokers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(value.ToLower()) ||
+                    !string.IsNullOrEmpty(i.EmailAddress) && i.EmailAddress.ToLower().Contains(value.ToLower()));
                 }
 
 
