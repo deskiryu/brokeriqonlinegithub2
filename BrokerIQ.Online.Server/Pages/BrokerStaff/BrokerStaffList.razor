@@ -25,18 +25,40 @@
             Add New Employee
         </MudButton>
 
+        <div class="card">
+            <div class="card-header">Filter Employees</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Filter the list below by name</label>
+                        <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name" class="filter_customerBroker" />
+                    </div>
+                    <div class="col-lg-8 control_wrapper">
+                        <MudAutocomplete T="string"
+                                 Label="Go direct to staff"
+                                 Placeholder="Start typing name, email or telephone ..."
+                                         AllowFiltering="true"
+                                 AdornmentColor="Color.Primary"
+                                 TextChanged="@AutoCompleteClick"
+                                 SearchFunc="@OnFilter">
+                        </MudAutocomplete>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="card">
             <div class="card-header">Employees</div>
             <div class="card-body">
-                <MudTable Items="@BrokerStaff" Hover="true" SortLabel="Sort By">
+                <MudTable Items="@FilteredBrokerStaff" Hover="true" SortLabel="Sort By">
                     <HeaderContent>
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
                         @if (IsAdmin||IsMinorAdmin)
                         {
-                            <MudTh>Broker</MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.BrokerId)">Broker</MudTableSortLabel></MudTh>
                             <MudTh>Two Factor</MudTh>                
                         }
                         <MudTh></MudTh>
@@ -65,6 +87,8 @@
             </div>
         </div>
     }
+
+    
 }
 else
 {
