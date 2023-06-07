@@ -544,6 +544,8 @@ namespace BrokerIQ.Online.Pages
                     if (!string.IsNullOrEmpty(messageToSend))
                     {
                         await NewChat(messageToSend);
+
+                        LoadedChatFiles.Clear();
                     }
                 }
                 catch (Exception ex)
