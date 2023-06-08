@@ -116,6 +116,8 @@ namespace BrokerIQ.Online.Pages
 
         public int UnReadChat { get; set; }
 
+        public int LastUnReadChat { get; set; }
+
         public bool BadgeDot { get; set; }
 
         public MudBlazor.Color ChatBadgeColour { get; set; }
@@ -222,12 +224,13 @@ namespace BrokerIQ.Online.Pages
         protected async Task UpdateChat(bool firstTime=false)
         {
             int latestUnreadchat = await ChatService.GetUnRead(Customer.Id);
-            if(firstTime || latestUnreadchat != UnReadChat)
+            if(firstTime || latestUnreadchat != LastUnReadChat)
             {
+                LastUnReadChat= latestUnreadchat;
                 UnReadChat += latestUnreadchat;
                 Chat = await ChatService.Get(Customer.Id);
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
-                BadgeDot = UnReadChat == 0;
+                BadgeDot = UnReadChat==0;
                 await InvokeAsync(StateHasChanged);
             }
         }
@@ -935,7 +938,7 @@ namespace BrokerIQ.Online.Pages
         {
             UnReadChat = 0;
             ChatBadgeColour = MudBlazor.Color.Transparent;
-            BadgeDot = UnReadChat == 0;
+            BadgeDot = true;
         }
     }
 }
