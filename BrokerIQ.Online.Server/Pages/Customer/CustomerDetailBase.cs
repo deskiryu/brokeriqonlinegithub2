@@ -132,11 +132,14 @@ namespace BrokerIQ.Online.Pages
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
+        private System.Threading.Timer timer;
+
 
         protected override async Task OnInitializedAsync()
         {
             var user = await AccountService.GetUser();
             IsAdmin = user.IsAdmin;
+            ClearUnReadChat();
 
             CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
 
@@ -196,10 +199,11 @@ namespace BrokerIQ.Online.Pages
 
             if (!IsAdmin)
             {
-                UnReadChat = await ChatService.GetUnRead(Customer.Id);
-                Chat = await ChatService.Get(Customer.Id);
-                ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
-                BadgeDot = UnReadChat == 0;
+                UpdateChat(firstTime: true);
+                timer = new System.Threading.Timer(async _ =>  // async void
+                {      
+                    await UpdateChat();
+                }, null, 0, 5000);
             }
             else
             {
@@ -213,6 +217,19 @@ namespace BrokerIQ.Online.Pages
             }
             fileUploadSettings = this.FileUploadSettingsOption.Value;
 
+        }
+
+        protected async Task UpdateChat(bool firstTime=false)
+        {
+            int latestUnreadchat = await ChatService.GetUnRead(Customer.Id);
+            if(firstTime || latestUnreadchat != UnReadChat)
+            {
+                UnReadChat += latestUnreadchat;
+                Chat = await ChatService.Get(Customer.Id);
+                ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
+                BadgeDot = UnReadChat == 0;
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
         protected async Task ChatBrokerChanged()
@@ -909,5 +926,16 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        public void Dispose()
+        {
+            timer?.Dispose();
+        }
+
+        protected void ClearUnReadChat()
+        {
+            UnReadChat = 0;
+            ChatBadgeColour = MudBlazor.Color.Transparent;
+            BadgeDot = UnReadChat == 0;
+        }
     }
 }

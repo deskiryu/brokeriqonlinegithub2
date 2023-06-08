@@ -7,8 +7,7 @@
 @using BrokerIQ.Online.Server.Extensions
 
 @inherits CustomerDetailBase
-@inject ICustomerService CustomerService
-@inject NavigationManager NavigationManager
+@implements IDisposable
 
 @inject IJSRuntime js
 
@@ -680,7 +679,8 @@ else if (!Saved)
                 }
             </div>
             </MudTabPanel>
-            <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot'>
+            <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot' OnClick="@(f => ClearUnReadChat())">
+                <div @onclick="this.ClearUnReadChat">
                 @if (!IsAdmin)
                 {
                         <div class="col-sm-6 control_wrapper mb-5">
@@ -732,7 +732,7 @@ else if (!Saved)
                 }
                 else
                 {
-                    <div class="form-group row">
+                    <div class="form-group row" >
                         <label class="col-sm-4 col-form-label">Choose Broker</label>
                         <div class="col-sm-8">
                             @if(CustomerBrokers!=null && CustomerBrokers.Any())
@@ -820,6 +820,7 @@ else if (!Saved)
                     </div>
                 }
                 </div></div></div>
+                </div>
             </MudTabPanel>
         </MudTabs>
     </section>
