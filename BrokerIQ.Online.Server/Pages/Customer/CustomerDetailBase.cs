@@ -544,8 +544,6 @@ namespace BrokerIQ.Online.Pages
                     if (!string.IsNullOrEmpty(messageToSend))
                     {
                         await NewChat(messageToSend);
-
-                        LoadedChatFiles.Clear();
                     }
                 }
                 catch (Exception ex)
@@ -644,6 +642,7 @@ namespace BrokerIQ.Online.Pages
             if (succeeded)
             {
                 await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
+                LoadedChatFiles.Clear();
             }
             else
             {
