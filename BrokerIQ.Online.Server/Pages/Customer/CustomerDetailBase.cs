@@ -226,11 +226,11 @@ namespace BrokerIQ.Online.Pages
             int latestUnreadchat = await ChatService.GetUnRead(Customer.Id);
             if(firstTime || latestUnreadchat != LastUnReadChat)
             {
-                LastUnReadChat= latestUnreadchat;
                 UnReadChat += latestUnreadchat;
                 Chat = await ChatService.Get(Customer.Id);
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
                 BadgeDot = UnReadChat==0;
+                LastUnReadChat= latestUnreadchat;
                 await InvokeAsync(StateHasChanged);
             }
         }
