@@ -194,18 +194,20 @@ namespace BrokerIQ.Online.Pages
         protected async Task HandleValidSubmit()
         {
             var dialogParams = new DialogParameters();
-            var  result = await this.BrokerService.UpdateBroker(Broker);
-
-            if(result!=null && result.Id > 0)
+            try
             {
-                dialogParams.Add("Message", $"Saved the preferences");
-                await DialogService.Show<AlertDialog>("Notifcation Preferences", dialogParams).Result;
+                await this.BrokerService.UpdateBroker(Broker);
             }
-            else
+            catch
             {
                 dialogParams.Add("Message", $"Preference did not save");
-                await DialogService.Show<AlertDialog>("Notifcation Preferences", dialogParams).Result;
+                await DialogService.Show<AlertDialog>("Notification Preferences", dialogParams).Result;
+                return;
             }
+
+            dialogParams.Add("Message", $"Saved the preferences");
+            await DialogService.Show<AlertDialog>("Notification Preferences", dialogParams).Result;
+
         }
     }
 }
