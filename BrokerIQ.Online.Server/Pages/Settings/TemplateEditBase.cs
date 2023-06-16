@@ -42,6 +42,9 @@ namespace BrokerIQ.Online.Pages
         public IBrokerService BrokerService { get; set; }
 
         [Inject]
+        public IBrokerStaffService BrokerStaffService { get; set; }
+
+        [Inject]
         public IDialogService DialogService { get; set; }
 
         [Inject]
@@ -53,12 +56,16 @@ namespace BrokerIQ.Online.Pages
 
         public Broker Broker { get; set; }
 
+        public BrokerStaff BrokerStaff { get; set; }
+
         [Parameter]
         public string BrokerId { get; set; }
 
         public bool IsAdmin { get; set; }
 
         public bool IsMinorAdmin { get; set; }
+
+        public bool IsBrokerStaff { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -67,6 +74,7 @@ namespace BrokerIQ.Online.Pages
                 var user = await AccountService.GetUser();
                 IsAdmin = user.IsAdmin;
                 IsMinorAdmin = user.IsMinorAdmin;
+                IsBrokerStaff = user.IsBrokerStaff;
                 if (IsAdmin || IsMinorAdmin)
                 {
                     id = Int32.Parse(BrokerId);
@@ -77,6 +85,17 @@ namespace BrokerIQ.Online.Pages
                 }
                 else
                 {
+                    if(IsBrokerStaff)
+                    {
+                        var brokerStaffId = 0;
+                        brokerStaffId = Int32.Parse(user.Id);
+
+                        if (brokerStaffId > 0)
+                        {
+                            BrokerStaff = await BrokerStaffService.GetBrokerStaff(brokerStaffId);
+                        }
+                                
+                    }
                     if (user.MasterBrokerId > 0)
                     {
                         Broker = (await BrokerService.GetBroker(user.MasterBrokerId));
@@ -147,37 +166,23 @@ namespace BrokerIQ.Online.Pages
             StateHasChanged();
         }
 
-        protected bool GetEmailPreference(EmailNotificationPreferencesEnum enpm)
+        protected bool GetEmailPreference(EmailNotificationPreferencesEnum enpm, bool staff=false)
         {
             var BrokerPrefAsInt = (int)Broker.EmailNotificationPreferences;
+            if (staff)
+            {
+                BrokerPrefAsInt = (int)BrokerStaff.EmailNotificationPreferences;
+            }
             return (BrokerPrefAsInt & (int)enpm) == (int)enpm;
         }
 
-        protected async Task SetEmailPreference(EmailNotificationPreferencesEnum enpm)
+        protected async Task SetEmailPreference(EmailNotificationPreferencesEnum enpm, bool staff = false)
         {
             var BrokerPrefAsInt = (int)Broker.EmailNotificationPreferences;
-            if((BrokerPrefAsInt & (int)enpm) == (int)enpm)
+            if (staff)
             {
-                //already set
-                BrokerPrefAsInt &= ~((int)enpm);
+                BrokerPrefAsInt = (int)BrokerStaff.EmailNotificationPreferences;
             }
-            else
-            {
-                BrokerPrefAsInt |= (int)enpm;
-            }
-            Broker.EmailNotificationPreferences = (EmailNotificationPreferencesEnum)BrokerPrefAsInt;
-        }
-
-
-        protected bool GetMobilePreference(MobileNotificationPreferencesEnum enpm)
-        {
-            var BrokerPrefAsInt = (int)Broker.MobileNotificationPreferences;
-            return (BrokerPrefAsInt & (int)enpm) == (int)enpm;
-        }
-
-        protected async Task SetMobilePreference(MobileNotificationPreferencesEnum enpm)
-        {
-            var BrokerPrefAsInt = (int)Broker.MobileNotificationPreferences;
             if ((BrokerPrefAsInt & (int)enpm) == (int)enpm)
             {
                 //already set
@@ -187,7 +192,53 @@ namespace BrokerIQ.Online.Pages
             {
                 BrokerPrefAsInt |= (int)enpm;
             }
-            Broker.MobileNotificationPreferences = (MobileNotificationPreferencesEnum)BrokerPrefAsInt;
+            if (staff)
+            {
+                BrokerStaff.EmailNotificationPreferences = (EmailNotificationPreferencesEnum)BrokerPrefAsInt;
+            }
+            else
+            {
+                Broker.EmailNotificationPreferences = (EmailNotificationPreferencesEnum)BrokerPrefAsInt;
+            }
+
+        }
+
+
+        protected bool GetMobilePreference(MobileNotificationPreferencesEnum enpm, bool staff = false)
+        {
+            var BrokerPrefAsInt = (int)Broker.MobileNotificationPreferences;
+            if (staff)
+            {
+                BrokerPrefAsInt = (int)BrokerStaff.MobileNotificationPreferences;
+            }
+            return (BrokerPrefAsInt & (int)enpm) == (int)enpm;
+        }
+
+        protected async Task SetMobilePreference(MobileNotificationPreferencesEnum enpm, bool staff = false)
+        {
+            var BrokerPrefAsInt = (int)Broker.MobileNotificationPreferences;
+            if (staff)
+            {
+                BrokerPrefAsInt = (int)BrokerStaff.MobileNotificationPreferences;
+            }
+            if ((BrokerPrefAsInt & (int)enpm) == (int)enpm)
+            {
+                //already set
+                BrokerPrefAsInt &= ~((int)enpm);
+            }
+            else
+            {
+                BrokerPrefAsInt |= (int)enpm;
+            }
+            if (staff)
+            {
+                BrokerStaff.MobileNotificationPreferences = (MobileNotificationPreferencesEnum)BrokerPrefAsInt;
+            }
+            else
+            {
+                Broker.MobileNotificationPreferences = (MobileNotificationPreferencesEnum)BrokerPrefAsInt;
+            }
+
         }
 
 
@@ -197,6 +248,46 @@ namespace BrokerIQ.Online.Pages
             try
             {
                 await this.BrokerService.UpdateBroker(Broker);
+            }
+            catch
+            {
+                dialogParams.Add("Message", $"Preference did not save");
+                await DialogService.Show<AlertDialog>("Notification Preferences", dialogParams).Result;
+                return;
+            }
+
+            dialogParams.Add("Message", $"Saved the preferences");
+            await DialogService.Show<AlertDialog>("Notification Preferences", dialogParams).Result;
+
+        }
+
+        protected bool GetEmailPreferenceStaff(EmailNotificationPreferencesEnum enpm)
+        {
+            return GetEmailPreference(enpm, staff: true);
+        }
+
+        protected async Task SetEmailPreferenceStaff(EmailNotificationPreferencesEnum enpm)
+        {
+             SetEmailPreference(enpm, staff: true);
+        }
+
+
+        protected bool GetMobilePreferenceStaff(MobileNotificationPreferencesEnum enpm)
+        {
+            return GetMobilePreference(enpm, staff: true);
+        }
+
+        protected async Task SetMobilePreferenceStaff(MobileNotificationPreferencesEnum enpm)
+        {
+            SetMobilePreference(enpm, staff: true);
+        }
+
+        protected async Task HandleValidSubmitBrokerStaff()
+        {
+            var dialogParams = new DialogParameters();
+            try
+            {
+                await this.BrokerStaffService.UpdateBrokerStaff(BrokerStaff);
             }
             catch
             {

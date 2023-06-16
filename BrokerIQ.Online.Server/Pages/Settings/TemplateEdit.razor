@@ -39,169 +39,338 @@
         </MudTable>
     </MudTabPanel>
     <MudTabPanel Text="Notifications">
-        <EditForm Model="@Broker" OnValidSubmit="@HandleValidSubmit">
-        <div class="row">
-        <div class="card col-lg-6">
-            <div class="card-header">Emails</div>
-            <div class="card-body">
-        <div class="col-lg-6">
-            <div class="form-group row">
-                <div class="col-lg-12">
-                    <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewClientRegistered))"
-                    @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewClientRegistered)"
-                                 Style="margin-left: -15px">
-                        @EmailNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
-                    </MudCheckBox>
+        @if(IsBrokerStaff){
+            <EditForm Model="@BrokerStaff" OnValidSubmit="@HandleValidSubmitBrokerStaff">
+                <div class="row">
+                    <div class="card col-lg-6">
+                        <div class="card-header">Emails</div>
+                        <div class="card-body">
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientRegistered))"
+                                        @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientRegistered)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientEmailVerified))"
+                                        @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientEmailVerified)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.NewClientEmailVerified.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientLoggedIn))"
+                                        @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientLoggedIn)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.NewClientLoggedIn.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientDocumentUpload))"
+                                        @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientDocumentUpload)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientNewChat))"
+                                        @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientNewChat)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientRenewalBrokerReminder))"
+                                        @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientRenewalBrokerReminder)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientRenewalBrokerReminder.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder))"
+                                        @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder))"
+                                        @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card col-lg-6">
+                        <div class="card-header">App Notifications</div>
+                        <div class="card-body">
+                            <div class="col-lg-6">
+                                @*                    <div class="form-group row">
+                            <div class="col-lg-12">
+                            <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientRegistered))"
+                            @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientRegistered)"
+                            Style="margin-left: -15px">
+                            @EmailNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
+                            </MudCheckBox>
+                            </div>
+                            </div>
+                            <div class="form-group row">
+                            <div class="col-lg-12">
+                            <MudCheckBox Checked="@(GetMobilePreferenceStaff(MobileNotificationPreferencesEnum.NewClientRegistered))"
+                            @onclick="async f => await SetMobilePreferenceStaff(MobileNotificationPreferencesEnum.NewClientRegistered)"
+                            Style="margin-left: -15px">
+                            @MobileNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
+                            </MudCheckBox>
+                            </div>
+                            </div>
+                            <div class="form-group row">
+                            <div class="col-lg-12">
+                            <MudCheckBox Checked="@(GetMobilePreferenceStaff(MobileNotificationPreferencesEnum.NewClientLoggedIn))"
+                            @onclick="async f => await SetMobilePreferenceStaff(MobileNotificationPreferencesEnum.NewClientLoggedIn)"
+                            Style="margin-left: -15px">
+                            @MobileNotificationPreferencesEnum.NewClientLoggedIn.GetDisplayPrompt()
+                            </MudCheckBox>
+                            </div>
+                            </div>*@
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientDocumentUpload))"
+                                        @onclick="async f => await SetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientDocumentUpload)"
+                                                     Style="margin-left: -15px">
+                                            @MobileNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientNewChat))"
+                                        @onclick="async f => await SetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientNewChat)"
+                                                     Style="margin-left: -15px">
+                                            @MobileNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                @*                    <div class="form-group row">
+                            <div class="col-lg-12">
+                            <MudCheckBox Checked="@(GetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientRenewalBrokerReminder))"
+                            @onclick="async f => await SetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientRenewalBrokerReminder)"
+                            Style="margin-left: -15px">
+                            @MobileNotificationPreferencesEnum.ClientRenewalBrokerReminder.GetDisplayPrompt()
+                            </MudCheckBox>
+                            </div>
+                            </div>
+                            <div class="form-group row">
+                            <div class="col-lg-12">
+                            <MudCheckBox Checked="@(GetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder))"
+                            @onclick="async f => await SetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder)"
+                            Style="margin-left: -15px">
+                            @MobileNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder.GetDisplayPrompt()
+                            </MudCheckBox>
+                            </div>
+                            </div>
+                            <div class="form-group row">
+                            <div class="col-lg-12">
+                            <MudCheckBox Checked="@(GetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientDateVideoBrokerReminder))"
+                            @onclick="async f => await SetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientDateVideoBrokerReminder)"
+                            Style="margin-left: -15px">
+                            @MobileNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
+                            </MudCheckBox>
+                            </div>
+                            </div>*@
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-12">
-                    <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewClientEmailVerified))"
-                    @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewClientEmailVerified)"
-                                 Style="margin-left: -15px">
-                        @EmailNotificationPreferencesEnum.NewClientEmailVerified.GetDisplayPrompt()
-                    </MudCheckBox>
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-12">
-                    <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewClientLoggedIn))"
-                    @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewClientLoggedIn)"
-                                 Style="margin-left: -15px">
-                        @EmailNotificationPreferencesEnum.NewClientLoggedIn.GetDisplayPrompt()
-                    </MudCheckBox>
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-12">
-                    <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientDocumentUpload))"
-                    @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientDocumentUpload)"
-                                 Style="margin-left: -15px">
-                        @EmailNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
-                    </MudCheckBox>
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-12">
-                    <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientNewChat))"
-                    @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientNewChat)"
-                                 Style="margin-left: -15px">
-                        @EmailNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
-                    </MudCheckBox>
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-12">
-                    <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientRenewalBrokerReminder))"
-                    @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientRenewalBrokerReminder)"
-                                 Style="margin-left: -15px">
-                        @EmailNotificationPreferencesEnum.ClientRenewalBrokerReminder.GetDisplayPrompt()
-                    </MudCheckBox>
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-12">
-                    <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder))"
-                    @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder)"
-                                 Style="margin-left: -15px">
-                        @EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder.GetDisplayPrompt()
-                    </MudCheckBox>
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-12">
-                    <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder))"
-                    @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder)"
-                                 Style="margin-left: -15px">
-                        @EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
-                    </MudCheckBox>
-                </div>
-            </div>
-        </div>
-        </div>
-        </div>
-        <div class="card col-lg-6">
-            <div class="card-header">App Notifications</div>
-            <div class="card-body">
-                <div class="col-lg-6">
-                        @*                    <div class="form-group row">
-                        <div class="col-lg-12">
+                <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save Preferences</MudButton>
+            </EditForm>
+        }
+        else
+        {
+            <EditForm Model="@Broker" OnValidSubmit="@HandleValidSubmit">
+                <div class="row">
+                    <div class="card col-lg-6">
+                        <div class="card-header">Emails</div>
+                        <div class="card-body">
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewClientRegistered))"
+                                        @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewClientRegistered)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewClientEmailVerified))"
+                                        @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewClientEmailVerified)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.NewClientEmailVerified.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewClientLoggedIn))"
+                                        @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewClientLoggedIn)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.NewClientLoggedIn.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientDocumentUpload))"
+                                        @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientDocumentUpload)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientNewChat))"
+                                        @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientNewChat)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientRenewalBrokerReminder))"
+                                        @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientRenewalBrokerReminder)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientRenewalBrokerReminder.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder))"
+                                        @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder))"
+                                        @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card col-lg-6">
+                        <div class="card-header">App Notifications</div>
+                        <div class="card-body">
+                            <div class="col-lg-6">
+                                @*                    <div class="form-group row">
+                            <div class="col-lg-12">
                             <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewClientRegistered))"
                             @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewClientRegistered)"
-                                         Style="margin-left: -15px">
-                                @EmailNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
+                            Style="margin-left: -15px">
+                            @EmailNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
                             </MudCheckBox>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-lg-12">
-                                <MudCheckBox Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.NewClientRegistered))"
-                                @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.NewClientRegistered)"
-                                         Style="margin-left: -15px">
-                                    @MobileNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
+                            </div>
+                            </div>
+                            <div class="form-group row">
+                            <div class="col-lg-12">
+                            <MudCheckBox Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.NewClientRegistered))"
+                            @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.NewClientRegistered)"
+                            Style="margin-left: -15px">
+                            @MobileNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
                             </MudCheckBox>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-lg-12">
+                            </div>
+                            </div>
+                            <div class="form-group row">
+                            <div class="col-lg-12">
                             <MudCheckBox Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.NewClientLoggedIn))"
                             @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.NewClientLoggedIn)"
-                                         Style="margin-left: -15px">
-                                @MobileNotificationPreferencesEnum.NewClientLoggedIn.GetDisplayPrompt()
+                            Style="margin-left: -15px">
+                            @MobileNotificationPreferencesEnum.NewClientLoggedIn.GetDisplayPrompt()
                             </MudCheckBox>
-                        </div>
-                    </div>*@
-                    <div class="form-group row">
-                        <div class="col-lg-12">
-                            <MudCheckBox Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.ClientDocumentUpload))"
-                            @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.ClientDocumentUpload)"
-                                         Style="margin-left: -15px">
-                                @MobileNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
-                            </MudCheckBox>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-lg-12">
-                            <MudCheckBox Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.ClientNewChat))"
-                            @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.ClientNewChat)"
-                                         Style="margin-left: -15px">
-                                @MobileNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
-                            </MudCheckBox>
-                        </div>
-                    </div>
-@*                    <div class="form-group row">
-                        <div class="col-lg-12">
+                            </div>
+                            </div>*@
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.ClientDocumentUpload))"
+                                        @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.ClientDocumentUpload)"
+                                                     Style="margin-left: -15px">
+                                            @MobileNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.ClientNewChat))"
+                                        @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.ClientNewChat)"
+                                                     Style="margin-left: -15px">
+                                            @MobileNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+                                @*                    <div class="form-group row">
+                            <div class="col-lg-12">
                             <MudCheckBox Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.ClientRenewalBrokerReminder))"
                             @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.ClientRenewalBrokerReminder)"
-                                         Style="margin-left: -15px">
-                                @MobileNotificationPreferencesEnum.ClientRenewalBrokerReminder.GetDisplayPrompt()
+                            Style="margin-left: -15px">
+                            @MobileNotificationPreferencesEnum.ClientRenewalBrokerReminder.GetDisplayPrompt()
                             </MudCheckBox>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-lg-12">
+                            </div>
+                            </div>
+                            <div class="form-group row">
+                            <div class="col-lg-12">
                             <MudCheckBox Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder))"
                             @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder)"
-                                         Style="margin-left: -15px">
-                                @MobileNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder.GetDisplayPrompt()
+                            Style="margin-left: -15px">
+                            @MobileNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder.GetDisplayPrompt()
                             </MudCheckBox>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-lg-12">
+                            </div>
+                            </div>
+                            <div class="form-group row">
+                            <div class="col-lg-12">
                             <MudCheckBox Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.ClientDateVideoBrokerReminder))"
                             @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.ClientDateVideoBrokerReminder)"
-                                         Style="margin-left: -15px">
-                                @MobileNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
+                            Style="margin-left: -15px">
+                            @MobileNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
                             </MudCheckBox>
+                            </div>
+                            </div>*@
+                            </div>
                         </div>
-                    </div>*@
+                    </div>
                 </div>
-            </div>
-            </div>
-        </div>
-            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save Preferences</MudButton>
-        </EditForm>
+                <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save Preferences</MudButton>
+            </EditForm>
+        }
+
     </MudTabPanel>
 </MudTabs>
 
