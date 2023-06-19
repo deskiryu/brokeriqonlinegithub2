@@ -374,6 +374,7 @@ else if (!Saved)
             <MudTabPanel Text="Uploads">
                 <div class = "row">
                 <div class = "col-sm-4">
+
                 @if (DocumentsRequirement != null) {
                     <h6 style="padding-bottom: 5px;">Client Documents Required</h6>
                     <MudTable Style="padding-bottom: 5px;" Items="@DocumentsRequirement.DocumentChecks">
@@ -401,6 +402,14 @@ else if (!Saved)
                         <MudSelectItem Value=4 />
                         <MudSelectItem Value=5 />
                     </MudSelect>
+                            <MudSelect T="int" Label="@DocuVaultTypeEnum.BenefitsInformation.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.BenefitsInformation]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
                     <MudSelect T="int" Label="@DocuVaultTypeEnum.Creditreport.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Creditreport]">
                         <MudSelectItem Value=0 />
                         <MudSelectItem Value=1 />
@@ -410,6 +419,22 @@ else if (!Saved)
                         <MudSelectItem Value=5 />
                     </MudSelect>
                     <MudSelect T="int" Label="@DocuVaultTypeEnum.DrivingLicense.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.DrivingLicense]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                            <MudSelect T="int" Label="@DocuVaultTypeEnum.FactFind.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.FactFind]">
+                                <MudSelectItem Value=0 />
+                                <MudSelectItem Value=1 />
+                                <MudSelectItem Value=2 />
+                                <MudSelectItem Value=3 />
+                                <MudSelectItem Value=4 />
+                                <MudSelectItem Value=5 />
+                            </MudSelect>
+                            <MudSelect T="int" Label="@DocuVaultTypeEnum.MortgageStatement.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.MortgageStatement]">
                         <MudSelectItem Value=0 />
                         <MudSelectItem Value=1 />
                         <MudSelectItem Value=2 />
