@@ -126,7 +126,7 @@ namespace BrokerIQ.Online.Pages
 
         public Dictionary<DocuVaultTypeEnum, int> RequestedDocuments = new Dictionary<DocuVaultTypeEnum, int>();
 
-        public List<string> BrokerDefinedMessages = new List<string>();
+        public List<DefinedMessagesDto> MergedMessages = new();
 
         public string SelectedTemplateMessage { get; set; }
 
@@ -203,7 +203,7 @@ namespace BrokerIQ.Online.Pages
             {
                 UpdateChat(firstTime: true);
                 timer = new System.Threading.Timer(async _ =>  // async void
-                {      
+                {
                     await UpdateChat();
                 }, null, 0, 5000);
             }
@@ -221,16 +221,16 @@ namespace BrokerIQ.Online.Pages
 
         }
 
-        protected async Task UpdateChat(bool firstTime=false)
+        protected async Task UpdateChat(bool firstTime = false)
         {
             int latestUnreadchat = await ChatService.GetUnRead(Customer.Id);
-            if(firstTime || latestUnreadchat != LastUnReadChat)
+            if (firstTime || latestUnreadchat != LastUnReadChat)
             {
                 UnReadChat += latestUnreadchat;
                 Chat = await ChatService.Get(Customer.Id);
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
-                BadgeDot = UnReadChat==0;
-                LastUnReadChat= latestUnreadchat;
+                BadgeDot = UnReadChat == 0;
+                LastUnReadChat = latestUnreadchat;
                 await InvokeAsync(StateHasChanged);
             }
         }
@@ -539,16 +539,19 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task InsertTemplateMessage()
         {
-            var succeeded = false;
-            if (SelectedTemplateMessage != null)
+            int selectedMessageEnum = 0;
+            int.TryParse(SelectedTemplateMessage, out selectedMessageEnum);
+
+            var message = MergedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == (BrokerDefinedMessageEnum)selectedMessageEnum);
+
+            if (message != null)
             {
-                var messageToSend = SelectedTemplateMessage;
-                if (SelectedTemplateMessage.Contains("INSERT_DATE"))
+                if (message.BrokerDefinedMessage.Contains("INSERT_DATE"))
                 {
                     if (SelectedTemplateDateReplacement.HasValue)
                     {
                         DateTime value = SelectedTemplateDateReplacement.Value;
-                        messageToSend = SelectedTemplateMessage.Replace("INSERT_DATE", value.ToShortDateString());
+                        message.BrokerDefinedMessage = message.BrokerDefinedMessage.Replace("INSERT_DATE", value.ToShortDateString());
                     }
                     else
                     {
@@ -561,10 +564,12 @@ namespace BrokerIQ.Online.Pages
 
                 try
                 {
-                    if (!string.IsNullOrEmpty(messageToSend))
-                    {
-                        await NewChat(messageToSend);
-                    }
+                    ChatDocument attachment = new ChatDocument();
+                    attachment.FileName = message.FileName;
+                    attachment.File = message.File;
+
+                    await NewChat(message.BrokerDefinedMessage, attachment);
+
                 }
                 catch (Exception ex)
                 {
@@ -580,12 +585,13 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task NewChat(string messageToshow = "")
+        protected async Task NewChat(string messageToshow = "", ChatDocument defaultAttachment = null)
         {
             bool succeeded = false;
 
             var fileAttached = false;
             var sdoc = new ChatDocument();
+            var memoryStream = new MemoryStream();
             var dialogParams = new DialogParameters();
 
             try
@@ -593,7 +599,7 @@ namespace BrokerIQ.Online.Pages
                 if (LoadedChatFiles.Any())
                 {
                     var fileName = "";
-                    var memoryStream = new MemoryStream();
+
                     var file = LoadedChatFiles[0];
                     if (file != null)
                     {
@@ -611,16 +617,25 @@ namespace BrokerIQ.Online.Pages
 
                             sdoc.FileName = fileName;
                             sdoc.File = memoryStream.ToArray();
-
-                            dialogParams.Add("Filenames", new List<string>{
-                                sdoc.FileName
-                            });
-                            dialogParams.Add("MemoryStreams", new List<MemoryStream> {
-                                memoryStream
-                            });
                         }
                     }
                 }
+
+                if (defaultAttachment != null)
+                {
+                    sdoc.FileName = defaultAttachment.FileName;
+                    sdoc.File = defaultAttachment.File;
+                    memoryStream = new MemoryStream(sdoc.File);
+
+                    fileAttached = true;
+                }
+
+                dialogParams.Add("Filenames", new List<string>{
+                                sdoc.FileName
+                            });
+                dialogParams.Add("MemoryStreams", new List<MemoryStream> {
+                                memoryStream
+                            });
             }
             catch
             {
@@ -859,54 +874,27 @@ namespace BrokerIQ.Online.Pages
 
         private async Task PopulateBrokerDefinedMessages()
         {
-            BrokerDefinedMessages = new List<string>();
-            BrokerDefinedMessage brokerDefinedMessage = await BrokerDefinedMessageService.Get();
+            MergedMessages = new List<DefinedMessagesDto>();
+            BrokerDefinedMessage definedMessages = await BrokerDefinedMessageService.Get();
+
             foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
             {
+                var message = definedMessages.BrokerDefinedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == enumVal);
 
-                //Only 20 for now
-                if (enumVal != BrokerDefinedMessageEnum.TickBoxMessage1 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage2 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage3 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage4 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage5 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage6 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage7 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage8 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage9 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage10 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage11 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage12 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage13 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage14 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage15 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage16 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage17 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage18 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage19 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage20)
-                {
-                    continue;
-                }
+                if (message == null) continue;
 
-                string message = String.Empty;
-                foreach (var item in brokerDefinedMessage.BrokerDefinedMessages.Where(
-                    b => b.BrokerDefinedMessageEnumValue == enumVal && !b.BrokerDefinedMessage.Equals(enumVal.GetDisplayName())))
-                {
-                    message = item.BrokerDefinedMessage;
-                    break;
-                }
-
-                if (message == String.Empty)
+                if (String.IsNullOrWhiteSpace(message.BrokerDefinedMessage))
                 {
                     // display default
-                    BrokerDefinedMessages.Add(enumVal.GetDisplayName().Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName));
+                    message.BrokerDefinedMessage = enumVal.GetDisplayName().Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName);
                 }
                 else
                 {
                     // display broker defined message
-                    BrokerDefinedMessages.Add(message.Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName));
+                    message.BrokerDefinedMessage = message.BrokerDefinedMessage.Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName);
                 }
+
+                MergedMessages.Add(message);
             }
         }
 
