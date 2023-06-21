@@ -131,10 +131,12 @@ namespace BrokerIQ.Online.Pages
         protected async Task PopulateBrokerDefinedMessages()
         {
             BrokerDefinedMessage definedMessages = await BrokerDefinedMessageService.Get();
-            MessageElements = new List<MessageElement>(Enum.GetValues(typeof(BrokerDefinedMessageEnum)).GetLength(0));
+            MessageElements = new List<MessageElement>();
 
             foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
             {
+                if (enumVal.IsSystemMessage()) continue;
+
                 var message = definedMessages.BrokerDefinedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == enumVal);
 
                 var element = new MessageElement()
