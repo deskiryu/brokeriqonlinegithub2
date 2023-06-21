@@ -25,6 +25,7 @@ namespace BrokerIQ.Online.Pages
         public string Message { get; set; }
         public string Prompt { get; set; }
         public string FileName { get; set; }
+        public byte[] FileContent { get; set; }
 
         public MessageElement GetCopy()
         {
@@ -144,7 +145,8 @@ namespace BrokerIQ.Online.Pages
                     Index = (int)enumVal,
                     Message = message == null ? enumVal.GetDisplayName() : message.BrokerDefinedMessage,
                     Prompt = enumVal.GetDisplayPrompt(),
-                    FileName = message?.FileName
+                    FileName = message?.FileName,
+                    FileContent = message?.File
                 };
 
                 MessageElements.Add(element);

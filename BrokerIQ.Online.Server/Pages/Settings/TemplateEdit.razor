@@ -1,9 +1,12 @@
 @page "/templateedit/{BrokerId}"
+@using System.IO
 @using Dto.Enum
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
 @inherits TemplateEditBase
 @using MudBlazor
+
+@inject IJSRuntime js
 
 <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
     <MudTabPanel Text="Templates">
@@ -29,7 +32,11 @@
                         <div>
                             @if (!String.IsNullOrWhiteSpace(@context.FileName))
                         {
-                            <i class="fa fa-file-pdf"> &nbsp;@context.FileName</i>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                Style="@($"color:{Colors.Shades.Black};")"
+                                OnClick="f => PreviewAttachment(context.FileContent)" Size="Size.Small">
+                                <i class="fa fa-file-pdf"> &nbsp;@context.FileName</i>
+                            </MudButton>
                         }
                     </div>
                 </MudTd>
@@ -59,14 +66,27 @@
                             @if (SelectedFiles.Any())
                             {
                                 var fileName = SelectedFiles[0].Name;
-                                <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")"
-                                    OnClick="@(f => DeleteDefinedDocument())" class="btn btn-link">Remove @fileName</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
+                                    Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteDefinedDocument())"
+                                    class="btn btn-link">Remove @fileName</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                    Style="@($"color:{Colors.Shades.Black};")"
+                                    OnClick="f => PreviewAttachment(SelectedFiles.FirstOrDefault())">
+                                    <i class="fa fa-eye" />
+                                </MudButton>
                             }
                         }
                         else
                         {
-                            <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")"
-                                OnClick="@(f => RemoveCurrentFile())" class="btn btn-link">Remove @context.FileName</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
+                                Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => RemoveCurrentFile())"
+                                class="btn btn-link">Remove @context.FileName</MudButton>
+
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                Style="@($"color:{Colors.Shades.Black};")"
+                                OnClick="f => PreviewAttachment(context.FileContent)">
+                                <i class="fa fa-eye" />
+                            </MudButton>
                         }
                     }
                 </MudTd>
@@ -305,5 +325,19 @@
     protected void RemoveCurrentFile()
     {
         IsCurrentFileToBeRemoved = true;
+    }
+
+    protected async Task PreviewAttachment(byte[] attachment)
+    {
+        await Extensions.PreviewFile(js, new MemoryStream(attachment));
+    }
+
+    protected async Task PreviewAttachment(IBrowserFile uploadedFile)
+    {
+        if (uploadedFile == null) return;
+
+        var contents = new MemoryStream(); ;
+        await uploadedFile.OpenReadStream(fileUploadSettings.MaxFileSize).CopyToAsync(contents);
+        await Extensions.PreviewFile(js, contents);
     }
 }
