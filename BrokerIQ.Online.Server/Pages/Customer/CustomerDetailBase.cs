@@ -205,6 +205,8 @@ namespace BrokerIQ.Online.Pages
                 timer = new System.Threading.Timer(async _ =>  // async void
                 {
                     await UpdateChat();
+
+                    await UpdateCustomerUploads();
                 }, null, 0, 5000);
             }
             else
@@ -233,6 +235,13 @@ namespace BrokerIQ.Online.Pages
                 LastUnReadChat = latestUnreadchat;
                 await InvokeAsync(StateHasChanged);
             }
+        }
+
+        protected async Task UpdateCustomerUploads()
+        {
+            CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+
+            await InvokeAsync(StateHasChanged);
         }
 
         protected async Task ChatBrokerChanged()
