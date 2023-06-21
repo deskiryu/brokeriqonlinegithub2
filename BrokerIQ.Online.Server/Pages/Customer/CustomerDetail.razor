@@ -710,7 +710,7 @@ else if (!Saved)
                     @if (!IsAdmin)
                     {
                                 <div class="col-sm-6 control_wrapper mb-5">
-                                    <MudSelect T="string"
+                                    <MudSelect T="string" @ref="TemplateSelect" 
                                             Label="Select Message Template"
                                             Placeholder="Select Message Template"
                                             Clearable="true"

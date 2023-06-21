@@ -136,6 +136,8 @@ namespace BrokerIQ.Online.Pages
 
         private System.Threading.Timer timer;
 
+        public MudSelect<string> TemplateSelect { get; set; }
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -678,6 +680,8 @@ namespace BrokerIQ.Online.Pages
             {
                 await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
                 LoadedChatFiles.Clear();
+
+                TemplateSelect.SelectedValues = new string[] { };
             }
             else
             {
