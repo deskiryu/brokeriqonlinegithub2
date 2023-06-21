@@ -224,7 +224,7 @@ namespace BrokerIQ.Online.Pages
         protected async Task UpdateChat(bool firstTime = false)
         {
             int latestUnreadchat = await ChatService.GetUnRead(Customer.Id);
-            if (firstTime || latestUnreadchat != LastUnReadChat)
+            if (firstTime || LastUnReadChat + latestUnreadchat != LastUnReadChat)
             {
                 UnReadChat += latestUnreadchat;
                 Chat = await ChatService.Get(Customer.Id);

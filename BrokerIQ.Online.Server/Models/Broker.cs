@@ -71,6 +71,10 @@ namespace BrokerIQ.Online.Models
 
         public TwoFactorEnum TwoFactorType { get; set; }
 
+        public EmailNotificationPreferencesEnum EmailNotificationPreferences { get; set; }
+
+        public MobileNotificationPreferencesEnum MobileNotificationPreferences { get; set; }
+
         public virtual ICollection<BrokerStaff> BrokerStaff { get; set; }
 
         public BrokerIdentifier BrokerIdentifier { get; set; }
