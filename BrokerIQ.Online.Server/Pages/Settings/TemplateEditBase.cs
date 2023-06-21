@@ -7,27 +7,36 @@ namespace BrokerIQ.Online.Pages
     using System.IO;
     using System.Linq;
     using BrokerIQ.Dto.Enum;
+    using BrokerIQ.Dto.Models;
     using BrokerIQ.Online.Models;
+    using BrokerIQ.Online.Server.AppSettings;
     using BrokerIQ.Online.Server.Extensions;
     using BrokerIQ.Online.Server.Models;
     using BrokerIQ.Online.Server.Shared;
-    using BrokerIQ.Online.Services;
     using Microsoft.AspNetCore.Components;
+    using Microsoft.AspNetCore.Components.Forms;
+    using Microsoft.Extensions.Options;
     using MudBlazor;
     using Services.Interface;
 
     public class MessageElement
     {
-        public MessageElement(int index, string message, string prompt)
-        {
-            Index = index;
-            Message = message;
-            Prompt = prompt;
-        }
-
         public int Index { get; set; }
         public string Message { get; set; }
         public string Prompt { get; set; }
+        public string FileName { get; set; }
+        public byte[] FileContent { get; set; }
+
+        public MessageElement GetCopy()
+        {
+            return new MessageElement()
+            {
+                Index = this.Index,
+                Message = this.Message,
+                Prompt = this.Prompt,
+                FileName = this.FileName
+            };
+        }
     }
 
     public class TemplateEditBase : ComponentBase
@@ -50,7 +59,16 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        public List<MessageElement> BrokerDefinedMessages = new List<MessageElement>();
+        [Inject]
+        public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
+
+        protected FileUploadSettings fileUploadSettings { get; set; }
+
+        public List<MessageElement> MessageElements = new List<MessageElement>();
+
+        protected List<IBrowserFile> SelectedFiles = new();
+
+        protected bool IsCurrentFileToBeRemoved = false;
 
         private int id;
 
@@ -85,7 +103,7 @@ namespace BrokerIQ.Online.Pages
                 }
                 else
                 {
-                    if(IsBrokerStaff)
+                    if (IsBrokerStaff)
                     {
                         var brokerStaffId = 0;
                         brokerStaffId = Int32.Parse(user.Id);
@@ -94,7 +112,7 @@ namespace BrokerIQ.Online.Pages
                         {
                             BrokerStaff = await BrokerStaffService.GetBrokerStaff(brokerStaffId);
                         }
-                                
+
                     }
                     if (user.MasterBrokerId > 0)
                     {
@@ -107,66 +125,86 @@ namespace BrokerIQ.Online.Pages
                 NavigationManager.NavigateTo($"account/logout");
             }
             await PopulateBrokerDefinedMessages();
+
+            fileUploadSettings = this.FileUploadSettingsOption.Value;
         }
 
         protected async Task PopulateBrokerDefinedMessages()
         {
-            BrokerDefinedMessage brokerDefinedMessage = await BrokerDefinedMessageService.Get();
-            BrokerDefinedMessages = new List<MessageElement>();
+            BrokerDefinedMessage definedMessages = await BrokerDefinedMessageService.Get();
+            MessageElements = new List<MessageElement>();
 
             foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
             {
-                string message = String.Empty;
+                if (enumVal.IsSystemMessage()) continue;
 
-                //Only 20 for now
-                if (enumVal != BrokerDefinedMessageEnum.TickBoxMessage1 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage2 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage3 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage4 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage5 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage6 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage7 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage8 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage9 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage10 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage11 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage12 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage13 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage14 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage15 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage16 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage17 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage18 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage19 &&
-                    enumVal != BrokerDefinedMessageEnum.TickBoxMessage20)
-                {
-                    continue;
-                }
+                var message = definedMessages.BrokerDefinedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == enumVal);
 
-                foreach (var item in brokerDefinedMessage.BrokerDefinedMessages.Where(
-                    b => b.BrokerDefinedMessageEnumValue == enumVal && !b.BrokerDefinedMessage.Equals(enumVal.GetDisplayName())))
+                var element = new MessageElement()
                 {
-                    message = item.BrokerDefinedMessage;
-                    
-                    break;
-                }
+                    Index = (int)enumVal,
+                    Message = message == null ? enumVal.GetDisplayName() : message.BrokerDefinedMessage,
+                    Prompt = enumVal.GetDisplayPrompt(),
+                    FileName = message?.FileName,
+                    FileContent = message?.File
+                };
 
-                if (message == String.Empty)
-                {
-                    // display default
-                    BrokerDefinedMessages.Add(new MessageElement((int)enumVal, enumVal.GetDisplayName(), enumVal.GetDisplayPrompt()));
-                }
-                else
-                {
-                    // display broker defined message
-                    BrokerDefinedMessages.Add(new MessageElement((int)enumVal, message, enumVal.GetDisplayPrompt()));
-                }
+                MessageElements.Add(element);
             }
 
             StateHasChanged();
         }
 
-        protected bool GetEmailPreference(EmailNotificationPreferencesEnum enpm, bool staff=false)
+        protected void LoadFiles(InputFileChangeEventArgs e)
+        {
+            SelectedFiles.Clear();
+
+            try
+            {
+                var ext = Path.GetExtension(e.File.Name);
+                if (ext != ".pdf")
+                {
+                    throw new Exception("Pdf files only");
+                }
+
+                SelectedFiles.Add(e.File);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        protected async void CommitMessage(object element)
+        {
+            // update defined messages in database
+            List<DefinedMessagesDto> definedMessages = new List<DefinedMessagesDto>();
+
+            var message = new DefinedMessagesDto
+            {
+                BrokerDefinedMessageEnumValue = (BrokerDefinedMessageEnum)((MessageElement)element).Index,
+                BrokerDefinedMessage = ((MessageElement)element).Message,
+            };
+
+            var uploadedFile = SelectedFiles.FirstOrDefault();
+
+            if (uploadedFile != null)
+            {
+                message.FileName = uploadedFile.Name;
+
+                var contents = new MemoryStream(); ;
+                await uploadedFile.OpenReadStream(fileUploadSettings.MaxFileSize).CopyToAsync(contents);
+                message.File = contents.ToArray();
+            }
+
+            definedMessages.Add(message);
+            await BrokerDefinedMessageService.UpdateOrCreate(definedMessages);
+            await PopulateBrokerDefinedMessages();
+
+            SelectedFiles.Clear();
+            IsCurrentFileToBeRemoved = false;
+        }
+
+        protected bool GetEmailPreference(EmailNotificationPreferencesEnum enpm, bool staff = false)
         {
             var BrokerPrefAsInt = (int)Broker.EmailNotificationPreferences;
             if (staff)
@@ -268,7 +306,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task SetEmailPreferenceStaff(EmailNotificationPreferencesEnum enpm)
         {
-             SetEmailPreference(enpm, staff: true);
+            SetEmailPreference(enpm, staff: true);
         }
 
 
