@@ -17,6 +17,7 @@ namespace BrokerIQ.Online.Pages
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;
     using Microsoft.Extensions.Options;
+    using Microsoft.JSInterop;
     using Models;
     using MudBlazor;
 
@@ -63,6 +64,12 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
+
+        [Inject]
+        protected IJSRuntime js { get; set; }
+
+        protected const int DefaultMonthsToShow = -1;
+
         private FileUploadSettings fileUploadSettings { get; set; }
 
         public Customer Customer { get; set; }
@@ -76,6 +83,7 @@ namespace BrokerIQ.Online.Pages
         public string BrokerName { get; set; }
 
         public bool BrokerHasWhiteLabel { get; set; }
+
         public bool BrokerHasWhiteLabelAndIsInsuranceOnly { get; set; }
 
         public IEnumerable<Broker> CustomerBrokers { get; set; }
@@ -99,17 +107,23 @@ namespace BrokerIQ.Online.Pages
 
         [Parameter]
         public string CustomerId { get; set; }
+
         public bool IsAdmin { get; set; }
 
         protected string Message = string.Empty;
+
         protected string StatusClass = string.Empty;
+
         protected bool Saved;
 
         protected string allNotification;
+
         protected string selectedNotification;
 
         protected MemoryStream memoryStream = new MemoryStream();
+
         protected string imageFileName { get; set; }
+
         protected byte[] imageData { get; set; }
 
         public int BrokerListId = 0;
@@ -138,6 +152,13 @@ namespace BrokerIQ.Online.Pages
 
         public MudSelect<string> TemplateSelect { get; set; }
 
+        protected MudDatePicker NoteFilterFrom { get; set; }
+
+        protected MudDatePicker NoteFilterTo { get; set; }
+
+        protected DateTime? noteFilterStartDate = DateTime.UtcNow.AddMonths(DefaultMonthsToShow);
+
+        protected DateTime? noteFilterEndDate = DateTime.UtcNow;
 
         protected override async Task OnInitializedAsync()
         {
@@ -154,7 +175,9 @@ namespace BrokerIQ.Online.Pages
                 CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
                 DocumentsRequirement = await DocumentsRequirementService.Get(int.Parse(CustomerId));
-                Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
+
+                await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
+
                 foreach (var item in Enum.GetValues(typeof(DocuVaultTypeEnum)).Cast<DocuVaultTypeEnum>())
                 {
                     if (item == DocuVaultTypeEnum.ProfilePicture)
@@ -698,9 +721,9 @@ namespace BrokerIQ.Online.Pages
         {
             if (success)
             {
-                Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
-                StateHasChanged();
+                await RefreshNotes();
             }
+
             var responseParams = new DialogParameters();
             responseParams.Add("Message", message);
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
@@ -934,6 +957,121 @@ namespace BrokerIQ.Online.Pages
             UnReadChat = 0;
             ChatBadgeColour = MudBlazor.Color.Transparent;
             BadgeDot = true;
+        }
+
+        protected void FilterStartDateChanged(DateTime? newDate)
+        {
+            noteFilterStartDate = newDate;
+            RefreshNotes();
+        }
+
+        protected void FilterEndDateChanged(DateTime? newDate)
+        {
+            noteFilterEndDate = newDate;
+            RefreshNotes();
+        }
+
+        protected async Task RefreshNotes()
+        {
+            DateTime startDate = NoteFilterFrom?.Date != null ? NoteFilterFrom.Date.Value : DateTime.UtcNow.AddMonths(DefaultMonthsToShow);
+            DateTime endDate = NoteFilterTo?.Date != null ? NoteFilterTo.Date.Value : DateTime.UtcNow;
+
+            if (startDate > endDate)
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", "Please ensure that the From date is earlier than the To date.");
+                await DialogService.Show<AlertDialog>("Invalid Interval", dialogParams).Result;
+
+                return;
+            }
+
+            await SetNotesFromInterval(startDate, endDate);
+
+            StateHasChanged();
+        }
+
+        private async Task SetNotesFromInterval(DateTime startDate, DateTime endDate)
+        {
+            Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
+
+            Notes = Notes.Where(n => n.DateTaken >= startDate.Date && n.DateTaken <= endDate.Add(new TimeSpan(23, 59, 59)))
+                         .OrderByDescending(n => n.DateTaken);
+        }
+
+        protected async Task ViewSelectedDocumentUpload()
+        {
+            foreach (var custDoc in SelectedItemsCustomerDocuments)
+            {
+                await ViewDocumentUpload(custDoc);
+            }
+        }
+
+        protected async Task SaveSelectedDocumentUpload()
+        {
+            foreach (var custDoc in SelectedItemsCustomerDocuments)
+            {
+                await SaveDocumentUpload(custDoc);
+            }
+            SelectedItemsCustomerDocuments.Clear();
+        }
+
+        protected async Task ViewDocumentUpload(CustomerDocument doc)
+        {
+            if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
+            {
+                memoryStream = new MemoryStream(doc.File);
+                await PreviewImage();
+            }
+            else
+            {
+                await PreviewPdf(doc);
+            }
+        }
+
+        protected async Task ViewDocumentUpload(ChatDocument doc)
+        {
+            var converted = new CustomerDocument
+            {
+                SupportingDocumentType = doc.SupportingDocumentType,
+                File = doc.File,
+
+            };
+            await ViewDocumentUpload(converted);
+        }
+
+        protected async Task SaveDocumentUpload(CustomerDocument doc)
+        {
+            if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
+            {
+                imageFileName = doc.Description + ".jpeg";
+                imageData = doc.File;
+                await SaveImage();
+            }
+            else
+            {
+                await DownloadPdf(doc);
+            }
+        }
+
+        async Task PreviewImage()
+        {
+            await Extensions.PreviewFile(js, memoryStream, true);
+        }
+
+        async Task SaveImage()
+        {
+            await Extensions.SaveAs(js, imageFileName, imageData);
+        }
+
+        async Task DownloadPdf(CustomerDocument sdoc)
+        {
+            await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
+        }
+
+        async Task PreviewPdf(CustomerDocument sdoc)
+        {
+            var memoryStream = new MemoryStream(sdoc.File);
+            await Extensions.PreviewFile(js, memoryStream);
         }
     }
 }
