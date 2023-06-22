@@ -68,6 +68,8 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         protected IJSRuntime js { get; set; }
 
+        protected const int DefaultMonthsToShow = -1;
+
         private FileUploadSettings fileUploadSettings { get; set; }
 
         public Customer Customer { get; set; }
@@ -81,6 +83,7 @@ namespace BrokerIQ.Online.Pages
         public string BrokerName { get; set; }
 
         public bool BrokerHasWhiteLabel { get; set; }
+
         public bool BrokerHasWhiteLabelAndIsInsuranceOnly { get; set; }
 
         public IEnumerable<Broker> CustomerBrokers { get; set; }
@@ -104,17 +107,23 @@ namespace BrokerIQ.Online.Pages
 
         [Parameter]
         public string CustomerId { get; set; }
+
         public bool IsAdmin { get; set; }
 
         protected string Message = string.Empty;
+
         protected string StatusClass = string.Empty;
+
         protected bool Saved;
 
         protected string allNotification;
+
         protected string selectedNotification;
 
         protected MemoryStream memoryStream = new MemoryStream();
+
         protected string imageFileName { get; set; }
+
         protected byte[] imageData { get; set; }
 
         public int BrokerListId = 0;
@@ -147,6 +156,10 @@ namespace BrokerIQ.Online.Pages
 
         protected MudDatePicker NoteFilterTo { get; set; }
 
+        protected DateTime? noteFilterStartDate = DateTime.UtcNow.AddMonths(DefaultMonthsToShow);
+
+        protected DateTime? noteFilterEndDate = DateTime.UtcNow;
+
         protected override async Task OnInitializedAsync()
         {
             var user = await AccountService.GetUser();
@@ -163,7 +176,7 @@ namespace BrokerIQ.Online.Pages
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
                 DocumentsRequirement = await DocumentsRequirementService.Get(int.Parse(CustomerId));
 
-                await SetNotesFromInterval(DateTime.UtcNow.AddMonths(-6), DateTime.UtcNow);
+                await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
 
                 foreach (var item in Enum.GetValues(typeof(DocuVaultTypeEnum)).Cast<DocuVaultTypeEnum>())
                 {
@@ -710,7 +723,7 @@ namespace BrokerIQ.Online.Pages
             {
                 await RefreshNotes();
             }
-            
+
             var responseParams = new DialogParameters();
             responseParams.Add("Message", message);
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
@@ -946,9 +959,21 @@ namespace BrokerIQ.Online.Pages
             BadgeDot = true;
         }
 
+        protected void FilterStartDateChanged(DateTime? newDate)
+        {
+            noteFilterStartDate = newDate;
+            RefreshNotes();
+        }
+
+        protected void FilterEndDateChanged(DateTime? newDate)
+        {
+            noteFilterEndDate = newDate;
+            RefreshNotes();
+        }
+
         protected async Task RefreshNotes()
         {
-            DateTime startDate = NoteFilterFrom?.Date != null ? NoteFilterFrom.Date.Value : DateTime.UtcNow.AddMonths(-6);
+            DateTime startDate = NoteFilterFrom?.Date != null ? NoteFilterFrom.Date.Value : DateTime.UtcNow.AddMonths(DefaultMonthsToShow);
             DateTime endDate = NoteFilterTo?.Date != null ? NoteFilterTo.Date.Value : DateTime.UtcNow;
 
             if (startDate > endDate)
@@ -969,7 +994,7 @@ namespace BrokerIQ.Online.Pages
         {
             Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
 
-            Notes = Notes.Where(n => n.DateTaken >= startDate && n.DateTaken <= endDate.Add(new TimeSpan(23, 59, 59)))
+            Notes = Notes.Where(n => n.DateTaken >= startDate.Date && n.DateTaken <= endDate.Add(new TimeSpan(23, 59, 59)))
                          .OrderByDescending(n => n.DateTaken);
         }
 

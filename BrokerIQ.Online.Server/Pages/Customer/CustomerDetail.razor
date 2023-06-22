@@ -587,10 +587,14 @@ else if (!Saved)
                         <div class="card-header">Filter notes</div>
                             <div class="card-body">
                                 <div class="row align-items-center">
-                                        <div class="col-4"><MudDatePicker Label="From" DisableToolbar="true" 
-                                                                        @ref="NoteFilterFrom" DateChanged="@RefreshNotes" /></div>
-                                        <div class="col-4"><MudDatePicker Label="To"  DisableToolbar="true" 
-                                                                        @ref="NoteFilterTo" DateChanged="@RefreshNotes" /></div>
+                                        <div class="col-4">
+                                            <MudDatePicker Label="From" DisableToolbar="true" @ref="NoteFilterFrom" 
+                                            Date="@noteFilterStartDate" DateChanged="FilterStartDateChanged" />
+                                        </div>
+                                        <div class="col-4">
+                                            <MudDatePicker Label="To"  DisableToolbar="true" @ref="NoteFilterTo" 
+                                            Date="@noteFilterEndDate" DateChanged="FilterEndDateChanged" />
+                                        </div>
                                         <div class="col-4 text-right">
                                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewNote" class="btn btn-primary align-bottom">
                                                 Add New Note
