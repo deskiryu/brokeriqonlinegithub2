@@ -2,35 +2,10 @@
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
-@using System.IO
 @using BrokerIQ.Online.Server.Extensions
 
 @inherits CustomerDetailBase
 @implements IDisposable
-
-@inject IJSRuntime js
-
-@functions {
-    async Task PreviewImage()
-    {
-        await Extensions.PreviewFile(js, memoryStream, true);
-    }
-
-    async Task SaveImage()
-    {
-        await Extensions.SaveAs(js, imageFileName, imageData);
-    }
-
-    async Task DownloadPdf(CustomerDocument sdoc)
-    {
-        await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
-    }
-    async Task PreviewPdf(CustomerDocument sdoc)
-    {
-        var memoryStream = new MemoryStream(sdoc.File);
-        await Extensions.PreviewFile(js, memoryStream);
-    }
-}
 
 <h3>Client Overview</h3>
 @if (Customer == null)
@@ -241,8 +216,6 @@ else if (!Saved)
                                         Resend Verify Email
                                     </MudButton>
                             }
-
-
 
                         </div>
                         </div>
@@ -609,8 +582,7 @@ else if (!Saved)
                             </MudTabPanel>
                 }
             }
-                <MudTabPanel Text="Notes" >
-                    
+                <MudTabPanel Text="Notes">
                     <div class="card mb-1">
                         <div class="card-header">Filter notes</div>
                             <div class="card-body">
@@ -627,7 +599,7 @@ else if (!Saved)
                                 </div>
                             </div>
                     </div>
-        
+
                     <div class = "row m-1">
                     @if (Notes != null && Notes.Any())
                     {
@@ -821,61 +793,3 @@ else
         <div class="alert @StatusClass">@Message</div>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
 }
-
-@code {
-    protected async Task ViewSelectedDocumentUpload()
-    {
-        foreach (var custDoc in SelectedItemsCustomerDocuments)
-        {
-            await ViewDocumentUpload(custDoc);
-        }
-    }
-
-    protected async Task SaveSelectedDocumentUpload()
-    {
-        foreach (var custDoc in SelectedItemsCustomerDocuments)
-        {
-            await SaveDocumentUpload(custDoc);
-        }
-        SelectedItemsCustomerDocuments.Clear();
-    }
-
-    protected async Task ViewDocumentUpload(CustomerDocument doc)
-    {
-        if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
-        {
-            memoryStream = new MemoryStream(doc.File);
-            await PreviewImage();
-        }
-        else
-        {
-            await PreviewPdf(doc);
-        }
-    }
-
-    protected async Task ViewDocumentUpload(ChatDocument doc)
-    {
-        var converted = new CustomerDocument
-        {
-            SupportingDocumentType = doc.SupportingDocumentType,
-            File = doc.File,
-
-        };
-        await ViewDocumentUpload(converted);
-    }
-
-    protected async Task SaveDocumentUpload(CustomerDocument doc)
-    {
-        if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
-        {
-            imageFileName = doc.Description + ".jpeg";
-            imageData = doc.File;
-            await SaveImage();
-        }
-        else
-        {
-            await DownloadPdf(doc);
-        }
-    }
-}
-
