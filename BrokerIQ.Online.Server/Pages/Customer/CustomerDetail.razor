@@ -2,7 +2,6 @@
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
-@using BrokerIQ.Online.Services.Interface
 @using System.IO
 @using BrokerIQ.Online.Server.Extensions
 
@@ -553,63 +552,7 @@ else if (!Saved)
                         </MudTable>         
                         </div>
                         </div>
-                    @code {
 
-        protected async Task ViewSelectedDocumentUpload()
-        {
-            foreach (var custDoc in SelectedItemsCustomerDocuments)
-            {
-                await ViewDocumentUpload(custDoc);
-            }
-        }
-
-        protected async Task SaveSelectedDocumentUpload()
-        {
-            foreach (var custDoc in SelectedItemsCustomerDocuments)
-            {
-                await SaveDocumentUpload(custDoc);
-            }
-            SelectedItemsCustomerDocuments.Clear();
-        }
-
-        protected async Task ViewDocumentUpload(CustomerDocument doc)
-        {
-            if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
-            {
-                memoryStream = new MemoryStream(doc.File);
-                await PreviewImage();
-            }
-            else
-            {
-                await PreviewPdf(doc);
-            }
-        }
-
-        protected async Task ViewDocumentUpload(ChatDocument doc)
-        {
-            var converted = new CustomerDocument
-            {
-                SupportingDocumentType = doc.SupportingDocumentType,
-                File = doc.File,
-
-            };
-            await ViewDocumentUpload(converted);
-        }
-
-        protected async Task SaveDocumentUpload(CustomerDocument doc)
-        {
-            if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
-            {
-                imageFileName = doc.Description + ".jpeg";
-                imageData = doc.File;
-                await SaveImage();
-            }
-            else
-            {
-                await DownloadPdf(doc);
-            }
-        }
-                }
             </MudTabPanel>
             @if (Customer.MenuPlans != null && Customer.MenuPlans.Any())
             {
@@ -666,12 +609,26 @@ else if (!Saved)
                             </MudTabPanel>
                 }
             }
-                <MudTabPanel Text="Notes">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewNote" class="btn btn-primary mb-2">
-                        Add New Note
-                    </MudButton>
-
-                    <div class = "row">
+                <MudTabPanel Text="Notes" >
+                    
+                    <div class="card mb-1">
+                        <div class="card-header">Filter notes</div>
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                        <div class="col-4"><MudDatePicker Label="From" DisableToolbar="true" 
+                                                                        @ref="NoteFilterFrom" DateChanged="@RefreshNotes" /></div>
+                                        <div class="col-4"><MudDatePicker Label="To"  DisableToolbar="true" 
+                                                                        @ref="NoteFilterTo" DateChanged="@RefreshNotes" /></div>
+                                        <div class="col-4 text-right">
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewNote" class="btn btn-primary align-bottom">
+                                                Add New Note
+                                            </MudButton>
+                                        </div>
+                                </div>
+                            </div>
+                    </div>
+        
+                    <div class = "row m-1">
                     @if (Notes != null && Notes.Any())
                     {
                         @foreach (var note in Notes)
@@ -864,3 +821,61 @@ else
         <div class="alert @StatusClass">@Message</div>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
 }
+
+@code {
+    protected async Task ViewSelectedDocumentUpload()
+    {
+        foreach (var custDoc in SelectedItemsCustomerDocuments)
+        {
+            await ViewDocumentUpload(custDoc);
+        }
+    }
+
+    protected async Task SaveSelectedDocumentUpload()
+    {
+        foreach (var custDoc in SelectedItemsCustomerDocuments)
+        {
+            await SaveDocumentUpload(custDoc);
+        }
+        SelectedItemsCustomerDocuments.Clear();
+    }
+
+    protected async Task ViewDocumentUpload(CustomerDocument doc)
+    {
+        if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
+        {
+            memoryStream = new MemoryStream(doc.File);
+            await PreviewImage();
+        }
+        else
+        {
+            await PreviewPdf(doc);
+        }
+    }
+
+    protected async Task ViewDocumentUpload(ChatDocument doc)
+    {
+        var converted = new CustomerDocument
+        {
+            SupportingDocumentType = doc.SupportingDocumentType,
+            File = doc.File,
+
+        };
+        await ViewDocumentUpload(converted);
+    }
+
+    protected async Task SaveDocumentUpload(CustomerDocument doc)
+    {
+        if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
+        {
+            imageFileName = doc.Description + ".jpeg";
+            imageData = doc.File;
+            await SaveImage();
+        }
+        else
+        {
+            await DownloadPdf(doc);
+        }
+    }
+}
+

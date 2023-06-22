@@ -136,6 +136,9 @@ namespace BrokerIQ.Online.Pages
 
         private System.Threading.Timer timer;
 
+        protected MudDatePicker NoteFilterFrom { get; set; }
+
+        protected MudDatePicker NoteFilterTo { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -152,7 +155,7 @@ namespace BrokerIQ.Online.Pages
                 CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
                 DocumentsRequirement = await DocumentsRequirementService.Get(int.Parse(CustomerId));
-                Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
+                await RefreshNotes();
                 foreach (var item in Enum.GetValues(typeof(DocuVaultTypeEnum)).Cast<DocuVaultTypeEnum>())
                 {
                     if (item == DocuVaultTypeEnum.ProfilePicture)
@@ -217,8 +220,8 @@ namespace BrokerIQ.Online.Pages
                     }
                 }
             }
-            fileUploadSettings = this.FileUploadSettingsOption.Value;
 
+            fileUploadSettings = this.FileUploadSettingsOption.Value;
         }
 
         protected async Task UpdateChat(bool firstTime = false)
@@ -930,6 +933,28 @@ namespace BrokerIQ.Online.Pages
             UnReadChat = 0;
             ChatBadgeColour = MudBlazor.Color.Transparent;
             BadgeDot = true;
+        }
+
+        protected async Task RefreshNotes()
+        {
+            DateTime startDate = NoteFilterFrom?.Date != null ? NoteFilterFrom.Date.Value : DateTime.UtcNow.AddYears(-1);
+            DateTime endDate = NoteFilterTo?.Date != null ? NoteFilterTo.Date.Value : DateTime.UtcNow;
+
+            if (startDate > endDate)
+            {
+                var dialogParams = new DialogParameters();
+                dialogParams.Add("Message", "Please ensure that the From date is earlier than the To date.");
+                await DialogService.Show<AlertDialog>("Invalid Interval", dialogParams).Result;
+
+                return;
+            }
+
+            Notes = await NoteService.GetNotesByBrokerId(Customer.Id);
+
+            Notes = Notes.Where(n => n.DateTaken >= startDate && n.DateTaken <= endDate.Add(new TimeSpan(23, 59, 59)))
+                         .OrderByDescending(n => n.DateTaken);
+
+            StateHasChanged();
         }
     }
 }
