@@ -140,6 +140,8 @@ namespace BrokerIQ.Online.Pages
 
         protected MudDatePicker NoteFilterTo { get; set; }
 
+        public MudSelect<string> TemplateSelect { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             var user = await AccountService.GetUser();
@@ -681,6 +683,8 @@ namespace BrokerIQ.Online.Pages
             {
                 await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
                 LoadedChatFiles.Clear();
+
+                TemplateSelect.SelectedValues = new string[] { };
             }
             else
             {
