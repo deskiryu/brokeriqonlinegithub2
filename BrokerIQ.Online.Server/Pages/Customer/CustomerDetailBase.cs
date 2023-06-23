@@ -103,6 +103,7 @@ namespace BrokerIQ.Online.Pages
         protected List<IBrowserFile> LoadedChatFiles = new();
 
         public string SpinnerVisible { get; set; }
+
         public string LoadFileStatus { get; set; }
 
         [Parameter]
@@ -132,7 +133,7 @@ namespace BrokerIQ.Online.Pages
 
         public int LastUnReadChat { get; set; }
 
-        public bool BadgeDot { get; set; }
+        public bool ChatBadgeDot { get; set; }
 
         public MudBlazor.Color ChatBadgeColour { get; set; }
 
@@ -160,6 +161,14 @@ namespace BrokerIQ.Online.Pages
 
         protected DateTime? noteFilterEndDate = DateTime.UtcNow;
 
+        public DateTime InitialLatestUploadDate { get; set; }
+
+        public int NewClientUploadsCount { get; set; }
+
+        public bool ShouldShowAsDot { get; set; }
+
+        public Color UploadsBadgeColor { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             var user = await AccountService.GetUser();
@@ -173,7 +182,10 @@ namespace BrokerIQ.Online.Pages
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
                 CustomerCategory = (int)Customer.CustomerCategory;
                 CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
+
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
+                ResetUploadsBadge();
+
                 DocumentsRequirement = await DocumentsRequirementService.Get(int.Parse(CustomerId));
 
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
@@ -227,9 +239,13 @@ namespace BrokerIQ.Online.Pages
             if (!IsAdmin)
             {
                 UpdateChat(firstTime: true);
+
                 timer = new System.Threading.Timer(async _ =>  // async void
                 {
                     await UpdateChat();
+
+                    await UpdateCustomerUploads();
+
                 }, null, 0, 5000);
             }
             else
@@ -254,10 +270,29 @@ namespace BrokerIQ.Online.Pages
                 UnReadChat += latestUnreadchat;
                 Chat = await ChatService.Get(Customer.Id);
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
-                BadgeDot = UnReadChat == 0;
+                ChatBadgeDot = UnReadChat == 0;
                 LastUnReadChat = latestUnreadchat;
                 await InvokeAsync(StateHasChanged);
             }
+        }
+
+        protected async Task UpdateCustomerUploads()
+        {
+            CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+
+            NewClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
+            ShouldShowAsDot = NewClientUploadsCount == 0;
+            UploadsBadgeColor = ShouldShowAsDot ? Color.Transparent : Color.Error;
+
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected void ResetUploadsBadge()
+        {
+            InitialLatestUploadDate = CustomerDocuments.Any() ? CustomerDocuments.Max(d => d.CreatedDate) : new DateTime(1900, 1, 1);
+            NewClientUploadsCount = 0;
+            ShouldShowAsDot = true;
+            UploadsBadgeColor = Color.Transparent;
         }
 
         protected async Task ChatBrokerChanged()
@@ -956,7 +991,7 @@ namespace BrokerIQ.Online.Pages
         {
             UnReadChat = 0;
             ChatBadgeColour = MudBlazor.Color.Transparent;
-            BadgeDot = true;
+            ChatBadgeDot = true;
         }
 
         protected void FilterStartDateChanged(DateTime? newDate)

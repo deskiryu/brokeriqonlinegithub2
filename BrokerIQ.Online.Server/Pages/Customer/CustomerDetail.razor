@@ -344,8 +344,9 @@ else if (!Saved)
                         </MudTabPanel>               
             }
 
-            <MudTabPanel Text="Uploads">
-                <div class = "row">
+            <MudTabPanel Text="Uploads" BadgeData="@NewClientUploadsCount" BadgeColor="@UploadsBadgeColor" BadgeDot="@ShouldShowAsDot"
+                         OnClick="@(f => ResetUploadsBadge())" >
+                <div class = "row" @onclick="this.ResetUploadsBadge">
                 <div class = "col-sm-4">
 
                 @if (DocumentsRequirement != null) {
@@ -477,7 +478,7 @@ else if (!Saved)
                 <div class = "col-sm-8 border-left">
                     <div class="row">
                         <div class="col-sm-4">
-                             <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6> 
+                            <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6> 
                         </div>
                         <div class = "col-sm-8" style="margin-top: -14px">
 
@@ -638,7 +639,7 @@ else if (!Saved)
                     }
                 </div>
                 </MudTabPanel>
-                <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot' OnClick="@(f => ClearUnReadChat())">
+                <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@ChatBadgeDot' OnClick="@(f => ClearUnReadChat())">
                     <div @onclick="this.ClearUnReadChat">
                     @if (!IsAdmin)
                     {
