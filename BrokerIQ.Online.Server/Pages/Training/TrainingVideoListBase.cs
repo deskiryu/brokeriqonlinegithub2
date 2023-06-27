@@ -12,12 +12,10 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         protected ITrainingVideoService TrainingVideoService { get; set; }
 
-        protected List<TrainingVideo> Videos { get; set; }
+        protected List<TrainingVideo> Videos { get; set; } = new List<TrainingVideo>();
 
         protected override async Task OnInitializedAsync()
         {
-            await base.OnInitializedAsync();
-
             Videos = await TrainingVideoService.GetVideos();
         }
     }

@@ -5,43 +5,23 @@
 @inherits TrainingVideoListBase
 
 <h3 class="page-title">Training Videos</h3>
-
-<MudTable Dense="true" Hover="true" Striped="true" Items="@Videos">
-    <HeaderContent>
-        <MudTh>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.TrainingVideo, object>(x=>x.Title)">
-                Title
-            </MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.TrainingVideo, object>(x=>x.UploadDate)">
-                Created on
-            </MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            Description
-        </MudTh>
-
-    </HeaderContent>
-    <NoRecordsContent>
-        <MudText Typo="Typo.h5" Class="mud-text-secondary mt-10 mb-10">
-            No training videos available at this time.
-        </MudText>
-    </NoRecordsContent>
-    <RowTemplate>
-        <MudTd>
-            <video height="150" controls>
-                <source src='@context.Url#t=0.1'>
-            </video>
-        </MudTd>
-        <MudTd>@context.Title</MudTd>
-        <MudTd>@((context.UploadDate == null)
-             ? "-"
-             : ((DateTimeOffset)context.UploadDate).ToString("g", new CultureInfo("en-GB")))
-        </MudTd>
-        <MudTd>@context.Description</MudTd>
-    </RowTemplate>
-</MudTable>
-
+<MudGrid>
+    @foreach (var video in Videos)
+    {
+        <MudItem xs="12" md="6">
+            <MudPaper Class="p-2">
+                <div>
+                    <video width="100%" controls>
+                        <source src='@video.Url#t=0.1'>
+                    </video>
+                </div>
+                <div>
+                    <MudText Class="fw-bold mb-2"><strong>@video.Title</strong></MudText>
+                </div>
+                <div>
+                    <MudText>@video.Description</MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+    }
+    </MudGrid>
