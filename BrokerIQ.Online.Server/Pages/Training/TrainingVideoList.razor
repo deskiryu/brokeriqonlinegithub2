@@ -1,0 +1,47 @@
+﻿@using System.Globalization
+@using BrokerIQ.Online.Pages
+
+@page "/trainingvideolist"
+@inherits TrainingVideoListBase
+
+<h3 class="page-title">Training Videos</h3>
+
+<MudTable Dense="true" Hover="true" Striped="true" Items="@Videos">
+    <HeaderContent>
+        <MudTh>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.TrainingVideo, object>(x=>x.Title)">
+                Title
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.TrainingVideo, object>(x=>x.UploadDate)">
+                Created on
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            Description
+        </MudTh>
+
+    </HeaderContent>
+    <NoRecordsContent>
+        <MudText Typo="Typo.h5" Class="mud-text-secondary mt-10 mb-10">
+            No training videos available at this time.
+        </MudText>
+    </NoRecordsContent>
+    <RowTemplate>
+        <MudTd>
+            <video height="150" controls>
+                <source src='@context.Url#t=0.1'>
+            </video>
+        </MudTd>
+        <MudTd>@context.Title</MudTd>
+        <MudTd>@((context.UploadDate == null)
+             ? "-"
+             : ((DateTimeOffset)context.UploadDate).ToString("g", new CultureInfo("en-GB")))
+        </MudTd>
+        <MudTd>@context.Description</MudTd>
+    </RowTemplate>
+</MudTable>
+
