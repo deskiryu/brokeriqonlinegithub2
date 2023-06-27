@@ -3,12 +3,12 @@ using AutoMapper;
 
 namespace BrokerIQ.Online.Mapper
 {
-    using Dto.Models;
-    using Models;
+    using BrokerIQ.Dto;
     using BrokerIQ.Dto.Response;
     using BrokerIQ.Online.Models.Account;
     using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Dto;
+    using Dto.Models;
+    using Models;
 
     public class ReviewItMapper : Profile
     {
@@ -64,7 +64,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.VideoNotificationsAllowed, opt => opt.MapFrom((src, dest) =>
                 {
                     bool videoOptOut = true;
-                    if (src.VideoOptOut==null || src.VideoOptOut==false)
+                    if (src.VideoOptOut == null || src.VideoOptOut == false)
                     {
                         videoOptOut = false;
                     }
@@ -602,8 +602,8 @@ namespace BrokerIQ.Online.Mapper
                 var matched = false;
                 if (!string.IsNullOrEmpty(src.TwoFactorPhoneNumber))
                 {
-                    var last10TwoFac = src.TwoFactorPhoneNumber.Length > 10 ? src.TwoFactorPhoneNumber.Substring(src.TwoFactorPhoneNumber.Length - 10) : ""; 
-                    if (!string.IsNullOrEmpty(last10TwoFac) && last10TwoFac.Length==10 && dest.TelephoneNumber.Contains(last10TwoFac))
+                    var last10TwoFac = src.TwoFactorPhoneNumber.Length > 10 ? src.TwoFactorPhoneNumber.Substring(src.TwoFactorPhoneNumber.Length - 10) : "";
+                    if (!string.IsNullOrEmpty(last10TwoFac) && last10TwoFac.Length == 10 && dest.TelephoneNumber.Contains(last10TwoFac))
                     {
                         matched = true;
                     }
@@ -611,7 +611,7 @@ namespace BrokerIQ.Online.Mapper
                 return matched;
             }));
             CreateMap<Broker, BrokerDto>();
-                
+
             CreateMap<Broker, UpdateBrokerDto>()
                 .ForMember(d => d.Name, action => action.MapFrom(s => s.Name))
                 .ForMember(d => d.BrokerFirstName, action => action.MapFrom(s => s.BrokerFirstName))
@@ -772,8 +772,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.ChatDocument, opt => opt.MapFrom((src, dest) =>
                 {
                     var chatDocument = new ChatDocument();
-                    
-                    if (src.ChatDocumentId>0)
+
+                    if (src.ChatDocumentId > 0)
                     {
                         chatDocument.Id = src.ChatDocument.Id;
                         chatDocument.ChatId = src.ChatDocument.ChatId;
@@ -803,6 +803,7 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<AzureVideoDto, Video>();
             CreateMap<Audio, AudioDto>();
             CreateMap<AudioDto, Audio>();
+            CreateMap<AzureTrainingVideoDto, TrainingVideo>();
         }
 
         public void DocumentsRequirementMapper()

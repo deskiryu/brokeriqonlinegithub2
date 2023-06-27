@@ -1,0 +1,27 @@
+﻿@using System.Globalization
+@using BrokerIQ.Online.Pages
+
+@page "/trainingvideolist"
+@inherits TrainingVideoListBase
+
+<h3 class="page-title">Training Videos</h3>
+<MudGrid>
+    @foreach (var video in Videos)
+    {
+        <MudItem xs="12" md="6" lg="4" xl="3">
+            <MudPaper Class="p-2">
+                <div>
+                    <video width="100%" controls>
+                        <source src='@video.Url#t=0.1'>
+                    </video>
+                </div>
+                <div>
+                    <MudText Class="fw-bold mb-2"><strong>@video.Title</strong></MudText>
+                </div>
+                <div>
+                    <MudText>@video.Description</MudText>
+                </div>
+            </MudPaper>
+        </MudItem>
+    }
+    </MudGrid>
