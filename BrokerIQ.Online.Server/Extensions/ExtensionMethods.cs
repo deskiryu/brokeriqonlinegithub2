@@ -98,5 +98,19 @@ namespace BrokerIQ.Online.Server.Extensions
 
             return result.Concat(remainingValues).ToArray();
         }
+
+
+        public static bool IsSystemMessage(this BrokerDefinedMessageEnum message)
+        {
+            var systemMessages = new BrokerDefinedMessageEnum[] {
+                        BrokerDefinedMessageEnum.FirstLoginMessage,
+                        BrokerDefinedMessageEnum.FirstLoginDelayMessage,
+                        BrokerDefinedMessageEnum.FirstDocumentRequirementsMessage,
+                        BrokerDefinedMessageEnum.ProgressDocumentRequirementsMessage,
+                        BrokerDefinedMessageEnum.CompleteDocumentRequirementsMessage
+            };
+
+            return systemMessages.Contains(message);
+        }
     }
 }

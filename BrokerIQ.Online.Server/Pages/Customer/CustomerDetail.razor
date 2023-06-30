@@ -2,215 +2,190 @@
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
-@using BrokerIQ.Online.Services.Interface
-@using System.IO
 @using BrokerIQ.Online.Server.Extensions
 
 @inherits CustomerDetailBase
 @implements IDisposable
 
-@inject IJSRuntime js
-
-@functions {
-    async Task PreviewImage()
-    {
-        await Extensions.PreviewFile(js, memoryStream, true);
-    }
-
-    async Task SaveImage()
-    {
-        await Extensions.SaveAs(js, imageFileName, imageData);
-    }
-
-    async Task DownloadPdf(CustomerDocument sdoc)
-    {
-        await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
-    }
-    async Task PreviewPdf(CustomerDocument sdoc)
-    {
-        var memoryStream = new MemoryStream(sdoc.File);
-        await Extensions.PreviewFile(js, memoryStream);
-    }
-}
-
 <h3>Client Overview</h3>
 @if (Customer == null)
 {
-    <div>
-        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-    </div>
+        <div>
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        </div>
 }
 else if (!Saved)
 {
-    <section class="customer-detail">
-        <h3 class="page-title">Details for @Customer.FirstName @Customer.LastName</h3>
+        <section class="customer-detail">
+            <h3 class="page-title">Details for @Customer.FirstName @Customer.LastName</h3>
         @{
             var leadingFormat = "00000";
             //var a = Customer.CustomerId.ToString("00000");
         }
-        <div class="card ">
-            <div class="card-header">Notifications</div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-6">
-                        <MudInputString @bind-Value="selectedNotification" Placeholder="Type a notification message" Style="width:100%" />
-                    </div>
-                    <div class="col-3">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Notification to client</MudButton>
+            <div class="card ">
+                <div class="card-header">Notifications</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <MudInputString @bind-Value="selectedNotification" Placeholder="Type a notification message" Style="width:100%" />
+                        </div>
+                        <div class="col-3">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendNotificationToSelected())" class="btn btn-secondary text-center">Send Notification to client</MudButton>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
 
-        <div class="card">
-            <div class="card-header">Details</div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-2">
+            <div class="card">
+                <div class="card-header">Details</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-2">
 
                         @if (CustomerProfilePicture != null)
                         {
                             var base64 = Convert.ToBase64String(CustomerProfilePicture.File);
                             var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
-                            <img src="@imgSrc" class="img-responsive customer-detail-img" style="width: 100%" />
+                                    <img src="@imgSrc" class="img-responsive customer-detail-img" style="width: 100%" />
                         }
-                    </div>
-                    <div class="col-lg-10">
-                        <div class="form-group row">
-                            <label class="col-lg-2 ">Name</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.Name</label>
-                            </div>
-
-                            <label class="col-lg-2 ">Email</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.EmailAddress</label>
-                            </div>
                         </div>
+                        <div class="col-lg-10">
+                            <div class="form-group row">
+                                <label class="col-lg-2 ">Name</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.Name</label>
+                                </div>
 
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">Date Of Birth</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.DateOfBirth.ToBiqDateString()</label>
+                                <label class="col-lg-2 ">Email</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.EmailAddress</label>
+                                </div>
                             </div>
 
-                            <label class="col-lg-2 col-form-label">Employment</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.Employment.GetDisplayName()</label>
-                            </div>
-                        </div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Date Of Birth</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.DateOfBirth.ToBiqDateString()</label>
+                                </div>
 
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">Nationality</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.Nationality.GetDisplayName()</label>
-                            </div>
-
-                            <label class="col-lg-2 col-form-label">Residential Status</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.ResidentialStatus.GetDisplayName()</label>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">Phone type</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.OperatingSystem.GetDisplayName()</label>
+                                <label class="col-lg-2 col-form-label">Employment</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.Employment.GetDisplayName()</label>
+                                </div>
                             </div>
 
-                            <label class="col-lg-2 col-form-label">Email confirmed</label>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Nationality</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.Nationality.GetDisplayName()</label>
+                                </div>
+
+                                <label class="col-lg-2 col-form-label">Residential Status</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.ResidentialStatus.GetDisplayName()</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Phone type</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.OperatingSystem.GetDisplayName()</label>
+                                </div>
+
+                                <label class="col-lg-2 col-form-label">Email confirmed</label>
                             @if (Customer.EmailConfirmed)
                             {
-                                <div class="col-lg-4">
-                                    <i class="fa fa-check-circle font_awesome_table_checks success"></i>
-                                </div>
+                                        <div class="col-lg-4">
+                                            <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                                        </div>
                             }
                             else
                             {
-                                <div class="col-lg-4">
-                                    <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
-                                </div>
+                                        <div class="col-lg-4">
+                                            <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                                        </div>
                             }
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">Address</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.Address</label>
                             </div>
 
-                            <label class="col-lg-2 ">Business Name</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.BusinessName</label>
-                            </div>
-                        </div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Address</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.Address</label>
+                                </div>
 
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">Telephone</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.TelephoneNumber</label>
+                                <label class="col-lg-2 ">Business Name</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.BusinessName</label>
+                                </div>
                             </div>
 
-                            <label class="col-lg-2 ">Video Notifications Allowed</label>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Telephone</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.TelephoneNumber</label>
+                                </div>
+
+                                <label class="col-lg-2 ">Video Notifications Allowed</label>
 
                             @if (Customer.VideoNotificationsAllowed)
                             {
-                                <div class="col-lg-4">
-                                    <i class="fa fa-check-circle font_awesome_table_checks success"></i>
-                                </div>
+                                        <div class="col-lg-4">
+                                            <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                                        </div>
                             }
                             else
                             {
-                                <div class="col-lg-4">
-                                    <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
-                                </div>
-                                }      
+                                        <div class="col-lg-4">
+                                            <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                                        </div>
+                            }      
 
-                        </div>
-
-
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">App Version</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.AppVersion</label>
                             </div>
-                            @if(BrokerHasWhiteLabel){
-                                <label class="col-lg-2 ">Using Branded App</label>
+
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">App Version</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.AppVersion</label>
+                                </div>
+                            @if (BrokerHasWhiteLabel)
+                            {
+                                        <label class="col-lg-2 ">Using Branded App</label>
                                 @if (Customer.IsWhiteLabel)
                                 {
-                                    <div class="col-lg-4">
-                                        <i class="fa fa-check-circle font_awesome_table_checks success"></i>
-                                    </div>
+                                                <div class="col-lg-4">
+                                                    <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                                                </div>
                                 }
                                 else
                                 {
-                                    <div class="col-lg-4">
-                                        <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
-                                    </div>
+                                                <div class="col-lg-4">
+                                                    <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                                                </div>
                                 }                                
                             }
 
-                        </div>
+                            </div>
 
                         @if (IsAdmin)
                         {
                             var broker = @Brokers.FirstOrDefault(x => x.Id == Customer.ChosenBrokerId);
                             var name = broker?.Name ?? "None chosen";
 
-                            <div class="form-group row">
-                                <label class="col-lg-2 col-form-label">Broker</label>
-                                <div class="col-lg-4">
-                                    <label type="text" readonly class="form-control-plaintext">@name</label>
-                                </div>
+                                    <div class="form-group row">
+                                        <label class="col-lg-2 col-form-label">Broker</label>
+                                        <div class="col-lg-4">
+                                            <label type="text" readonly class="form-control-plaintext">@name</label>
+                                        </div>
 
-                                <label class="col-lg-2 col-form-label">Suggested Broker 1</label>
-                                <div class="col-lg-4">
-                                    <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker1</label>
-                                </div>
-                            </div>
+                                        <label class="col-lg-2 col-form-label">Suggested Broker 1</label>
+                                        <div class="col-lg-4">
+                                            <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker1</label>
+                                        </div>
+                                    </div>
 
-                            <div class="form-group row">
+                                    <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">Suggested Broker 2</label>
                                 <div class="col-lg-4">
                                     <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker2</label>
@@ -224,155 +199,154 @@ else if (!Saved)
 
                         }
 
-                    <div class="row col-6 mt-1">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientedit/{Customer.Id}")" class="mt-1">
-                            Edit Client
-                        </MudButton>                            
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/0/{Customer.Id}")" class="ml-lg-2 mt-1">
-                            Add a Menu Plan
-                        </MudButton>
-                        @if (IsAdmin)
-                        {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="DeleteCustomer">
-                                Delete Client
+                        <div class="row col-6 mt-1">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientedit/{Customer.Id}")" class="mt-1">
+                                Edit Client
+                            </MudButton>                            
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/0/{Customer.Id}")" class="ml-lg-2 mt-1">
+                                Add a Menu Plan
                             </MudButton>
+                            @if (IsAdmin)
+                            {
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="DeleteCustomer">
+                                        Delete Client
+                                    </MudButton>
 
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="ResendEmailCustomer">
-                                Resend Verify Email
-                            </MudButton>
-                        }
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="ResendEmailCustomer">
+                                        Resend Verify Email
+                                    </MudButton>
+                            }
 
-
-
-                    </div>
+                        </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </section>
+        </section>
 
-    <section>
-        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
-            <MudTabPanel Text="Insurances">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
-                    Add New Insurance
-                </MudButton>
-                <table id="table-insurance" class="table  col-sm-12 table-striped ">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Insurer</th>
-                            <th>Expiry</th>
-                            @if (IsAdmin)
-                            {
-                                <th>Broker</th>
-                            }
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var insurance in Customer.Insurances)
-                        {
-                            if (!insurance.MenuPlanId.HasValue || insurance.MenuPlanId == 0)
-                            {
-                                <tr>
-                                    <td>@insurance.InsType.GetDisplayName()</td>
-                                    <td>@insurance.Name</td>
-                                    <td>@insurance.ExpiryDate.ToBiqDateString()</td>
-                                    @if (IsAdmin)
-                                    {
-                                        <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
-                                    }
-                                    <td>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
-                                            <i class="fas fa-info-circle"></i>
-                                        </MudButton>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId=0")" class="btn btn-primary table-btn">
-                                            <i class="fas fa-edit"></i>
-                                        </MudButton>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </MudTabPanel>
-            @if (BrokerHasWhiteLabelAndIsInsuranceOnly == false)
-            {
-                 <MudTabPanel Text="Mortgages">
-                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Customer Category</label>
-                            <div class="col-sm-4">
-                                         <MudSelect T="int"
-                                                Label="Customer Category"
-                                                Placeholder="None chosen"
-                                                Disabled="false"                           
-                                                @bind-Value="CustomerCategory"
-                                                SelectedValuesChanged="@HandleValidCustomerCategory"
-                                                AdornmentColor="Color.Primary"
-                                                MaxHeight="400">
-                                                @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
-                                                {
-                                                    CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
-                                                    int id = (int)looped;
-                                                    <MudSelectItem Value="@id">@looped.GetDisplayName()</MudSelectItem>
-                                                }
-                                    </MudSelect> 
-
-                            </div>
-                        </div>
-                    @* </EditForm> *@
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/0/{Customer.Id}")" class="btn btn-primary mb-2">
-                        Add New Mortgage
+        <section>
+            <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+                <MudTabPanel Text="Insurances">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
+                        Add New Insurance
                     </MudButton>
-                    <table id="table-mortgage" class="table  col-sm-12 table-striped ">
+                    <table id="table-insurance" class="table  col-sm-12 table-striped ">
                         <thead>
                             <tr>
-                                <th>Provider</th>
                                 <th>Type</th>
-                                <th>Rate</th>
-                                <th>Promotion End</th>
-                                @if (IsAdmin)
-                                {
-                                    <th>Broker</th>
-                                }
+                                <th>Insurer</th>
+                                <th>Expiry</th>
+                            @if (IsAdmin)
+                            {
+                                        <th>Broker</th>
+                            }
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
+                        @foreach (var insurance in Customer.Insurances)
+                        {
+                            if (!insurance.MenuPlanId.HasValue || insurance.MenuPlanId == 0)
+                            {
+                                            <tr>
+                                                <td>@insurance.InsType.GetDisplayName()</td>
+                                                <td>@insurance.Name</td>
+                                                <td>@insurance.ExpiryDate.ToBiqDateString()</td>
+                                    @if (IsAdmin)
+                                    {
+                                                        <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
+                                    }
+                                                <td>
+                                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </MudButton>
+                                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId=0")" class="btn btn-primary table-btn">
+                                                        <i class="fas fa-edit"></i>
+                                                    </MudButton>
+                                                </td>
+                                            </tr>
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </MudTabPanel>
+            @if (BrokerHasWhiteLabelAndIsInsuranceOnly == false)
+            {
+                         <MudTabPanel Text="Mortgages">
+                                 <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Customer Category</label>
+                                    <div class="col-sm-4">
+                                                 <MudSelect T="int"
+                                                        Label="Customer Category"
+                                                        Placeholder="None chosen"
+                                                        Disabled="false"                           
+                            @bind-Value="CustomerCategory"
+                                                        SelectedValuesChanged="@HandleValidCustomerCategory"
+                                                        AdornmentColor="Color.Primary"
+                                                        MaxHeight="400">
+                                @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
+                                {
+                                    CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
+                                    int id = (int)looped;
+                                                                <MudSelectItem Value="@id">@looped.GetDisplayName()</MudSelectItem>
+                                }
+                                            </MudSelect> 
+
+                                    </div>
+                                </div>
+                    @* </EditForm> *@
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/0/{Customer.Id}")" class="btn btn-primary mb-2">
+                                Add New Mortgage
+                            </MudButton>
+                            <table id="table-mortgage" class="table  col-sm-12 table-striped ">
+                                <thead>
+                                    <tr>
+                                        <th>Provider</th>
+                                        <th>Type</th>
+                                        <th>Rate</th>
+                                        <th>Promotion End</th>
+                                @if (IsAdmin)
+                                {
+                                                <th>Broker</th>
+                                }
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                             @foreach (var mortgage in Customer.Mortgages)
                             {
-                                <tr>
-                                    <td>@mortgage.ProviderName</td>
-                                    <td>@mortgage.MortgageType.GetDisplayName()</td>
-                                    <td>@mortgage.MortgageRateType.GetDisplayName()</td>
+                                            <tr>
+                                                <td>@mortgage.ProviderName</td>
+                                                <td>@mortgage.MortgageType.GetDisplayName()</td>
+                                                <td>@mortgage.MortgageRateType.GetDisplayName()</td>
 
                                     @if (mortgage.PromotionalEndDate.HasValue)
                                     {
-                                        <td>@mortgage.PromotionalEndDate.Value.ToBiqDateString()</td>
+                                                        <td>@mortgage.PromotionalEndDate.Value.ToBiqDateString()</td>
                                     }
                                     @if (IsAdmin)
                                     {
-                                        <td>@Brokers.First(x => x.Id == mortgage.BrokerId)?.Name</td>
+                                                        <td>@Brokers.First(x => x.Id == mortgage.BrokerId)?.Name</td>
                                     }
-                                    <td>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgagedetail/{mortgage.Id}")" class="btn btn-primary table-btn">
-                                            <i class="fas fa-info-circle"></i>
-                                        </MudButton>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/{mortgage.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
-                                            <i class="fas fa-edit"></i>
-                                        </MudButton>
-                                    </td>
-                                </tr>
+                                                <td>
+                                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgagedetail/{mortgage.Id}")" class="btn btn-primary table-btn">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </MudButton>
+                                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/{mortgage.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
+                                                        <i class="fas fa-edit"></i>
+                                                    </MudButton>
+                                                </td>
+                                            </tr>
                             }
-                        </tbody>
-                    </table>
-                </MudTabPanel>               
+                                </tbody>
+                            </table>
+                        </MudTabPanel>               
             }
 
-            <MudTabPanel Text="Uploads">
-                <div class = "row">
+            <MudTabPanel Text="Uploads" BadgeData="@NewClientUploadsCount" BadgeColor="@UploadsBadgeColor" BadgeDot="@ShouldShowAsDot"
+                         OnClick="@(f => ResetUploadsBadge())" >
+                <div class = "row" @onclick="this.ResetUploadsBadge">
                 <div class = "col-sm-4">
 
                 @if (DocumentsRequirement != null) {
@@ -504,111 +478,55 @@ else if (!Saved)
                 <div class = "col-sm-8 border-left">
                     <div class="row">
                         <div class="col-sm-4">
-                             <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6> 
+                            <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6> 
                         </div>
                         <div class = "col-sm-8" style="margin-top: -14px">
 
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()">
-                                Download Selected
-                            </MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()">
-                                Delete Selected
-                            </MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()">
+                                    Download Selected
+                                </MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()">
+                                    Delete Selected
+                                </MudButton>
+                            </div>
                         </div>
-                    </div>
-                <MudTable Items="@CustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
-                    <HeaderContent>
-                        <MudTh>Document</MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.CreatedDate)">Date</MudTableSortLabel></MudTh>
-                        <MudTh>Type</MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.FileName)">Name</MudTableSortLabel></MudTh>
-                        <MudTh></MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Document">@{
+                    <MudTable Items="@CustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
+                        <HeaderContent>
+                            <MudTh>Document</MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.CreatedDate)">Date</MudTableSortLabel></MudTh>
+                            <MudTh>Type</MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.FileName)">Name</MudTableSortLabel></MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Document">@{
                                         var strDocType = string.Empty;
                                         DocumentTypeEnumValues.TryGetValue((int)context.DocuVaultType, out strDocType);
                                         @strDocType
                                     }</MudTd>
-                                    <MudTd DataLabel="Email">@context.CreatedDate</MudTd>
-                        <MudTd DataLabel="Type">@context.TypeDesc</MudTd>
-                        <MudTd DataLabel="Description">@context.Description</MudTd>
-                        <MudTd>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(context)">
-                                <i class="fas fa-eye"></i>
-                            </MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveDocumentUpload(context)">
-                                <i class="fas fa-download"></i>
-                            </MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteDocumentUpload(context)">
-                                <i class="fas fa-trash"></i>
-                            </MudButton>
-                        </MudTd>
+                                            <MudTd DataLabel="Email">@context.CreatedDate</MudTd>
+                                <MudTd DataLabel="Type">@context.TypeDesc</MudTd>
+                                <MudTd DataLabel="Description">@context.Description</MudTd>
+                                <MudTd>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(context)">
+                                        <i class="fas fa-eye"></i>
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveDocumentUpload(context)">
+                                        <i class="fas fa-download"></i>
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteDocumentUpload(context)">
+                                        <i class="fas fa-trash"></i>
+                                    </MudButton>
+                                </MudTd>
 
-                    </RowTemplate>
-                    <PagerContent>
-                        <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
-                    </PagerContent>
-                </MudTable>         
-                </div>
-                </div>
-                @code{
+                            </RowTemplate>
+                            <PagerContent>
+                                <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
+                            </PagerContent>
+                        </MudTable>         
+                        </div>
+                        </div>
 
-                    protected async Task ViewSelectedDocumentUpload()
-                    {
-                        foreach(var custDoc in SelectedItemsCustomerDocuments)
-                        {
-                            await ViewDocumentUpload(custDoc);
-                        }
-                    }
-
-                    protected async Task SaveSelectedDocumentUpload()
-                    {
-                        foreach(var custDoc in SelectedItemsCustomerDocuments)
-                        {
-                            await SaveDocumentUpload(custDoc);
-                        }
-                        SelectedItemsCustomerDocuments.Clear();
-                    }
-
-                    protected async Task ViewDocumentUpload(CustomerDocument doc)
-                    {
-                        if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
-                        {
-                            memoryStream = new MemoryStream(doc.File);
-                            await PreviewImage();
-                        }
-                        else
-                        {
-                            await PreviewPdf(doc);
-                        }
-                    }
-
-                    protected async Task ViewDocumentUpload(ChatDocument doc)
-                    {
-                        var converted = new CustomerDocument
-                        {
-                            SupportingDocumentType = doc.SupportingDocumentType,
-                            File = doc.File,
-
-                        };
-                        await ViewDocumentUpload(converted);
-                    }
-
-                    protected async Task SaveDocumentUpload(CustomerDocument doc)
-                    {
-                        if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
-                        {
-                            imageFileName = doc.Description + ".jpeg";
-                            imageData = doc.File;
-                            await SaveImage();
-                        }
-                        else
-                        {
-                            await DownloadPdf(doc);
-                        }
-                    }
-                }
             </MudTabPanel>
             @if (Customer.MenuPlans != null && Customer.MenuPlans.Any())
             {
@@ -616,242 +534,267 @@ else if (!Saved)
                 @foreach (var menuplan in Customer.MenuPlans)
                 {
 
-                <MudTabPanel Text="@($"Menuplan: {menuplan.Name}")">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary mb-2">
-                        Add New Insurance
-                    </MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/{menuplan.Id}/{Customer.Id}")" class="btn btn-primary table-btn mb-2">
-                        Edit this Menu Plan
-                    </MudButton>
-                    <table id="table-menuplan" class="table  col-sm-12 table-striped ">
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Insurer</th>
-                                <th>Expiry</th>
-                                @if (IsAdmin)
-                                {
-                                    <th>Broker</th>
-                                }
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var insurance in Customer.Insurances)
-                            {
-                                if (insurance.MenuPlanId.HasValue && insurance.MenuPlanId == menuplan.Id)
-                                {
-                                    <tr>
-                                        <td>@insurance.InsType.GetDisplayName()</td>
-                                        <td>@insurance.Name</td>
-                                        <td>@insurance.ExpiryDate.ToBiqDateString()</td>
-                                        @if (IsAdmin)
-                                        {
-                                            <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
-                                        }
-                                        <td>
-                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
-                                                <i class="fas fa-info-circle"></i>
-                                            </MudButton>
-                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary table-btn">
-                                                <i class="fas fa-edit"></i>
-                                            </MudButton>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </MudTabPanel>
-                }
-            }
-            <MudTabPanel Text="Notes">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewNote" class="btn btn-primary mb-2">
-                    Add New Note
-                </MudButton>
-
-                <div class = "row">
-                @if (Notes != null && Notes.Any())
-                {
-                    @foreach (var note in Notes)
-                    {
-                        <MudCard Class="col-sm-5 mb-1 ml-1" Style="background-color: lightgoldenrodyellow">
-                            <MudCardHeader>
-                                <CardHeaderContent>
-                                    <MudText Typo="Typo.h6">@note.DateTaken.ToBiqDateString()</MudText>
+                            <MudTabPanel Text="@($"Menuplan: {menuplan.Name}")">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary mb-2">
+                                    Add New Insurance
+                                </MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/{menuplan.Id}/{Customer.Id}")" class="btn btn-primary table-btn mb-2">
+                                    Edit this Menu Plan
+                                </MudButton>
+                                <table id="table-menuplan" class="table  col-sm-12 table-striped ">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Insurer</th>
+                                            <th>Expiry</th>
                                     @if (IsAdmin)
                                     {
-                                        @if (note.BrokerId > 0)
-                                        {
-                                            <td>@Brokers.First(x => x.Id == note.BrokerId)?.Name</td>
-                                        }
-                                        else
-                                        {
-                                            <td>Admin</td>                    
-                                        }
+                                                    <th>Broker</th>
                                     }
-                                </CardHeaderContent>
-                                <CardHeaderActions>
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default"  @onclick="f => DeleteNote(note.Id)" />
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default"  @onclick="f => EditNote(note.Id)" />
-                                </CardHeaderActions>
-                            </MudCardHeader>
-                            <MudCardContent>
-                                <MudText>@note.Message</MudText>
-                            </MudCardContent>
-                        </MudCard>
-                    }
-                }
-            </div>
-            </MudTabPanel>
-            <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@BadgeDot' OnClick="@(f => ClearUnReadChat())">
-                <div @onclick="this.ClearUnReadChat">
-                @if (!IsAdmin)
-                {
-                        <div class="col-sm-6 control_wrapper mb-5">
-                            <MudSelect T="string"
-                                    Label="Select Message Template"
-                                    Placeholder="Select Message Template"
-                                    Clearable="true"
-                                    @bind-Value="SelectedTemplateMessage"
-                                    AdornmentColor="Color.Primary">
-                                @foreach (string message in @BrokerDefinedMessages)
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                @foreach (var insurance in Customer.Insurances)
                                 {
-                                    <MudSelectItem Value="@message">@message</MudSelectItem>
-                                }
-                            </MudSelect>
-                        </div>
-                        <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                            <MudDatePicker Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement"/>
-                            <MudSpacer />
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
-                        </div>
-
-                        <div class="col-sm-6 mt-1">
-                            <div class="card">
-                                <div class="card-body">
-                                    <label class="card-title">Upload pdf files</label>
-                                    <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
-                                                @ondragleave="@(() => DragEnterStyle = null)"
-                                                @ondragend="@(() => DragEnterStyle = null)"
-                                                Class=@("drag-drop-zone " + DragEnterStyle)>
-
-                                        <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" accept="application/pdf"/>
-                                        <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
-                                    </MudPaper>                      
-                                    @if(LoadedChatFiles.Any()){
-                                    var filename = LoadedChatFiles[0].Name;
-                                    <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())" class="btn btn-link">Remove @filename</MudButton>
+                                    if (insurance.MenuPlanId.HasValue && insurance.MenuPlanId == menuplan.Id)
+                                    {
+                                                        <tr>
+                                                            <td>@insurance.InsType.GetDisplayName()</td>
+                                                            <td>@insurance.Name</td>
+                                                            <td>@insurance.ExpiryDate.ToBiqDateString()</td>
+                                            @if (IsAdmin)
+                                            {
+                                                                    <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
+                                            }
+                                                            <td>
+                                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
+                                                                    <i class="fas fa-info-circle"></i>
+                                                                </MudButton>
+                                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary table-btn">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </MudButton>
+                                                            </td>
+                                                        </tr>
                                     }
+                                }
+                                    </tbody>
+                                </table>
+                            </MudTabPanel>
+                }
+            }
+                <MudTabPanel Text="Notes">
+                    <div class="card mb-1">
+                        <div class="card-header">Filter notes</div>
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                        <div class="col-4">
+                                            <MudDatePicker Label="From" DisableToolbar="true" @ref="NoteFilterFrom" 
+                                            Date="@noteFilterStartDate" DateChanged="FilterStartDateChanged" />
+                                        </div>
+                                        <div class="col-4">
+                                            <MudDatePicker Label="To"  DisableToolbar="true" @ref="NoteFilterTo" 
+                                            Date="@noteFilterEndDate" DateChanged="FilterEndDateChanged" />
+                                        </div>
+                                        <div class="col-4 text-right">
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewNote" class="btn btn-primary align-bottom">
+                                                Add New Note
+                                            </MudButton>
+                                        </div>
                                 </div>
                             </div>
-                        </div>
-  
-                    <div class="col-sm-6 mt-1">
-                    <div class="card">
-                    <div class="card-body">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
-                    New Chat Message
-                    </MudButton>
-                    </div></div></div>
-                }
-                else
-                {
-                    <div class="form-group row" >
-                        <label class="col-sm-4 col-form-label">Choose Broker</label>
-                        <div class="col-sm-8">
-                            @if(CustomerBrokers!=null && CustomerBrokers.Any())
-                            {
-                                <MudSelect T="int"
-                                            Label="Brokers"
-                                            Placeholder="Select"
-                                            Disabled="false"                           
-                                            @bind-Value="BrokerListId"
-                                            SelectedValuesChanged="@ChatBrokerChanged"
-                                            AdornmentColor="Color.Primary">
-                                    <MudSelectItem Value="0">Select</MudSelectItem>
-                                    @foreach (var item in @CustomerBrokers)
-                                    {
-                                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                                    }
-                                </MudSelect>
-                            }
-                        </div>
-                    </div>                    
-                }
+                    </div>
 
-                <div class="col-sm-8 mt-1">
-                <div class="card">
-                <div class="card-body">
-                @if (Chat != null && Chat.Messages.Any())
-                {                    
-                    @if (IsAdmin)
+                    <div class = "row m-1">
+                    @if (Notes != null && Notes.Any())
                     {
-                        @if (Chat.BrokerId > 0)
+                        @foreach (var note in Notes)
                         {
-                            <div class = "row col-sm-12">
-                                @{
-                                    var message = $"Chat is with - {@Brokers.First(x => x.Id == Chat.BrokerId)?.Name}";
-                                    <p>@message</p>
-                                }
-                            </div>
+                                    <MudCard Class="col-sm-5 mb-1 ml-1" Style="background-color: lightgoldenrodyellow">
+                                        <MudCardHeader>
+                                            <CardHeaderContent>
+                                                <MudText Typo="Typo.h6">@note.DateTaken.ToBiqDateString()</MudText>
+                                        @if (IsAdmin)
+                                        {
+                                            @if (note.BrokerId > 0)
+                                            {
+                                                                <td>@Brokers.First(x => x.Id == note.BrokerId)?.Name</td>
+                                            }
+                                            else
+                                            {
+                                                                <td>Admin</td>                    
+                                            }
+                                        }
+                                            </CardHeaderContent>
+                                            <CardHeaderActions>
+                                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default"  @onclick="f => DeleteNote(note.Id)" />
+                                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default"  @onclick="f => EditNote(note.Id)" />
+                                            </CardHeaderActions>
+                                        </MudCardHeader>
+                                        <MudCardContent>
+                                            <MudText>@note.Message</MudText>
+                                        </MudCardContent>
+                                    </MudCard>
                         }
                     }
-                    <div class = "row col-sm-8">
-                    @foreach (var message in Chat.Messages.OrderByDescending(x => x.Id))
-                    {
-                            var advancedClass = $"col-sm-10 mb-1 {message.Style}";
-                            <MudCard Class="@advancedClass">
-                            <MudCardHeader>
-                                <CardHeaderContent>
-                                <MudText Typo="Typo.body1">@message.Message</MudText>   
-
-                                    </CardHeaderContent>
-                            </MudCardHeader>
-                            <MudCardContent>                                           
-                                @if (message.ChatDocumentId > 0)
-                                        {
-                                            <div>
-                                            @if (message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.JPEG || message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.PNG)
-                                            {
-                                                <MudText>Photo Attachement- @message.ChatDocument.FileName</MudText>
-                                            }
-                                            else{
-                                                <MudText>Pdf Attachment- @message.ChatDocument.FileName</MudText> 
-                                            } 
-
-                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(message.ChatDocument)">
-                                                <i class="fas fa-eye"></i>
-                                            </MudButton></div>
-
-                                        }     
-                            @if (message.BrokerSource)
-                            {
-                                var combined = $"Sent from us at {@message.SentTime.ToBiqDateTimeString()}";
-                                        <MudText Typo="Typo.body2">@combined</MudText>
-                                @if (message.IsRead)
-                                {
-                                    <MudIconButton Icon="@Icons.Material.Outlined.Check" Color="Color.Tertiary"/>
-                                }
-                            }
-                            else
-                            {
-                                var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToBiqDateTimeString()}";
-                                <MudText Typo="Typo.body2">@combined</MudText>
-                            }
-                            </MudCardContent>
-                        </MudCard>
-                    }
-                    </div>
-                }
-                </div></div></div>
                 </div>
-            </MudTabPanel>
-        </MudTabs>
-    </section>
+                </MudTabPanel>
+                <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@ChatBadgeDot' OnClick="@(f => ClearUnReadChat())">
+                    <div @onclick="this.ClearUnReadChat">
+                    @if (!IsAdmin)
+                    {
+                                <div class="col-sm-6 control_wrapper mb-5">
+                                    <MudSelect T="string" @ref="TemplateSelect" 
+                                            Label="Select Message Template"
+                                            Placeholder="Select Message Template"
+                                            Clearable="true"
+                            @bind-Value="SelectedTemplateMessage"
+                                            AdornmentColor="Color.Primary">
+                                @foreach (var message in MergedMessages)
+                                {
+                                    var attachment = String.IsNullOrWhiteSpace(message.FileName) 
+                                    ? String.Empty
+                                    : $"<br/><br/><i class=\"fa fa-file-pdf\"> &nbsp;{message.FileName}</i>";
+
+                                    var itemContent = $"{message.BrokerDefinedMessage}{@attachment}";
+
+                                    <MudSelectItem Value="@(((int)message.BrokerDefinedMessageEnumValue).ToString())">@((MarkupString)itemContent)</MudSelectItem>
+                                }
+                                    </MudSelect>
+                                </div>
+                                <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                                    <MudDatePicker Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement"/>
+                                    <MudSpacer />
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
+                                </div>
+
+                                <div class="col-sm-6 mt-1">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <label class="card-title">Upload pdf files</label>
+                                            <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
+                                    @ondragleave="@(() => DragEnterStyle = null)"
+                                    @ondragend="@(() => DragEnterStyle = null)"
+                                                        Class=@("drag-drop-zone " + DragEnterStyle)>
+
+                                                <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" accept="application/pdf"/>
+                                                <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
+                                            </MudPaper>                      
+                                    @if (LoadedChatFiles.Any())
+                                    {
+                                        var filename = LoadedChatFiles[0].Name;
+                                                <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())" class="btn btn-link">Remove @filename</MudButton>
+                                    }
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <div class="col-sm-6 mt-1">
+                            <div class="card">
+                            <div class="card-body">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
+                            New Chat Message
+                            </MudButton>
+                            </div></div></div>
+                    }
+                    else
+                    {
+                            <div class="form-group row" >
+                                <label class="col-sm-4 col-form-label">Choose Broker</label>
+                                <div class="col-sm-8">
+                                @if (CustomerBrokers != null && CustomerBrokers.Any())
+                                {
+                                            <MudSelect T="int"
+                                                        Label="Brokers"
+                                                        Placeholder="Select"
+                                                        Disabled="false"                           
+                                    @bind-Value="BrokerListId"
+                                                        SelectedValuesChanged="@ChatBrokerChanged"
+                                                        AdornmentColor="Color.Primary">
+                                                <MudSelectItem Value="0">Select</MudSelectItem>
+                                        @foreach (var item in @CustomerBrokers)
+                                        {
+                                                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                                        }
+                                            </MudSelect>
+                                }
+                                </div>
+                            </div>                    
+                    }
+
+                    <div class="col-sm-8 mt-1">
+                    <div class="card">
+                    <div class="card-body">
+                                @if (Chat != null && Chat.Messages.Any())
+                                {                    
+                                    @if (IsAdmin)
+                                    {
+                                        @if (Chat.BrokerId > 0)
+                                        {
+                                            <div class = "row col-sm-12">
+                                                @{
+                                                    var message = $"Chat is with - {@Brokers.First(x => x.Id == Chat.BrokerId)?.Name}";
+                                                        <p>@message</p>
+                                                }
+                            </div>
+                                        }
+                                    }
+                            <div class = "row col-sm-8">
+                    @foreach (var message in Chat.Messages.OrderByDescending(x => x.Id))
+                                        {
+                                            var advancedClass = $"col-sm-10 mb-1 {message.Style}";
+                                        <MudCard Class="@advancedClass">
+                                        <MudCardHeader>
+                                            <CardHeaderContent>
+                                            <MudText Typo="Typo.body1">@message.Message</MudText>   
+
+                                                </CardHeaderContent>
+                                        </MudCardHeader>
+                                        <MudCardContent>                                           
+                                                    @if (message.ChatDocumentId > 0)
+                                                    {
+                                                            <div>
+                                                            @if (message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.JPEG || message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.PNG)
+                                                            {
+                                                                    <MudText>Photo Attachement- @message.ChatDocument.FileName</MudText>
+                                                            }
+                                                            else
+                                                            {
+                                                                    <MudText>Pdf Attachment- @message.ChatDocument.FileName</MudText> 
+                                                            } 
+
+                                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(message.ChatDocument)">
+                                                                <i class="fas fa-eye"></i>
+                                                            </MudButton></div>
+
+                                                    }     
+                                                    @if (message.BrokerSource)
+                                                    {
+                                                        var combined = $"Sent from us at {@message.SentTime.ToBiqDateTimeString()}";
+                                                        <MudText Typo="Typo.body2">@combined</MudText>
+                                                        @if (message.IsRead)
+                                                        {
+                                                        <MudIconButton Icon="@Icons.Material.Outlined.Check" Color="Color.Tertiary"/>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToBiqDateTimeString()}";
+                                                <MudText Typo="Typo.body2">@combined</MudText>
+                                                    }
+                                        </MudCardContent>
+                                    </MudCard>
+                                        }
+                            </div>
+                                }
+                    </div></div></div>
+                    </div>
+                </MudTabPanel>
+            </MudTabs>
+        </section>
 }
 else
 {
-    <div class="alert @StatusClass">@Message</div>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
+        <div class="alert @StatusClass">@Message</div>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
 }
