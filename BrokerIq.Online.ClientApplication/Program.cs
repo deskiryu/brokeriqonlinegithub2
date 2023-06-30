@@ -1,19 +1,19 @@
-using Blazored.SessionStorage;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Services;
-using BrokerIQ.Online.Server.Helper;
-using BrokerIQ.Online.Services;
-using BrokerIQ.Online.Services.Interface;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Blazored.SessionStorage;
+using BrokerIQ.Online.AppSettings;
 using BrokerIQ.Online.Mapper;
+using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Helper;
+using BrokerIQ.Online.Server.Services;
+using BrokerIQ.Online.Services;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Concrete;
-using BrokerIQ.Online.Server.Services;
-using BrokerIQ.Online.AppSettings;
-using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Services.Interface;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Services;
 
 namespace BrokerIQ.Online.Server
 {
@@ -68,11 +68,11 @@ namespace BrokerIQ.Online.Server
             builder.Services.AddScoped<IVersionService, VersionService>();
             builder.Services.AddScoped<ITelephoneInviteService, TelephoneInviteService>();
             builder.Services.AddScoped<IClientReferralService, ClientReferralService>();
+            builder.Services.AddScoped<ITrainingVideoService, TrainingVideoService>();
+
             builder.Services.AddAutoMapper(typeof(ReviewItMapper));
             builder.Services.AddScoped<LoggedInAppState>();
             builder.Services.AddScoped<MessageCountState>();
-
-
 
             await builder.Build().RunAsync();
         }

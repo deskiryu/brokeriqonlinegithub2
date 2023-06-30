@@ -6,21 +6,20 @@ using Microsoft.Extensions.Hosting;
 
 namespace BrokerIQ.Online.ServerApplication
 {
+    using System;
+    using System.Text.Json;
     using Blazored.SessionStorage;
-    using Mapper;
-    using MudBlazor.Services;
     using BrokerIQ.Online.AppSettings;
     using BrokerIQ.Online.Server.AppSettings;
     using BrokerIQ.Online.Server.Helper;
     using BrokerIQ.Online.Server.Services;
     using BrokerIQ.Online.Services.Interface;
+    using Mapper;
+    using Microsoft.Extensions.Logging;
+    using MudBlazor.Services;
     using Services;
     using Services.Abstract;
     using Services.Concrete;
-    using System.Text.Json;
-    using Microsoft.Extensions.Logging;
-    using System;
-    using Microsoft.Extensions.Options;
 
     public class Startup
     {
@@ -92,6 +91,8 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<ITelephoneInviteService, TelephoneInviteService>();
             services.AddScoped<IBrokerIdentifierService, BrokerIdentifierService>();
             services.AddScoped<IClientReferralService, ClientReferralService>();
+            services.AddScoped<ITrainingVideoService, TrainingVideoService>();
+
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
             services.AddScoped<MessageCountState>();
@@ -108,10 +109,10 @@ namespace BrokerIQ.Online.ServerApplication
             {
                 o.DetailedErrors = true;
             }).AddHubOptions(h =>
-            { 
+            {
                 h.ClientTimeoutInterval = TimeSpan.FromMinutes(10);
                 h.KeepAliveInterval = TimeSpan.FromSeconds(3);
-                h.HandshakeTimeout = TimeSpan.FromMinutes(10); 
+                h.HandshakeTimeout = TimeSpan.FromMinutes(10);
             });
 
             services.AddBlazoredSessionStorage(config =>
@@ -137,7 +138,7 @@ namespace BrokerIQ.Online.ServerApplication
                 .AddCheck<HealthCheck>("health_check");
             services.AddAzureAppConfiguration();
         }
-            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
