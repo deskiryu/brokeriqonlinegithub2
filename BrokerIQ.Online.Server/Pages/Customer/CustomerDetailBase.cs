@@ -279,6 +279,7 @@ namespace BrokerIQ.Online.Pages
         protected async Task UpdateCustomerUploads()
         {
             CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+            DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
 
             NewClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
             ShouldShowAsDot = NewClientUploadsCount == 0;
