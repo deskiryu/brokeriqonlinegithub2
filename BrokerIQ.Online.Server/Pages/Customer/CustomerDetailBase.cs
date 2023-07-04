@@ -279,6 +279,7 @@ namespace BrokerIQ.Online.Pages
         protected async Task UpdateCustomerUploads()
         {
             CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+            DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
 
             NewClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
             ShouldShowAsDot = NewClientUploadsCount == 0;
@@ -599,8 +600,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task InsertTemplateMessage()
         {
-            int selectedMessageEnum = 0;
-            int.TryParse(SelectedTemplateMessage, out selectedMessageEnum);
+            int.TryParse(SelectedTemplateMessage, out int selectedMessageEnum);
 
             var message = MergedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == (BrokerDefinedMessageEnum)selectedMessageEnum);
 
@@ -943,9 +943,8 @@ namespace BrokerIQ.Online.Pages
             {
                 if (enumVal.IsSystemMessage()) continue;
 
-                var message = definedMessages.BrokerDefinedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == enumVal);
-
-                if (message == null) continue;
+                var message = definedMessages.BrokerDefinedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == enumVal) ??
+                                new DefinedMessagesDto() { BrokerDefinedMessageEnumValue = enumVal };
 
                 if (String.IsNullOrWhiteSpace(message.BrokerDefinedMessage))
                 {
