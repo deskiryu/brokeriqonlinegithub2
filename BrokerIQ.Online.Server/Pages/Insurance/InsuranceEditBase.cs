@@ -120,7 +120,8 @@ namespace BrokerIQ.Online.Pages
             Insurance = new Insurance();
             Insurance.SupportingDocuments = new List<InsuranceDocument>();
             var insurancevalues = Enum.GetValues(typeof(InsuranceEnum)).Cast<InsuranceEnum>().ToList();
-            var consumerInsuranceValues = insurancevalues.Where(x => (int)x < 1000).ToList();
+            var consumerInsuranceValues = insurancevalues.Where(x => (int)x < 1000).OrderBy(y => y.GetOrderValue()).ToList();
+            InsuranceType = (int)consumerInsuranceValues.First();
             ConsumerInsurances = consumerInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();
             var businessInsuranceValues = insurancevalues.Where(x => (int)x >= 1000).ToList();
             BusinessInsurances = businessInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();

@@ -31,7 +31,7 @@ namespace BrokerIQ.Online.Models.Account
         [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$", ErrorMessage = "Passwords should contain at least one capital letter, one lowercase letter and one number")]
         public string Password { get; set; }
 
-        [CompareProperty("Password")]
+        [Compare("Password")]
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
     }

@@ -61,7 +61,7 @@ namespace BrokerIQ.Online.Models.Account
 
         public TwoFactorEnum TwoFactorType { get; set; }
 
-        [CompareProperty("Password")]
+        [Compare("Password")]
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
     }
