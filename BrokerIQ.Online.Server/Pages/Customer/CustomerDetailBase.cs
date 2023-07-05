@@ -70,6 +70,8 @@ namespace BrokerIQ.Online.Pages
 
         protected const int DefaultMonthsToShow = -1;
 
+        private const string DEFAULT_UPLOAD_CLASS = "col-sm-6 mt-1";
+
         private FileUploadSettings fileUploadSettings { get; set; }
 
         public Customer Customer { get; set; }
@@ -168,6 +170,8 @@ namespace BrokerIQ.Online.Pages
         public bool ShouldShowAsDot { get; set; }
 
         public Color UploadsBadgeColor { get; set; }
+
+        protected string UploadSectionClass { get; set; } = DEFAULT_UPLOAD_CLASS;
 
         protected override async Task OnInitializedAsync()
         {
@@ -624,12 +628,18 @@ namespace BrokerIQ.Online.Pages
 
                 try
                 {
-                    ChatDocument attachment = new ChatDocument();
-                    attachment.FileName = message.FileName;
-                    attachment.File = message.File;
+                    ChatDocument attachment = null;
+
+                    if (!string.IsNullOrEmpty(message.FileName))
+                    {
+                        attachment = new ChatDocument()
+                        {
+                            FileName = message.FileName,
+                            File = message.File
+                        };
+                    }
 
                     await NewChat(message.BrokerDefinedMessage, attachment);
-
                 }
                 catch (Exception ex)
                 {
@@ -656,7 +666,15 @@ namespace BrokerIQ.Online.Pages
 
             try
             {
-                if (LoadedChatFiles.Any())
+                if (defaultAttachment != null)
+                {
+                    sdoc.FileName = defaultAttachment.FileName;
+                    sdoc.File = defaultAttachment.File;
+                    memoryStream = new MemoryStream(sdoc.File);
+
+                    fileAttached = true;
+                }
+                else if (LoadedChatFiles.Any())
                 {
                     var fileName = "";
 
@@ -679,15 +697,6 @@ namespace BrokerIQ.Online.Pages
                             sdoc.File = memoryStream.ToArray();
                         }
                     }
-                }
-
-                if (defaultAttachment != null)
-                {
-                    sdoc.FileName = defaultAttachment.FileName;
-                    sdoc.File = defaultAttachment.File;
-                    memoryStream = new MemoryStream(sdoc.File);
-
-                    fileAttached = true;
                 }
 
                 dialogParams.Add("Filenames", new List<string>{
@@ -1106,6 +1115,25 @@ namespace BrokerIQ.Online.Pages
         {
             var memoryStream = new MemoryStream(sdoc.File);
             await Extensions.PreviewFile(js, memoryStream);
+        }
+
+        protected async Task MessageTemplateChanged()
+        {
+            var isConverted = int.TryParse(SelectedTemplateMessage, out int selectedMessageEnum);
+
+            if (isConverted)
+            {
+                BrokerDefinedMessage definedMessages = await BrokerDefinedMessageService.Get();
+
+                var message = definedMessages.BrokerDefinedMessages.FirstOrDefault(m => (int)m.BrokerDefinedMessageEnumValue == selectedMessageEnum);
+
+                UploadSectionClass = DEFAULT_UPLOAD_CLASS;
+
+                if (message != null && !String.IsNullOrWhiteSpace(message.FileName))
+                {
+                    UploadSectionClass += @" d-none";
+                }
+            }
         }
     }
 }
