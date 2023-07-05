@@ -749,6 +749,7 @@ namespace BrokerIQ.Online.Pages
                 LoadedChatFiles.Clear();
 
                 TemplateSelect.SelectedValues = new string[] { };
+                UploadSectionClass = DEFAULT_UPLOAD_CLASS;
             }
             else
             {
