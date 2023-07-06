@@ -120,8 +120,7 @@ namespace BrokerIQ.Online.Pages
             Insurance = new Insurance();
             Insurance.SupportingDocuments = new List<InsuranceDocument>();
             var insurancevalues = Enum.GetValues(typeof(InsuranceEnum)).Cast<InsuranceEnum>().ToList();
-            var consumerInsuranceValues = insurancevalues.Where(x => (int)x < 1000).OrderBy(y => y.GetOrderValue()).ToList();
-            InsuranceType = (int)consumerInsuranceValues.First();
+            var consumerInsuranceValues = insurancevalues.Where(x => (int)x < 1000).OrderBy(y => y.GetOrderValue()).ToList(); 
             ConsumerInsurances = consumerInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();
             var businessInsuranceValues = insurancevalues.Where(x => (int)x >= 1000).ToList();
             BusinessInsurances = businessInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();
@@ -186,6 +185,8 @@ namespace BrokerIQ.Online.Pages
                 }
                 else
                 {
+                    InsuranceType = ConsumerInsurances.First().Item1;
+                    Insurance.InsType = (InsuranceEnum )ConsumerInsurances.First().Item1;
                     if (user.IsBroker || user.IsBrokerStaff)
                     {
                         Insurance.ContactNumber = Broker?.TelephoneNumber ?? "";
@@ -689,7 +690,7 @@ namespace BrokerIQ.Online.Pages
             { 
                 Insurance.InsType = (InsuranceEnum)value;
                 InsuranceType = value;
-                if (!Insurance.IsTermTypeInsurance)
+                if (!BrokerIQ.Dto.Extensions.Extensions.IsTermTypeInsurance(Insurance.InsType))
                 {
                     TermType = (int)TermTypeEnum.None;
                     Insurance.TermType = TermTypeEnum.None;
@@ -697,6 +698,10 @@ namespace BrokerIQ.Online.Pages
                     Insurance.ShowTermAmount = false;
                     Insurance.ShowDeferredPeriodWeeks = false;
 
+                }
+                if (!BrokerIQ.Dto.Extensions.Extensions.IsSecondTermTypeInsurance(Insurance.InsType))
+                {
+                    Insurance.ShowSecondTermAmount = false;
                 }
                 StateHasChanged();
             }

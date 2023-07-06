@@ -2,7 +2,6 @@
 
 @page "/insurancedetail/{InsuranceId}"
 @using BrokerIQ.Online.Models
-@using BrokerIQ.Dto.Enum
 @using System.IO
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
@@ -81,7 +80,7 @@ else
                         </div>
                     </div>
 
-                    @if (Insurance.IsTermTypeInsurance)
+                    @if (BrokerIQ.Dto.Extensions.Extensions.IsTermTypeInsurance(Insurance.InsType))
                     {
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Term Type </label>
