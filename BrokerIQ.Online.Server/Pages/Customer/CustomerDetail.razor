@@ -258,9 +258,6 @@ else if (!Saved)
                                                         <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
                                     }
                                                 <td>
-                                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
-                                                        <i class="fas fa-info-circle"></i>
-                                                    </MudButton>
                                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId=0")" class="btn btn-primary table-btn">
                                                         <i class="fas fa-edit"></i>
                                                     </MudButton>
@@ -330,9 +327,6 @@ else if (!Saved)
                                                         <td>@Brokers.First(x => x.Id == mortgage.BrokerId)?.Name</td>
                                     }
                                                 <td>
-                                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgagedetail/{mortgage.Id}")" class="btn btn-primary table-btn">
-                                                        <i class="fas fa-info-circle"></i>
-                                                    </MudButton>
                                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/{mortgage.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
                                                         <i class="fas fa-edit"></i>
                                                     </MudButton>
@@ -568,9 +562,6 @@ else if (!Saved)
                                                                     <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
                                             }
                                                             <td>
-                                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insurancedetail/{insurance.Id}")" class="btn btn-primary table-btn">
-                                                                    <i class="fas fa-info-circle"></i>
-                                                                </MudButton>
                                                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary table-btn">
                                                                     <i class="fas fa-edit"></i>
                                                                 </MudButton>

@@ -114,6 +114,15 @@ namespace BrokerIQ.Online.Mapper
                 }
                 return ta;
             }))
+            .ForMember(d => d.SecondTermAmount, opt => opt.MapFrom((src, dest) =>
+            {
+                decimal? ta = null;
+                if (src.SecondTermAmount > 0.0m)
+                {
+                    ta = src.SecondTermAmount;
+                }
+                return ta;
+            }))
             .ForMember(d => d.DeferredPeriodWeeks, opt => opt.MapFrom((src, dest) =>
             {
                 int? dpw = null;
@@ -154,6 +163,18 @@ namespace BrokerIQ.Online.Mapper
                     if (src.TermAmount.Value > 0.0m)
                     {
                         ta = src.TermAmount.Value;
+                    }
+                }
+                return ta;
+            }))
+            .ForMember(d => d.SecondTermAmount, opt => opt.MapFrom((src, dest) =>
+            {
+                var ta = 0.0m;
+                if (src.SecondTermAmount.HasValue)
+                {
+                    if (src.SecondTermAmount.Value > 0.0m)
+                    {
+                        ta = src.SecondTermAmount.Value;
                     }
                 }
                 return ta;
@@ -203,6 +224,18 @@ namespace BrokerIQ.Online.Mapper
                 if (src.TermAmount.HasValue)
                 {
                     if (src.TermAmount.Value > 0.0m)
+                    {
+                        ta = src.TermAmount.Value;
+                    }
+                }
+                return ta;
+            }))
+            .ForMember(d => d.SecondTermAmount, opt => opt.MapFrom((src, dest) =>
+            {
+                var ta = 0.0m;
+                if (src.SecondTermAmount.HasValue)
+                {
+                    if (src.SecondTermAmount.Value > 0.0m)
                     {
                         ta = src.TermAmount.Value;
                     }

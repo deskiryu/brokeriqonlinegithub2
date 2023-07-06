@@ -44,9 +44,7 @@ namespace BrokerIQ.Online.ServerApplication
                 options.Conventions.AuthorizePage("/clientdetail");
                 options.Conventions.AuthorizePage("/clientedit");
                 options.Conventions.AuthorizePage("/notifications");
-                options.Conventions.AuthorizePage("/insurancedetail");
                 options.Conventions.AuthorizePage("/insuranceedit");
-                options.Conventions.AuthorizePage("/mortgagedetail");
                 options.Conventions.AuthorizePage("/mortgageedit");
             }
             );

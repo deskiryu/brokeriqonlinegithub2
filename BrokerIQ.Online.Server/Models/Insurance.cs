@@ -81,7 +81,9 @@ namespace BrokerIQ.Online.Models
 
         public string BrokerNotes { get; set; }
 
-        public decimal SecondTermAmount { get; set; }
+        [RequiredIf(nameof(ShowSecondTermAmount), true, ErrorMessage = "Please enter a second benefit amount")]
+        [Range(0.01, float.MaxValue, ErrorMessage = "Please enter a second benefit amount")]
+        public decimal? SecondTermAmount { get; set; }
 
         public bool ShowSecondTermAmount { get; set; }
 
