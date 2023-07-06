@@ -2,6 +2,7 @@
 
 namespace BrokerIQ.Online.Server.Extensions
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.IO;
     using System.Linq;
@@ -112,5 +113,13 @@ namespace BrokerIQ.Online.Server.Extensions
 
             return systemMessages.Contains(message);
         }
+
+        public static int GetOrderValue(this Enum enumValue)
+        {
+            return enumValue.GetType()
+                            .GetMember(enumValue.ToString())
+                            .FirstOrDefault()?.GetCustomAttribute<DisplayAttribute>().GetOrder() ?? 0;
+        }
+
     }
 }

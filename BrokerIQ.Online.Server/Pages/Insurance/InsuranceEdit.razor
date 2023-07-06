@@ -146,7 +146,7 @@
                         </div>
 
 
-                        @if(Insurance.IsTermTypeInsurance){
+                        @if(BrokerIQ.Dto.Extensions.Extensions.IsTermTypeInsurance(Insurance.InsType)){
 
 
                         <div class="form-group row">
@@ -212,8 +212,40 @@
                             </div>
                         }
 
+                        @if (BrokerIQ.Dto.Extensions.Extensions.IsSecondTermTypeInsurance(Insurance.InsType))
+                        {
+
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Second Benefit Amount</label>
+                                <div class="col-sm-5">
+                                    <MudItem class="col">
+                                        <MudTextField @bind-Value="@Insurance.SecondTermAmount" HelperText="Enter a benefit amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                                        <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.SecondTermAmount)" />
+                                    </MudItem>
+                                </div>
+                                <div class="col-sm-2 mt-5">
+                                    <label>Show</label>
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowSecondTermAmount" />
+                                </div>
+                            </div>
+                        }
 
 
+
+                        @if (BrokerIQ.Dto.Extensions.Extensions.IsFractureCoverInsurance(Insurance.InsType))
+                        {
+
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Fracture cover</label>
+                                <div class="col-sm-5">
+                                    <MudCheckBox @bind-Checked="@Insurance.FractureCover" />
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>Show</label>
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowFractureCover" />
+                                </div>
+                            </div>
+                        }
                         @if (IsAdmin)
                         {
                             <div class="form-group row">
