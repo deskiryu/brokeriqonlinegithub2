@@ -639,8 +639,9 @@ else if (!Saved)
                                             Label="Select Message Template"
                                             Placeholder="Select Message Template"
                                             Clearable="true"
-                            @bind-Value="SelectedTemplateMessage"
-                                            AdornmentColor="Color.Primary">
+                                            AdornmentColor="Color.Primary"
+                                            SelectedValuesChanged="@MessageTemplateChanged"
+                                            @bind-Value="SelectedTemplateMessage">
                                 @foreach (var message in MergedMessages)
                                 {
                                     var attachment = String.IsNullOrWhiteSpace(message.FileName) 
@@ -659,16 +660,18 @@ else if (!Saved)
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
                                 </div>
 
-                                <div class="col-sm-6 mt-1">
+                                <div class="@UploadSectionClass">
                                     <div class="card">
                                         <div class="card-body">
                                             <label class="card-title">Upload pdf files</label>
-                                            <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
-                                    @ondragleave="@(() => DragEnterStyle = null)"
-                                    @ondragend="@(() => DragEnterStyle = null)"
-                                                        Class=@("drag-drop-zone " + DragEnterStyle)>
-
-                                                <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" accept="application/pdf"/>
+                                            <MudPaper 
+                                                    @ondragenter="@(() => DragEnterStyle = "drag-enter")"
+                                                    @ondragleave="@(() => DragEnterStyle = null)"
+                                                    @ondragend="@(() => DragEnterStyle = null)"
+                                                    Class=@("drag-drop-zone " + DragEnterStyle) >
+                                                <InputFile OnChange="LoadFiles" 
+                                                        multiple class="drag-drop-input" 
+                                                        accept="application/pdf" />
                                                 <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
                                             </MudPaper>                      
                                     @if (LoadedChatFiles.Any())
@@ -695,14 +698,14 @@ else if (!Saved)
                                 <div class="col-sm-8">
                                 @if (CustomerBrokers != null && CustomerBrokers.Any())
                                 {
-                                            <MudSelect T="int"
-                                                        Label="Brokers"
-                                                        Placeholder="Select"
-                                                        Disabled="false"                           
-                                    @bind-Value="BrokerListId"
-                                                        SelectedValuesChanged="@ChatBrokerChanged"
-                                                        AdornmentColor="Color.Primary">
-                                                <MudSelectItem Value="0">Select</MudSelectItem>
+                                        <MudSelect T="int"
+                                                Label="Brokers"
+                                                Placeholder="Select"
+                                                Disabled="false"                           
+                                                SelectedValuesChanged="@ChatBrokerChanged"
+                                                AdornmentColor="Color.Primary"
+                                                @bind-Value="BrokerListId">
+                                            <MudSelectItem Value="0">Select</MudSelectItem>
                                         @foreach (var item in @CustomerBrokers)
                                         {
                                                         <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
