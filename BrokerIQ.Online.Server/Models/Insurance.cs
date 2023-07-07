@@ -79,22 +79,17 @@ namespace BrokerIQ.Online.Models
 
         public bool ShowDeferredPeriodWeeks { get; set; }
 
-        public bool IsTermTypeInsurance {
-            get
-            {
-                return InsType switch
-                {
-                    InsuranceEnum.Life => true,
-                    InsuranceEnum.Illness => true,
-                    InsuranceEnum.MortgageProtection => true,
-                    InsuranceEnum.FamilyIncomeBenefit => true,
-                    InsuranceEnum.Income => true,
-                    _ => false
-                };
-            }
-        }
-
         public string BrokerNotes { get; set; }
+
+        [RequiredIf(nameof(ShowSecondTermAmount), true, ErrorMessage = "Please enter a second benefit amount")]
+        [Range(0.01, float.MaxValue, ErrorMessage = "Please enter a second benefit amount")]
+        public decimal? SecondTermAmount { get; set; }
+
+        public bool ShowSecondTermAmount { get; set; }
+
+        public bool FractureCover { get; set; }
+
+        public bool ShowFractureCover { get; set; }
 
         public virtual ICollection<InsuranceDocument> SupportingDocuments { get; set; }
     }
