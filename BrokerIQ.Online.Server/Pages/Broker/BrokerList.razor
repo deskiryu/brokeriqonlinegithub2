@@ -119,7 +119,7 @@ else
 
         //filter
         List<BrokerIQ.Online.Models.Broker>
-        FilteredBrokers => Brokers.Where(i => !string.IsNullOrEmpty(i.Name) &&  i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        FilteredBrokers => Brokers.Where(i => !string.IsNullOrEmpty(i.Name) &&  i.Name.ToLower().Contains(SearchTerm.ToLower())).OrderByDescending(y=>y.Id).ToList();
 
 
 
