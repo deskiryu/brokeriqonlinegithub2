@@ -20,62 +20,59 @@
         <MudContainer Style="max-height: 800px; overflow-y: scroll">
             <div class="row">
 
-            <div class="col-sm-6 mt-1">
-                <div class="card">
-                    <div class="card-body">
-                        <label class="card-title">Upload pdf files</label>
-                        <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
-                                  @ondragleave="@(() => DragEnterStyle = null)"
-                                  @ondragend="@(() => DragEnterStyle = null)"
-                                  Class=@("drag-drop-zone " + DragEnterStyle)>
-
-                            <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" accept="application/pdf" />
-                            <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
-                        </MudPaper>
-                        @if (LoadedChatFiles.Any())
-                        {
-                            var filename = LoadedChatFiles[0].Name;
-                            <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())" class="btn btn-link">Remove @filename</MudButton>
-                        }
-                    </div>
-                </div>
+                <div class="col-sm-6 mt-1">
                     <div class="card">
                         <div class="card-body">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
+                            <label class="card-title">Upload pdf files</label>
+                            <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
+                            @ondragleave="@(() => DragEnterStyle = null)"
+                            @ondragend="@(() => DragEnterStyle = null)" Class=@("drag-drop-zone " + DragEnterStyle)>
+                                <InputFile OnChange="LoadFiles" multiple class="drag-drop-input"
+                                    accept="application/pdf" />
+                                <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
+                            </MudPaper>
+                            @if (LoadedChatFiles.Any())
+                            {
+                                var filename = LoadedChatFiles[0].Name;
+                                <MudButton Variant="Variant.Filled" Color="Color.Error"
+                                    Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())"
+                                    class="btn btn-link">Remove @filename</MudButton>
+                            }
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())"
+                                class="btn btn-primary mb-2">
                                 Compose Chat Message
                             </MudButton>
                         </div>
                     </div>
+                </div>
+
+                <div class="col-sm-6 mt-1">
                     <div class="card">
                         <div class="card-body">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => SendAppLinks())" class="btn btn-primary mb-2">
-                                Send App Links
-                            </MudButton>
+                            <p>Will be sent to: </p>
+                            @foreach (var user in CustomerNames)
+                            {
+                                <MudText Style="white-space: pre-line;">@user</MudText>
+                            }
                         </div>
                     </div>
-            </div>
-
-            <div class="col-sm-6 mt-1">
-                <div class="card">
-                    <div class="card-body">
-                        <p>Will be sent to: </p>
-                        @foreach (var user in CustomerNames)
-                        {
-                            <MudText Style="white-space: pre-line;">@user</MudText>
-                        }
-                    </div>
                 </div>
-            </div>
             </div>
         </MudContainer>
     </DialogContent>
     <DialogActions>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+            OnClick="Cancel">Cancel</MudButton>
     </DialogActions>
 </MudDialog>
 
 
-@code 
+@code
 {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
@@ -104,7 +101,6 @@
         CustomerIds = Customers.Select(x => x.Item2).ToList();
 
     }
-
 
     private bool Loading = false;
 
@@ -185,12 +181,8 @@
                         sdoc.FileName = fileName;
                         sdoc.File = memoryStream.ToArray();
 
-                        dialogParams.Add("Filenames", new List<string>{
-                            sdoc.FileName
-                        });
-                        dialogParams.Add("MemoryStreams", new List<MemoryStream> {
-                            memoryStream
-                        });
+                        dialogParams.Add("Filenames", new List<string> { sdoc.FileName });
+                        dialogParams.Add("MemoryStreams", new List<MemoryStream> { memoryStream });
                     }
                 }
             }
@@ -264,7 +256,7 @@
 
         if (!succeeded)
         {
-            AlertService.Error("Chat app link  sending failed for some or all clients, check the chat to see.");
+            AlertService.Error("Chat app link sending failed for some or all clients, check the chat to see.");
         }
         else
         {
