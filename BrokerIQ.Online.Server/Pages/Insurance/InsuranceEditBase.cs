@@ -14,7 +14,7 @@ namespace BrokerIQ.Online.Pages
     using MudBlazor;
     using BrokerIQ.Dto.Enum;
     using Services.Interface;
-    
+
     using BrokerIQ.Online.Server.Extensions;
     using Microsoft.AspNetCore.WebUtilities;
     using Microsoft.AspNetCore.Components.Forms;
@@ -39,7 +39,7 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IInsuranceDocumentService SupportingDocumentService { get; set; }
 
-        [Inject] 
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -68,7 +68,7 @@ namespace BrokerIQ.Online.Pages
         protected bool Saved;
         public bool IsAdmin { get; set; }
         public IEnumerable<Broker> Brokers { get; set; }
-        public Broker Broker{ get; set; }
+        public Broker Broker { get; set; }
 
         public string DragEnterStyle { get; set; }
 
@@ -84,7 +84,8 @@ namespace BrokerIQ.Online.Pages
         protected List<(IBrowserFile, byte[])> LoadedFiles = new();
 
         [Parameter]
-        public string InsuranceId {
+        public string InsuranceId
+        {
             get => this.insuranceId;
             set
             {
@@ -110,17 +111,20 @@ namespace BrokerIQ.Online.Pages
         public bool SendNotification { get; set; }
         public bool BrokerHasWhiteLabelAndIsInsuranceOnly { get; set; }
 
-        public List<(int,string)> ConsumerInsurances { get; set; }
+        public List<(int, string)> ConsumerInsurances { get; set; }
 
         public List<(int, string)> BusinessInsurances { get; set; }
 
+        protected string FormId = "InsuranceForm";
 
         public InsuranceEditBase()
         {
-            Insurance = new Insurance();
-            Insurance.SupportingDocuments = new List<InsuranceDocument>();
+            Insurance = new Insurance
+            {
+                SupportingDocuments = new List<InsuranceDocument>()
+            };
             var insurancevalues = Enum.GetValues(typeof(InsuranceEnum)).Cast<InsuranceEnum>().ToList();
-            var consumerInsuranceValues = insurancevalues.Where(x => (int)x < 1000).OrderBy(y => y.GetOrderValue()).ToList(); 
+            var consumerInsuranceValues = insurancevalues.Where(x => (int)x < 1000).OrderBy(y => y.GetOrderValue()).ToList();
             ConsumerInsurances = consumerInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();
             var businessInsuranceValues = insurancevalues.Where(x => (int)x >= 1000).ToList();
             BusinessInsurances = businessInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();
@@ -156,7 +160,7 @@ namespace BrokerIQ.Online.Pages
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting broker details";
                     Saved = true;
-                }   
+                }
             }
             else
             {
@@ -170,7 +174,7 @@ namespace BrokerIQ.Online.Pages
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting broker details";
                     Saved = true;
-                }        
+                }
             }
 
             try
@@ -179,14 +183,14 @@ namespace BrokerIQ.Online.Pages
                 {
                     Insurance = (await InsuranceService.GetInsurance(this.id));
                     InsuranceType = (int)Insurance.InsType;
-                    
+
                     TermType = (int)Insurance.TermType;
                     BrokerListId = Insurance.BrokerId;
                 }
                 else
                 {
                     InsuranceType = ConsumerInsurances.First().Item1;
-                    Insurance.InsType = (InsuranceEnum )ConsumerInsurances.First().Item1;
+                    Insurance.InsType = (InsuranceEnum)ConsumerInsurances.First().Item1;
                     if (user.IsBroker || user.IsBrokerStaff)
                     {
                         Insurance.ContactNumber = Broker?.TelephoneNumber ?? "";
@@ -206,7 +210,7 @@ namespace BrokerIQ.Online.Pages
                 Message = "Something went wrong getting insurance details";
                 Saved = true;
             }
-            
+
         }
 
         protected void HandleInvalidSubmit()
@@ -228,7 +232,7 @@ namespace BrokerIQ.Online.Pages
             if (Insurance.Id == 0)
             {
                 Insurance.CustomerId = this.customerId;
-                if(Insurance.StartDate == DateTime.MinValue)
+                if (Insurance.StartDate == DateTime.MinValue)
                 {
                     Insurance.StartDate = DateTime.Now;
                 }
@@ -262,7 +266,7 @@ namespace BrokerIQ.Online.Pages
 
 
                 var dialogParams = new DialogParameters();
-                if (customer.EmailConfirmed && SendNotification==true)
+                if (customer.EmailConfirmed && SendNotification == true)
                 {
                     dialogParams.Add("Message", $"Insurance will be added and a notification will be sent to {customer.Name} about this new insurance.");
                 }
@@ -270,7 +274,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     dialogParams.Add("Message", $"Insurance will be added however a notification will be NOT be sent to {customer.Name} about this new insurance as their email address is not confirmed");
                 }
-                else 
+                else
                 {
                     dialogParams.Add("Message", $"Insurance will be added however a notification will be NOT be sent to {customer.Name}.");
                 }
@@ -278,14 +282,14 @@ namespace BrokerIQ.Online.Pages
                 var fileNamesAndMemoryStreams = new List<(string, MemoryStream)>();
                 var fileNamesAndBytes = new List<(string, byte[])>();
                 foreach (var file in LoadedFiles)
-                {  
+                {
                     if (file.Item1.Size > this.fileUploadSettings.MaxFileSize)
                     {
                         dialogParams.Add("Oversize", "true");
                         continue;
                     }
                     var loopMemoryStream = new MemoryStream(file.Item2);
-                    fileNamesAndMemoryStreams.Add((file.Item1.Name,loopMemoryStream));
+                    fileNamesAndMemoryStreams.Add((file.Item1.Name, loopMemoryStream));
                 }
 
                 bool agreed;
@@ -384,7 +388,7 @@ namespace BrokerIQ.Online.Pages
                     Message = "Something went wrong deleting the Insurance. Please try again.";
                     Saved = true;
                     return;
-                }             
+                }
 
                 StatusClass = "alert-success";
                 Message = "Deleted successfully";
@@ -407,12 +411,12 @@ namespace BrokerIQ.Online.Pages
                 var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
                 if (!result.Cancelled)
                 {
-                    await SupportingDocumentService.DeleteInsuranceFile(id);            
+                    await SupportingDocumentService.DeleteInsuranceFile(id);
                     StatusClass = "alert-success";
                     Message = "Deleted successfully";
                     Saved = true;
                 }
-                
+
             }
             catch
             {
@@ -429,11 +433,11 @@ namespace BrokerIQ.Online.Pages
         {
             Insurance.SupportingDocuments.Remove(doc);
             var loadedtoRemove = LoadedFiles.FirstOrDefault(x => x.Item1.Name == doc.FileName);
-            if(loadedtoRemove.Item1 != null && loadedtoRemove.Item2!=null)
+            if (loadedtoRemove.Item1 != null && loadedtoRemove.Item2 != null)
             {
                 Array.Clear(loadedtoRemove.Item2, 0, loadedtoRemove.Item2.Length);
                 LoadedFiles.Remove(loadedtoRemove);
-            }   
+            }
         }
         protected async Task UploadInsuranceFile(string filename, byte[] dataBytes)
         {
@@ -445,11 +449,13 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            InsuranceDocument sdoc = new InsuranceDocument();
-            sdoc.InsuranceId = this.id;
-            sdoc.FileName = filename;
-            sdoc.SupportingDocumentType = DocumentTypeEnum.PDF;
-            sdoc.File = dataBytes;
+            InsuranceDocument sdoc = new()
+            {
+                InsuranceId = this.id,
+                FileName = filename,
+                SupportingDocumentType = DocumentTypeEnum.PDF,
+                File = dataBytes
+            };
 
             bool succeeded = false;
             try
@@ -489,9 +495,10 @@ namespace BrokerIQ.Online.Pages
 
         public DateTimeOffset? ReviewDate
         {
-            get {
+            get
+            {
                 var date = Insurance.ReviewDate.HasValue ? Insurance.ReviewDate.Value : DateTime.Today;
-                return GetDTtoDTO(date); 
+                return GetDTtoDTO(date);
             }
             set => Insurance.ReviewDate = SetDTtoDTO(value);
         }
@@ -520,7 +527,7 @@ namespace BrokerIQ.Online.Pages
             bool success = true;
             var alreadyUploaded = Insurance.SupportingDocuments.Count();
             var remainingFiles = fileUploadSettings.MaxAllowedFiles - alreadyUploaded;
-            if(e.FileCount > remainingFiles)
+            if (e.FileCount > remainingFiles)
             {
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", $"A maximum of five documents can be shown in the app");
@@ -543,13 +550,13 @@ namespace BrokerIQ.Online.Pages
                 {
                     LoadFileStatus = ex.Message;
                     success = false;
-                    
+
                     break;
                 }
             }
             if (success)
             {
-                if(Insurance.Id > 0)
+                if (Insurance.Id > 0)
                 {
                     await UploadFiles();
                 }
@@ -559,9 +566,9 @@ namespace BrokerIQ.Online.Pages
                     foreach (var file in LoadedFiles)
                     {
                         Insurance.SupportingDocuments.Add(new InsuranceDocument
-                            {
-                             FileName = file.Item1.Name,
-                             SupportingDocumentType = DocumentTypeEnum.PDF
+                        {
+                            FileName = file.Item1.Name,
+                            SupportingDocumentType = DocumentTypeEnum.PDF
                         });
                     }
                     StateHasChanged();
@@ -581,18 +588,18 @@ namespace BrokerIQ.Online.Pages
                     var customer = await CustomerService.GetCustomer(customerId);
                     dialogParams.Add("Client", customer.Name);
 
-                    var fileNames = new List<string>(); 
+                    var fileNames = new List<string>();
                     var memoryStreams = new List<MemoryStream>();
 
-                    foreach(var file in LoadedFiles)
+                    foreach (var file in LoadedFiles)
                     {
-                        if(file.Item1.Size> this.fileUploadSettings.MaxFileSize)
+                        if (file.Item1.Size > this.fileUploadSettings.MaxFileSize)
                         {
                             dialogParams.Add("Oversize", "true");
                             continue;
                         }
                         var loopMemoryStream = new MemoryStream(file.Item2);
-                        fileNames.Add(file.Item1.Name);   
+                        fileNames.Add(file.Item1.Name);
                         memoryStreams.Add(loopMemoryStream);
                     }
 
@@ -604,13 +611,13 @@ namespace BrokerIQ.Online.Pages
                     {
                         SpinnerVisible = "display:block";
                         StateHasChanged();
-                        for(int i=0; i<memoryStreams.Count(); i++)
+                        for (int i = 0; i < memoryStreams.Count(); i++)
                         {
                             if (fileNames.Count() > i)
                             {
                                 await UploadInsuranceFile(fileNames[i], memoryStreams[i].ToArray());
                             }
-                            LoadFileStatus = $"Finished loading {i+1} of {memoryStreams.Count} : {fileNames[i]}";
+                            LoadFileStatus = $"Finished loading {i + 1} of {memoryStreams.Count} : {fileNames[i]}";
                         }
 
                         await SendMessageNotification(customer, upload: true);
@@ -623,7 +630,7 @@ namespace BrokerIQ.Online.Pages
             }
             finally
             {
-                LoadedFiles.Clear();    
+                LoadedFiles.Clear();
                 SpinnerVisible = "display:none";
                 StateHasChanged();
             }
@@ -635,17 +642,17 @@ namespace BrokerIQ.Online.Pages
             return messageToSend;
         }
 
-         private string GetMessageDocumentUploaded (string customerName, string brokerName, string insuranceName)
+        private string GetMessageDocumentUploaded(string customerName, string brokerName, string insuranceName)
         {
             var messageToSend = $"{customerName}, your broker {brokerName} has added new {insuranceName} policy documents to your BrokerIQ app.";
             return messageToSend;
         }
 
-        private async Task SendMessageNotification(Customer customer, bool upload=false)
+        private async Task SendMessageNotification(Customer customer, bool upload = false)
         {
-             var brokerId = 0;
-             var brokerName = "";
-             var insuranceName = "";
+            var brokerId = 0;
+            var brokerName = "";
+            var insuranceName = "";
 
             if (IsAdmin)
             {
@@ -655,22 +662,22 @@ namespace BrokerIQ.Online.Pages
             else
             {
                 brokerName += Broker?.Name ?? "";
-                brokerId = Broker?.Id??0;
+                brokerId = Broker?.Id ?? 0;
             }
 
-           if(Insurance!=null && Insurance.InsType>0)
+            if (Insurance != null && Insurance.InsType > 0)
             {
                 insuranceName += Insurance.InsType.GetDisplayName();
             }
 
             var messageToSend = "";
-            if(upload)
+            if (upload)
             {
-                messageToSend = GetMessageDocumentUploaded(customer.FirstName,brokerName,insuranceName);
+                messageToSend = GetMessageDocumentUploaded(customer.FirstName, brokerName, insuranceName);
             }
             else
             {
-                messageToSend = GetMessageInsuranceAdded(customer.FirstName,brokerName,insuranceName);
+                messageToSend = GetMessageInsuranceAdded(customer.FirstName, brokerName, insuranceName);
             }
 
             try
@@ -686,8 +693,8 @@ namespace BrokerIQ.Online.Pages
 
         protected Task OnValueChanged(int value)
         {
-            if (Enum.IsDefined(typeof(InsuranceEnum), value)) 
-            { 
+            if (Enum.IsDefined(typeof(InsuranceEnum), value))
+            {
                 Insurance.InsType = (InsuranceEnum)value;
                 InsuranceType = value;
                 if (!BrokerIQ.Dto.Extensions.Extensions.IsTermTypeInsurance(Insurance.InsType))
