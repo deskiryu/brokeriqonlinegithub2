@@ -237,7 +237,7 @@ namespace BrokerIQ.Online.Mapper
                 {
                     if (src.SecondTermAmount.Value > 0.0m)
                     {
-                        ta = src.TermAmount.Value;
+                        ta = src.SecondTermAmount.Value;
                     }
                 }
                 return ta;
