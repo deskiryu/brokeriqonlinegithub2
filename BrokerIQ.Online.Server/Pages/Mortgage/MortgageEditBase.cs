@@ -619,13 +619,13 @@ namespace BrokerIQ.Online.Pages
 
         private string GetMessageMortgageAdded(string customerName, string brokerName, string mortgageName)
         {
-            var messageToSend = $"{customerName}, your broker {brokerName} has added a new {mortgageName} mortgage to your BrokerIQ app.";
+            var messageToSend = $"{customerName}, your broker {brokerName} has added a new {mortgageName} mortgage to your app.";
             return messageToSend;
         }
 
          private string GetMessageDocumentUploaded (string customerName, string brokerName, string mortgageName)
         {
-            var messageToSend = $"{customerName}, your broker {brokerName} has added new mortgage documents to your BrokerIQ app.";
+            var messageToSend = $"{customerName}, your broker {brokerName} has added new mortgage documents to your app.";
             return messageToSend;
         }
 
