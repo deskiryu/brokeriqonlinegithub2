@@ -382,6 +382,12 @@ app {
     box-shadow: var(--mud-elevation-10);
 }
 
+.drag-file-hover {
+    border-style: dashed;
+    border-color: #FFEB3B;
+    border-width: 3px;
+}
+
 .chat_broker {
     background-color: #fffe65 !important;
     margin-left: 1em !important;

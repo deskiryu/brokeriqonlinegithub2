@@ -73,7 +73,7 @@ namespace BrokerIQ.Online.Pages
 
         protected string HoverClass;
 
-        protected void OnDragEnter(DragEventArgs e) => HoverClass = "mud-theme-secondary";
+        protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
 
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
@@ -179,6 +179,16 @@ namespace BrokerIQ.Online.Pages
             catch (Exception ex)
             {
             }
+        }
+
+        protected void DeleteDefinedDocument()
+        {
+            SelectedFiles.Clear();
+        }
+
+        protected void RemoveCurrentFile()
+        {
+            IsCurrentFileToBeRemoved = true;
         }
 
         protected async void CommitMessage(object element)
