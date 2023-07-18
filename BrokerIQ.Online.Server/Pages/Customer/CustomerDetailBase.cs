@@ -16,6 +16,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Services.Interface;
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;
+    using Microsoft.AspNetCore.Components.Web;
     using Microsoft.Extensions.Options;
     using Microsoft.JSInterop;
     using Models;
@@ -100,8 +101,6 @@ namespace BrokerIQ.Online.Pages
 
         public Chat Chat { get; set; }
 
-        public string DragEnterStyle { get; set; }
-
         protected List<IBrowserFile> LoadedChatFiles = new();
 
         public string SpinnerVisible { get; set; }
@@ -172,6 +171,12 @@ namespace BrokerIQ.Online.Pages
         public Color UploadsBadgeColor { get; set; }
 
         protected string UploadSectionClass { get; set; } = DEFAULT_UPLOAD_CLASS;
+
+        protected string HoverClass;
+
+        protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
+
+        protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
         protected override async Task OnInitializedAsync()
         {

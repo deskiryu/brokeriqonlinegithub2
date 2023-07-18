@@ -664,16 +664,14 @@ else if (!Saved)
                                     <div class="card">
                                         <div class="card-body">
                                             <label class="card-title">Upload pdf files</label>
-                                            <MudPaper 
-                                                    @ondragenter="@(() => DragEnterStyle = "drag-enter")"
-                                                    @ondragleave="@(() => DragEnterStyle = null)"
-                                                    @ondragend="@(() => DragEnterStyle = null)"
-                                                    Class=@("drag-drop-zone " + DragEnterStyle) >
-                                                <InputFile OnChange="LoadFiles" 
-                                                        multiple class="drag-drop-input" 
-                                                        accept="application/pdf" />
-                                                <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
-                                            </MudPaper>                      
+
+                                            <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
+                                                    <MudPaper class="drag-drop-zone">
+                                                        <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
+                                                        <MudText Typo="Typo.subtitle1">Click or drag pdf file to attach to chat</MudText>
+                                                    </MudPaper>
+                                            </div>
+               
                                     @if (LoadedChatFiles.Any())
                                     {
                                         var filename = LoadedChatFiles[0].Name;
