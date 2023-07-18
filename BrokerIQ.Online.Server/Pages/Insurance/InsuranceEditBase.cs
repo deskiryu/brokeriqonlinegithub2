@@ -456,7 +456,7 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            InsuranceDocument sdoc = new()
+            var sdoc = new InsuranceDocument()
             {
                 InsuranceId = this.id,
                 FileName = filename,

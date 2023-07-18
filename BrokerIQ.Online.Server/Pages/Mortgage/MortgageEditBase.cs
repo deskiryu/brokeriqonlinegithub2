@@ -447,7 +447,7 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            MortgageDocument sdoc = new()
+            var sdoc = new MortgageDocument()
             {
                 MortgageId = this.id,
                 FileName = filename,
