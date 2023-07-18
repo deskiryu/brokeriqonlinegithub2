@@ -115,11 +115,14 @@ namespace BrokerIQ.Online.Pages
 
         public List<(int, string)> BusinessInsurances { get; set; }
 
+        protected string FormId = "InsuranceForm";
 
         public InsuranceEditBase()
         {
-            Insurance = new Insurance();
-            Insurance.SupportingDocuments = new List<InsuranceDocument>();
+            Insurance = new Insurance
+            {
+                SupportingDocuments = new List<InsuranceDocument>()
+            };
             var insurancevalues = Enum.GetValues(typeof(InsuranceEnum)).Cast<InsuranceEnum>().ToList();
             var consumerInsuranceValues = insurancevalues.Where(x => (int)x < 1000).OrderBy(y => y.GetOrderValue()).ToList();
             ConsumerInsurances = consumerInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();
@@ -446,11 +449,13 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            InsuranceDocument sdoc = new InsuranceDocument();
-            sdoc.InsuranceId = this.id;
-            sdoc.FileName = filename;
-            sdoc.SupportingDocumentType = DocumentTypeEnum.PDF;
-            sdoc.File = dataBytes;
+            InsuranceDocument sdoc = new()
+            {
+                InsuranceId = this.id,
+                FileName = filename,
+                SupportingDocumentType = DocumentTypeEnum.PDF,
+                File = dataBytes
+            };
 
             bool succeeded = false;
             try

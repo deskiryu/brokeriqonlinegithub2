@@ -9,13 +9,13 @@ namespace BrokerIQ.Online.Pages
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using AutoMapper;
-    
+
     using Microsoft.AspNetCore.Components;
     using Models;
     using MudBlazor;
     using BrokerIQ.Dto.Enum;
     using Services.Interface;
-    
+
     using BrokerIQ.Online.Server.Extensions;
     using Microsoft.JSInterop;
     using BrokerIQ.Online.Server.AppSettings;
@@ -37,7 +37,7 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IMortgageDocumentService SupportingDocumentService { get; set; }
 
-        [Inject] 
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -68,7 +68,7 @@ namespace BrokerIQ.Online.Pages
         protected bool Saved;
         public bool IsAdmin { get; set; }
         public IEnumerable<Broker> Brokers { get; set; }
-        public Broker Broker{ get; set; }
+        public Broker Broker { get; set; }
 
         public string DragEnterStyle { get; set; }
 
@@ -82,7 +82,8 @@ namespace BrokerIQ.Online.Pages
         public int MortgageRateType = 1;
 
         [Parameter]
-        public string MortgageId {
+        public string MortgageId
+        {
             get => this.mortgageId;
             set
             {
@@ -107,10 +108,14 @@ namespace BrokerIQ.Online.Pages
         public bool SendNotification { get; set; }
         public bool SendVideoNotification { get; set; }
 
+        protected string FormId = "MortgageForm";
+
         public MortgageEditBase()
         {
-            Mortgage = new Mortgage();
-            Mortgage.SupportingDocuments = new List<MortgageDocument>();
+            Mortgage = new Mortgage
+            {
+                SupportingDocuments = new List<MortgageDocument>()
+            };
         }
 
         protected override async Task OnInitializedAsync()
@@ -152,7 +157,7 @@ namespace BrokerIQ.Online.Pages
                     StatusClass = "alert-danger";
                     Message = "Something went wrong getting broker details";
                     Saved = true;
-                }        
+                }
             }
 
             try
@@ -171,7 +176,7 @@ namespace BrokerIQ.Online.Pages
                 Message = "Something went wrong getting mortgage details";
                 Saved = true;
             }
-            
+
         }
 
         protected void HandleInvalidSubmit()
@@ -228,7 +233,7 @@ namespace BrokerIQ.Online.Pages
 
 
                 var dialogParams = new DialogParameters();
-                if (customer.EmailConfirmed && SendNotification == true && SendVideoNotification==true)
+                if (customer.EmailConfirmed && SendNotification == true && SendVideoNotification == true)
                 {
                     dialogParams.Add("Message", $"Mortgage will be added and a mortgage notification and a new mortgage video notification will be sent to {customer.Name} about this new mortgage.");
                 }
@@ -307,7 +312,7 @@ namespace BrokerIQ.Online.Pages
 
                         if (SendVideoNotification)
                         {
-                            await SendMessageNotification(customer,upload:false,mortgageVideo:true);
+                            await SendMessageNotification(customer, upload: false, mortgageVideo: true);
                         }
                     }
                     catch
@@ -377,7 +382,7 @@ namespace BrokerIQ.Online.Pages
                     Message = "Something went wrong deleting the Mortgage. Please try again.";
                     Saved = true;
                     return;
-                }             
+                }
 
                 StatusClass = "alert-success";
                 Message = "Deleted successfully";
@@ -437,11 +442,13 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            MortgageDocument sdoc = new MortgageDocument();
-            sdoc.MortgageId = this.id;
-            sdoc.FileName = filename;
-            sdoc.SupportingDocumentType = DocumentTypeEnum.PDF;
-            sdoc.File = dataBytes;
+            MortgageDocument sdoc = new()
+            {
+                MortgageId = this.id,
+                FileName = filename,
+                SupportingDocumentType = DocumentTypeEnum.PDF,
+                File = dataBytes
+            };
 
             bool succeeded = false;
             try
@@ -472,7 +479,7 @@ namespace BrokerIQ.Online.Pages
             get { return GetDTtoDTO(Mortgage.EndDate); }
             set => Mortgage.EndDate = SetDTtoDTO(value);
         }
-        
+
         public DateTimeOffset? PotentialEndDate
         {
             get { return GetDTtoDTO(Mortgage.PotentialEndDate); }
@@ -623,7 +630,7 @@ namespace BrokerIQ.Online.Pages
             return messageToSend;
         }
 
-         private string GetMessageDocumentUploaded (string customerName, string brokerName, string mortgageName)
+        private string GetMessageDocumentUploaded(string customerName, string brokerName, string mortgageName)
         {
             var messageToSend = $"{customerName}, your broker {brokerName} has added new mortgage documents to your app.";
             return messageToSend;
@@ -636,11 +643,11 @@ namespace BrokerIQ.Online.Pages
         }
 
 
-        private async Task SendMessageNotification(Customer customer, bool upload=false, bool mortgageVideo=false)
+        private async Task SendMessageNotification(Customer customer, bool upload = false, bool mortgageVideo = false)
         {
-             var brokerId = 0;
-             var brokerName = "";
-             var mortgageName = ""
+            var brokerId = 0;
+            var brokerName = "";
+            var mortgageName = ""
 ;
             if (IsAdmin)
             {
@@ -650,22 +657,22 @@ namespace BrokerIQ.Online.Pages
             else
             {
                 brokerName += Broker?.Name ?? "";
-                brokerId = Broker?.Id??0;
+                brokerId = Broker?.Id ?? 0;
             }
 
-           if(Mortgage!=null && Mortgage.MortgageType>0)
+            if (Mortgage != null && Mortgage.MortgageType > 0)
             {
                 mortgageName += Mortgage.MortgageType.GetDisplayName();
             }
 
             var messageToSend = "";
-            if(upload)
+            if (upload)
             {
-                messageToSend = GetMessageDocumentUploaded(customer.FirstName,brokerName,mortgageName);
+                messageToSend = GetMessageDocumentUploaded(customer.FirstName, brokerName, mortgageName);
             }
             else
             {
-                messageToSend = GetMessageMortgageAdded(customer.FirstName,brokerName,mortgageName);
+                messageToSend = GetMessageMortgageAdded(customer.FirstName, brokerName, mortgageName);
             }
             if (mortgageVideo)
             {
@@ -676,11 +683,11 @@ namespace BrokerIQ.Online.Pages
             {
                 if (mortgageVideo)
                 {
-                    await NotificationService.SendMortgageVideoNotification(customerId ,messageToSend);
+                    await NotificationService.SendMortgageVideoNotification(customerId, messageToSend);
                 }
                 else
                 {
-                    await NotificationService.SendMessageNotification(messageToSend, new List<int> { customerId }, brokerId, updateAppAlert:false);
+                    await NotificationService.SendMessageNotification(messageToSend, new List<int> { customerId }, brokerId, updateAppAlert: false);
                 }
 
             }

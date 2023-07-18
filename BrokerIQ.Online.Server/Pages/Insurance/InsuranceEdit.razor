@@ -1,6 +1,4 @@
-﻿
-
-@page "/insuranceedit/{InsuranceId}/{CustomerId}"
+﻿@page "/insuranceedit/{InsuranceId}/{CustomerId}"
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
@@ -30,7 +28,7 @@
 
         <h4 class="page-title">Add or edit insurance</h4>
 
-        <EditForm Model="@Insurance" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+        <EditForm Model="@Insurance" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit" id="@FormId">
 
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -148,21 +146,19 @@
 
                         @if(BrokerIQ.Dto.Extensions.Extensions.IsTermTypeInsurance(Insurance.InsType)){
 
-
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Term Type</label>
                             <div class="col-sm-5">
 
-                                <InputSelect id="termtype" class="form-control" @bind-Value="@TermType" onchange="">
-                                    @if (true)
-                                        {
-                                            var names = Enum.GetNames(typeof(TermTypeEnum));
-                                        @for (int i = 0; i < names.Length; i++)
-                                            {
-                                                var looped = (TermTypeEnum)i;
-                                            <option value=@i>@looped.GetDisplayName()</option>
-                                            }
-                                        }
+                                <InputSelect id="termtype" class="form-control" @bind-Value="@TermType">
+                                @{
+                                    var names = Enum.GetNames(typeof(TermTypeEnum));
+                                    for (int i = 0; i < names.Length; i++)
+                                    {
+                                        var looped = (TermTypeEnum)i;
+                                        <option value=@i>@looped.GetDisplayName()</option>
+                                    }
+                                }
                                 </InputSelect>
                                 <ValidationMessage class="offset-sm-3" For="@(() => TermType)" />
 
@@ -214,7 +210,6 @@
 
                         @if (BrokerIQ.Dto.Extensions.Extensions.IsSecondTermTypeInsurance(Insurance.InsType))
                         {
-
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Second Benefit Amount</label>
                                 <div class="col-sm-5">
@@ -229,8 +224,6 @@
                                 </div>
                             </div>
                         }
-
-
 
                         @if (BrokerIQ.Dto.Extensions.Extensions.IsFractureCoverInsurance(Insurance.InsType))
                         {
@@ -251,7 +244,6 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label">Choose Broker</label>
                                 <div class="col-sm-8">
-
                                     <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId">
 
                                         @foreach (var broker in @Brokers)
@@ -260,33 +252,10 @@
                                                 }
                                     </InputSelect>
                                     <ValidationMessage class="offset-sm-3" For="@(() => BrokerListId)" />
-
                                 </div>
                             </div>
                         }
-  
-                        @if(Insurance!=null && Insurance.Id>0){
-
-                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save insurance</MudButton>
-                        }
-                        else
-                        {
-                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add insurance</MudButton>
-                            <MudCheckBox @bind-Checked="@SendNotification" Class="ml-1 mt-2" />
-                            <label class="mt-2">Send Notification</label>
-                        }
-
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="ml-4">Cancel</MudButton>
-
-                        @if (Insurance.Id > 0)
-                        {
-
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteInsurance" Class="ml-4">Delete</MudButton>
-
-                        }
-
                     </div>
-
                 </div>
             </div>
 
@@ -344,10 +313,28 @@
         </div>
     </div>
 
+    <div > 
+        @if (Insurance?.Id > 0)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteInsurance" Class="mr-8">Delete</MudButton>
+        }
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="mr-1">Cancel</MudButton>
+
+        @if(Insurance?.Id > 0){
+
+            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" form="@FormId" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Class="mr-1">Save insurance</MudButton>
+        }
+        else
+        {
+            <MudCheckBox @bind-Checked="@SendNotification"/>
+            <label class="mr-1">Send Notification</label>
+            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" form="@FormId" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add insurance</MudButton>
+        }
+    </div>
 }
 else
 {
     <div class="alert @StatusClass">@Message</div>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
 }
-
