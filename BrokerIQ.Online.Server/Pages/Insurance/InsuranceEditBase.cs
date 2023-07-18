@@ -638,13 +638,13 @@ namespace BrokerIQ.Online.Pages
 
         private string GetMessageInsuranceAdded(string customerName, string brokerName, string insuranceName)
         {
-            var messageToSend = $"{customerName}, your broker {brokerName} has added a new {insuranceName} insurance to your BrokerIQ app.";
+            var messageToSend = $"{customerName}, your broker {brokerName} has added a new {insuranceName} insurance to your app.";
             return messageToSend;
         }
 
         private string GetMessageDocumentUploaded(string customerName, string brokerName, string insuranceName)
         {
-            var messageToSend = $"{customerName}, your broker {brokerName} has added new {insuranceName} policy documents to your BrokerIQ app.";
+            var messageToSend = $"{customerName}, your broker {brokerName} has added new {insuranceName} policy documents to your app.";
             return messageToSend;
         }
 
