@@ -21,6 +21,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Server.AppSettings;
     using Microsoft.Extensions.Options;
     using Microsoft.AspNetCore.Components.Forms;
+    using Microsoft.AspNetCore.Components.Web;
     using BrokerIQ.Online.Server.Shared;
 
     public class MortgageEditBase : ComponentBase
@@ -70,8 +71,6 @@ namespace BrokerIQ.Online.Pages
         public IEnumerable<Broker> Brokers { get; set; }
         public Broker Broker { get; set; }
 
-        public string DragEnterStyle { get; set; }
-
         [Required]
         public int BrokerListId = 1;
 
@@ -109,6 +108,12 @@ namespace BrokerIQ.Online.Pages
         public bool SendVideoNotification { get; set; }
 
         protected string FormId = "MortgageForm";
+
+        protected string HoverClass;
+
+        protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
+
+        protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
         public MortgageEditBase()
         {
@@ -442,7 +447,7 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            MortgageDocument sdoc = new()
+            var sdoc = new MortgageDocument()
             {
                 MortgageId = this.id,
                 FileName = filename,

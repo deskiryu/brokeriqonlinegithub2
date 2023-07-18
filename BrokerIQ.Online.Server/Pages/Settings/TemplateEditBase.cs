@@ -15,6 +15,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Server.Shared;
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;
+    using Microsoft.AspNetCore.Components.Web;
     using Microsoft.Extensions.Options;
     using MudBlazor;
     using Services.Interface;
@@ -69,6 +70,12 @@ namespace BrokerIQ.Online.Pages
         protected List<IBrowserFile> SelectedFiles = new();
 
         protected bool IsCurrentFileToBeRemoved = false;
+
+        protected string HoverClass;
+
+        protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
+
+        protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
         private int id;
 
@@ -174,6 +181,16 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected void DeleteDefinedDocument()
+        {
+            SelectedFiles.Clear();
+        }
+
+        protected void RemoveCurrentFile()
+        {
+            IsCurrentFileToBeRemoved = true;
+        }
+
         protected async void CommitMessage(object element)
         {
             // update defined messages in database
@@ -241,7 +258,6 @@ namespace BrokerIQ.Online.Pages
 
         }
 
-
         protected bool GetMobilePreference(MobileNotificationPreferencesEnum enpm, bool staff = false)
         {
             var BrokerPrefAsInt = (int)Broker.MobileNotificationPreferences;
@@ -279,7 +295,6 @@ namespace BrokerIQ.Online.Pages
 
         }
 
-
         protected async Task HandleValidSubmit()
         {
             var dialogParams = new DialogParameters();
@@ -308,7 +323,6 @@ namespace BrokerIQ.Online.Pages
         {
             SetEmailPreference(enpm, staff: true);
         }
-
 
         protected bool GetMobilePreferenceStaff(MobileNotificationPreferencesEnum enpm)
         {

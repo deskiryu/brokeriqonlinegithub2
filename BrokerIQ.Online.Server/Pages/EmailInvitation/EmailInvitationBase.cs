@@ -1,10 +1,8 @@
-﻿
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
-using BrokerIQ.Online.Server.Models;
 
 using BrokerIQ.Online.Services.Interface;
 using System;
@@ -12,15 +10,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BrokerIQ.Online.Server.Shared;
 using Microsoft.JSInterop;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Data;
-using BrokerIQ.Online.Services;
-using BrokerIQ.Online.Server.Services;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -76,9 +72,7 @@ namespace BrokerIQ.Online.Pages
 
         public string TelephoneNumber { get; set; }
 
-
         public string Email { get; set; }
-        public string DragEnterStyle { get; set; }
 
         public string SearchTerm { get; set; } = "";
 
@@ -99,7 +93,7 @@ namespace BrokerIQ.Online.Pages
         //filter
         public List<EmailInvite> FilteredEmailInvites => EmailInvitesSent.Where(i => string.IsNullOrEmpty(i.EmailAddress) || i.EmailAddress.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
-        public List<TelephoneInvite> FilteredTelephoneInvites => TelephoneInvitesSent.Where(i =>  string.IsNullOrEmpty(CustomerName) || i.CustomerName.ToLower().Contains(SearchTermPhone.ToLower())).ToList();
+        public List<TelephoneInvite> FilteredTelephoneInvites => TelephoneInvitesSent.Where(i => string.IsNullOrEmpty(CustomerName) || i.CustomerName.ToLower().Contains(SearchTermPhone.ToLower())).ToList();
 
         public bool ShowEmployee { get; set; }
 
@@ -119,6 +113,12 @@ namespace BrokerIQ.Online.Pages
         public int BrokerListIdTelephone = 0;
 
         public string BrokerStaffFirstName { get; set; }
+
+        protected string HoverClass;
+
+        protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
+
+        protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
         protected override async Task OnInitializedAsync()
         {
@@ -260,7 +260,7 @@ namespace BrokerIQ.Online.Pages
             EmailTargets.Add(Email);
         }
 
-        
+
         public async Task DeleteSelectedInviteList()
         {
             var dialogParams = new DialogParameters();
