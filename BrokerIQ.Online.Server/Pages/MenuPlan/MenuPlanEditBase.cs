@@ -287,7 +287,7 @@ namespace BrokerIQ.Online.Pages
 
         private string GetMessageMenuPlanAdded(string customerName, string brokerName, string menuPlanName)
         {
-            var messageToSend = $"{customerName}, your broker {brokerName} has added a new {menuPlanName} MenuPlan to your BrokerIQ app.";
+            var messageToSend = $"{customerName}, your broker {brokerName} has added a new {menuPlanName} MenuPlan to your app.";
             return messageToSend;
         }
 
