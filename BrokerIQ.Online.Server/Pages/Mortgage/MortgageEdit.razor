@@ -29,7 +29,7 @@
 
         <h4 class="page-title">Add or edit mortgage</h4>
 
-        <EditForm Model="@Mortgage" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+        <EditForm Model="@Mortgage" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit" id="@FormId">
 
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -51,17 +51,14 @@
                             <div class="col-sm-7">
 
                                 <InputSelect id="mortgage" class="form-control col-sm-7" @bind-Value="@MortgageType">
-                                    @if (true)
-                                        {
-                                            var names = Enum.GetNames(typeof(MortgageEnum));
+                                        @{
+                                        var names = Enum.GetNames(typeof(MortgageEnum));
                                         @for (int i = 1; i <= names.Length; i++)
                                             {
                                                 MortgageEnum looped = (MortgageEnum)i;
                                             <option value=@i>@looped.GetDisplayName()</option>
                                             }
                                         }
-
-
 
                                 </InputSelect>
                                 <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => MortgageType)" />
@@ -198,7 +195,6 @@
                             </div>
                         </div>
 
-
                         @if (IsAdmin)
                         {
                             <div class="form-group row">
@@ -218,31 +214,8 @@
                             </div>
                         }
 
-                        @if (Mortgage != null && Mortgage.Id > 0)
-                        {
-
-                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save mortgage</MudButton>
-                        }
-                        else
-                        {
-                            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add mortgage</MudButton>
-                            <MudCheckBox @bind-Checked="@SendNotification" Class="ml-1 mt-2" />
-                            <label class="mt-2">Send Notification</label>
-                            <MudCheckBox @bind-Checked="@SendVideoNotification" Class="ml-1 mt-2" />
-                            <label class="mt-2">Send Video Notification</label>
-                        }
-
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="ml-4">Cancel</MudButton>
-
-                        @if (Mortgage.Id > 0)
-                        {
-
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteMortgage" Class="ml-4">Delete</MudButton>
-
-                        }
 
                     </div>
-
                 </div>
             </div>
 
@@ -300,6 +273,34 @@
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" style="@SpinnerVisible" />
             </div>
         </div>
+       <div>
+        @if (Mortgage == null || Mortgage.Id == 0)
+        {
+            <MudCheckBox @bind-Checked="@SendNotification" />
+            <label class="mr-2">Send Notification</label>
+            <MudCheckBox @bind-Checked="@SendVideoNotification" Class="ml-1 mt-2" />
+            <label>Send Video Notification</label>
+        }
+       </div> 
+
+       <div>
+        @if (Mortgage?.Id > 0)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteMortgage" Class="mr-8">Delete</MudButton>
+        }
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="mr-1">Cancel</MudButton>
+
+        @if (Mortgage?.Id > 0)
+        {
+            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" form="@FormId" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Save mortgage</MudButton>
+        }
+        else
+        {
+            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" form="@FormId" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add mortgage</MudButton>
+        }
+        </div>
+
 
 }
 else

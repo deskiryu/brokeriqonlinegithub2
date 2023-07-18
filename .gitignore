@@ -267,4 +267,4 @@ ReviewIt.Web.ServerApplication/.DS_Store
 /ReviewIt.Web.ServerApplication/Properties/ServiceDependencies/ReviewItWebServerDebug - Web Deploy/profile.arm.json
 
 # vscode config dir
-.vscode
+#.vscode
