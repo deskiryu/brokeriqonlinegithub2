@@ -4,6 +4,8 @@
         <MudTh>Type</MudTh>
         <MudTh>Intervals</MudTh>
         <MudTh>Message Content</MudTh>
+        <MudTh></MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd>@(((ReminderTargetEnum)context.ReminderTargetId).ToString())</MudTd>
@@ -22,5 +24,15 @@
                 <br /> @context.FifthNotificationPeriod.ToDisplayValue()
             } </MudTd>
             <MudTd>@context.MessageContent</MudTd>
-        </RowTemplate>
-    </MudTable> 
+            <MudTd Style="text-align:right">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small"></MudIconButton>
+            </MudTd>
+            <MudTd> @{
+                if (context.FirstNotificationPeriod != TimeSpan.Zero)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r=> RemoveReminderOption(context)) />
+                }
+            }
+        </MudTd>
+    </RowTemplate>
+</MudTable> 

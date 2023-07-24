@@ -26,6 +26,7 @@ namespace BrokerIQ.Online.Services
             this.requestProviderService = requestProviderService;
             this.accountService = accountService;
         }
+
         public async Task<IEnumerable<ReminderOptionDto>> GetAllForCurrentBroker()
         {
             var brokerId = await GetCurrentBrokerId();
@@ -76,6 +77,28 @@ namespace BrokerIQ.Online.Services
             }
 
             return allOptions;
+        }
+
+        public async Task<bool> UpdateOrCreate(IEnumerable<ReminderOptionDto> reminderOptions)
+        {
+            var brokerId = await GetCurrentBrokerId();
+
+            CreateBrokerReminderOptionDto brokerReminderOption = new CreateBrokerReminderOptionDto
+            {
+                BrokerId = brokerId,
+                BrokerReminderOptions = reminderOptions.ToList()
+            };
+
+            bool response = false;
+            try
+            {
+                response = await requestProviderService.Post<CreateBrokerReminderOptionDto, bool>(API_CONTROLLER, brokerReminderOption);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"UpdateOrCreate: exception {ex.Message}");
+            }
+            return response;
         }
     }
 }
