@@ -1,5 +1,6 @@
 @page "/templateedit/{BrokerId}"
 @using System.IO
+@using BrokerIQ.Online.Server.Pages.Settings.Components
 @using Dto.Enum
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
@@ -283,6 +284,9 @@
                     Style="@($"color:{Colors.Shades.Black};")">Save Preferences</MudButton>
             </EditForm>
         }
+    </MudTabPanel>
+    <MudTabPanel Text="Reminder Options">
+    <ReminderOptionTable Broker="@Broker" User="@User"/>
     </MudTabPanel>
 </MudTabs>
 

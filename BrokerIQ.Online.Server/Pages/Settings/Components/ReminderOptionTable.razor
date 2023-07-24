@@ -1,0 +1,26 @@
+@using Dto.Enum @using BrokerIQ.Online.Server.Extensions <MudTable Items="@ReminderOptions" Dense="true">
+    <HeaderContent>
+        <MudTh>Target</MudTh>
+        <MudTh>Type</MudTh>
+        <MudTh>Intervals</MudTh>
+        <MudTh>Message Content</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@(((ReminderTargetEnum)context.ReminderTargetId).ToString())</MudTd>
+            <MudTd>@(((ReminderTypeEnum)context.ReminderTypeId).ToString())</MudTd>
+            <MudTd> @context.FirstNotificationPeriod.ToDisplayValue() @if (context.SecondNotificationPeriod != TimeSpan.Zero)
+            {
+                <br /> @context.SecondNotificationPeriod.ToDisplayValue()
+            } @if (context.ThirdNotificationPeriod != TimeSpan.Zero)
+            {
+                <br /> @context.ThirdNotificationPeriod.ToDisplayValue()
+            } @if (context.FourthNotificationPeriod != TimeSpan.Zero)
+            {
+                <br /> @context.FourthNotificationPeriod.ToDisplayValue()
+            } @if (context.FifthNotificationPeriod != TimeSpan.Zero)
+            {
+                <br /> @context.FifthNotificationPeriod.ToDisplayValue()
+            } </MudTd>
+            <MudTd>@context.MessageContent</MudTd>
+        </RowTemplate>
+    </MudTable> 
