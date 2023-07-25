@@ -79,7 +79,9 @@ namespace BrokerIQ.Online.Pages
 
         private int id;
 
-        public Broker Broker { get; set; }
+        protected User User { get; set; }
+
+        protected Broker Broker { get; set; }
 
         public BrokerStaff BrokerStaff { get; set; }
 
@@ -96,10 +98,10 @@ namespace BrokerIQ.Online.Pages
         {
             try
             {
-                var user = await AccountService.GetUser();
-                IsAdmin = user.IsAdmin;
-                IsMinorAdmin = user.IsMinorAdmin;
-                IsBrokerStaff = user.IsBrokerStaff;
+                User = await AccountService.GetUser();
+                IsAdmin = User.IsAdmin;
+                IsMinorAdmin = User.IsMinorAdmin;
+                IsBrokerStaff = User.IsBrokerStaff;
                 if (IsAdmin || IsMinorAdmin)
                 {
                     id = Int32.Parse(BrokerId);
@@ -113,7 +115,7 @@ namespace BrokerIQ.Online.Pages
                     if (IsBrokerStaff)
                     {
                         var brokerStaffId = 0;
-                        brokerStaffId = Int32.Parse(user.Id);
+                        brokerStaffId = Int32.Parse(User.Id);
 
                         if (brokerStaffId > 0)
                         {
@@ -121,9 +123,9 @@ namespace BrokerIQ.Online.Pages
                         }
 
                     }
-                    if (user.MasterBrokerId > 0)
+                    if (User.MasterBrokerId > 0)
                     {
-                        Broker = (await BrokerService.GetBroker(user.MasterBrokerId));
+                        Broker = (await BrokerService.GetBroker(User.MasterBrokerId));
                     }
                 }
             }
