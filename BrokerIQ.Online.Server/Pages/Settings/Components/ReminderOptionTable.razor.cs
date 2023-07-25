@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
-using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Components;
-using BrokerIQ.Online.Server.Models;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -63,23 +61,65 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 option.FourthNotificationPeriod = TimeSpan.Zero;
                 option.FifthNotificationPeriod = TimeSpan.Zero;
 
-                var wasSuccessfull = await BrokerReminderOptionService.UpdateOrCreate(ReminderOptions);
-
-
-                // TODO : Re introduce these when a fix for the parsing error has been found
-                // if (wasSuccessfull)
-                // {
-                //     Snackbar.Add("Reminder option was removed.", Severity.Success);
-                // }
-                // else
-                // {
-                //     Snackbar.Add("Reminder options update failed. Please try again.", Severity.Error);
-                // }
-
-                ReminderOptions = await BrokerReminderOptionService.GetAllForCurrentBroker();
-
-                StateHasChanged();
+                await SaveReminderOptions();
             }
+
+            await ReloadReminderOptions();
         }
+
+        private async Task SaveReminderOptions()
+        {
+            var wasSuccessfull = await BrokerReminderOptionService.UpdateOrCreate(ReminderOptions);
+
+
+            // TODO : Re introduce these when a fix for the parsing error has been found
+            // if (wasSuccessfull)
+            // {
+            //     Snackbar.Add("Reminder option was removed.", Severity.Success);
+            // }
+            // else
+            // {
+            //     Snackbar.Add("Reminder options update failed. Please try again.", Severity.Error);
+            // }
+        }
+
+        private async Task ReloadReminderOptions()
+        {
+            ReminderOptions = await BrokerReminderOptionService.GetAllForCurrentBroker();
+
+            StateHasChanged();
+        }
+
+        private async Task EditReminderOption(ReminderOptionDto option)
+        {
+            var title = $"Edit {Enum.GetName((ReminderTargetEnum)option.ReminderTargetId)} {Enum.GetName((ReminderTypeEnum)option.ReminderTypeId)} reminder";
+            var parameters = new DialogParameters
+            {
+                { "Option", option }
+            };
+
+            var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+            var result = await DialogService.Show<ReminderOptionDialog>(title, parameters, options).Result;
+
+            if (!result.Cancelled)
+            {
+                ReminderOptionDto updated = result.Data as ReminderOptionDto;
+
+                option.FirstNotificationPeriod = updated.FirstNotificationPeriod;
+                option.SecondNotificationPeriod = updated.SecondNotificationPeriod;
+                option.ThirdNotificationPeriod = updated.ThirdNotificationPeriod;
+                option.FourthNotificationPeriod = updated.FourthNotificationPeriod;
+                option.FifthNotificationPeriod = updated.FifthNotificationPeriod;
+
+                option.MessageContent = updated.MessageContent;
+
+                await SaveReminderOptions();
+            }
+
+            await ReloadReminderOptions();
+        }
+
+
     }
 }

@@ -2,7 +2,7 @@
     <HeaderContent>
         <MudTh>Target</MudTh>
         <MudTh>Type</MudTh>
-        <MudTh>Intervals</MudTh>
+        <MudTh>Notifications</MudTh>
         <MudTh>Message Content</MudTh>
         <MudTh></MudTh>
         <MudTh></MudTh>
@@ -24,8 +24,8 @@
                 <br /> @context.FifthNotificationPeriod.ToDisplayValue()
             } </MudTd>
             <MudTd>@context.MessageContent</MudTd>
-            <MudTd Style="text-align:right">
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small"></MudIconButton>
+            <MudTd>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small" OnClick=@(r=> EditReminderOption(context))></MudIconButton>
             </MudTd>
             <MudTd> @{
                 if (context.FirstNotificationPeriod != TimeSpan.Zero)
