@@ -20,6 +20,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         MudSelect<TimeSpan> FourthNotification;
         MudSelect<TimeSpan> FifthNotification;
 
+        private TimeSpan FromDays180 = TimeSpan.FromDays(180);
+        private TimeSpan FromDays150 = TimeSpan.FromDays(150);
+        private TimeSpan FromDays120 = TimeSpan.FromDays(120);
         private TimeSpan FromDays90 = TimeSpan.FromDays(90);
         private TimeSpan FromDays60 = TimeSpan.FromDays(60);
         private TimeSpan FromDays30 = TimeSpan.FromDays(30);
