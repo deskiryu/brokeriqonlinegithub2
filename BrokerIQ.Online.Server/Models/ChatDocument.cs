@@ -30,7 +30,7 @@ namespace BrokerIQ.Online.Models
         {
             get
             {
-                if (SupportingDocumentType != DocumentTypeEnum.PDF)
+                if (SupportingDocumentType == DocumentTypeEnum.JPEG || SupportingDocumentType == DocumentTypeEnum.PNG)
                 {
                     var base64 = Convert.ToBase64String(File);
                     var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
