@@ -15,6 +15,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Server.Shared;
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;
+    using Microsoft.AspNetCore.Components.Web;
     using Microsoft.Extensions.Options;
     using MudBlazor;
     using Services.Interface;
@@ -70,9 +71,17 @@ namespace BrokerIQ.Online.Pages
 
         protected bool IsCurrentFileToBeRemoved = false;
 
+        protected string HoverClass;
+
+        protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
+
+        protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
+
         private int id;
 
-        public Broker Broker { get; set; }
+        protected User User { get; set; }
+
+        protected Broker Broker { get; set; }
 
         public BrokerStaff BrokerStaff { get; set; }
 
@@ -89,10 +98,10 @@ namespace BrokerIQ.Online.Pages
         {
             try
             {
-                var user = await AccountService.GetUser();
-                IsAdmin = user.IsAdmin;
-                IsMinorAdmin = user.IsMinorAdmin;
-                IsBrokerStaff = user.IsBrokerStaff;
+                User = await AccountService.GetUser();
+                IsAdmin = User.IsAdmin;
+                IsMinorAdmin = User.IsMinorAdmin;
+                IsBrokerStaff = User.IsBrokerStaff;
                 if (IsAdmin || IsMinorAdmin)
                 {
                     id = Int32.Parse(BrokerId);
@@ -106,7 +115,7 @@ namespace BrokerIQ.Online.Pages
                     if (IsBrokerStaff)
                     {
                         var brokerStaffId = 0;
-                        brokerStaffId = Int32.Parse(user.Id);
+                        brokerStaffId = Int32.Parse(User.Id);
 
                         if (brokerStaffId > 0)
                         {
@@ -114,9 +123,9 @@ namespace BrokerIQ.Online.Pages
                         }
 
                     }
-                    if (user.MasterBrokerId > 0)
+                    if (User.MasterBrokerId > 0)
                     {
-                        Broker = (await BrokerService.GetBroker(user.MasterBrokerId));
+                        Broker = (await BrokerService.GetBroker(User.MasterBrokerId));
                     }
                 }
             }
@@ -172,6 +181,16 @@ namespace BrokerIQ.Online.Pages
             catch (Exception ex)
             {
             }
+        }
+
+        protected void DeleteDefinedDocument()
+        {
+            SelectedFiles.Clear();
+        }
+
+        protected void RemoveCurrentFile()
+        {
+            IsCurrentFileToBeRemoved = true;
         }
 
         protected async void CommitMessage(object element)
@@ -241,7 +260,6 @@ namespace BrokerIQ.Online.Pages
 
         }
 
-
         protected bool GetMobilePreference(MobileNotificationPreferencesEnum enpm, bool staff = false)
         {
             var BrokerPrefAsInt = (int)Broker.MobileNotificationPreferences;
@@ -279,7 +297,6 @@ namespace BrokerIQ.Online.Pages
 
         }
 
-
         protected async Task HandleValidSubmit()
         {
             var dialogParams = new DialogParameters();
@@ -308,7 +325,6 @@ namespace BrokerIQ.Online.Pages
         {
             SetEmailPreference(enpm, staff: true);
         }
-
 
         protected bool GetMobilePreferenceStaff(MobileNotificationPreferencesEnum enpm)
         {

@@ -33,6 +33,7 @@ namespace BrokerIQ.Online.Mapper
             DocumentsRequirementMapper();
             BrokerDefinedMessageMapper();
             ClientReferralMapper();
+            BrokerReminderOptionsMapper();
         }
         public void CustomerMapper()
         {
@@ -844,6 +845,7 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<DocumentsRequirementDto, DocumentsRequirement>();
             CreateMap<DocumentsRequirement, DocumentsRequirementDto>();
         }
+        
         public void BrokerDefinedMessageMapper()
         {
             CreateMap<BrokerDefinedMessageDto, BrokerDefinedMessage>();
@@ -854,6 +856,12 @@ namespace BrokerIQ.Online.Mapper
         {
             CreateMap<ClientReferral, UpdateClientReferralDto>();
             CreateMap<ClientReferralDto, ClientReferral>();
+        }
+
+        public void BrokerReminderOptionsMapper()
+        {
+            CreateMap<BrokerReminderOptionDto, BrokerReminderOption>();
+            CreateMap<BrokerReminderOption, BrokerReminderOptionDto>();
         }
     }
 }
