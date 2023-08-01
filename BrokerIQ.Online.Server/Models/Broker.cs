@@ -75,6 +75,12 @@ namespace BrokerIQ.Online.Models
 
         public MobileNotificationPreferencesEnum MobileNotificationPreferences { get; set; }
 
+        public bool ShouldProfileCustomers { get; set; }
+
+        public bool NotifyBrokerOfVulnerability { get; set; }
+
+        public bool NotifyCustomerOfVulnerability { get; set; }
+
         public virtual ICollection<BrokerStaff> BrokerStaff { get; set; }
 
         public BrokerIdentifier BrokerIdentifier { get; set; }
