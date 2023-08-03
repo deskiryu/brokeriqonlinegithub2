@@ -994,6 +994,8 @@ namespace BrokerIQ.Online.Pages
                 Saved = true;
                 return;
             }
+
+            Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
         }
 
         public void Dispose()

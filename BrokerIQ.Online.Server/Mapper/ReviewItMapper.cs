@@ -62,6 +62,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.ProfilePicture, action => action.MapFrom(s => s.ProfilePicture))
                 .ForMember(d => d.Mortgages, action => action.MapFrom(s => s.Mortgages))
                 .ForMember(d => d.AppVersion, action => action.MapFrom(s => s.AppVersion))
+                .ForMember(d => d.CustomerCategory, action => action.MapFrom(s => s.CustomerCategory))
                 .ForMember(d => d.VideoNotificationsAllowed, opt => opt.MapFrom((src, dest) =>
                 {
                     bool videoOptOut = true;
@@ -91,7 +92,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.PotentialBroker2, action => action.MapFrom(s => s.PotentialBroker2))
                 .ForMember(d => d.PotentialBroker3, action => action.MapFrom(s => s.PotentialBroker3))
                 .ForMember(d => d.VideoOptOut, action => action.MapFrom(s => !s.VideoNotificationsAllowed))
-                .ForMember(d => d.BusinessName, action => action.MapFrom(s => s.BusinessName));
+                .ForMember(d => d.BusinessName, action => action.MapFrom(s => s.BusinessName))
+                .ForMember(d => d.CustomerCategory, action => action.MapFrom(s => s.CustomerCategory));
         }
 
         public void InsuranceMapper()
@@ -845,7 +847,7 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<DocumentsRequirementDto, DocumentsRequirement>();
             CreateMap<DocumentsRequirement, DocumentsRequirementDto>();
         }
-        
+
         public void BrokerDefinedMessageMapper()
         {
             CreateMap<BrokerDefinedMessageDto, BrokerDefinedMessage>();
