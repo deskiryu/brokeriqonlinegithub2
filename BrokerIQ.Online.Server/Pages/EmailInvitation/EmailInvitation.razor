@@ -36,14 +36,12 @@
                 <div class="card">
                     <div class="card-body">
                         <label class="card-title">Upload invite file</label>
-                        <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
-                          @ondragleave="@(() => DragEnterStyle = null)"
-                          @ondragend="@(() => DragEnterStyle = null)"
-                          Class=@("drag-drop-zone " + DragEnterStyle)>
-
-                            <InputFile OnChange="LoadFiles" multiple class="drag-drop-input" />
-                            <MudText Typo="Typo.subtitle1">Drag and drop text files here or click to browse</MudText>
-                        </MudPaper>
+                            <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
+                                    <MudPaper class="drag-drop-zone">
+                                        <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
+                                        <MudText Typo="Typo.subtitle1">Drag and drop text files here or click to browse</MudText>
+                                    </MudPaper>
+                            </div>
                         <div>
                             <p>Text files should have a seperate email address on each line</p>
                         </div>

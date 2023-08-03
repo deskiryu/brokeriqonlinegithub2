@@ -1,5 +1,6 @@
 @page "/templateedit/{BrokerId}"
 @using System.IO
+@using BrokerIQ.Online.Server.Pages.Settings.Components
 @using Dto.Enum
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
@@ -51,16 +52,11 @@
 
                         if (String.IsNullOrWhiteSpace(@context.FileName))
                         {
-                            <div class="@toggleHiddenClass">
-                                <div class="card-body">
-                                    <MudPaper @ondragenter="@(() => DragEnterStyle = "drag-enter")"
-                                    @ondragleave="@(() => DragEnterStyle = null)"
-                                    @ondragend="@(() => DragEnterStyle = null)" Class=@("drag-drop-zone " + DragEnterStyle)>
-
-                                        <InputFile OnChange="LoadFiles" class="drag-drop-input" accept="application/pdf" />
+                            <div class="@toggleHiddenClass @HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
+                                    <MudPaper class="drag-drop-zone">
+                                        <InputFile OnChange="LoadFiles" Class="drag-drop-input" accept="application/pdf" />
                                         <MudText Typo="Typo.subtitle1">Click or drag pdf file to attach to message</MudText>
                                     </MudPaper>
-                                </div>
                             </div>
 
                             @if (SelectedFiles.Any())
@@ -284,6 +280,9 @@
             </EditForm>
         }
     </MudTabPanel>
+@*    <MudTabPanel Text="Reminder Options">
+    <ReminderOptionTable Broker="@Broker" User="@User"/>
+    </MudTabPanel>*@
 </MudTabs>
 
 
@@ -315,16 +314,6 @@
         ((MessageElement)element).Message = elementBeforeEdit.Message;
 
         SelectedFiles.Clear();
-    }
-
-    protected void DeleteDefinedDocument()
-    {
-        SelectedFiles.Clear();
-    }
-
-    protected void RemoveCurrentFile()
-    {
-        IsCurrentFileToBeRemoved = true;
     }
 
     protected async Task PreviewAttachment(byte[] attachment)

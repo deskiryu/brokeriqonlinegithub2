@@ -1,0 +1,111 @@
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form">
+            <div class="mb-2">
+                <MudSelect T="TimeSpan" Label="First Notification" @bind-Value=Option.FirstNotificationPeriod @ref="FirstNotification">
+                    <MudSelectItem Value="@FromDays180">180 days (6 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays150">150 days (5 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays120">120 days (4 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays90">90 days (3 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays60">60 days (2 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays30">30 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays15">15 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays7">7 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays6">6 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays5">5 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays4">4 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays3">3 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays2">2 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays1">1 day before final date</MudSelectItem>
+                    <MudSelectItem Value="@TimeSpan.Zero">Not set</MudSelectItem>
+                </MudSelect>
+            </div>
+            <div class="mb-2">
+                <MudSelect T="TimeSpan" Label="Second Notification" @bind-Value=Option.SecondNotificationPeriod @ref="SecondNotification">
+                    <MudSelectItem Value="@FromDays180">180 days (6 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays150">150 days (5 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays120">120 days (4 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays90">90 days (3 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays60">60 days (2 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays30">30 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays15">15 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays7">7 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays6">6 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays5">5 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays4">4 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays3">3 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays2">2 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays1">1 day before final date</MudSelectItem>
+                    <MudSelectItem Value="@TimeSpan.Zero">Not set</MudSelectItem>
+                </MudSelect>
+            </div>
+            <div class="mb-2">
+                <MudSelect T="TimeSpan" Label="Third Notification" @bind-Value=Option.ThirdNotificationPeriod @ref="ThirdNotification">
+                    <MudSelectItem Value="@FromDays180">180 days (6 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays150">150 days (5 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays120">120 days (4 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays90">90 days (3 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays60">60 days (2 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays30">30 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays15">15 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays7">7 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays6">6 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays5">5 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays4">4 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays3">3 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays2">2 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays1">1 day before final date</MudSelectItem>
+                    <MudSelectItem Value="@TimeSpan.Zero">Not set</MudSelectItem>
+                </MudSelect>
+            </div>
+            <div class="mb-2">
+                <MudSelect T="TimeSpan" Label="Fourth Notification" @bind-Value=Option.FourthNotificationPeriod @ref="FourthNotification">
+                    <MudSelectItem Value="@FromDays180">180 days (6 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays150">150 days (5 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays120">120 days (4 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays90">90 days (3 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays60">60 days (2 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays30">30 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays15">15 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays7">7 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays6">6 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays5">5 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays4">4 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays3">3 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays2">2 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays1">1 day before final date</MudSelectItem>
+                    <MudSelectItem Value="@TimeSpan.Zero">Not set</MudSelectItem>
+                </MudSelect>
+            </div>
+            <div class="mb-2">
+                <MudSelect T="TimeSpan" Label="Fifth Notification" @bind-Value=Option.FifthNotificationPeriod @ref="FifthNotification">
+                    <MudSelectItem Value="@FromDays180">180 days (6 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays150">150 days (5 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays120">120 days (4 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays90">90 days (3 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays60">60 days (2 months) before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays30">30 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays15">15 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays7">7 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays6">6 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays5">5 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays4">4 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays3">3 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays2">2 days before final date</MudSelectItem>
+                    <MudSelectItem Value="@FromDays1">1 day before final date</MudSelectItem>
+                    <MudSelectItem Value="@TimeSpan.Zero">Not set</MudSelectItem>
+                </MudSelect>
+            </div>
+            <div class="mb-2">
+                <p><b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.</p>
+                <p><b>INSERT_BROKER_NAME</b> is replaced in message by your brokerage name.</p>
+                <p><b>INSERT_DATE</b> is replaced by the final date.</p>
+                <MudTextField Lines="5" @bind-Value=Option.MessageContent Label="Message Content" Required="true" RequiredError="Message content cannot be empty" />
+            </div>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" OnClick="Submit">Update</MudButton>
+    </DialogActions>
+</MudDialog> 

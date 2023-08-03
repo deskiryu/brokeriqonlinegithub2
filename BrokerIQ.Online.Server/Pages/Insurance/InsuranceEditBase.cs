@@ -18,6 +18,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Server.Extensions;
     using Microsoft.AspNetCore.WebUtilities;
     using Microsoft.AspNetCore.Components.Forms;
+    using Microsoft.AspNetCore.Components.Web;
     using BrokerIQ.Online.Server.AppSettings;
     using Microsoft.Extensions.Options;
     using BrokerIQ.Online.Server.Shared;
@@ -116,6 +117,12 @@ namespace BrokerIQ.Online.Pages
         public List<(int, string)> BusinessInsurances { get; set; }
 
         protected string FormId = "InsuranceForm";
+
+        protected string HoverClass;
+
+        protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
+
+        protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
         public InsuranceEditBase()
         {
@@ -449,7 +456,7 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            InsuranceDocument sdoc = new()
+            var sdoc = new InsuranceDocument()
             {
                 InsuranceId = this.id,
                 FileName = filename,

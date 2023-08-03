@@ -3,24 +3,23 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Text.Json;
+using Blazored.SessionStorage;
+using BrokerIQ.Online.AppSettings;
+using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Helper;
+using BrokerIQ.Online.Server.Services;
+using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Online.Mapper;
+using Microsoft.Extensions.Logging;
+using MudBlazor.Services;
+using BrokerIQ.Online.Services;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Concrete;
 
 namespace BrokerIQ.Online.ServerApplication
 {
-    using System;
-    using System.Text.Json;
-    using Blazored.SessionStorage;
-    using BrokerIQ.Online.AppSettings;
-    using BrokerIQ.Online.Server.AppSettings;
-    using BrokerIQ.Online.Server.Helper;
-    using BrokerIQ.Online.Server.Services;
-    using BrokerIQ.Online.Services.Interface;
-    using Mapper;
-    using Microsoft.Extensions.Logging;
-    using MudBlazor.Services;
-    using Services;
-    using Services.Abstract;
-    using Services.Concrete;
-
     public class Startup
     {
         private IWebHostEnvironment CurrentEnvironment { get; set; }
@@ -90,6 +89,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<IBrokerIdentifierService, BrokerIdentifierService>();
             services.AddScoped<IClientReferralService, ClientReferralService>();
             services.AddScoped<ITrainingVideoService, TrainingVideoService>();
+            services.AddScoped<IBrokerReminderOptionService, BrokerReminderOptionService>();
 
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();

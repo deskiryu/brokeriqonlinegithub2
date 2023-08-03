@@ -25,5 +25,19 @@ namespace BrokerIQ.Online.Models
         public DateTime CreatedDate { get; set; }
 
         public DocumentTypeEnum SupportingDocumentType { get; set; }
+
+        public string ChatDocAsImage
+        {
+            get
+            {
+                if (SupportingDocumentType == DocumentTypeEnum.JPEG || SupportingDocumentType == DocumentTypeEnum.PNG)
+                {
+                    var base64 = Convert.ToBase64String(File);
+                    var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                    return imgSrc;
+                }
+                return null;
+            }
+        }
     }
 }
