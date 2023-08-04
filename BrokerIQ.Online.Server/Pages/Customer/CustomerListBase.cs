@@ -55,7 +55,15 @@ namespace BrokerIQ.Online.Pages
         public int CustomerCategory { get; set; }
         public int AgeRange { get; set; }
 
+        //filter
+        protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
+
+        protected override async Task OnInitializedAsync()
+        {
+            await GetCustomersInit();
+        }
 
         protected async Task GetCustomersInit()
         {
@@ -181,8 +189,6 @@ namespace BrokerIQ.Online.Pages
             StateHasChanged();
         }
 
-
-
         protected async Task SendChatMessageToSelected()
         {
             var dialogParams = new DialogParameters();
@@ -219,7 +225,6 @@ namespace BrokerIQ.Online.Pages
 
             await DialogService.Show<MultipleChatDialog>("Send Chat To Multiple", dialogParams, dialogOptions).Result;
         }
-
 
         protected async Task SendNotificationToSelected()
         {
@@ -298,5 +303,15 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected async Task OnCategoryClick(int customerId, int newCategory)
+        {
+            await CustomerService.SetCustomerCategory(customerId, (CustomerCategoryEnum)newCategory);
+
+            await GetCustomers();
+        }
+
+        protected string GetCategoryDisplayName(Customer c){
+            return c.CustomerCategory.GetDisplayName();
+        }
     }
 }

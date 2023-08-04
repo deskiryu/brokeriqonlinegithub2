@@ -2,6 +2,8 @@
 {
     using System;
     using System.Threading.Tasks;
+    using BrokerIQ.Dto.Enum;
+    using BrokerIQ.Online.Server.Extensions;
     using Microsoft.AspNetCore.Components;
     using Models;
     using Services.Interface;
@@ -18,10 +20,14 @@
         [Inject]
         public IInsuranceDocumentService SupportingDocumentService { get; set; }
 
-        [Inject] 
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         public Customer Customer { get; set; }
+
+        public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
+
+        public int SelectedCustomerCategory { get { return (int)Customer.CustomerCategory; } set { Customer.CustomerCategory = (CustomerCategoryEnum)value; } }
 
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
@@ -37,10 +43,12 @@
 
         protected override async Task OnInitializedAsync()
         {
+            CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
+
             id = Int32.Parse(CustomerId);
             if (id > 0)
             {
-                Customer = (await CustomerService.GetCustomer(id));
+                Customer = await CustomerService.GetCustomer(id);
             }
         }
 
