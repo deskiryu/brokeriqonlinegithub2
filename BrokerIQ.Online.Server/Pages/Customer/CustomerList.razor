@@ -196,7 +196,8 @@ else
             }
                 <MudTd Style="text-align:center" DataLabel="Verified" ><MudCheckBox @bind-Checked="@context.EmailConfirmed" Disabled="true"></MudCheckBox></MudTd>
                 <MudTd DataLabel="">
-                    <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Link="@($"clientdetail/{@context.Id}")"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Filled" Size="Size.Small" 
+                    Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" Link="@($"clientdetail/{@context.Id}")"></MudIconButton>
                     @* <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientdetail/{@context.Id}")" >
                         <i class="fas fa-info-circle"></i>
                     </MudButton> *@
