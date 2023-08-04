@@ -158,7 +158,7 @@ else
                 <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.DateOfBirth)">Date Of Birth</MudTableSortLabel></MudTh>
-                <MudTh>Category</MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.CustomerCategory.GetDisplayName())">Category</MudTableSortLabel></MudTh>
             @if (IsAdmin)
             {
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.AppVersion)">App</MudTableSortLabel></MudTh>
