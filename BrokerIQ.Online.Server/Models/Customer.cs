@@ -70,6 +70,8 @@ namespace BrokerIQ.Online.Models
 
         public bool VideoNotificationsAllowed { get; set; }
 
+        public bool IsVulnerable { get; set; }
+
         public virtual ICollection<Insurance> Insurances { get; set; }
 
         public virtual ICollection<Mortgage> Mortgages { get; set; }

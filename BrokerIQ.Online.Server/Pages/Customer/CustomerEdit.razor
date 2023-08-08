@@ -96,10 +96,14 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Video Notifications Allowed</label>
                         <div class="col-sm-8">
+                            <MudCheckBox @bind-Checked="@Customer.VideoNotificationsAllowed" Style="margin-left: -15px" TriState="false"/>
+                        </div>
+                    </div>
 
-                            <MudCheckBox @bind-Checked="@Customer.VideoNotificationsAllowed" Style="margin-left: -15px" TriState="false">
-                                </MudCheckBox>
-
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Is Vulnerable</label>
+                        <div class="col-sm-8">
+                            <MudCheckBox @bind-Checked="@Customer.IsVulnerable" Style="margin-left: -15px" TriState="false"/>
                         </div>
                     </div>
 
