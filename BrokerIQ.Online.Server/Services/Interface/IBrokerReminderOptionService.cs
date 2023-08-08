@@ -9,5 +9,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<IEnumerable<ReminderOptionDto>> GetAllForCurrentBroker();
 
         Task<bool> UpdateOrCreate(IEnumerable<ReminderOptionDto> definedMessages);
+
+        Task<bool> Delete(ReminderOptionDto toDelete);
     }
 }

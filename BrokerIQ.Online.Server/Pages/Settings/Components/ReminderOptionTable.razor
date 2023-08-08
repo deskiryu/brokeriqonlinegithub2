@@ -1,34 +1,28 @@
-@using Dto.Enum @using BrokerIQ.Online.Server.Extensions <MudTable Items="@ReminderOptions" Dense="true">
+@using BrokerIQ.Dto.Enum @using BrokerIQ.Online.Server.Extensions <div class="mb-2">
+    <MudButton StartIcon="@Icons.Material.Filled.AddAlert" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium" OnClick=@(r=> EditReminderOption(new Dto.Dto.ReminderOptionDto()))>Add reminder </MudButton>
+</div>
+<MudTable Items="@ReminderOptions" Dense="true">
+    <NoRecordsContent>
+        <MudText>No reminders have been defined.</MudText>
+    </NoRecordsContent>
     <HeaderContent>
-        <MudTh>Target</MudTh>
         <MudTh>Type</MudTh>
-        <MudTh>Notifications</MudTh>
+        <MudTh>Notice</MudTh>
+        <MudTh>Target</MudTh>
         <MudTh>Message Content</MudTh>
         <MudTh></MudTh>
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@(((ReminderTargetEnum)context.ReminderTargetId).ToString())</MudTd>
-            <MudTd>@(((ReminderTypeEnum)context.ReminderTypeId).ToString())</MudTd>
-            <MudTd> @context.FirstNotificationPeriod.ToDisplayValue() @if (context.SecondNotificationPeriod != TimeSpan.Zero)
-            {
-                <br /> @context.SecondNotificationPeriod.ToDisplayValue()
-            } @if (context.ThirdNotificationPeriod != TimeSpan.Zero)
-            {
-                <br /> @context.ThirdNotificationPeriod.ToDisplayValue()
-            } @if (context.FourthNotificationPeriod != TimeSpan.Zero)
-            {
-                <br /> @context.FourthNotificationPeriod.ToDisplayValue()
-            } @if (context.FifthNotificationPeriod != TimeSpan.Zero)
-            {
-                <br /> @context.FifthNotificationPeriod.ToDisplayValue()
-            } </MudTd>
+        <MudTd>@(((ReminderTypeEnum)context.ReminderTypeId).ToString())</MudTd>
+            <MudTd> @context.NotificationPeriod.ToDisplayValue() </MudTd>
+            <MudTd>@(((ReminderTargetEnum)context.ReminderTargetId).ToString())</MudTd>
             <MudTd>@context.MessageContent</MudTd>
             <MudTd>
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small" OnClick=@(r=> EditReminderOption(context))></MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" OnClick=@(r=> EditReminderOption(context))></MudIconButton>
             </MudTd>
             <MudTd> @{
-                if (context.FirstNotificationPeriod != TimeSpan.Zero)
+                if (context.NotificationPeriod != TimeSpan.Zero)
                 {
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r=> RemoveReminderOption(context)) />
                 }
