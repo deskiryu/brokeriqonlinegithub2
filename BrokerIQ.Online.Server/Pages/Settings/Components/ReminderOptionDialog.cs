@@ -14,11 +14,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         MudForm form;
 
-        MudSelect<TimeSpan> FirstNotification;
-        MudSelect<TimeSpan> SecondNotification;
-        MudSelect<TimeSpan> ThirdNotification;
-        MudSelect<TimeSpan> FourthNotification;
-        MudSelect<TimeSpan> FifthNotification;
+        MudSelect<int> ReminderTypeId;
+        MudSelect<TimeSpan> Notification;
+        MudSelect<int> ReminderTargetId;
 
         private TimeSpan FromDays180 = TimeSpan.FromDays(180);
         private TimeSpan FromDays150 = TimeSpan.FromDays(150);

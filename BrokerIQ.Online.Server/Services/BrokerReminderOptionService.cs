@@ -34,7 +34,11 @@ namespace BrokerIQ.Online.Services
             {
                 var messagesDto = await requestProviderService.Get<BrokerReminderOptionDto>($"{API_CONTROLLER}/{brokerId}");
                 var options = mapper.Map<BrokerReminderOption>(messagesDto);
-                return BuildAllOptionsFrom(brokerId, options.BrokerReminderOptions);
+
+                return options.BrokerReminderOptions = options.BrokerReminderOptions.OrderBy(o => o.ReminderTypeId)
+                                                                                    .ThenByDescending(o => o.NotificationPeriod)
+                                                                                    .ThenBy(o => o.ReminderTargetId)
+                                                                                    .ToList();
             }
             catch (Exception ex)
             {
@@ -50,33 +54,6 @@ namespace BrokerIQ.Online.Services
             requestProviderService.Token = user?.Token;
 
             return user.MasterBrokerId;
-        }
-
-        private static IEnumerable<ReminderOptionDto> BuildAllOptionsFrom(int brokerId, IEnumerable<ReminderOptionDto> options)
-        {
-            var allOptions = new List<ReminderOptionDto>();
-
-            foreach (var target in Enum.GetValues(typeof(ReminderTargetEnum)))
-            {
-                foreach (var type in Enum.GetValues(typeof(ReminderTypeEnum)))
-                {
-                    var option = options.FirstOrDefault(x => x.ReminderTargetId == (int)target && x.ReminderTypeId == (int)type);
-
-                    if (option != null)
-                    {
-                        allOptions.Add(option);
-                        continue;
-                    }
-
-                    allOptions.Add(new ReminderOptionDto()
-                    {
-                        ReminderTargetId = (int)target,
-                        ReminderTypeId = (int)type
-                    });
-                }
-            }
-
-            return allOptions;
         }
 
         public async Task<bool> UpdateOrCreate(IEnumerable<ReminderOptionDto> reminderOptions)
@@ -99,6 +76,20 @@ namespace BrokerIQ.Online.Services
                 Console.WriteLine($"UpdateOrCreate: exception {ex.Message}");
             }
             return response;
+        }
+
+        public async Task<bool> Delete(ReminderOptionDto reminderOption)
+        {
+            try
+            {
+                return await requestProviderService.Delete(API_CONTROLLER, reminderOption.Id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Delete: exception {ex.Message}");
+            }
+
+            return false;
         }
     }
 }
