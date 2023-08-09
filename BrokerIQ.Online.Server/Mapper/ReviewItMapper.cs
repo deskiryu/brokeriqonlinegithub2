@@ -72,7 +72,8 @@ namespace BrokerIQ.Online.Mapper
                     }
                     return !videoOptOut;
                 }))
-                .ForMember(d => d.IsWhiteLabel, action => action.MapFrom(s => s.IsWhiteLabel));
+                .ForMember(d => d.IsWhiteLabel, action => action.MapFrom(s => s.IsWhiteLabel))
+                .ForMember(d =>d.IsVulnerable, action => action.MapFrom(s => s.IsVulnerable));
 
             CreateMap<Customer, UpdateCustomerDto>()
                 .ForMember(d => d.Id, action => action.MapFrom(s => s.Id))
@@ -93,7 +94,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.PotentialBroker3, action => action.MapFrom(s => s.PotentialBroker3))
                 .ForMember(d => d.VideoOptOut, action => action.MapFrom(s => !s.VideoNotificationsAllowed))
                 .ForMember(d => d.BusinessName, action => action.MapFrom(s => s.BusinessName))
-                .ForMember(d => d.CustomerCategory, action => action.MapFrom(s => s.CustomerCategory));
+                .ForMember(d => d.CustomerCategory, action => action.MapFrom(s => s.CustomerCategory))
+                .ForMember(d =>d.IsVulnerable, action => action.MapFrom(s => s.IsVulnerable));
         }
 
         public void InsuranceMapper()

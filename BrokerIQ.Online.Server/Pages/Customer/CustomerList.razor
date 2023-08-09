@@ -62,7 +62,7 @@ else
                                    Placeholder="Select"
                                    Clearable="true"
                                    @bind-Value="FilterRecent"
-                                   SelectedValuesChanged="@RecentFilterSelect"
+                                   SelectedValuesChanged="@RefreshListFromFilterValues"
                                    AdornmentColor="Color.Primary">
                             <MudSelectItem Value="0">None</MudSelectItem>
                             <MudSelectItem Value="1">Upcoming Insurance Renewal</MudSelectItem>
@@ -77,7 +77,7 @@ else
                                 Placeholder="Select"
                                 Clearable="true"
                                 @bind-Value="CustomerCategory"
-                                SelectedValuesChanged="@RecentFilterSelect"
+                                SelectedValuesChanged="@RefreshListFromFilterValues"
                                 AdornmentColor="Color.Primary"
                                 MaxHeight="400">
                                 @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
@@ -94,7 +94,7 @@ else
                                     Placeholder="Select"
                                     Clearable="true"
                                     @bind-Value="AgeRange"
-                                    SelectedValuesChanged="@RecentFilterSelect"
+                                    SelectedValuesChanged="@RefreshListFromFilterValues"
                                     AdornmentColor="Color.Primary">
                                         @if (true)
                                             {
@@ -113,7 +113,7 @@ else
                                 Placeholder="Select"
                                 Clearable="true"
                                 @bind-Value="FilterPeriod"
-                                SelectedValuesChanged="@RecentFilterSelect"
+                                SelectedValuesChanged="@RefreshListFromFilterValues"
                                 AdornmentColor="Color.Primary">
                         <MudSelectItem Value="0">2 weeks</MudSelectItem>
                         <MudSelectItem Value="1">4 weeks</MudSelectItem>
@@ -122,6 +122,21 @@ else
                     </MudSelect>
                 </div>                    
             </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <MudSwitch T="bool" @bind-checked="@IsVulnerable" Label="Is Vulnerable" Color="Color.Primary"/>
+                </div>
+                <div class="col-lg-4">
+                    <MudSwitch T="bool" @bind-checked="@WithoutIncomeProtection" Label="Without Income Protection" Color="Color.Primary"/>
+                </div>
+                <div class="col-lg-4">
+                    <MudSwitch T="bool" @bind-checked="@WithoutLifeInsurance" Label="Without Life Insurance" Color="Color.Primary" />
+                </div>
+                <div class="col-lg-4">
+                    <MudSwitch T="bool" @bind-checked="@WithoutLifeCritical" Label="Without Life & Critical Ilness" Color="Color.Primary" />
+                </div>
+            </div>
+
             @if (IsAdmin)
             {   
                 <div class="row">
