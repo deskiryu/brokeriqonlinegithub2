@@ -14,7 +14,6 @@
 		<Content Remove="Pages\Users\Add.razor" />
 	</ItemGroup>
 
-
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="12.0.0" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
@@ -32,10 +31,9 @@
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.0" />
 		<PackageReference Include="MudBlazor" Version="6.0.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="BrokerIQ.Dto" Version="1.1.30" />
+		<PackageReference Include="BrokerIQ.Dto" Version="1.1.31" />
 		<PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
 	</ItemGroup>
-
 
 	<ItemGroup>
 	  <Content Update="wwwroot\js\AudioRecord.js">

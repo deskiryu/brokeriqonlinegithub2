@@ -6,6 +6,7 @@ namespace BrokerIQ.Online.Pages
 {
     using BrokerIQ.Dto.Enum;
     using BrokerIQ.Online.Server.Extensions;
+    using BrokerIQ.Online.Server.Models;
     using BrokerIQ.Online.Server.Shared;
     using Microsoft.AspNetCore.Components;
     using Models;
@@ -54,6 +55,50 @@ namespace BrokerIQ.Online.Pages
         public int FilterPeriod { get; set; }
         public int CustomerCategory { get; set; }
         public int AgeRange { get; set; }
+
+        private bool isVulnerable;
+        public bool IsVulnerable
+        {
+            get { return isVulnerable; }
+            set
+            {
+                isVulnerable = value;
+                RefreshListFromFilterValues();
+            }
+        }
+
+        private bool withoutIncomeProtection;
+        public bool WithoutIncomeProtection
+        {
+            get { return withoutIncomeProtection; }
+            set
+            {
+                withoutIncomeProtection = value;
+                RefreshListFromFilterValues();
+            }
+        }
+
+        private bool withoutLifeInsurance;
+        public bool WithoutLifeInsurance
+        {
+            get { return withoutLifeInsurance; }
+            set
+            {
+                withoutLifeInsurance = value;
+                RefreshListFromFilterValues();
+            }
+        }
+
+        private bool withoutLifeAndCritical;
+        public bool WithoutLifeCritical
+        {
+            get { return withoutLifeAndCritical; }
+            set
+            {
+                withoutLifeAndCritical = value;
+                RefreshListFromFilterValues();
+            }
+        }
 
         //filter
         protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
@@ -169,6 +214,9 @@ namespace BrokerIQ.Online.Pages
             Customers.Clear();
             Customers = null;
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
+
+
+
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
                 SelectedCustomers.Clear();
@@ -177,15 +225,30 @@ namespace BrokerIQ.Online.Pages
             StateHasChanged();
         }
 
-        protected async Task RecentFilterSelect()
+        protected async Task RefreshListFromFilterValues()
         {
             Customers.Clear();
             Customers = null;
-            Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
+
+            Customers = (await CustomerService.GetFilteredCustomers(new CustomerFilter()
+            {
+                BrokerId = BrokerId,
+                Recent = FilterRecent,
+                Period = FilterPeriod,
+                Category = CustomerCategory,
+                AgeRange = AgeRange,
+                ProfilePictures = true,
+                IsVulnerable = IsVulnerable,
+                WithoutIncomeProtection = WithoutIncomeProtection,
+                WithoutLifeInsurance = WithoutLifeInsurance,
+                WithoutLifeCritical = WithoutLifeCritical
+            })).ToList();
+
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
                 SelectedCustomers.Clear();
             }
+
             StateHasChanged();
         }
 
@@ -310,7 +373,8 @@ namespace BrokerIQ.Online.Pages
             await GetCustomers();
         }
 
-        protected string GetCategoryDisplayName(Customer c){
+        protected string GetCategoryDisplayName(Customer c)
+        {
             return c.CustomerCategory.GetDisplayName();
         }
     }
