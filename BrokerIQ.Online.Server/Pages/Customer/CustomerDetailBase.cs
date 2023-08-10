@@ -1143,5 +1143,22 @@ namespace BrokerIQ.Online.Pages
                 }
             }
         }
+
+        protected async Task ToggleVulnerability()
+        {
+            try
+            {
+                await CustomerService.SetCustomerVulnerability(Customer.Id, !Customer.IsVulnerable);
+            }
+            catch
+            {
+                StatusClass = "alert-danger";
+                Message = "Something went wrong setting the category. Please try again.";
+                Saved = true;
+                return;
+            }
+
+            Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
+        }
     }
 }

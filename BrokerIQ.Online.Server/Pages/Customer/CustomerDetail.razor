@@ -150,7 +150,7 @@ else if (!Saved)
 
                                  <label class="col-lg-2 col-form-label">Is Vulnerable</label>
                                 <div class="col-lg-4">
-                                    <label readonly class="form-control-plaintext" style="@(Customer.IsVulnerable ? "color: red;": "")">@(Customer.IsVulnerable ? "YES" : "No")</label>
+                                    <MudCheckBox Checked="@Customer.IsVulnerable" Style="margin-left: -15px" TriState="false" @onclick="ToggleVulnerability"/>
                                 </div>
                             </div>
 

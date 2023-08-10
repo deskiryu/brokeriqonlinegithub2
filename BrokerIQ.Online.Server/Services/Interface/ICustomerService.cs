@@ -27,5 +27,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<int> GetCustomerCount(int brokerId = 0);
 
         Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory);
+
+        Task<bool> SetCustomerVulnerability(int customerid, bool isVulnerable);
     }
 }
