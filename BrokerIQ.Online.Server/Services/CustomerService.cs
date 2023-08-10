@@ -155,5 +155,16 @@ namespace BrokerIQ.Online.Services
             var answer = await requestProviderService.Post<SearchOptionDto, IEnumerable<CustomerDto>>(url, searchOption);
             return mapper.Map<IEnumerable<Customer>>(answer);
         }
+
+        public async Task<bool> SetCustomerVulnerability(int customerid, bool isVulnerable)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var patchDoc = new JsonPatchDocument<Customer>();
+            patchDoc.Replace(x => x.IsVulnerable, isVulnerable);
+
+            var answer = await this.requestProviderService.Patch<JsonPatchDocument<Customer>, CustomerDto>(this.customerUrl + $"/patch?customerid={customerid}", patchDoc);
+            return answer.IsVulnerable;
+        }
     }
 }
