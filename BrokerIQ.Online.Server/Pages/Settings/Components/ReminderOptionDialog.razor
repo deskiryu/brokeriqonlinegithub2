@@ -1,7 +1,7 @@
 @using BrokerIQ.Online.Server.Extensions <MudDialog>
     <DialogContent>
         <MudForm @ref="form">
-            <MudSelect Required="true" Class="mb-2" T="int" Label="Reminder Type" @bind-Value=Option.ReminderTypeId @ref="ReminderTypeId">
+            <MudSelect Validation="@(new Func<int, string>(IsValidReminderType))" Class="mb-2" T="int" Label="Reminder Type" @bind-Value=Option.ReminderTypeId @ref="ReminderTypeId">
                 <MudSelectItem Value="0">Not set</MudSelectItem> @{
                     var names = Enum.GetNames(typeof(Dto.Enum.ReminderTypeEnum)); for (int i = 1; i <= names.Length; i++)
                     {
@@ -10,7 +10,7 @@
                     }
                 }
             </MudSelect>
-            <MudSelect Required="true" Class="mb-2" T="TimeSpan" Label="Notification Interval" @bind-Value=Option.NotificationPeriod @ref="Notification">
+            <MudSelect Validation="@(new Func<TimeSpan, string>(IsValidNotificationInterval))" Class="mb-2" T="TimeSpan" Label="Notification Interval" @bind-Value=Option.NotificationPeriod @ref="Notification">
                 <MudSelectItem Value="@FromDays180">180 days (6 months) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays150">150 days (5 months) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays120">120 days (4 months) before final date</MudSelectItem>
@@ -27,7 +27,7 @@
                 <MudSelectItem Value="@FromDays1">1 day before final date</MudSelectItem>
                 <MudSelectItem Value="@TimeSpan.Zero">Not set</MudSelectItem>
             </MudSelect>
-            <MudSelect Required="true" Class="mb-2" T="int" Label="Reminder Target" @bind-Value=Option.ReminderTargetId @ref="ReminderTargetId">
+            <MudSelect Validation="@(new Func<int, string>(IsValidTarget))" Class="mb-2" T="int" Label="Reminder Target" @bind-Value=Option.ReminderTargetId @ref="ReminderTargetId">
                 <MudSelectItem Value="0">Not set</MudSelectItem> @{
                     var names = Enum.GetNames(typeof(Dto.Enum.ReminderTargetEnum)); for (int i = 1; i <= names.Length; i++)
                     {
