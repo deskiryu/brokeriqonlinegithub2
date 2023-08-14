@@ -147,11 +147,6 @@ else if (!Saved)
                                 <div class="col-lg-4">
                                     <label type="text" readonly class="form-control-plaintext">@Customer.CustomerCategory.GetDisplayName()</label>
                                 </div>
-
-                                 <label class="col-lg-2 col-form-label">Is Vulnerable</label>
-                                <div class="col-lg-4">
-                                    <MudCheckBox Checked="@Customer.IsVulnerable" Style="margin-left: -15px" TriState="false" @onclick="ToggleVulnerability"/>
-                                </div>
                             </div>
 
                             <div class="form-group row">
