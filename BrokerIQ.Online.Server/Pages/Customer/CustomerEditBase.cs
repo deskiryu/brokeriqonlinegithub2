@@ -29,6 +29,8 @@
 
         public int SelectedCustomerCategory { get { return (int)Customer.CustomerCategory; } set { Customer.CustomerCategory = (CustomerCategoryEnum)value; } }
 
+        public int SelectedGender { get { return (int)Customer.Gender; } set { Customer.Gender = (GenderEnum)value; } }
+
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
         protected bool Saved;
