@@ -73,7 +73,10 @@ namespace BrokerIQ.Online.Mapper
                     return !videoOptOut;
                 }))
                 .ForMember(d => d.IsWhiteLabel, action => action.MapFrom(s => s.IsWhiteLabel))
-                .ForMember(d =>d.IsVulnerable, action => action.MapFrom(s => s.IsVulnerable));
+                .ForMember(d =>d.IsVulnerable, action => action.MapFrom(s => s.IsVulnerable))
+                .ForMember(d =>d.IsSmokerOrVaper, action => action.MapFrom(s => s.IsSmokerOrVaper))
+                .ForMember(d =>d.AnnualIncome, action => action.MapFrom(s => s.AnnualIncome))
+                .ForMember(d =>d.Gender, action => action.MapFrom(s => s.Gender));
 
             CreateMap<Customer, UpdateCustomerDto>()
                 .ForMember(d => d.Id, action => action.MapFrom(s => s.Id))
@@ -95,7 +98,10 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.VideoOptOut, action => action.MapFrom(s => !s.VideoNotificationsAllowed))
                 .ForMember(d => d.BusinessName, action => action.MapFrom(s => s.BusinessName))
                 .ForMember(d => d.CustomerCategory, action => action.MapFrom(s => s.CustomerCategory))
-                .ForMember(d =>d.IsVulnerable, action => action.MapFrom(s => s.IsVulnerable));
+                .ForMember(d =>d.IsVulnerable, action => action.MapFrom(s => s.IsVulnerable))
+                .ForMember(d => d.IsSmokerOrVaper, action => action.MapFrom(s => s.IsSmokerOrVaper))
+                .ForMember(d => d.AnnualIncome, action => action.MapFrom(s => s.AnnualIncome))
+                .ForMember(d => d.Gender, action => action.MapFrom(s => s.Gender));
         }
 
         public void InsuranceMapper()

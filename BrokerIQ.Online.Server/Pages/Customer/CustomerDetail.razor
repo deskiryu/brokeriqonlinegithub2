@@ -148,9 +148,21 @@ else if (!Saved)
                                     <label type="text" readonly class="form-control-plaintext">@Customer.CustomerCategory.GetDisplayName()</label>
                                 </div>
 
-                                 <label class="col-lg-2 col-form-label">Is Vulnerable</label>
+                                 <label class="col-lg-2 col-form-label">Is Smoker/Vaper</label>
                                 <div class="col-lg-4">
-                                    <MudCheckBox Checked="@Customer.IsVulnerable" Style="margin-left: -15px" TriState="false" @onclick="ToggleVulnerability"/>
+                                    <MudCheckBox ReadOnly Checked="@Customer.IsSmokerOrVaper" Style="margin-left: -15px" TriState="false" @onclick="ToggleVulnerability"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Annual Income</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">£ @Customer.AnnualIncome</label>
+                                </div>
+
+                                 <label class="col-lg-2 col-form-label">Gender</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.Gender.GetDisplayName()</label>
                                 </div>
                             </div>
 
