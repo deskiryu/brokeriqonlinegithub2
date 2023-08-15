@@ -13,11 +13,11 @@ namespace BrokerIQ.Online.Models
         public byte[] Image { get; set; }
         public int ChatId { get; set; }
         public string Style { get => BrokerSource ? "chat_broker" : "chat_client"; }
-
         public bool IsRead { get; set; }
-
+        public bool IsVideo { get; set; }
+        public string VideoUrl { get; set; }
+        public bool HasEmbeddedUrl { get; set; }
         public int ChatDocumentId { get; set; }
-
         public virtual ChatDocument ChatDocument { get; set; }
     }
 }

@@ -24,5 +24,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> SendMultipleAppLink(List<int> listCustomerId, int brokerId);
 
         Task<int> GetUnRead(int customerId, int brokerId = 0);
+
+        Task<bool> SendMultipleVideoLink(List<int> listCustomerId, int brokerId, string videoUrl);
     }
 }
