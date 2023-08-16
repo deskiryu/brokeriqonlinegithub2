@@ -270,12 +270,14 @@ namespace BrokerIQ.Online.Server.Pages.Video
                     return;
                 }
             }
+            var thumbnail = await VideoService.GetVideoThumbnail($"{VideoName}.jpeg", BrokerId);
 
             dialogParams.Add("BrokerId", BrokerId);
             dialogParams.Add("Customers", targets);
             dialogParams.Add("VideoUrl", Url);
             dialogParams.Add("VideoName", VideoNameNoExtension);
-            
+            dialogParams.Add("VideoThumbnailData", thumbnail?.Data??"");
+
 
             var dialogOptions = new DialogOptions()
             {

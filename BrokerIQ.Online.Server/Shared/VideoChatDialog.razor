@@ -29,6 +29,13 @@
                             }
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="col-sm-6 mt-1">
+                                <MudInputString @bind-Value="Message" Placeholder="Type a message for your video (optional)" Style="width:100%" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </MudContainer>
@@ -53,6 +60,10 @@
     [Parameter] public string VideoUrl { get; set; }
 
     [Parameter] public string VideoName { get; set; }
+
+    [Parameter] public string VideoThumbnailData { get; set; }
+
+    public string Message { get; set; }
 
     public List<string> CustomerNames { get; set; }
 
@@ -85,8 +96,56 @@
     {
         bool succeeded = false;
 
-        succeeded = (await ChatService.SendMultipleVideoLink(CustomerIds, BrokerID, VideoUrl));
+        succeeded = (await ChatService.SendMultipleVideoLink(Message, CustomerIds, BrokerID, VideoUrl, VideoThumbnailData));
 
+
+        if (!succeeded)
+        {
+            AlertService.Error("Chat sending failed for some or all clients, check the chat to see.");
+        }
+        else
+        {
+            AlertService.Success("Chat successfully sent.");
+        }
+        MudDialog.Close(DialogResult.Ok("true"));
+
+        return;
+    }
+
+    protected async Task NewChat(string messageToshow = "")
+    {
+        bool succeeded = false;
+
+        var fileAttached = false;
+        var sdoc = new ChatDocument();
+        var dialogParams = new DialogParameters();
+
+        dialogParams.Add("PrePopulatedMessage", messageToshow);
+
+        var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams).Result;
+        if (!result.Cancelled)
+        {
+            var message = result.Data.ToString();
+
+            try
+            {
+                if (!string.IsNullOrEmpty(message))
+                {
+                    if (fileAttached)
+                    {
+                        succeeded = (await ChatService.SendMultipleWithDoc(message, CustomerIds, BrokerID, sdoc));
+                    }
+                    else
+                    {
+                        succeeded = (await ChatService.SendMultiple(message, CustomerIds, BrokerID));
+                    }
+                }
+            }
+            catch
+            {
+                succeeded = false;
+            }
+        }
 
         if (!succeeded)
         {

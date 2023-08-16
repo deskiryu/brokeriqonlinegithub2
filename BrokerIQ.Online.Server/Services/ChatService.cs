@@ -15,6 +15,9 @@ namespace BrokerIQ.Online.Services
     using Interface;
     using Models;
     using BrokerIQ.Dto.Request;
+    using BrokerIQ.Online.Server.Models;
+    using static System.Net.Mime.MediaTypeNames;
+    using System.Text.RegularExpressions;
 
     public class ChatService : IChatService
     {
@@ -145,16 +148,23 @@ namespace BrokerIQ.Online.Services
             return answer;
         }
 
-        public async Task<bool> SendMultipleVideoLink(List<int> listCustomerId, int brokerId, string videoUrl)
+        public async Task<bool> SendMultipleVideoLink(string message, List<int> listCustomerId, int brokerId, string videoUrl, string VideoThumbnailData)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
+
+            var result = Regex.Replace(VideoThumbnailData, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
+            byte[] bytes = Convert.FromBase64String(result);
+
+
             var createChatMessage = new CreateChatMessageDto
             {
+                Message = message,
                 BrokerId = brokerId,
                 CustomerIdList = listCustomerId,
                 BrokerSource = true,
                 VideoUrl = videoUrl,
+                Image = bytes,
                 IsVideo = true
             };
 

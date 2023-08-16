@@ -782,7 +782,18 @@ else if (!Saved)
 
                                                             </div>
 
-                                                    }     
+                                                    }
+                                                    @if (message.IsVideo && !string.IsNullOrEmpty(message.VideoUrl))
+                                                    {
+                                                        <div>
+                                                            <video id="movie" width="350" height="262" controls preload>
+                                                                <source src='@message.VideoUrl#t=0.1'>
+                                                            </video>
+
+                                                        </div>
+
+                                                    }
+                                                    
                                                     @if (message.BrokerSource)
                                                     {
                                                         var combined = $"Sent from us at {@message.SentTime.ToBiqDateTimeString()}";
