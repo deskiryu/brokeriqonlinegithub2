@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BrokerIQ.Online.Models
@@ -19,5 +20,26 @@ namespace BrokerIQ.Online.Models
         public bool HasEmbeddedUrl { get; set; }
         public int ChatDocumentId { get; set; }
         public virtual ChatDocument ChatDocument { get; set; }
+        public List<string> FormattedLinkMessage
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Message))
+                {
+                    string[] separatingStrings = { "<--", "-->" };
+                    var myStrings = Message.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries).ToList();
+                    if(myStrings.Count==2)
+                    {
+                        myStrings.Add("");
+                    }
+                    if(myStrings.Count==3)
+                    {
+                        return myStrings;
+                    }
+                }
+
+                return null;
+            }
+        }
     }
 }

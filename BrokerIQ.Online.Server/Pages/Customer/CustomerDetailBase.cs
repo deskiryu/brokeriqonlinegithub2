@@ -1090,6 +1090,11 @@ namespace BrokerIQ.Online.Pages
             await ViewDocumentUpload(converted);
         }
 
+        protected async Task ViewLink(string url)
+        {
+            await Extensions.OpenLinkInNewTab(js, url);
+        }
+
         protected async Task SaveDocumentUpload(CustomerDocument doc)
         {
             if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)

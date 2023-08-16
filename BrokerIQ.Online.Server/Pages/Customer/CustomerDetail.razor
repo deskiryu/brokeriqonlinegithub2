@@ -760,8 +760,18 @@ else if (!Saved)
                                         <MudCard Class="@advancedClass">
                                         <MudCardHeader>
                                             <CardHeaderContent>
-                                            <MudText Typo="Typo.body1">@message.Message</MudText>   
-
+                                            @if (message.FormattedLinkMessage != null && message.FormattedLinkMessage.Count == 3)
+                                            {
+                                                @message.FormattedLinkMessage[0]
+                                                <MudLink @onclick="f => ViewLink(message.FormattedLinkMessage[1])" Color="Color.Tertiary">
+                                                    @message.FormattedLinkMessage[1]
+                                                </MudLink>
+                                                @message.FormattedLinkMessage[2]
+                                            }
+                                            else
+                                            {
+                                                @message.Message
+                                            }
                                                 </CardHeaderContent>
                                         </MudCardHeader>
                                         <MudCardContent>                                           

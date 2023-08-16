@@ -56,7 +56,8 @@ namespace BrokerIQ.Online.Services
                 BrokerId = brokerId,
                 CustomerId = customerId,
                 Message = message,
-                BrokerSource = true
+                BrokerSource = true,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--")
             };
 
             var answer = await requestProviderService.Post<CreateChatMessageDto,ChatMessageDto>(this.ChatUrl, createChatMessage);
