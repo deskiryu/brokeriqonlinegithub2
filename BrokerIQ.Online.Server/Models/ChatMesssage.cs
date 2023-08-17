@@ -28,13 +28,16 @@ namespace BrokerIQ.Online.Models
                 {
                     string[] separatingStrings = { "<--", "-->" };
                     var myStrings = Message.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries).ToList();
-                    if(myStrings.Count==2)
+                    if (myStrings != null && myStrings.Any())
                     {
-                        myStrings.Add("");
-                    }
-                    if(myStrings.Count==3)
-                    {
-                        return myStrings;
+                        if (myStrings.Count==2)
+                        {
+                            myStrings.Add("");
+                        }
+                        if(myStrings.Count==3)
+                        {
+                            return myStrings;
+                        }
                     }
                 }
 
