@@ -803,6 +803,18 @@ else if (!Saved)
                                                         </div>
 
                                                     }
+
+                                                    @if (message.IsAudio && !string.IsNullOrEmpty(message.AudioUrl))
+                                                    {
+                                                        <div>
+                                                            <audio controls>
+                                                                <source src='@message.AudioUrl#t=0.1' type="audio/wav">
+                                                                <!-- HERE THE CODE FOR THE ALTERNATIVE PLAYER (FLASH) WILL BE! -->
+                                                            </audio>
+
+                                                        </div>
+
+                                                    }
                                                     
                                                     @if (message.BrokerSource)
                                                     {

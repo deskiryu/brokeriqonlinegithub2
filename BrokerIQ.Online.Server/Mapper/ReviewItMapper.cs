@@ -814,6 +814,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
                 .ForMember(p => p.IsVideo, opt => opt.MapFrom(r => r.IsVideo))
                 .ForMember(p => p.VideoUrl, opt => opt.MapFrom(r => r.VideoUrl))
+                .ForMember(p => p.IsAudio, opt => opt.MapFrom(r => r.IsAudio))
+                .ForMember(p => p.AudioUrl, opt => opt.MapFrom(r => r.AudioUrl))
                 .ForMember(p => p.HasEmbeddedUrl, opt => opt.MapFrom(r => r.HasEmbeddedUrl))
                 .ForMember(p => p.ChatDocumentId, opt => opt.MapFrom(r => r.ChatDocumentId))
                 .ForMember(d => d.ChatDocument, opt => opt.MapFrom((src, dest) =>
@@ -842,6 +844,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
                 .ForMember(p => p.IsVideo, opt => opt.MapFrom(r => r.IsVideo))
                 .ForMember(p => p.VideoUrl, opt => opt.MapFrom(r => r.VideoUrl))
+                .ForMember(p => p.IsAudio, opt => opt.MapFrom(r => r.IsAudio))
+                .ForMember(p => p.AudioUrl, opt => opt.MapFrom(r => r.AudioUrl))
                 .ForMember(p => p.HasEmbeddedUrl, opt => opt.MapFrom(r => r.HasEmbeddedUrl))
                 .ForMember(p => p.BrokerSource, opt => opt.MapFrom(r => r.BrokerSource));
         }

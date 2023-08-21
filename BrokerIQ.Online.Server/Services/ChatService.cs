@@ -172,5 +172,25 @@ namespace BrokerIQ.Online.Services
             var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
             return answer;
         }
+
+        public async Task<bool> SendMultipleAudioLink(string message, List<int> listCustomerId, int brokerId, string audioUrl)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var createChatMessage = new CreateChatMessageDto
+            {
+                Message = message,
+                BrokerId = brokerId,
+                CustomerIdList = listCustomerId,
+                BrokerSource = true,
+                AudioUrl = audioUrl,
+                IsVideo = false,
+                IsAudio = true,
+            };
+
+            var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
+            return answer;
+        }
     }
 }

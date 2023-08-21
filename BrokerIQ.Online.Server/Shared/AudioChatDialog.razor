@@ -22,7 +22,7 @@
                 <div class="col-sm-12 mt-1">
                     <div class="card">
                         <div class="card-body">
-                            <p>Video @VideoName will be sent to the chat stream of : </p>
+                            <p>Audio @AudioName will be sent to the chat stream of : </p>
                             @foreach (var user in CustomerNames)
                             {
                                 <MudText Style="white-space: pre-line;">@user</MudText>
@@ -31,7 +31,7 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
-                                <MudInputString @bind-Value="Message" Placeholder="Type a message for your video (optional)" Style="width:100%" />
+                                <MudInputString @bind-Value="Message" Placeholder="Type a message for your audio (optional)" Style="width:100%" />
 
                         </div>
                     </div>
@@ -56,11 +56,10 @@
 
     [Parameter] public int BrokerID { get; set; }
 
-    [Parameter] public string VideoUrl { get; set; }
+    [Parameter] public string AudioUrl { get; set; }
 
-    [Parameter] public string VideoName { get; set; }
+    [Parameter] public string AudioName { get; set; }
 
-    [Parameter] public string VideoThumbnailData { get; set; }
 
     public string Message { get; set; }
 
@@ -95,7 +94,7 @@
     {
         bool succeeded = false;
 
-        succeeded = (await ChatService.SendMultipleVideoLink(Message, CustomerIds, BrokerID, VideoUrl, VideoThumbnailData));
+        succeeded = (await ChatService.SendMultipleAudioLink(Message, CustomerIds, BrokerID, AudioUrl));
 
 
         if (!succeeded)

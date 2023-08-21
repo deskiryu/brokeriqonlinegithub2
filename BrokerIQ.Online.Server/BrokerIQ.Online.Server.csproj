@@ -31,11 +31,14 @@
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.0" />
 		<PackageReference Include="MudBlazor" Version="6.0.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="BrokerIQ.Dto" Version="1.1.32" />
+		<PackageReference Include="BrokerIQ.Dto" Version="1.1.38" />
 		<PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Shared\AudioChatDialog.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
 	  <Content Update="wwwroot\js\AudioRecord.js">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
