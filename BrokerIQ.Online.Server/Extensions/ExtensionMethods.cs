@@ -42,7 +42,11 @@ namespace BrokerIQ.Online.Server.Extensions
                     "openInTab",
                     converted);
             }
+        }
 
+        public async static Task OpenLinkInNewTab(IJSRuntime js, string url)
+        {
+             await js.InvokeVoidAsync("open", url, "_blank");
         }
 
         public async static Task StartWarningTimer(IJSRuntime js, int timeoutIntervalms)
