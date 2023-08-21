@@ -760,8 +760,18 @@ else if (!Saved)
                                         <MudCard Class="@advancedClass">
                                         <MudCardHeader>
                                             <CardHeaderContent>
-                                            <MudText Typo="Typo.body1">@message.Message</MudText>   
-
+                                            @if (message.FormattedLinkMessage != null && message.FormattedLinkMessage.Count == 3)
+                                            {
+                                                @message.FormattedLinkMessage[0]
+                                                <MudLink @onclick="f => ViewLink(message.FormattedLinkMessage[1])" Color="Color.Tertiary">
+                                                    @message.FormattedLinkMessage[1]
+                                                </MudLink>
+                                                @message.FormattedLinkMessage[2]
+                                            }
+                                            else
+                                            {
+                                                @message.Message
+                                            }
                                                 </CardHeaderContent>
                                         </MudCardHeader>
                                         <MudCardContent>                                           
@@ -782,7 +792,30 @@ else if (!Saved)
 
                                                             </div>
 
-                                                    }     
+                                                    }
+                                                    @if (message.IsVideo && !string.IsNullOrEmpty(message.VideoUrl))
+                                                    {
+                                                        <div>
+                                                            <video id="movie" width="350" height="262" controls preload>
+                                                                <source src='@message.VideoUrl#t=0.1'>
+                                                            </video>
+
+                                                        </div>
+
+                                                    }
+
+                                                    @if (message.IsAudio && !string.IsNullOrEmpty(message.AudioUrl))
+                                                    {
+                                                        <div>
+                                                            <audio controls>
+                                                                <source src='@message.AudioUrl#t=0.1' type="audio/wav">
+                                                                <!-- HERE THE CODE FOR THE ALTERNATIVE PLAYER (FLASH) WILL BE! -->
+                                                            </audio>
+
+                                                        </div>
+
+                                                    }
+                                                    
                                                     @if (message.BrokerSource)
                                                     {
                                                         var combined = $"Sent from us at {@message.SentTime.ToBiqDateTimeString()}";

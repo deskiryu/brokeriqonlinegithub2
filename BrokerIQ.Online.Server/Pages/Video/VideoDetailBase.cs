@@ -81,6 +81,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
             else
             {
                 Brokers = new List<Broker>();
+                BrokerId = user.MasterBrokerId;
             }
 
 
@@ -243,6 +244,48 @@ namespace BrokerIQ.Online.Server.Pages.Video
             Customers.Clear();
             Customers = null;
             Customers = (await CustomerService.GetAllCustomers(BrokerId, filterCategory:CustomerCategory, filterAgeRange:AgeRange, profilePictures: false)).ToList();
-        } 
+        }
+
+        protected async Task SendChatMessageToSelected()
+        {
+            var dialogParams = new DialogParameters();
+
+            var targets = new List<(string, int)>();
+            if (SelectedCustomers != null && SelectedCustomers.Any())
+            {
+                targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => (x.Name, x.Id)).ToList();
+            }
+
+            if (targets == null || !targets.Any())
+            {
+                AlertService.Error("No targets chosen");
+                return;
+            }
+
+            if (IsAdmin)
+            {
+                if (BrokerId <= 0)
+                {
+                    AlertService.Error("Please filter by broker first");
+                    return;
+                }
+            }
+            var thumbnail = await VideoService.GetVideoThumbnail($"{VideoName}.jpeg", BrokerId);
+
+            dialogParams.Add("BrokerId", BrokerId);
+            dialogParams.Add("Customers", targets);
+            dialogParams.Add("VideoUrl", Url);
+            dialogParams.Add("VideoName", VideoNameNoExtension);
+            dialogParams.Add("VideoThumbnailData", thumbnail?.Data??"");
+
+
+            var dialogOptions = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true
+            };
+
+            await DialogService.Show<VideoChatDialog>("Send Video To Multiple Chats", dialogParams, dialogOptions).Result;
+        }
     }
 }
