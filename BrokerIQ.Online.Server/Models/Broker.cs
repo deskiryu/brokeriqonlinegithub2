@@ -59,7 +59,7 @@ namespace BrokerIQ.Online.Models
 
         public bool Selected { get; set; }
 
-   
+
         [MaxLength(15, ErrorMessage = "The phone number must be 15 letters or less")]
         [Required(ErrorMessage = "Mobile no. is required in format +4407xxxxxxxxx")]
         [RegularExpression("^((\\+447)) ?\\d{9}$", ErrorMessage = "Please enter valid phone no in format +447xxxxxxxx")]
@@ -84,5 +84,7 @@ namespace BrokerIQ.Online.Models
         public virtual ICollection<BrokerStaff> BrokerStaff { get; set; }
 
         public BrokerIdentifier BrokerIdentifier { get; set; }
+
+        public virtual ICollection<BrokerSubscription> Subscriptions { get; set; }
     }
 }

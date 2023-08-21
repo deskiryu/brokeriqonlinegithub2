@@ -90,6 +90,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<IClientReferralService, ClientReferralService>();
             services.AddScoped<ITrainingVideoService, TrainingVideoService>();
             services.AddScoped<IBrokerReminderOptionService, BrokerReminderOptionService>();
+            services.AddScoped<IBrokerSubscriptionService, BrokerSubscriptionService>();
 
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
