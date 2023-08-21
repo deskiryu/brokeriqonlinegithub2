@@ -1,0 +1,21 @@
+@using BrokerIQ.Online.Server.Extensions <MudDialog>
+    <DialogContent>
+        <MudForm @ref="form">
+            <MudSelect Validation="@(new Func<int, string>(IsValidSubscriptionService))" Class="mb-2" T="int" Label="Service" @bind-Value="Subscription.SubscriptionServiceId">
+                <MudSelectItem Value="0">Not set</MudSelectItem> @{
+                    var names = Enum.GetNames(typeof(Dto.Enum.SubscriptionServiceEnum)); for (int i = 1; i <= names.Length; i++)
+                    {
+                        var looped = (Dto.Enum.ReminderTypeEnum)i;
+                        <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+            <MudDatePicker Label="Start Date" DisableToolbar="true" @bind-Date="StartDate" />
+            <MudDatePicker Label="End Date" DisableToolbar="true" @bind-Date="EndDate" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" OnClick="Submit">Update</MudButton>
+    </DialogActions>
+</MudDialog> 

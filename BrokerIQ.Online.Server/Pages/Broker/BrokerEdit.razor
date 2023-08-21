@@ -1,25 +1,21 @@
-﻿
+﻿@page "/brokeredit/{BrokerId}"
 
-@page "/brokeredit/{BrokerId}"
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
+@using BrokerIQ.Online.Server.Pages.Broker.Components
 @using BlazorDateRangePicker
 @using System.IO
 @using BrokerIQ.Online.Services.Interface
 
 @inherits BrokerEditBase
 
-
 @if (!Saved)
 {
     <section class="Broker-detail">
 
         <h4 class="page-title">Edit Broker</h4>
-
-        
-
 
             <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
                 <MudTabPanel Text="Main Details">
@@ -189,6 +185,12 @@
                 </EditForm>
 
                 </MudTabPanel>
+                @if (IsAdmin){
+                    <MudTabPanel Text="Subscriptions">
+                        <SubscriptionsTable Broker="@Broker" />
+                    </MudTabPanel>
+                }
+
                  @if (IsAdmin && BrokerIdentifier!=null && BrokerIdentifier.IdentifierFound)
                 {
                  <MudTabPanel Text="White Label">
