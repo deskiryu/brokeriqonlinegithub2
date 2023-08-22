@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
+using BrokerIQ.Dto.CreateDto;
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Pages.Customer.Components;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Options;
+using Microsoft.JSInterop;
+using BrokerIQ.Online.Models;
+using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {
-    using System.IO;
-    using BrokerIQ.Dto.CreateDto;
-    using BrokerIQ.Dto.Enum;
-    using BrokerIQ.Dto.Models;
-    using BrokerIQ.Online.Server.AppSettings;
-    using BrokerIQ.Online.Server.Extensions;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Online.Server.Shared;
-    using BrokerIQ.Online.Services.Interface;
-    using Microsoft.AspNetCore.Components;
-    using Microsoft.AspNetCore.Components.Forms;
-    using Microsoft.AspNetCore.Components.Web;
-    using Microsoft.Extensions.Options;
-    using Microsoft.JSInterop;
-    using Models;
-    using MudBlazor;
-
     public class CustomerDetailBase : ComponentBase
     {
         [Inject]
@@ -88,6 +88,8 @@ namespace BrokerIQ.Online.Pages
         public bool BrokerHasWhiteLabel { get; set; }
 
         public bool BrokerHasWhiteLabelAndIsInsuranceOnly { get; set; }
+
+        public bool BrokerHasActiveInsuranceQuoteSubscription { get; set; }
 
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
@@ -213,10 +215,13 @@ namespace BrokerIQ.Online.Pages
                 BrokerHasWhiteLabelAndIsInsuranceOnly = false;
                 if (!IsAdmin)
                 {
-                    var broker = await BrokerService.GetBroker(user.MasterBrokerId);
+                    var broker = await BrokerService.GetBroker(user.MasterBrokerId, true);
+                    var today = DateTime.UtcNow;
                     BrokerName = broker.Name;
                     BrokerHasWhiteLabel = broker.BrokerIdentifier != null && broker.BrokerIdentifier.IdentifierFound;
                     BrokerHasWhiteLabelAndIsInsuranceOnly = BrokerHasWhiteLabel && broker.BrokerIdentifier != null && broker.BrokerIdentifier.InsuranceOnly;
+                    BrokerHasActiveInsuranceQuoteSubscription = broker.Subscriptions.Any(s => s.SubscriptionServiceId == SubscriptionServiceEnum.InsuranceQuote &&
+                            s.StartDate <= today && today <= s.EndDate);
                     await PopulateBrokerDefinedMessages();
                 }
                 else
@@ -335,7 +340,6 @@ namespace BrokerIQ.Online.Pages
                     await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
                     return;
                 }
-
 
                 dialogParams.Add("Notification", selectedNotification);
 
@@ -1146,6 +1150,26 @@ namespace BrokerIQ.Online.Pages
                 {
                     UploadSectionClass += @" d-none";
                 }
+            }
+        }
+
+        protected async Task GetInsuranceQuote()
+        {
+            var parameters = new DialogParameters
+            {
+                { "Customer", Customer }
+            };
+
+            var options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+
+            var result = await DialogService.Show<IncomeProtectionQuoteDialog>("Income Protection Quote", parameters, options).Result;
+
+            if (!result.Cancelled)
+            {
+
+
+
+
             }
         }
     }

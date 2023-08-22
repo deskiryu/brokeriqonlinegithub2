@@ -239,6 +239,7 @@ else if (!Saved)
                                     </MudButton>
                             }
 
+
                         </div>
                         </div>
                     </div>
@@ -253,6 +254,11 @@ else if (!Saved)
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
                         Add New Insurance
                     </MudButton>
+                    @if(Customer.IsVulnerable && BrokerHasActiveInsuranceQuoteSubscription){
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick=@(r=> GetInsuranceQuote()) class="ml-2 mb-2">
+                            Get Quote
+                        </MudButton>
+                    }
                     <table id="table-insurance" class="table  col-sm-12 table-striped ">
                         <thead>
                             <tr>
@@ -261,7 +267,7 @@ else if (!Saved)
                                 <th>Expiry</th>
                             @if (IsAdmin)
                             {
-                                        <th>Broker</th>
+                                <th>Broker</th>
                             }
                                 <th></th>
                             </tr>
