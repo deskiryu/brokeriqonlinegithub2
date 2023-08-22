@@ -858,15 +858,15 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task LoadFiles(InputFileChangeEventArgs e)
         {
-            if (e.FileCount > 1)
+            if (e.FileCount > 5)
             {
                 var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", $"Only one document per chat message");
+                dialogParams.Add("Message", $"At most 5 documents in one go.");
                 await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
 
             }
             LoadedChatFiles.Clear();
-            foreach (var file in e.GetMultipleFiles(1))
+            foreach (var file in e.GetMultipleFiles(5))
             {
                 try
                 {
