@@ -656,60 +656,66 @@ else if (!Saved)
                     <div @onclick="this.ClearUnReadChat">
                         @if (!IsAdmin)
                         {
-                                    <div class="col-sm-6 control_wrapper mb-5">
-                                        <MudSelect T="string" @ref="TemplateSelect" 
-                                                Label="Select Message Template"
-                                                Placeholder="Select Message Template"
-                                                Clearable="true"
-                                                AdornmentColor="Color.Primary"
-                                                SelectedValuesChanged="@MessageTemplateChanged"
-                                                @bind-Value="SelectedTemplateMessage">
-                                    @foreach (var message in MergedMessages)
-                                    {
-                                        var attachment = String.IsNullOrWhiteSpace(message.FileName) 
-                                        ? String.Empty
-                                        : $"<br/><br/><i class=\"fa fa-file-pdf\"> &nbsp;{message.FileName}</i>";
+                            <div class="col-sm-6 control_wrapper mb-5">
+                                <MudSelect T="string" @ref="TemplateSelect" 
+                                        Label="Select Message Template"
+                                        Placeholder="Select Message Template"
+                                        Clearable="true"
+                                        AdornmentColor="Color.Primary"
+                                        SelectedValuesChanged="@MessageTemplateChanged"
+                                        @bind-Value="SelectedTemplateMessage">
+                                        @foreach (var message in MergedMessages)
+                                        {
+                                            var attachment = String.IsNullOrWhiteSpace(message.FileName) 
+                                            ? String.Empty
+                                            : $"<br/><br/><i class=\"fa fa-file-pdf\"> &nbsp;{message.FileName}</i>";
 
-                                        var itemContent = $"{message.BrokerDefinedMessage}{@attachment}";
+                                            var itemContent = $"{message.BrokerDefinedMessage}{@attachment}";
 
-                                        <MudSelectItem Value="@(((int)message.BrokerDefinedMessageEnumValue).ToString())">@((MarkupString)itemContent)</MudSelectItem>
-                                    }
-                                        </MudSelect>
-                                    </div>
-                                    <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                                        <MudDatePicker Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement"/>
-                                        <MudSpacer />
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
-                                    </div>
+                                            <MudSelectItem Value="@(((int)message.BrokerDefinedMessageEnumValue).ToString())">@((MarkupString)itemContent)</MudSelectItem>
+                                        }
+                                </MudSelect>
+                            </div>
+                            <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                                <MudDatePicker Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement"/>
+                                <MudSpacer />
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
+                            </div>
 
-                                    <div class="@UploadSectionClass">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <label class="card-title">Upload pdf files</label>
+                            <div class="@UploadSectionClass">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <label class="card-title">Upload pdf files</label>
 
-                                                <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
-                                                        <MudPaper class="drag-drop-zone">
-                                                            <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
-                                                            <MudText Typo="Typo.subtitle1">Click or drag pdf file to attach to chat</MudText>
-                                                        </MudPaper>
-                                                </div>
+                                        <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
+                                                <MudPaper class="drag-drop-zone">
+                                                    <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
+                                                    <MudText Typo="Typo.subtitle1">Click or drag pdf file to attach to chat</MudText>
+                                                </MudPaper>
+                                        </div>
                
                                         @if (LoadedChatFiles.Any())
                                         {
-                                            var filename = LoadedChatFiles[0].Name;
-                                                    <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())" class="btn btn-link">Remove @filename</MudButton>
+                                        <MudTable Items="@LoadedChatFiles" Hover="true" SortLabel="Sort By" Class="">
+                                            <RowTemplate>
+                                                <MudTd>@context.Name</MudTd>
+                                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument(context.Name))" class="btn btn-link">Delete</MudButton></MudTd>
+                                            </RowTemplate>
+                                        </MudTable>
                                         }
-                                            </div>
-                                        </div>
                                     </div>
+                                </div>
+                            </div>
 
-                                <div class="col-sm-6 mt-1">
+                            <div class="col-sm-6 mt-1">
                                 <div class="card">
-                                <div class="card-body">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
-                                New Chat Message
-                                </MudButton>
-                                </div></div></div>
+                                    <div class="card-body">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
+                                        New Chat Message
+                                        </MudButton>
+                                    </div>
+                                </div>
+                            </div>
                         }
                         else
                         {
