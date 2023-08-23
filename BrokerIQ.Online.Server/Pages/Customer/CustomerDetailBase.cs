@@ -697,6 +697,7 @@ namespace BrokerIQ.Online.Pages
                             {
                                 dialogParams.Add("Oversize", "true");
                                 filesAttached = false;
+                                continue;
                             }
                             else
                             {
