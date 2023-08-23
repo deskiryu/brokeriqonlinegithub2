@@ -57,6 +57,7 @@ namespace BrokerIQ.Online.Services
                 CustomerId = customerId,
                 Message = message,
                 BrokerSource = true,
+                NoNotification = false,
                 HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--")
             };
 
@@ -64,7 +65,7 @@ namespace BrokerIQ.Online.Services
             return answer!=null&&answer.Id>0;
         }
 
-        public async Task<bool> SendWithDoc(string message, int customerId, ChatDocument chatDocument)
+        public async Task<bool> SendWithDoc(string message, int customerId, ChatDocument chatDocument, bool NoNotification = false)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -75,10 +76,11 @@ namespace BrokerIQ.Online.Services
                 CustomerId = customerId,
                 Message = message,
                 BrokerSource = true,
+                NoNotification = NoNotification,
                 ChatDocument = new CreateChatDocumentDto
                 {
                      File = chatDocument.File,
-                     FileName = chatDocument.FileName
+                     FileName = chatDocument.FileName,
                 }
             };
 
@@ -106,7 +108,8 @@ namespace BrokerIQ.Online.Services
                 BrokerId = brokerId,
                 CustomerIdList = listCustomerId,
                 Message = message,
-                BrokerSource = true
+                BrokerSource = true,
+                NoNotification = false,
             };
 
             var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl+"/multiple", createChatMessage);
@@ -123,6 +126,7 @@ namespace BrokerIQ.Online.Services
                 CustomerIdList = listCustomerId,
                 Message = message,
                 BrokerSource = true,
+                NoNotification = false,
                 ChatDocument = new CreateChatDocumentDto
                 {
                     File = chatDocument.File,
@@ -142,7 +146,8 @@ namespace BrokerIQ.Online.Services
             {
                 BrokerId = brokerId,
                 CustomerIdList = listCustomerId,
-                BrokerSource = true
+                BrokerSource = true,
+                NoNotification = false,
             };
 
             var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multipleAppLink", createChatMessage);
@@ -166,7 +171,8 @@ namespace BrokerIQ.Online.Services
                 BrokerSource = true,
                 VideoUrl = videoUrl,
                 Image = bytes,
-                IsVideo = true
+                IsVideo = true,
+                NoNotification = false,
             };
 
             var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
@@ -187,6 +193,7 @@ namespace BrokerIQ.Online.Services
                 AudioUrl = audioUrl,
                 IsVideo = false,
                 IsAudio = true,
+                NoNotification = false,
             };
 
             var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
