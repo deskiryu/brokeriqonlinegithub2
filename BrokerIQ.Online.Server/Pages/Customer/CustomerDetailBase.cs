@@ -664,7 +664,7 @@ namespace BrokerIQ.Online.Pages
         {
             bool succeeded = false;
 
-            var fileAttached = false;
+            var templateFileAttached = false;
             var filesAttached = false;
             var filenames = new List<string>();
             var memoryStreams = new List<MemoryStream>();
@@ -679,9 +679,9 @@ namespace BrokerIQ.Online.Pages
                 {
                     sdoc.FileName = defaultAttachment.FileName;
                     sdoc.File = defaultAttachment.File;
-                    memoryStream = new MemoryStream(sdoc.File);
-
-                    fileAttached = true;
+                    filenames.Add(sdoc.FileName);
+                    memoryStreams.Add(new MemoryStream(sdoc.File));
+                    templateFileAttached = true;
                 }
                 else if (LoadedChatFiles.Any())
                 {
@@ -696,7 +696,7 @@ namespace BrokerIQ.Online.Pages
                             if (file.Size > this.fileUploadSettings.MaxFileSize)
                             {
                                 dialogParams.Add("Oversize", "true");
-                                fileAttached = false;
+                                filesAttached = false;
                             }
                             else
                             {
@@ -709,13 +709,13 @@ namespace BrokerIQ.Online.Pages
                             memoryStreams.Add(memoryStream);
                         }
                     }
-                    dialogParams.Add("Filenames",filenames);
-                    dialogParams.Add("MemoryStreams",memoryStreams);
                 }
+                dialogParams.Add("Filenames", filenames);
+                dialogParams.Add("MemoryStreams", memoryStreams);
             }
             catch
             {
-                fileAttached = false;
+                templateFileAttached = false;
             }
 
             dialogParams.Add("PrePopulatedMessage", messageToshow);
@@ -729,7 +729,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (!string.IsNullOrEmpty(message))
                     {
-                        if (fileAttached)
+                        if (templateFileAttached)
                         {
                             succeeded = (await ChatService.SendWithDoc(message, Customer.Id, sdoc));
                         }
@@ -739,15 +739,13 @@ namespace BrokerIQ.Online.Pages
                             {
                                 for (int i = 0; i < memoryStreams.Count; i++)
                                 {
-                                    if (i > 0){
-                                        message = string.Empty;
-                                    }
+                                    var noNotification = i > 0;
                                     var loopSdoc = new ChatDocument
                                     {
                                         FileName = filenames[i],
                                         File = memoryStreams[i].ToArray()
                                     };
-                                    succeeded = (await ChatService.SendWithDoc(message, Customer.Id, loopSdoc));
+                                    succeeded = (await ChatService.SendWithDoc(noNotification ? string.Empty : message, Customer.Id, loopSdoc, noNotification));
                                 }
                             }
 
@@ -762,6 +760,12 @@ namespace BrokerIQ.Online.Pages
                 {
                     succeeded = false;
                 }
+                finally
+                {
+                    LoadedChatFiles.Clear();
+                    SpinnerVisible = "display:none";
+                    StateHasChanged();
+                }
             }
             else
             {
@@ -772,8 +776,6 @@ namespace BrokerIQ.Online.Pages
             if (succeeded)
             {
                 await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
-                LoadedChatFiles.Clear();
-
                 TemplateSelect.SelectedValues = new string[] { };
                 UploadSectionClass = DEFAULT_UPLOAD_CLASS;
             }
