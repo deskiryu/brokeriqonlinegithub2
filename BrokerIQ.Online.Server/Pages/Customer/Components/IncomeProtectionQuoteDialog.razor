@@ -1,33 +1,41 @@
 @using BrokerIQ.Online.Server.Extensions <MudDialog>
     <DialogContent>
         <MudForm @ref="form">
-            <MudSelect T="string" Label="Lives Assured" AnchorOrigin="Origin.BottomCenter" ReadOnly=true @bind-Value="SelectedLife"> @foreach (var value in LivesAssured)
-                {
-                    <MudSelectItem Value="@value">@value</MudSelectItem>
-                } </MudSelect>
-                <MudSelect T="string" Label="Premium Type" AnchorOrigin="Origin.BottomCenter" @bind-Value="SelectedPremium"> @foreach (var value in PremiumTypes)
-                {
-                    <MudSelectItem Value="@value">@value</MudSelectItem>
-                } </MudSelect>
-                <MudNumericField @bind-Value="SelectedToAge" Label="To Age" Variant="Variant.Text" Min="50" Max="70" />
-                <MudSelect T="string" Label="Benefit Basis" AnchorOrigin="Origin.BottomCenter" @bind-Value="SelectedBenefitBasis"> @foreach (var value in BenefitBasis)
-                {
-                    <MudSelectItem Value="@value">@value</MudSelectItem>
-                } </MudSelect>
-                <MudNumericField @bind-Value="SelectedBenefitAmount" Label="Benefit Amount" Variant="Variant.Text" Min="1000.0M" Max="4000.0M" Step="250M" />
-                <MudSelect T="string" Label="Deferred Period" AnchorOrigin="Origin.BottomCenter" @bind-Value="SelectedDeferredPeriod"> @foreach (var value in DeferredPeriods)
-                {
-                    <MudSelectItem Value="@value">@value</MudSelectItem>
-                } </MudSelect>
-                <MudSelect T="string" Label="Indexation" AnchorOrigin="Origin.BottomCenter" @bind-Value="SelectedIndexation"> @foreach (var value in Indexations)
-                {
-                    <MudSelectItem Value="@value">@value</MudSelectItem>
-                } </MudSelect>
-                <MudCheckBox @bind-Checked="@IncludeLimitedPaymentPlans" Label="Include Limited Payment Plans"></MudCheckBox>
+            <MudGrid>
+                <MudItem xs="6"> @* <MudSelect T="string" Label="Lives Assured" AnchorOrigin="Origin.BottomCenter" ReadOnly=true @bind-Value="SelectedLife"> @foreach (var value in LivesAssured) { <MudSelectItem Value="@value">@value</MudSelectItem> } </MudSelect> *@
+                    <MudNumericField @bind-Value="SelectedToAge" Label="To Age" Variant="Variant.Text" Min="50" Max="70" />
+                    <MudSelect T="string" Label="Premium Type" AnchorOrigin="Origin.BottomCenter" @bind-Value="SelectedPremiumType"> @foreach (var value in PremiumTypes)
+                        {
+                            <MudSelectItem Value="@value">@value</MudSelectItem>
+                        } </MudSelect>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudSelect T="string" Label="Deferred Period" AnchorOrigin="Origin.BottomCenter" @bind-Value="SelectedDeferredPeriod"> @foreach (var value in DeferredPeriods)
+                        {
+                            <MudSelectItem Value="@value">@value</MudSelectItem>
+                        } </MudSelect>
+                        <MudSelect T="string" Label="Indexation" AnchorOrigin="Origin.BottomCenter" @bind-Value="SelectedIndexation"> @foreach (var value in Indexations)
+                        {
+                            <MudSelectItem Value="@value">@value</MudSelectItem>
+                        } </MudSelect>
+                    </MudItem>
+                </MudGrid>
             </MudForm>
-        </DialogContent>
-        <DialogActions>
-            <MudButton OnClick="Cancel">Cancel</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" OnClick="Submit">Update</MudButton>
-        </DialogActions>
-    </MudDialog> 
+            <MudButton Class="mt-2" Disabled="@isProcessing" OnClick="GetQuote" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" FullWidth="true"> @if (isProcessing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Getting Quote ...</MudText>
+            }
+            else
+            {
+                <MudText>Get Quote</MudText>
+            }
+        </MudButton>
+        <MudPaper Class="mt-2" Elevation="0">
+            <MudText>@QuoteText</MudText>
+        </MudPaper>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Back</MudButton>
+    </DialogActions>
+</MudDialog> 
