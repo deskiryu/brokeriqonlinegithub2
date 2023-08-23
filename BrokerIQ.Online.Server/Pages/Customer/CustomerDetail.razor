@@ -706,8 +706,8 @@ else if (!Saved)
                                         {
                                         <MudTable Items="@LoadedChatFiles" Hover="true" SortLabel="Sort By" Class="">
                                             <RowTemplate>
-                                                <MudTd>@context.Name</MudTd>
-                                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument(context.Name))" class="btn btn-link">Delete</MudButton></MudTd>
+                                                <MudTd>@context.Item1.Name</MudTd>
+                                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument(context.Item1.Name))" class="btn btn-link">Delete</MudButton></MudTd>
                                             </RowTemplate>
                                         </MudTable>
                                         }
