@@ -437,6 +437,15 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected void ClearLoadedFiles()
+        {
+            foreach (var file in LoadedFiles)
+            {
+                Array.Clear(file.Item2, 0, file.Item2.Length);
+            }
+            LoadedFiles.Clear();
+            StateHasChanged();
+        }
         protected async Task UploadMortgageFile(string filename, byte[] dataBytes)
         {
             if (id == 0)
@@ -623,9 +632,8 @@ namespace BrokerIQ.Online.Pages
             }
             finally
             {
-                LoadedFiles.Clear();
+                ClearLoadedFiles();
                 SpinnerVisible = "display:none";
-                StateHasChanged();
             }
         }
 

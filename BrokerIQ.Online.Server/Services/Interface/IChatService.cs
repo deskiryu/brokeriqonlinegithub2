@@ -15,7 +15,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<bool> Send(string message, int customerId);
 
-        Task<bool> SendWithDoc(string message, int customerId, ChatDocument chatDocument);
+        Task<bool> SendWithDoc(string message, int customerId, ChatDocument chatDocument, bool NoNotification=false);
 
         Task<bool> SendMultiple(string message, List<int> listCustomerId, int brokerId);
 

@@ -103,7 +103,7 @@ namespace BrokerIQ.Online.Pages
 
         public Chat Chat { get; set; }
 
-        protected List<IBrowserFile> LoadedChatFiles = new();
+        protected List<(IBrowserFile, byte[])> LoadedChatFiles = new();
 
         public string SpinnerVisible { get; set; }
 
@@ -668,9 +668,13 @@ namespace BrokerIQ.Online.Pages
         {
             bool succeeded = false;
 
-            var fileAttached = false;
+            var templateFileAttached = false;
+            var filesAttached = false;
+            var filenames = new List<string>();
+            var memoryStreams = new List<MemoryStream>();
+
             var sdoc = new ChatDocument();
-            var memoryStream = new MemoryStream();
+
             var dialogParams = new DialogParameters();
 
             try
@@ -679,45 +683,45 @@ namespace BrokerIQ.Online.Pages
                 {
                     sdoc.FileName = defaultAttachment.FileName;
                     sdoc.File = defaultAttachment.File;
-                    memoryStream = new MemoryStream(sdoc.File);
-
-                    fileAttached = true;
+                    filenames.Add(sdoc.FileName);
+                    memoryStreams.Add(new MemoryStream(sdoc.File));
+                    templateFileAttached = true;
                 }
                 else if (LoadedChatFiles.Any())
                 {
-                    var fileName = "";
-
-                    var file = LoadedChatFiles[0];
-                    if (file != null)
+                    foreach (var file in LoadedChatFiles)
                     {
-                        fileAttached = true;
-                        fileName = LoadedChatFiles[0].Name;
-
-                        if (file.Size > this.fileUploadSettings.MaxFileSize)
+                        var fileName = "";
+                        var memoryStream = new MemoryStream();
+                        if (file.Item1 != null)
                         {
-                            dialogParams.Add("Oversize", "true");
-                            fileAttached = false;
-                        }
-                        else
-                        {
-                            await file.OpenReadStream(this.fileUploadSettings.MaxFileSize).CopyToAsync(memoryStream);
+                            filesAttached = true;
+                            fileName = file.Item1.Name;
 
-                            sdoc.FileName = fileName;
-                            sdoc.File = memoryStream.ToArray();
+                            if (file.Item1.Size > this.fileUploadSettings.MaxFileSize)
+                            {
+                                dialogParams.Add("Oversize", "true");
+                                filesAttached = false;
+                                continue;
+                            }
+                            else
+                            {
+
+                                sdoc.FileName = fileName;
+                                memoryStream = new MemoryStream(file.Item2);
+                            }
+
+                            filenames.Add(sdoc.FileName);
+                            memoryStreams.Add(memoryStream);
                         }
                     }
                 }
-
-                dialogParams.Add("Filenames", new List<string>{
-                                sdoc.FileName
-                            });
-                dialogParams.Add("MemoryStreams", new List<MemoryStream> {
-                                memoryStream
-                            });
+                dialogParams.Add("Filenames", filenames);
+                dialogParams.Add("MemoryStreams", memoryStreams);
             }
             catch
             {
-                fileAttached = false;
+                templateFileAttached = false;
             }
 
             dialogParams.Add("PrePopulatedMessage", messageToshow);
@@ -731,9 +735,26 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (!string.IsNullOrEmpty(message))
                     {
-                        if (fileAttached)
+                        if (templateFileAttached)
                         {
                             succeeded = (await ChatService.SendWithDoc(message, Customer.Id, sdoc));
+                        }
+                        else if (filesAttached)
+                        {
+                            if (filenames.Count == memoryStreams.Count)
+                            {
+                                for (int i = 0; i < memoryStreams.Count; i++)
+                                {
+                                    var noNotification = i > 0;
+                                    var loopSdoc = new ChatDocument
+                                    {
+                                        FileName = filenames[i],
+                                        File = memoryStreams[i].ToArray()
+                                    };
+                                    succeeded = (await ChatService.SendWithDoc(noNotification ? string.Empty : message, Customer.Id, loopSdoc, noNotification));
+                                }
+                            }
+
                         }
                         else
                         {
@@ -745,6 +766,12 @@ namespace BrokerIQ.Online.Pages
                 {
                     succeeded = false;
                 }
+                finally
+                {
+                    ClearLoadedChatDocuments();
+                    SpinnerVisible = "display:none";
+                    StateHasChanged();
+                }
             }
             else
             {
@@ -755,8 +782,6 @@ namespace BrokerIQ.Online.Pages
             if (succeeded)
             {
                 await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
-                LoadedChatFiles.Clear();
-
                 TemplateSelect.SelectedValues = new string[] { };
                 UploadSectionClass = DEFAULT_UPLOAD_CLASS;
             }
@@ -862,37 +887,59 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task LoadFiles(InputFileChangeEventArgs e)
         {
-            if (e.FileCount > 1)
+            var alreadyUploaded = LoadedChatFiles.Count();
+            var remainingFiles = fileUploadSettings.MaxAllowedFiles - alreadyUploaded;
+            if (e.FileCount > remainingFiles)
             {
                 var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", $"Only one document per chat message");
+                dialogParams.Add("Message", $"A maximum of five documents can be shown in the app");
                 await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
 
             }
-            LoadedChatFiles.Clear();
-            foreach (var file in e.GetMultipleFiles(1))
+            else
             {
-                try
+                foreach (var file in e.GetMultipleFiles(remainingFiles))
                 {
-                    var ext = Path.GetExtension(file.Name);
-                    if (ext != ".pdf")
+                    try
                     {
-                        throw new Exception("Pdf files only");
+                        var ext = Path.GetExtension(file.Name);
+                        if (ext != ".pdf")
+                        {
+                            throw new Exception("Pdf files only");
+                        }
+                        LoadedChatFiles.Add((file, await GetFileBytes(file)));
                     }
-                    LoadedChatFiles.Add(file);
-                }
-                catch (Exception ex)
-                {
-                    LoadFileStatus = ex.Message;
+                    catch (Exception ex)
+                    {
+                        LoadFileStatus = ex.Message;
 
-                    break;
+                        break;
+                    }
                 }
             }
+            StateHasChanged();
+
         }
 
-        protected async Task DeleteChatDocument()
+        protected void DeleteChatDocument(string Name)
         {
+            var loadedtoRemove = LoadedChatFiles.FirstOrDefault(x => x.Item1.Name == Name);
+            if (loadedtoRemove.Item1 != null && loadedtoRemove.Item2 != null)
+            {
+                Array.Clear(loadedtoRemove.Item2, 0, loadedtoRemove.Item2.Length);
+                LoadedChatFiles.Remove(loadedtoRemove);
+            }
+            StateHasChanged();
+        }
+
+        protected void ClearLoadedChatDocuments()
+        {
+            foreach (var file in LoadedChatFiles)
+            {
+                Array.Clear(file.Item2, 0, file.Item2.Length);
+            }
             LoadedChatFiles.Clear();
+            StateHasChanged();
         }
 
         protected async Task SubmitDocumentRequirements()
@@ -1151,6 +1198,19 @@ namespace BrokerIQ.Online.Pages
                     UploadSectionClass += @" d-none";
                 }
             }
+        }
+
+        private async Task<byte[]> GetFileBytes(IBrowserFile file)
+        {
+            var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            await using var fileStream = new FileStream(path, FileMode.Create);
+            await file.OpenReadStream(file.Size).CopyToAsync(fileStream);
+            var bytes = new byte[file.Size];
+            fileStream.Position = 0;
+            await fileStream.ReadAsync(bytes);
+            fileStream.Close();
+            File.Delete(path);
+            return bytes;
         }
 
         protected async Task GetInsuranceQuote()
