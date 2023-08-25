@@ -8,6 +8,7 @@ namespace BrokerIQ.Online.Models
     using BrokerIQ.Dto.Enum;
     using System.ComponentModel.DataAnnotations;
     using BrokerIQ.Online.Attributes;
+    using BrokerIQ.Dto.Dto;
 
     public class Customer
     {
@@ -111,5 +112,7 @@ namespace BrokerIQ.Online.Models
         public int? AnnualIncome { get; set; }
 
         public GenderEnum Gender { get; set; }
+
+        public int OccupationId { get; set; }
     }
 }

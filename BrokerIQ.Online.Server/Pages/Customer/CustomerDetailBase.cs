@@ -19,6 +19,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using BrokerIQ.Online.Models;
 using MudBlazor;
+using BrokerIQ.Dto.Dto;
+using BrokerIQ.Online.Server.Services.Interface;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -65,6 +67,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
+
+        [Inject]
+        public IOccupationService OccupationService { get; set; }
 
         [Inject]
         protected IJSRuntime js { get; set; }
@@ -180,6 +185,8 @@ namespace BrokerIQ.Online.Pages
 
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
+        protected OccupationDto Occupation { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             var user = await AccountService.GetUser();
@@ -193,6 +200,7 @@ namespace BrokerIQ.Online.Pages
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
                 CustomerCategory = (int)Customer.CustomerCategory;
                 CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
+                Occupation = await OccupationService.GetById(Customer.OccupationId);
 
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
                 ResetUploadsBadge();
