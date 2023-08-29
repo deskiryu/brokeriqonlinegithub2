@@ -2,26 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
+using BrokerIQ.Dto.CreateDto;
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Pages.Customer.Components;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Options;
+using Microsoft.JSInterop;
+using BrokerIQ.Online.Models;
+using MudBlazor;
+using BrokerIQ.Dto.Dto;
+using BrokerIQ.Online.Server.Services.Interface;
 
 namespace BrokerIQ.Online.Pages
 {
-    using System.IO;
-    using BrokerIQ.Dto.CreateDto;
-    using BrokerIQ.Dto.Enum;
-    using BrokerIQ.Dto.Models;
-    using BrokerIQ.Online.Server.AppSettings;
-    using BrokerIQ.Online.Server.Extensions;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Online.Server.Shared;
-    using BrokerIQ.Online.Services.Interface;
-    using Microsoft.AspNetCore.Components;
-    using Microsoft.AspNetCore.Components.Forms;
-    using Microsoft.AspNetCore.Components.Web;
-    using Microsoft.Extensions.Options;
-    using Microsoft.JSInterop;
-    using Models;
-    using MudBlazor;
-
     public class CustomerDetailBase : ComponentBase
     {
         [Inject]
@@ -67,6 +69,9 @@ namespace BrokerIQ.Online.Pages
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
 
         [Inject]
+        public IOccupationService OccupationService { get; set; }
+
+        [Inject]
         protected IJSRuntime js { get; set; }
 
         protected const int DefaultMonthsToShow = -1;
@@ -88,6 +93,8 @@ namespace BrokerIQ.Online.Pages
         public bool BrokerHasWhiteLabel { get; set; }
 
         public bool BrokerHasWhiteLabelAndIsInsuranceOnly { get; set; }
+
+        public bool BrokerHasActiveInsuranceQuoteSubscription { get; set; }
 
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
@@ -178,6 +185,8 @@ namespace BrokerIQ.Online.Pages
 
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
+        protected OccupationDto Occupation { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             var user = await AccountService.GetUser();
@@ -191,6 +200,7 @@ namespace BrokerIQ.Online.Pages
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
                 CustomerCategory = (int)Customer.CustomerCategory;
                 CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
+                Occupation = await OccupationService.GetById(Customer.OccupationId);
 
                 CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
                 ResetUploadsBadge();
@@ -213,10 +223,13 @@ namespace BrokerIQ.Online.Pages
                 BrokerHasWhiteLabelAndIsInsuranceOnly = false;
                 if (!IsAdmin)
                 {
-                    var broker = await BrokerService.GetBroker(user.MasterBrokerId);
+                    var broker = await BrokerService.GetBroker(user.MasterBrokerId, true);
+                    var today = DateTime.UtcNow;
                     BrokerName = broker.Name;
                     BrokerHasWhiteLabel = broker.BrokerIdentifier != null && broker.BrokerIdentifier.IdentifierFound;
                     BrokerHasWhiteLabelAndIsInsuranceOnly = BrokerHasWhiteLabel && broker.BrokerIdentifier != null && broker.BrokerIdentifier.InsuranceOnly;
+                    BrokerHasActiveInsuranceQuoteSubscription = broker.Subscriptions.Any(s => s.SubscriptionServiceId == SubscriptionServiceEnum.InsuranceQuote &&
+                            s.StartDate <= today && today <= s.EndDate);
                     await PopulateBrokerDefinedMessages();
                 }
                 else
@@ -335,7 +348,6 @@ namespace BrokerIQ.Online.Pages
                     await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
                     return;
                 }
-
 
                 dialogParams.Add("Notification", selectedNotification);
 
@@ -685,7 +697,8 @@ namespace BrokerIQ.Online.Pages
                 }
                 else if (LoadedChatFiles.Any())
                 {
-                    foreach (var file in LoadedChatFiles){
+                    foreach (var file in LoadedChatFiles)
+                    {
                         var fileName = "";
                         var memoryStream = new MemoryStream();
                         if (file.Item1 != null)
@@ -736,7 +749,7 @@ namespace BrokerIQ.Online.Pages
                         }
                         else if (filesAttached)
                         {
-                            if(filenames.Count == memoryStreams.Count)
+                            if (filenames.Count == memoryStreams.Count)
                             {
                                 for (int i = 0; i < memoryStreams.Count; i++)
                                 {
@@ -929,7 +942,7 @@ namespace BrokerIQ.Online.Pages
 
         protected void ClearLoadedChatDocuments()
         {
-            foreach(var  file in LoadedChatFiles)
+            foreach (var file in LoadedChatFiles)
             {
                 Array.Clear(file.Item2, 0, file.Item2.Length);
             }
@@ -1206,6 +1219,26 @@ namespace BrokerIQ.Online.Pages
             fileStream.Close();
             File.Delete(path);
             return bytes;
+        }
+
+        protected async Task GetInsuranceQuote()
+        {
+            var parameters = new DialogParameters
+            {
+                { "Customer", Customer }
+            };
+
+            var options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+
+            var result = await DialogService.Show<IncomeProtectionQuoteDialog>("Income Protection Quote", parameters, options).Result;
+
+            if (!result.Cancelled)
+            {
+
+
+
+
+            }
         }
     }
 }

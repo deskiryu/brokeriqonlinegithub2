@@ -17,6 +17,7 @@ using MudBlazor.Services;
 using BrokerIQ.Online.Services;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Concrete;
+using BrokerIQ.Online.Server.Services.Interface;
 
 namespace BrokerIQ.Online.ServerApplication
 {
@@ -91,6 +92,8 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<ITrainingVideoService, TrainingVideoService>();
             services.AddScoped<IBrokerReminderOptionService, BrokerReminderOptionService>();
             services.AddScoped<IBrokerSubscriptionService, BrokerSubscriptionService>();
+            services.AddScoped<IInsuranceQuoteService, InsuranceQuoteService>();
+            services.AddScoped<IOccupationService, OccupationService>();
 
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();

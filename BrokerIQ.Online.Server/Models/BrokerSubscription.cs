@@ -7,7 +7,7 @@ namespace BrokerIQ.Online.Server.Models
     {
         public int BrokerId { get; set; }
 
-        public SubscriptionServiceEnum SubscriptionService { get; set; }
+        public SubscriptionServiceEnum SubscriptionServiceId { get; set; }
 
         public DateTime StartDate { get; set; }
 

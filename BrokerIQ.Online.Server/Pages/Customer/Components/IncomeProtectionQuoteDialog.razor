@@ -1,0 +1,41 @@
+@using BrokerIQ.Online.Server.Extensions <MudDialog>
+    <DialogContent>
+        <MudForm @ref="form">
+            <MudGrid>
+                <MudItem xs="6"> @* <MudSelect T="string" Label="Lives Assured" AnchorOrigin="Origin.BottomCenter" ReadOnly=true @bind-Value="SelectedLife"> @foreach (var value in LivesAssured) { <MudSelectItem Value="@value">@value</MudSelectItem> } </MudSelect> *@
+                    <MudNumericField @bind-Value="SelectedToAge" Label="To Age" Variant="Variant.Text" Min="50" Max="70" />
+                    <MudSelect T="string" Label="Premium Type" AnchorOrigin="Origin.BottomCenter" @bind-Value="SelectedPremiumType"> @foreach (var value in PremiumTypes)
+                        {
+                            <MudSelectItem Value="@value">@value</MudSelectItem>
+                        } </MudSelect>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudSelect T="string" Label="Deferred Period" AnchorOrigin="Origin.BottomCenter" @bind-Value="SelectedDeferredPeriod"> @foreach (var value in DeferredPeriods)
+                        {
+                            <MudSelectItem Value="@value">@value</MudSelectItem>
+                        } </MudSelect>
+                        <MudSelect T="string" Label="Indexation" AnchorOrigin="Origin.BottomCenter" @bind-Value="SelectedIndexation"> @foreach (var value in Indexations)
+                        {
+                            <MudSelectItem Value="@value">@value</MudSelectItem>
+                        } </MudSelect>
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
+            <MudButton Class="mt-2" Disabled="@isProcessing" OnClick="GetQuote" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" FullWidth="true"> @if (isProcessing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Getting Quote ...</MudText>
+            }
+            else
+            {
+                <MudText>Get Quote</MudText>
+            }
+        </MudButton>
+        <MudPaper Class="mt-2" Elevation="0">
+            <MudText>@QuoteText</MudText>
+        </MudPaper>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Back</MudButton>
+    </DialogActions>
+</MudDialog> 
