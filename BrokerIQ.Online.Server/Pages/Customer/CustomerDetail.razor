@@ -157,10 +157,11 @@ else if (!Saved)
                             <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">Occupation</label>
                                 <div class="col-lg-4">
-                                    <label type="text" readonly class="form-control-plaintext">@Occupation.Description (@Occupation.OrigoCode)</label>
+                                    <label type="text" readonly class="form-control-plaintext"> @(Occupation == null ? String.Empty : $"{Occupation.Description} ({Occupation.OrigoCode})")</label>
                                 </div>
 
                                 <label class="col-lg-2 col-form-label">Annual Income</label>
+                                
                                 <div class="col-lg-4">
                                     <label type="text" readonly class="form-control-plaintext">£ @Customer.AnnualIncome</label>
                                 </div>
