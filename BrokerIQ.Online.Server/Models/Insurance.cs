@@ -91,6 +91,26 @@ namespace BrokerIQ.Online.Models
 
         public bool ShowFractureCover { get; set; }
 
+        public bool ShowPolNumber { get; set; }
+
+        public PaymentMethodEnum PaymentMethod { get; set; }
+
+        public bool ShowPaymentMethod { get; set; }
+
+        public DateTime? RetroactiveDate { get; set; }
+
+        public bool ShowRetroactiveDate { get; set; }
+
+        [StringLength(200, ErrorMessage = "Jurisdiction is too long.")]
+        public string Jurisdiction { get; set; }
+
+        public bool ShowJurisdiction { get; set; }
+
+        [StringLength(200, ErrorMessage = "Territorial Limit is too long.")]
+        public string TerritorialLimit { get; set; }
+
+        public bool ShowTerritorialLimit { get; set; }
+
         public virtual ICollection<InsuranceDocument> SupportingDocuments { get; set; }
     }
 }
