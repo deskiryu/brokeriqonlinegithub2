@@ -166,7 +166,7 @@
                         </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Term</label>
+                                <label class="col-sm-3 col-form-label">Term</label>
                                 <div class="col-sm-5">
                                     <MudItem class="col">
                                         <MudTextField @bind-Value="@Insurance.TermYears" HelperText="Enter a term" Format="" Adornment="Adornment.Start" AdornmentText="Years" />
@@ -180,7 +180,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Benefit Amount</label>
+                                <label class="col-sm-3 col-form-label">Benefit Amount</label>
                                 <div class="col-sm-5">
                                     <MudItem class="col" >
                                         <MudTextField @bind-Value="@Insurance.TermAmount" HelperText="Enter a benefit amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
@@ -194,7 +194,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Deferred Period</label>
+                                <label class="col-sm-3 col-form-label">Deferred Period</label>
                                 <div class="col-sm-5">
                                     <MudItem class="col">
                                         <MudTextField @bind-Value="@Insurance.DeferredPeriodWeeks" HelperText="Enter a deferred period" Format="" Adornment="Adornment.Start" AdornmentText="Weeks" />
@@ -229,7 +229,7 @@
                         {
 
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Fracture cover</label>
+                                <label class="col-sm-3 col-form-label">Fracture cover</label>
                                 <div class="col-sm-5">
                                     <MudCheckBox @bind-Checked="@Insurance.FractureCover" />
                                 </div>
@@ -239,84 +239,85 @@
                                 </div>
                             </div>
                         }
-
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Policy number</label>
-                            <div class="col-sm-5">
-                                <MudItem class="col">
-                                <MudTextField @bind-Value="@Insurance.PolNumber" HelperText="Enter a term" Format="" />
-                                <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.PolNumber)" />
-                                </MudItem>
+                        @if (BrokerHasWhiteLabelAndIsInsuranceOnly && BrokerIQ.Dto.Extensions.Extensions.IsBusinessInsurance(Insurance.InsType))
+                        {
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Policy number</label>
+                                <div class="col-sm-5">
+                                    <MudItem class="col">
+                                        <MudTextField @bind-Value="@Insurance.PolNumber" HelperText="Enter a policy number" Format="" />
+                                        <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.PolNumber)" />
+                                    </MudItem>
+                                </div>
+                                <div class="col-sm-2 mt-5">
+                                    <label>Show</label>
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowPolNumber" />
+                                </div>
                             </div>
-                            <div class="col-sm-2 mt-5">
-                                <label>Show</label>
-                                <MudCheckBox @bind-Checked="@Insurance.ShowPolNumber" />
-                            </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Payment Method</label>
-                            <div class="col-sm-5">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Payment Method</label>
+                                <div class="col-sm-5">
 
-                                <InputSelect id="termtype" class="form-control" @bind-Value="@PaymentMethod">
-                                    @{
-                                        var names = Enum.GetNames(typeof(PaymentMethodEnum));
-                                        for (int i = 0; i < names.Length; i++)
-                                        {
-                                            var looped = (PaymentMethodEnum)i;
-                                            <option value=@i>@looped.GetDisplayName()</option>
+                                    <InputSelect id="termtype" class="form-control" @bind-Value="@PaymentMethod">
+                                        @{
+                                            var names = Enum.GetNames(typeof(PaymentMethodEnum));
+                                            for (int i = 0; i < names.Length; i++)
+                                            {
+                                                var looped = (PaymentMethodEnum)i;
+                                                <option value=@i>@looped.GetDisplayName()</option>
+                                            }
                                         }
-                                    }
-                                </InputSelect>
-                                <ValidationMessage class="offset-sm-3" For="@(() => PaymentMethod)" />
+                                    </InputSelect>
+                                    <ValidationMessage class="offset-sm-3" For="@(() => PaymentMethod)" />
 
+                                </div>
+                                <div class="col-sm-2 ">
+                                    <label>Show</label>
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowPaymentMethod" />
+                                </div>
                             </div>
-                           <div class="col-sm-2 mt-5">
-                                <label>Show</label>
-                                <MudCheckBox @bind-Checked="@Insurance.ShowPaymentMethod" />
-                            </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Retroactive Date</label>
-                            <div class="col-sm-5">
-                                <DateRangePicker @bind-StartDate="ReviewDate" SingleDatePicker="true" class="form-control " Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
-                                <ValidationMessage class="offset-sm-3" For="@(() => Insurance.RetroactiveDate)" />
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Retroactive Date</label>
+                                <div class="col-sm-5">
+                                    <DateRangePicker @bind-StartDate="ReviewDate" SingleDatePicker="true" class="form-control " Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
+                                    <ValidationMessage class="offset-sm-3" For="@(() => Insurance.RetroactiveDate)" />
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>Show</label>
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowRetroactiveDate" />
+                                </div>
                             </div>
-                            <div class="col-sm-2">
-                                <label>Show</label>
-                                <MudCheckBox @bind-Checked="@Insurance.ShowRetroactiveDate" />
-                            </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Jurisdiction</label>
-                            <div class="col-sm-5">
-                                <MudItem class="col">
-                                    <MudTextField @bind-Value="@Insurance.Jurisdiction" HelperText="Enter a term" Format=""  />
-                                <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.Jurisdiction)" />
-                                </MudItem>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Jurisdiction</label>
+                                <div class="col-sm-5">
+                                    <MudItem class="col">
+                                        <MudTextField @bind-Value="@Insurance.Jurisdiction" HelperText="Enter a jurisdiction" Format=""  />
+                                        <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.Jurisdiction)" />
+                                    </MudItem>
+                                </div>
+                                <div class="col-sm-2 mt-5">
+                                    <label>Show</label>
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowJurisdiction" />
+                                </div>
                             </div>
-                            <div class="col-sm-2 mt-5">
-                                <label>Show</label>
-                                <MudCheckBox @bind-Checked="@Insurance.ShowJurisdiction" />
-                            </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Territorial Limit</label>
-                            <div class="col-sm-5">
-                                <MudItem class="col">
-                                    <MudTextField @bind-Value="@Insurance.TerritorialLimit" HelperText="Enter a term" Format=""  />
-                                    <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.TerritorialLimit)" />
-                                </MudItem>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Territorial Limit</label>
+                                <div class="col-sm-5">
+                                    <MudItem class="col">
+                                        <MudTextField @bind-Value="@Insurance.TerritorialLimit" HelperText="Enter a territorial limit" Format=""  />
+                                        <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.TerritorialLimit)" />
+                                    </MudItem>
+                                </div>
+                                <div class="col-sm-2 mt-5">
+                                    <label>Show</label>
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowTerritorialLimit" />
+                                </div>
                             </div>
-                            <div class="col-sm-2 mt-5">
-                                <label>Show</label>
-                                <MudCheckBox @bind-Checked="@Insurance.ShowTerritorialLimit" />
-                            </div>
-                        </div>
-
+                        }
                         @if (IsAdmin)
                         {
                             <div class="form-group row">
