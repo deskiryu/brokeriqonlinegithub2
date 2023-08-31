@@ -36,6 +36,9 @@
         </MudPaper>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Back</MudButton>
+        <MudButton OnClick="Cancel">Back</MudButton> @if (LastPremiumAmount > 0)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" OnClick="SendChatToCustomer">Message Customer</MudButton>
+        }
     </DialogActions>
-</MudDialog> 
+</MudDialog>
