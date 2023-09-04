@@ -116,6 +116,9 @@
                         <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.Broker)">Broker
                         </MudTableSortLabel>
                     </MudTh>
+                }
+                
+                @if(IsAdmin || IsBroker){
                     <MudTh class="">
                         Vetted
                     </MudTh>
@@ -187,6 +190,8 @@
                     @if (IsAdmin)
                 {
                     <MudTd DataLabel="Broker">@context.Broker</MudTd>
+                }
+                @if(IsAdmin || IsBroker){
                     <MudTd>
                         <MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Name)" />
                     </MudTd>
@@ -200,17 +205,13 @@
                 <MudTd DataLabel="Send">
                     @if (!IsMinorAdmin)
                     {
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
-                            Link="@($"videodetail?url={context.Url}")">
-                            <i class="fas fa-paper-plane"></i>
-                        </MudButton>
+                        <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.Send"
+                            Link="@($"videodetail?url={context.Url}")" />
                     }
                 </MudTd>
                 <MudTd DataLabel="Delete">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
-                        class="btn btn-primary table-btn" @onclick="f => DeleteVideo(context.Name)">
-                        <i class="fas fa-trash"></i>
-                    </MudButton>
+                    <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.DeleteForever"
+                        @onclick="f => DeleteVideo(context.Name)" />
                 </MudTd>
             </RowTemplate>
         </MudTable>
