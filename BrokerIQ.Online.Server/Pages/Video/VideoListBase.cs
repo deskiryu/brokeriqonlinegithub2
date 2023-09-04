@@ -93,6 +93,8 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsMinorAdmin { get; set; }
 
+        public bool IsBroker { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
@@ -118,6 +120,7 @@ namespace BrokerIQ.Online.Pages
                 }
                 else if (user.IsBroker || user.IsBrokerStaff)
                 {
+                    IsBroker = user.IsBroker;
                     BrokerId = user.MasterBrokerId;
                 }
                 else
@@ -673,12 +676,14 @@ namespace BrokerIQ.Online.Pages
             {
                 var response = await AdminService.VerifyAdmin();
                 verified = response.BoolResult;
-                if (!verified)
-                {
-                    response = await AdminService.VerifyMinorAdmin();
-                    verified = response.BoolResult;
-                }
                 IsAdmin = verified;
+
+                response = await AdminService.VerifyMinorAdmin();
+                verified = response.BoolResult;
+                IsMinorAdmin = verified;
+
+                var user = await AccountService.GetUser();
+                verified = IsBroker = user.IsBroker;
             }
             catch
             {
