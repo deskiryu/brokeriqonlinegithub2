@@ -4,11 +4,14 @@
 @using BrokerIQ.Online.Services.Interface
 @using Dto.Enum
 @using Microsoft.AspNetCore.Components
+@using Microsoft.Extensions.Options
+@using BrokerIQ.Online.AppSettings
 
 @inherits CustomerListBase
 
 @inject NavigationManager NavigationManager
 @inject IAccountService AccountService
+@inject IOptions<ReviewItAPIDetails> api
 
 <h3 class="page-title">Clients</h3>
 
@@ -122,6 +125,7 @@ else
                     </MudSelect>
                 </div>                    
             </div>
+            @if(this.api.Value.ShowProtection){
             <div class="row">
                 <div class="col-lg-4">
                     <MudSwitch T="bool" @bind-checked="@IsVulnerable" Label="Is Vulnerable" Color="Color.Primary"/>
@@ -135,7 +139,9 @@ else
                 <div class="col-lg-4">
                     <MudSwitch T="bool" @bind-checked="@WithoutLifeCritical" Label="Without Life & Critical Ilness" Color="Color.Primary" />
                 </div>
-            </div>
+            </div>  
+            }
+
 
             @if (IsAdmin)
             {   

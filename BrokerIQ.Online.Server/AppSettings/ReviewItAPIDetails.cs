@@ -11,5 +11,7 @@
         public int AutoLogoutTimeMs { get; set; }
 
         public string VideoConvertUrl { get; set; }
+
+        public bool ShowProtection { get; set; }
     }
 }
