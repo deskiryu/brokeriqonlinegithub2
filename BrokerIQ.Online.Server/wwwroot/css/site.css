@@ -531,3 +531,13 @@ app {
 #components-reconnect-modal h5 a {
     color: #092464 !important;
 }
+
+tr.recent {
+    color: green;
+    font-weight: bold;
+}
+
+tr.expired {
+    color: red;
+    font-weight: bold;
+}

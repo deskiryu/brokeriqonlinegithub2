@@ -1,5 +1,6 @@
 using System;
 using BrokerIQ.Dto.Dto;
+using BrokerIQ.Dto.Enum;
 using MudBlazor;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
@@ -14,11 +15,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         MudForm form;
 
-        MudSelect<TimeSpan> FirstNotification;
-        MudSelect<TimeSpan> SecondNotification;
-        MudSelect<TimeSpan> ThirdNotification;
-        MudSelect<TimeSpan> FourthNotification;
-        MudSelect<TimeSpan> FifthNotification;
+        MudSelect<int> ReminderTypeId;
+        MudSelect<TimeSpan> Notification;
+        MudSelect<int> ReminderTargetId;
 
         private TimeSpan FromDays180 = TimeSpan.FromDays(180);
         private TimeSpan FromDays150 = TimeSpan.FromDays(150);
@@ -37,9 +36,26 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         void Submit()
         {
+            form.Validate();
+
             if (form.IsValid) MudDialog.Close(DialogResult.Ok(Option));
         }
 
         void Cancel() => MudDialog.Cancel();
+
+        protected static string IsValidReminderType(int i)
+        {
+            return Enum.IsDefined(typeof(ReminderTypeEnum), i) ? null : "Please select a reminder type";
+        }
+
+        protected static string IsValidTarget(int i)
+        {
+            return Enum.IsDefined(typeof(ReminderTargetEnum), i) ? null : "Please select a target for the reminder";
+        }
+
+        protected static string IsValidNotificationInterval(TimeSpan ts)
+        {
+            return ts != TimeSpan.Zero ? null : "Please select a notification interval";
+        }
     }
 }

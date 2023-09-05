@@ -1,0 +1,112 @@
+﻿@using System.Net
+@using System.Text
+@using BrokerIQ.Dto.Enum;
+@using BrokerIQ.Online.Models;
+@using BrokerIQ.Online.Server.Extensions;
+@using BrokerIQ.Online.Server.Models;
+@using BrokerIQ.Online.Services.Interface;
+@using System.IO;
+@using Microsoft.Extensions.Options;
+@using BrokerIQ.Online.Server.AppSettings;
+
+@inject IBrokerDefinedMessageService BrokerDefinedMessageService
+@inject IDialogService DialogService
+@inject IOptions<FileUploadSettings> FileUploadSettingsOption;
+@inject IChatService ChatService;
+@inject IAlertService AlertService;
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer Style="max-height: 800px; overflow-y: scroll">
+            <div class="row">
+                <div class="col-sm-12 mt-1">
+                    <div class="card">
+                        <div class="card-body">
+                            <p>Audio @AudioName will be sent to the chat stream of : </p>
+                            @foreach (var user in CustomerNames)
+                            {
+                                <MudText Style="white-space: pre-line;">@user</MudText>
+                            }
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <MudInputString @bind-Value="Message" Placeholder="Type a message for your audio (optional)" Style="width:100%" />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+            OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+                   OnClick="NewChatSend">Send</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code
+{
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public List<(string, int)> Customers { get; set; }
+
+    [Parameter] public int BrokerID { get; set; }
+
+    [Parameter] public string AudioUrl { get; set; }
+
+    [Parameter] public string AudioName { get; set; }
+
+
+    public string Message { get; set; }
+
+    public List<string> CustomerNames { get; set; }
+
+    public List<int> CustomerIds { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Loading = false;
+
+        CustomerNames = Customers.Select(x => x.Item1).ToList();
+        CustomerIds = Customers.Select(x => x.Item2).ToList();
+
+    }
+
+    private bool Loading = false;
+
+    private void Ok()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+
+    protected async Task NewChatSend()
+    {
+        bool succeeded = false;
+
+        succeeded = (await ChatService.SendMultipleAudioLink(Message, CustomerIds, BrokerID, AudioUrl));
+
+
+        if (!succeeded)
+        {
+            AlertService.Error("Chat sending failed for some or all clients, check the chat to see.");
+        }
+        else
+        {
+            AlertService.Success("Chat successfully sent.");
+        }
+        MudDialog.Close(DialogResult.Ok("true"));
+
+        return;
+    }
+}

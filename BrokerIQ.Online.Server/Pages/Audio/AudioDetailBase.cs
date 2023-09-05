@@ -13,6 +13,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
     using Microsoft.AspNetCore.WebUtilities;
     using System.IO;
     using BrokerIQ.Online.Server.Shared;
+    using BrokerIQ.Online.Server.Services;
 
     public class AudioDetailBase : ComponentBase
     {
@@ -97,6 +98,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
             else
             {
                 Brokers = new List<Broker>();
+                BrokerId = user.MasterBrokerId;
             }
 
             try
@@ -211,6 +213,46 @@ namespace BrokerIQ.Online.Server.Pages.Audio
             Customers.Clear();
             Customers = null;
             Customers = (await CustomerService.GetAllCustomers(BrokerId, filterCategory: CustomerCategory, filterAgeRange: AgeRange, profilePictures: false)).ToList();
+        }
+
+        protected async Task SendChatMessageToSelected()
+        {
+            var dialogParams = new DialogParameters();
+
+            var targets = new List<(string, int)>();
+            if (SelectedCustomers != null && SelectedCustomers.Any())
+            {
+                targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => (x.Name, x.Id)).ToList();
+            }
+
+            if (targets == null || !targets.Any())
+            {
+                AlertService.Error("No targets chosen");
+                return;
+            }
+
+            if (IsAdmin)
+            {
+                if (BrokerId <= 0)
+                {
+                    AlertService.Error("Please filter by broker first");
+                    return;
+                }
+            }
+
+            dialogParams.Add("BrokerId", BrokerId);
+            dialogParams.Add("Customers", targets);
+            dialogParams.Add("AudioUrl", Url);
+            dialogParams.Add("AudioName", AudioNameNoExtension);
+
+
+            var dialogOptions = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true
+            };
+
+            await DialogService.Show<AudioChatDialog>("Send Audio To Multiple Chats", dialogParams, dialogOptions).Result;
         }
     }
 }

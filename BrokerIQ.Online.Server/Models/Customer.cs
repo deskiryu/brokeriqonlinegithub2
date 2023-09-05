@@ -8,6 +8,7 @@ namespace BrokerIQ.Online.Models
     using BrokerIQ.Dto.Enum;
     using System.ComponentModel.DataAnnotations;
     using BrokerIQ.Online.Attributes;
+    using BrokerIQ.Dto.Dto;
 
     public class Customer
     {
@@ -70,6 +71,8 @@ namespace BrokerIQ.Online.Models
 
         public bool VideoNotificationsAllowed { get; set; }
 
+        public bool IsVulnerable { get; set; }
+
         public virtual ICollection<Insurance> Insurances { get; set; }
 
         public virtual ICollection<Mortgage> Mortgages { get; set; }
@@ -94,7 +97,7 @@ namespace BrokerIQ.Online.Models
         {
             get
             {
-                if(ProfilePicture != null && ProfilePicture.File.Any())
+                if (ProfilePicture != null && ProfilePicture.File.Any())
                 {
                     var base64 = Convert.ToBase64String(ProfilePicture.File);
                     var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
@@ -103,5 +106,13 @@ namespace BrokerIQ.Online.Models
                 return null;
             }
         }
+
+        public bool? IsSmokerOrVaper { get; set; }
+
+        public int? AnnualIncome { get; set; }
+
+        public GenderEnum Gender { get; set; }
+
+        public int OccupationId { get; set; }
     }
 }

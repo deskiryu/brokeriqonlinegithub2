@@ -52,7 +52,7 @@ else if (!Saved)
                         </div>
                         <div class="col-lg-10">
                             <div class="form-group row">
-                                <label class="col-lg-2 ">Name</label>
+                                <label class="col-lg-2 col-form-label">Name</label>
                                 <div class="col-lg-4">
                                     <label type="text" readonly class="form-control-plaintext">@Customer.Name</label>
                                 </div>
@@ -140,9 +140,39 @@ else if (!Saved)
                                             <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
                                         </div>
                             }      
-
                             </div>
 
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Category</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.CustomerCategory.GetDisplayName()</label>
+                                </div>
+
+                                 <label class="col-lg-2 col-form-label">Is Smoker/Vaper</label>
+                                <div class="col-lg-4">
+                                    <MudCheckBox ReadOnly Checked="@Customer.IsSmokerOrVaper" Style="margin-left: -15px" TriState="true" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Occupation</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext"> @(Occupation == null ? String.Empty : $"{Occupation.Description} ({Occupation.OrigoCode})")</label>
+                                </div>
+
+                                <label class="col-lg-2 col-form-label">Annual Income</label>
+                                
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">£ @Customer.AnnualIncome</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Gender</label>
+                                <div class="col-lg-4">
+                                    <label type="text" readonly class="form-control-plaintext">@Customer.Gender.GetDisplayName()</label>
+                                </div>
+                            </div>
 
                             <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">App Version</label>
@@ -151,18 +181,18 @@ else if (!Saved)
                                 </div>
                             @if (BrokerHasWhiteLabel)
                             {
-                                        <label class="col-lg-2 ">Using Branded App</label>
+                                <label class="col-lg-2 ">Using Branded App</label>
                                 @if (Customer.IsWhiteLabel)
                                 {
-                                                <div class="col-lg-4">
-                                                    <i class="fa fa-check-circle font_awesome_table_checks success"></i>
-                                                </div>
+                                    <div class="col-lg-4">
+                                        <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                                    </div>
                                 }
                                 else
                                 {
-                                                <div class="col-lg-4">
-                                                    <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
-                                                </div>
+                                    <div class="col-lg-4">
+                                        <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                                    </div>
                                 }                                
                             }
 
@@ -217,6 +247,7 @@ else if (!Saved)
                                     </MudButton>
                             }
 
+
                         </div>
                         </div>
                     </div>
@@ -231,6 +262,11 @@ else if (!Saved)
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
                         Add New Insurance
                     </MudButton>
+                    @if(Customer.IsVulnerable && BrokerHasActiveInsuranceQuoteSubscription){
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick=@(r=> GetInsuranceQuote()) class="ml-2 mb-2">
+                            Get Quote
+                        </MudButton>
+                    }
                     <table id="table-insurance" class="table  col-sm-12 table-striped ">
                         <thead>
                             <tr>
@@ -239,7 +275,7 @@ else if (!Saved)
                                 <th>Expiry</th>
                             @if (IsAdmin)
                             {
-                                        <th>Broker</th>
+                                <th>Broker</th>
                             }
                                 <th></th>
                             </tr>
@@ -249,7 +285,13 @@ else if (!Saved)
                         {
                             if (!insurance.MenuPlanId.HasValue || insurance.MenuPlanId == 0)
                             {
-                                            <tr>
+                                var currentDate = DateTime.UtcNow;
+
+                                var rowClass = String.Empty;
+
+                                if (@insurance.ExpiryDate < currentDate) rowClass = "expired" ;
+
+                                            <tr class="@rowClass">
                                                 <td>@insurance.InsType.GetDisplayName()</td>
                                                 <td>@insurance.Name</td>
                                                 <td>@insurance.ExpiryDate.ToBiqDateString()</td>
@@ -313,25 +355,32 @@ else if (!Saved)
                                 <tbody>
                             @foreach (var mortgage in Customer.Mortgages)
                             {
-                                            <tr>
-                                                <td>@mortgage.ProviderName</td>
-                                                <td>@mortgage.MortgageType.GetDisplayName()</td>
-                                                <td>@mortgage.MortgageRateType.GetDisplayName()</td>
+                                var currentDate = DateTime.UtcNow;
 
-                                    @if (mortgage.PromotionalEndDate.HasValue)
-                                    {
-                                                        <td>@mortgage.PromotionalEndDate.Value.ToBiqDateString()</td>
-                                    }
-                                    @if (IsAdmin)
-                                    {
-                                                        <td>@Brokers.First(x => x.Id == mortgage.BrokerId)?.Name</td>
-                                    }
-                                                <td>
-                                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/{mortgage.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
-                                                        <i class="fas fa-edit"></i>
-                                                    </MudButton>
-                                                </td>
-                                            </tr>
+                                var rowClass = String.Empty;
+
+                                if (@mortgage.PromotionalEndDate < currentDate) rowClass = "recent" ;
+                                if (@mortgage.EndDate < currentDate) rowClass = "expired" ;
+
+                                    <tr class="@rowClass">
+                                        <td>@mortgage.ProviderName</td>
+                                        <td>@mortgage.MortgageType.GetDisplayName()</td>
+                                        <td>@mortgage.MortgageRateType.GetDisplayName()</td>
+
+                                        @if (mortgage.PromotionalEndDate.HasValue)
+                                        {
+                                            <td>@mortgage.PromotionalEndDate.Value.ToBiqDateString()</td>
+                                        }
+                                        @if (IsAdmin)
+                                        {
+                                            <td>@Brokers.First(x => x.Id == mortgage.BrokerId)?.Name</td>
+                                        }
+                                            <td>
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"mortgageedit/{mortgage.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
+                                                    <i class="fas fa-edit"></i>
+                                                </MudButton>
+                                            </td>
+                                    </tr>
                             }
                                 </tbody>
                             </table>
@@ -632,155 +681,204 @@ else if (!Saved)
                 </MudTabPanel>
                 <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@ChatBadgeDot' OnClick="@(f => ClearUnReadChat())">
                     <div @onclick="this.ClearUnReadChat">
-                    @if (!IsAdmin)
-                    {
-                                <div class="col-sm-6 control_wrapper mb-5">
-                                    <MudSelect T="string" @ref="TemplateSelect" 
-                                            Label="Select Message Template"
-                                            Placeholder="Select Message Template"
-                                            Clearable="true"
-                                            AdornmentColor="Color.Primary"
-                                            SelectedValuesChanged="@MessageTemplateChanged"
-                                            @bind-Value="SelectedTemplateMessage">
-                                @foreach (var message in MergedMessages)
-                                {
-                                    var attachment = String.IsNullOrWhiteSpace(message.FileName) 
-                                    ? String.Empty
-                                    : $"<br/><br/><i class=\"fa fa-file-pdf\"> &nbsp;{message.FileName}</i>";
+                        @if (!IsAdmin)
+                        {
+                            <div class="col-sm-6 control_wrapper mb-5">
+                                <MudSelect T="string" @ref="TemplateSelect" 
+                                        Label="Select Message Template"
+                                        Placeholder="Select Message Template"
+                                        Clearable="true"
+                                        AdornmentColor="Color.Primary"
+                                        SelectedValuesChanged="@MessageTemplateChanged"
+                                        @bind-Value="SelectedTemplateMessage">
+                                        @foreach (var message in MergedMessages)
+                                        {
+                                            var attachment = String.IsNullOrWhiteSpace(message.FileName) 
+                                            ? String.Empty
+                                            : $"<br/><br/><i class=\"fa fa-file-pdf\"> &nbsp;{message.FileName}</i>";
 
-                                    var itemContent = $"{message.BrokerDefinedMessage}{@attachment}";
+                                            var itemContent = $"{message.BrokerDefinedMessage}{@attachment}";
 
-                                    <MudSelectItem Value="@(((int)message.BrokerDefinedMessageEnumValue).ToString())">@((MarkupString)itemContent)</MudSelectItem>
-                                }
-                                    </MudSelect>
-                                </div>
-                                <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                                    <MudDatePicker Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement"/>
-                                    <MudSpacer />
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
-                                </div>
+                                            <MudSelectItem Value="@(((int)message.BrokerDefinedMessageEnumValue).ToString())">@((MarkupString)itemContent)</MudSelectItem>
+                                        }
+                                </MudSelect>
+                            </div>
+                            <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                                <MudDatePicker Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement"/>
+                                <MudSpacer />
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
+                            </div>
 
-                                <div class="@UploadSectionClass">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <label class="card-title">Upload pdf files</label>
+                            <div class="@UploadSectionClass">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <label class="card-title">Upload pdf files</label>
 
-                                            <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
-                                                    <MudPaper class="drag-drop-zone">
-                                                        <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
-                                                        <MudText Typo="Typo.subtitle1">Click or drag pdf file to attach to chat</MudText>
-                                                    </MudPaper>
-                                            </div>
-               
-                                    @if (LoadedChatFiles.Any())
-                                    {
-                                        var filename = LoadedChatFiles[0].Name;
-                                                <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())" class="btn btn-link">Remove @filename</MudButton>
-                                    }
+                                        <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
+                                                <MudPaper class="drag-drop-zone">
+                                                    <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
+                                                    <MudText Typo="Typo.subtitle1">Click or drag pdf file to attach to chat</MudText>
+                                                </MudPaper>
                                         </div>
+              
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="">
+                                <div class="card">
+                                    <div class="card-body">
+               
+                                        @if (LoadedChatFiles.Any())
+                                        {
+                                        <MudTable Items="@LoadedChatFiles" Hover="true" SortLabel="Sort By" Class="">
+                                            <RowTemplate>
+                                                <MudTd>@context.Item1.Name</MudTd>
+                                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument(context.Item1.Name))" class="btn btn-link">Delete</MudButton></MudTd>
+                                            </RowTemplate>
+                                        </MudTable>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="col-sm-6 mt-1">
-                            <div class="card">
-                            <div class="card-body">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
-                            New Chat Message
-                            </MudButton>
-                            </div></div></div>
-                    }
-                    else
-                    {
-                            <div class="form-group row" >
-                                <label class="col-sm-4 col-form-label">Choose Broker</label>
-                                <div class="col-sm-8">
-                                @if (CustomerBrokers != null && CustomerBrokers.Any())
-                                {
-                                        <MudSelect T="int"
-                                                Label="Brokers"
-                                                Placeholder="Select"
-                                                Disabled="false"                           
-                                                SelectedValuesChanged="@ChatBrokerChanged"
-                                                AdornmentColor="Color.Primary"
-                                                @bind-Value="BrokerListId">
-                                            <MudSelectItem Value="0">Select</MudSelectItem>
-                                        @foreach (var item in @CustomerBrokers)
-                                        {
-                                                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                                        }
-                                            </MudSelect>
-                                }
+                                <div class="card">
+                                    <div class="card-body">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
+                                        New Chat Message
+                                        </MudButton>
+                                    </div>
                                 </div>
-                            </div>                    
-                    }
-
-                    <div class="col-sm-12 mt-1">
-                    <div class="card">
-                    <div class="card-body">
-                                @if (Chat != null && Chat.Messages.Any())
-                                {                    
-                                    @if (IsAdmin)
-                                    {
-                                        @if (Chat.BrokerId > 0)
-                                        {
-                                            <div class = "row col-sm-12">
-                                                @{
-                                                    var message = $"Chat is with - {@Brokers.First(x => x.Id == Chat.BrokerId)?.Name}";
-                                                        <p>@message</p>
-                                                }
                             </div>
-                                        }
+                        }
+                        else
+                        {
+                                <div class="form-group row" >
+                                    <label class="col-sm-4 col-form-label">Choose Broker</label>
+                                    <div class="col-sm-8">
+                                    @if (CustomerBrokers != null && CustomerBrokers.Any())
+                                    {
+                                            <MudSelect T="int"
+                                                    Label="Brokers"
+                                                    Placeholder="Select"
+                                                    Disabled="false"                           
+                                                    SelectedValuesChanged="@ChatBrokerChanged"
+                                                    AdornmentColor="Color.Primary"
+                                                    @bind-Value="BrokerListId">
+                                                <MudSelectItem Value="0">Select</MudSelectItem>
+                                            @foreach (var item in @CustomerBrokers)
+                                            {
+                                                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                                            }
+                                                </MudSelect>
                                     }
-                            <div class = "row col-sm-12">
-                    @foreach (var message in Chat.Messages.OrderByDescending(x => x.Id))
-                                        {
-                                            var advancedClass = $"col-sm-10 mb-1 {message.Style}";
-                                        <MudCard Class="@advancedClass">
-                                        <MudCardHeader>
-                                            <CardHeaderContent>
-                                            <MudText Typo="Typo.body1">@message.Message</MudText>   
+                                    </div>
+                                </div>                    
+                        }
 
-                                                </CardHeaderContent>
-                                        </MudCardHeader>
-                                        <MudCardContent>                                           
-                                                    @if (message.ChatDocumentId > 0)
-                                                    {
+                        <div class="col-sm-12 mt-1">
+                            <div class="card">
+                                <div class="card-body">
+                                    @if (Chat != null && Chat.Messages.Any())
+                                    {                    
+                                        @if (IsAdmin)
+                                        {
+                                            @if (Chat.BrokerId > 0)
+                                            {
+                                                <div class = "row col-sm-12">
+                                                    @{
+                                                        var message = $"Chat is with - {@Brokers.First(x => x.Id == Chat.BrokerId)?.Name}";
+                                                            <p>@message</p>
+                                                    }
+                                                </div>
+                                            }
+                                        }
+                                        <div class = "row col-sm-12">
+                                            @foreach (var message in Chat.Messages.OrderByDescending(x => x.Id))
+                                            {
+                                                var advancedClass = $"col-sm-10 mb-1 {message.Style}";
+                                                <MudCard Class="@advancedClass">
+                                                    <MudCardHeader>
+                                                        <CardHeaderContent>
+                                                        @if (message.FormattedLinkMessage != null && message.FormattedLinkMessage.Count == 3)
+                                                        {
+                                                            @message.FormattedLinkMessage[0]
+                                                            <MudLink @onclick="f => ViewLink(message.FormattedLinkMessage[1])" Color="Color.Tertiary">
+                                                                @message.FormattedLinkMessage[1]
+                                                            </MudLink>
+                                                            @message.FormattedLinkMessage[2]
+                                                        }
+                                                        else
+                                                        {
+                                                            @message.Message
+                                                        }
+                                                        </CardHeaderContent>
+                                                    </MudCardHeader>
+                                                    <MudCardContent>                                           
+                                                        @if (message.ChatDocumentId > 0)
+                                                        {
                                                             <div>
-                                                            @if (message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.JPEG || message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.PNG)
-                                                            {
-                                                                <img src="@message.ChatDocument.ChatDocAsImage" style="width:300px;" @onclick="f => ViewDocumentUpload(message.ChatDocument)" />
-                                                            }
-                                                            else
-                                                            {
-                                                                    <MudText>Pdf Attachment- @message.ChatDocument.FileName</MudText>                                                             
-                                                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(message.ChatDocument)">
-                                                                        <i class="fas fa-eye"></i>
-                                                                    </MudButton>
-                                                            } 
+                                                                @if (message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.JPEG || message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.PNG)
+                                                                {
+                                                                    <img src="@message.ChatDocument.ChatDocAsImage" style="width:300px;" @onclick="f => ViewDocumentUpload(message.ChatDocument)" />
+                                                                }
+                                                                else
+                                                                {
+                                                                        <MudText>Pdf Attachment- @message.ChatDocument.FileName</MudText>                                                             
+                                                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(message.ChatDocument)">
+                                                                            <i class="fas fa-eye"></i>
+                                                                        </MudButton>
+                                                                } 
 
                                                             </div>
 
-                                                    }     
-                                                    @if (message.BrokerSource)
-                                                    {
-                                                        var combined = $"Sent from us at {@message.SentTime.ToBiqDateTimeString()}";
-                                                        <MudText Typo="Typo.body2">@combined</MudText>
-                                                        @if (message.IsRead)
-                                                        {
-                                                        <MudIconButton Icon="@Icons.Material.Outlined.Check" Color="Color.Tertiary"/>
                                                         }
-                                                    }
-                                                    else
-                                                    {
-                                                        var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToBiqDateTimeString()}";
-                                                <MudText Typo="Typo.body2">@combined</MudText>
-                                                    }
-                                        </MudCardContent>
-                                    </MudCard>
-                                        }
+                                                        @if (message.IsVideo && !string.IsNullOrEmpty(message.VideoUrl))
+                                                        {
+                                                            <div>
+                                                                <video id="movie" width="350" height="262" controls preload>
+                                                                    <source src='@message.VideoUrl#t=0.1'>
+                                                                </video>
+
+                                                            </div>
+
+                                                        }
+
+                                                        @if (message.IsAudio && !string.IsNullOrEmpty(message.AudioUrl))
+                                                        {
+                                                            <div>
+                                                                <audio controls>
+                                                                    <source src='@message.AudioUrl#t=0.1' type="audio/wav">
+                                                                    <!-- HERE THE CODE FOR THE ALTERNATIVE PLAYER (FLASH) WILL BE! -->
+                                                                </audio>
+
+                                                            </div>
+
+                                                        }
+                                                    
+                                                        @if (message.BrokerSource)
+                                                        {
+                                                            var combined = $"Sent from us at {@message.SentTime.ToBiqDateTimeString()}";
+                                                            <MudText Typo="Typo.body2">@combined</MudText>
+                                                            @if (message.IsRead)
+                                                            {
+                                                            <MudIconButton Icon="@Icons.Material.Outlined.Check" Color="Color.Tertiary"/>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToBiqDateTimeString()}";
+                                                            <MudText Typo="Typo.body2">@combined</MudText>
+                                                        }
+                                                    </MudCardContent>
+                                                </MudCard>
+                                            }
+                                        </div>
+                                    }
+                                </div>
                             </div>
-                                }
-                    </div></div></div>
+                        </div>
                     </div>
                 </MudTabPanel>
             </MudTabs>

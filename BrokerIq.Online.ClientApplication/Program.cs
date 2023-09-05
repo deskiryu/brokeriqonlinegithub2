@@ -7,6 +7,7 @@ using BrokerIQ.Online.Mapper;
 using BrokerIQ.Online.Server.AppSettings;
 using BrokerIQ.Online.Server.Helper;
 using BrokerIQ.Online.Server.Services;
+using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Services;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Concrete;
@@ -70,6 +71,10 @@ namespace BrokerIQ.Online.Server
             builder.Services.AddScoped<IClientReferralService, ClientReferralService>();
             builder.Services.AddScoped<ITrainingVideoService, TrainingVideoService>();
             builder.Services.AddScoped<IBrokerReminderOptionService, BrokerReminderOptionService>();
+            builder.Services.AddScoped<IBrokerSubscriptionService, BrokerSubscriptionService>();
+            builder.Services.AddScoped<IInsuranceQuoteService, InsuranceQuoteService>();
+            builder.Services.AddScoped<IOccupationService, OccupationService>();
+            builder.Services.AddScoped<IBrokerIdentifierService, BrokerIdentifierService>();
 
             builder.Services.AddAutoMapper(typeof(ReviewItMapper));
             builder.Services.AddScoped<LoggedInAppState>();
