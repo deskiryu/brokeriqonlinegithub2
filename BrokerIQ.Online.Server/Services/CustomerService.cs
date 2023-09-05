@@ -13,6 +13,7 @@ namespace BrokerIQ.Online.Services
     using BrokerIQ.Online.Server.Extensions;
     using BrokerIQ.Dto.Enum;
     using Microsoft.AspNetCore.JsonPatch;
+    using BrokerIQ.Online.Server.Models;
 
     public class CustomerService : ICustomerService
     {
@@ -28,45 +29,17 @@ namespace BrokerIQ.Online.Services
             this.accountService = accountService;
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId=0, int filterRecent=0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures=false)
+        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures = false)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var option = (RecentEnum)filterRecent;
-            var ts = ((RecentPeriodEnum)filterPeriod).TransformToTS();
-            var searchOption = new SearchOptionDto
+            return await GetFilteredCustomers(new CustomerFilter()
             {
-                InsuranceEndingSoon = option==RecentEnum.RecentInsurance,
-                MortgagePromotionEndingSoon = option == RecentEnum.RecentMortgage,
-                InsuranceRecentPeriod = ts,
-                MortgagePromotionRecentPeriod = ts,
-                CustomerCategory = (CustomerCategoryEnum)filterCategory,
-                AgeRange = (AgeRangeEnum)filterAgeRange
-            };
-
-            var url = this.customerUrl;
-            if (user.IsBroker || user.IsBrokerStaff)
-            {
-                 url += "/broker/" + $"{user.MasterBrokerId}";
-
-            }
-            else if (user.IsAdmin)
-            {
-                if (brokerId > 0)
-                {
-                    url += "/broker/" + $"{brokerId}";
-                }
-                else
-                {
-                    url += "/getwithfilter";
-                }
-            }
-            url += $"?profilePictures={profilePictures}";
-
-            var answer = await this.requestProviderService.Post<SearchOptionDto,IEnumerable<CustomerDto>>(url, searchOption);
-            return this.mapper.Map<IEnumerable<Customer>>(answer);
-
-            throw new UnauthorizedAccessException();
+                BrokerId = brokerId,
+                Recent = filterRecent,
+                Period = filterPeriod,
+                Category = filterCategory,
+                AgeRange = filterAgeRange,
+                ProfilePictures = profilePictures
+            });
         }
 
         public async Task<Customer> GetCustomer(int id)
@@ -124,7 +97,7 @@ namespace BrokerIQ.Online.Services
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var answer = await this.requestProviderService.Get<int>(this.customerUrl+$"/count", brokerId);
+            var answer = await this.requestProviderService.Get<int>(this.customerUrl + $"/count", brokerId);
             return answer;
         }
 
@@ -135,9 +108,63 @@ namespace BrokerIQ.Online.Services
             var patchDoc = new JsonPatchDocument<Customer>();
             patchDoc.Replace(x => (int)x.CustomerCategory, (int)customerCategory);
 
-            var answer = await this.requestProviderService.Patch<JsonPatchDocument<Customer>,CustomerDto>(this.customerUrl+$"/patch?customerid={customerid}", patchDoc);
+            var answer = await this.requestProviderService.Patch<JsonPatchDocument<Customer>, CustomerDto>(this.customerUrl + $"/patch?customerid={customerid}", patchDoc);
             return answer.CustomerCategory;
         }
 
+        public async Task<IEnumerable<Customer>> GetFilteredCustomers(CustomerFilter filter)
+        {
+            var user = await this.accountService.GetUser();
+            requestProviderService.Token = user?.Token;
+
+            var option = (RecentEnum)filter.Recent;
+            var ts = ((RecentPeriodEnum)filter.Period).TransformToTS();
+            var searchOption = new SearchOptionDto
+            {
+                InsuranceEndingSoon = option == RecentEnum.RecentInsurance,
+                MortgagePromotionEndingSoon = option == RecentEnum.RecentMortgage,
+                InsuranceRecentPeriod = ts,
+                MortgagePromotionRecentPeriod = ts,
+                CustomerCategory = (CustomerCategoryEnum)filter.Category,
+                AgeRange = (AgeRangeEnum)filter.AgeRange,
+                IsVulnerable = filter.IsVulnerable,
+                WithoutIncomeProtection = filter.WithoutIncomeProtection,
+                WithoutLifeInsurance = filter.WithoutLifeInsurance,
+                WithoutLifeCritical = filter.WithoutLifeCritical,
+            };
+
+            var url = this.customerUrl;
+            if (user.IsBroker || user.IsBrokerStaff)
+            {
+                url += "/broker/" + $"{user.MasterBrokerId}";
+
+            }
+            else if (user.IsAdmin)
+            {
+                if (filter.BrokerId > 0)
+                {
+                    url += "/broker/" + $"{filter.BrokerId}";
+                }
+                else
+                {
+                    url += "/getwithfilter";
+                }
+            }
+            url += $"?profilePictures={filter.ProfilePictures}";
+
+            var answer = await requestProviderService.Post<SearchOptionDto, IEnumerable<CustomerDto>>(url, searchOption);
+            return mapper.Map<IEnumerable<Customer>>(answer);
+        }
+
+        public async Task<bool> SetCustomerVulnerability(int customerid, bool isVulnerable)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var patchDoc = new JsonPatchDocument<Customer>();
+            patchDoc.Replace(x => x.IsVulnerable, isVulnerable);
+
+            var answer = await this.requestProviderService.Patch<JsonPatchDocument<Customer>, CustomerDto>(this.customerUrl + $"/patch?customerid={customerid}", patchDoc);
+            return answer.IsVulnerable;
+        }
     }
 }

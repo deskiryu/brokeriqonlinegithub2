@@ -1,7 +1,7 @@
-﻿
+﻿@page "/clientedit/{CustomerId}"
 
-@page "/clientedit/{CustomerId}"
 @using BrokerIQ.Online.Models
+@using BrokerIQ.Dto.Dto;
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
@@ -11,21 +11,17 @@
 
 @inherits CustomerEditBase
 
-
 @if (!Saved)
 {
-    <section class="Customer-detail">
+            <section class="Customer-detail">
 
-        <h4 class="page-title">Add or edit client</h4>
+                <h4 class="page-title">Add or edit client</h4>
 
-        <EditForm Model="@Customer" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+                <EditForm Model="@Customer" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
 
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-            <div class="col-12 row">
-
-                <div class="col-xs-12 col-sm-12 com-md-12 col-lg-12">
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">First Name</label>
 
@@ -34,6 +30,7 @@
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Customer.FirstName)" />
                         </div>
                     </div>
+
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Last Name</label>
 
@@ -52,7 +49,6 @@
                         </div>
                     </div>
 
-
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Telephone Number</label>
                         <div class="col-sm-8">
@@ -64,8 +60,29 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Date Of Birth</label>
                         <div class="col-sm-8">
-                            <DateRangePicker @bind-StartDate="DateOfBirth" SingleDatePicker="true" placeholder=" Enter DOB for this client" class="form-control col-sm-8" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
+                            <DateRangePicker @bind-StartDate="DateOfBirth" SingleDatePicker="true" placeholder=" Enter DOB for this client" class="form-control col-sm-8" 
+                                Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))">
+                            </DateRangePicker>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Customer.DateOfBirth)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Gender</label>
+                        <div class="col-sm-8">
+                            <MudSelect T="int" 
+                                Margin="Margin.Dense"
+                                Dense="true"
+                    @bind-Value="@SelectedGender">
+                        @{
+                            var names = Enum.GetNames(typeof(GenderEnum));
+                            for (int i = 0; i < names.Length; i++)
+                            {
+                                GenderEnum looped = (GenderEnum)i;
+                                                    <MudSelectItem Value=@i>@looped.GetDisplayName()</MudSelectItem>
+                            }
+                        }
+                            </MudSelect> 
                         </div>
                     </div>
 
@@ -78,62 +95,92 @@
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Video Notifications Allowed</label>
+                        <label class="col-sm-4 col-form-label">Category</label>
                         <div class="col-sm-8">
-
-                            <MudCheckBox @bind-Checked="@Customer.VideoNotificationsAllowed" Style="margin-left: -15px" TriState="false">
-                                </MudCheckBox>
-
+                            <MudSelect T="int" 
+                                Margin="Margin.Dense"
+                                Dense="true"
+                                Placeholder="None chosen"
+                    @bind-Value="@(SelectedCustomerCategory)">
+                        @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
+                        {
+                            CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
+                            int id = (int)looped;
+                                        <MudSelectItem Value="@id">@looped.GetDisplayName()</MudSelectItem>
+                        }
+                            </MudSelect> 
                         </div>
                     </div>
 
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Occupation</label>
+                        <div class="col-sm-8">
+                        <MudAutocomplete T="OccupationDto" @bind-Value="SelectedOccupation" SearchFunc="@SearchOccupations"
+                                             AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
+                                             MinCharacters="3" SelectValueOnTab="true"
+                                             ToStringFunc="@(o=> o == null ? null : $"{o.Description} ({o.OrigoCode})")" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Annual Income</label>
+                        <div class="col-sm-8">
+                            <MudTextField Margin="Margin.Dense" T="int?" @bind-Value="@Customer.AnnualIncome" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Video Notifications Allowed</label>
+                        <div class="col-sm-8">
+                            <MudCheckBox @bind-Checked="@Customer.VideoNotificationsAllowed" Style="margin-left: -15px" TriState="false"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Is Smoker or Vaper</label>
+                        <div class="col-sm-8">
+                            <MudCheckBox @bind-Checked="@Customer.IsSmokerOrVaper" Style="margin-left: -15px" TriState="false"/>
+                        </div>
+                    </div>
 
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Update Client</MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>
 
+                </EditForm>
 
-
-                </div>
-
-            </div>
-
-        </EditForm>
-
-    </section>
+            </section>
 
     @code {
 
-        DateTimeOffset? DateOfBirth
-        {
-            get { return GetDTtoDTO(Customer.DateOfBirth); }
-            set => Customer.DateOfBirth = SetDTtoDTO(value);
-        }
-
-        DateTimeOffset? GetDTtoDTO(DateTime datetimeIn)
-        {
-            if (Customer != null && datetimeIn != default(DateTime))
-            {
-                var localTime1 = DateTime.SpecifyKind(datetimeIn, DateTimeKind.Local);
-                DateTimeOffset localTime2 = localTime1;
-                return localTime2;
-            }
-            else
-            {
-                return DateTimeOffset.Now;
-            }
-        }
-
-        DateTime SetDTtoDTO(DateTimeOffset? value)
-        {
-            return (value.HasValue ? value.Value : DateTime.MinValue).ToLocalTime().DateTime;
-        }
-
+    DateTimeOffset? DateOfBirth
+    {
+        get { return GetDTtoDTO(Customer.DateOfBirth); }
+        set => Customer.DateOfBirth = SetDTtoDTO(value);
     }
 
+    DateTimeOffset? GetDTtoDTO(DateTime datetimeIn)
+    {
+        if (Customer != null && datetimeIn != default(DateTime))
+        {
+            var localTime1 = DateTime.SpecifyKind(datetimeIn, DateTimeKind.Local);
+            DateTimeOffset localTime2 = localTime1;
+            return localTime2;
+        }
+        else
+        {
+            return DateTimeOffset.Now;
+        }
+    }
 
+    DateTime SetDTtoDTO(DateTimeOffset? value)
+    {
+        return (value.HasValue ? value.Value : DateTime.MinValue).ToLocalTime().DateTime;
+    }
+
+    }
 }
 else
 {
-    <div class="alert @StatusClass">@Message</div>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
+            <div class="alert @StatusClass">@Message</div>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
 }

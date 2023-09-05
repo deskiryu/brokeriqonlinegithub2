@@ -1,0 +1,23 @@
+@using BrokerIQ.Dto.Enum @using BrokerIQ.Online.Server.Extensions <div class="mb-2"> @if (ServicesAvailable)
+    {
+        <MudButton StartIcon="@Icons.Material.Filled.AppRegistration" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium" OnClick=@(r=> EditSubscription(new Dto.Dto.BrokerSubscriptionDto(){StartDate = DateTime.Now, EndDate = DateTime.Now.AddYears(1)}))>Add Subscription </MudButton>
+    } </div>
+<MudTable Items="@Subscriptions" Dense="true">
+    <NoRecordsContent>
+        <MudText>Broker is not subscribed to any services.</MudText>
+    </NoRecordsContent>
+    <HeaderContent>
+        <MudTh>Service</MudTh>
+        <MudTh>Start Date</MudTh>
+        <MudTh>End Date</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@(((SubscriptionServiceEnum)context.SubscriptionServiceId).GetDisplayName())</MudTd>
+        <MudTd> @context.StartDate.ToShortDateString()</MudTd>
+        <MudTd> @context.EndDate.ToShortDateString()</MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" OnClick=@(r=> EditSubscription(context))></MudIconButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable> 

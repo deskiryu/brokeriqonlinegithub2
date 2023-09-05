@@ -1,11 +1,16 @@
-﻿namespace BrokerIQ.Online.Pages
-{
-    using System;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Components;
-    using Models;
-    using Services.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BrokerIQ.Dto.Dto;
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Server.Extensions;
+using Microsoft.AspNetCore.Components;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Online.Server.Services.Interface;
 
+namespace BrokerIQ.Online.Pages
+{
     public class CustomerEditBase : ComponentBase
     {
         private int id;
@@ -18,14 +23,27 @@
         [Inject]
         public IInsuranceDocumentService SupportingDocumentService { get; set; }
 
-        [Inject] 
+        [Inject]
+        public IOccupationService OccupationService { get; set; }
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         public Customer Customer { get; set; }
 
+        public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
+
+        public int SelectedCustomerCategory { get { return (int)Customer.CustomerCategory; } set { Customer.CustomerCategory = (CustomerCategoryEnum)value; } }
+
+        public int SelectedGender { get { return (int)Customer.Gender; } set { Customer.Gender = (GenderEnum)value; } }
+
         protected string Message = string.Empty;
+
         protected string StatusClass = string.Empty;
+
         protected bool Saved;
+
+        protected OccupationDto SelectedOccupation { get; set; }
 
         [Parameter]
         public string CustomerId { get; set; }
@@ -37,10 +55,15 @@
 
         protected override async Task OnInitializedAsync()
         {
+            CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
+
             id = Int32.Parse(CustomerId);
+
             if (id > 0)
             {
-                Customer = (await CustomerService.GetCustomer(id));
+                Customer = await CustomerService.GetCustomer(id);
+
+                SelectedOccupation = await OccupationService.GetById(Customer.OccupationId);
             }
         }
 
@@ -57,13 +80,13 @@
             Message = "Broker updated successfully.";
             try
             {
+                Customer.OccupationId = SelectedOccupation.Id;
                 await CustomerService.UpdateCustomer(Customer);
             }
             catch
             {
                 StatusClass = "alert-danger";
                 Message = "Something went wrong updating the Customer. Please try again.";
-
             }
             finally
             {
@@ -74,6 +97,11 @@
         protected void NavigateToOverview()
         {
             NavigationManager.NavigateTo($"/clientdetail/{CustomerId}");
+        }
+
+        protected async Task<IEnumerable<OccupationDto>> SearchOccupations(string partial)
+        {
+            return await OccupationService.Search(partial);
         }
     }
 }

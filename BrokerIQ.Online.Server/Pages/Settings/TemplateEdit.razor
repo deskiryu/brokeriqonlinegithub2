@@ -6,8 +6,11 @@
 @using BrokerIQ.Online.Server.Extensions
 @inherits TemplateEditBase
 @using MudBlazor
+@using Microsoft.Extensions.Options
+@using BrokerIQ.Online.AppSettings
 
 @inject IJSRuntime js
+@inject IOptions<ReviewItAPIDetails> api
 
 <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
     <MudTabPanel Text="Templates">
@@ -193,7 +196,7 @@
                     <div class="card col-lg-6">
                         <div class="card-header">Emails</div>
                         <div class="card-body">
-                            <div class="col-lg-6">
+                            <div>
                                 <div class="form-group row">
                                     <div class="col-lg-12">
                                         <MudCheckBox
@@ -250,7 +253,7 @@
                     <div class="card col-lg-6">
                         <div class="card-header">App Notifications</div>
                         <div class="card-body">
-                            <div class="col-lg-6">
+                            <div >
                                 <div class="form-group row">
                                     <div class="col-lg-12">
                                         <MudCheckBox
@@ -271,6 +274,29 @@
                                         </MudCheckBox>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox @bind-Checked=@Broker.ShouldProfileCustomers Style="margin-left: -15px">
+                                            Profile customer vulnerability
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox  @bind-Checked=@Broker.NotifyBrokerOfVulnerability Style="margin-left: -15px">
+                                            Notify me of vulnerable customers
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox @bind-Checked=@Broker.NotifyCustomerOfVulnerability Style="margin-left: -15px">
+                                            Notify customer of vulnerability
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -280,9 +306,14 @@
             </EditForm>
         }
     </MudTabPanel>
-@*    <MudTabPanel Text="Reminder Options">
-    <ReminderOptionTable Broker="@Broker" User="@User"/>
-    </MudTabPanel>*@
+
+    @if(this.api.Value.ShowProtection){
+         
+        <MudTabPanel Text="Reminder Options">
+            <ReminderOptionTable Broker="@Broker" User="@User"/>
+        </MudTabPanel>
+   }
+
 </MudTabs>
 
 

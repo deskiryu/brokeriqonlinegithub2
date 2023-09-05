@@ -82,6 +82,9 @@ namespace BrokerIQ.Online.Pages
         [Required]
         public int TermType = 0;
 
+        [Required]
+        public int PaymentMethod = 0;
+
         protected List<(IBrowserFile, byte[])> LoadedFiles = new();
 
         [Parameter]
@@ -133,7 +136,7 @@ namespace BrokerIQ.Online.Pages
             var insurancevalues = Enum.GetValues(typeof(InsuranceEnum)).Cast<InsuranceEnum>().ToList();
             var consumerInsuranceValues = insurancevalues.Where(x => (int)x < 1000).OrderBy(y => y.GetOrderValue()).ToList();
             ConsumerInsurances = consumerInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();
-            var businessInsuranceValues = insurancevalues.Where(x => (int)x >= 1000).ToList();
+            var businessInsuranceValues = insurancevalues.Where(x => (int)x >= 1000).OrderBy(y => y.GetOrderValue()).ToList();
             BusinessInsurances = businessInsuranceValues.Select(x => ((int)x, x.GetDisplayName())).ToList();
         }
 
@@ -192,6 +195,7 @@ namespace BrokerIQ.Online.Pages
                     InsuranceType = (int)Insurance.InsType;
 
                     TermType = (int)Insurance.TermType;
+                    PaymentMethod = (int)Insurance.PaymentMethod;
                     BrokerListId = Insurance.BrokerId;
                 }
                 else
@@ -230,6 +234,7 @@ namespace BrokerIQ.Online.Pages
         {
             Insurance.InsType = (InsuranceEnum)InsuranceType;
             Insurance.TermType = (TermTypeEnum)TermType;
+            Insurance.PaymentMethod = (PaymentMethodEnum)PaymentMethod;
             Insurance.BrokerId = this.BrokerListId;
 
             if (IsAdmin)
@@ -251,10 +256,15 @@ namespace BrokerIQ.Online.Pages
                 {
                     Insurance.ReviewDate = DateTime.Now;
                 }
+                if (Insurance.RetroactiveDate == null || Insurance.RetroactiveDate == DateTime.MinValue)
+                {
+                    Insurance.RetroactiveDate = DateTime.Now;
+                }
                 //Midnight
                 Insurance.StartDate = new DateTime(Insurance.StartDate.Year, Insurance.StartDate.Month, Insurance.StartDate.Day, 0, 0, 0);
                 Insurance.ExpiryDate = new DateTime(Insurance.ExpiryDate.Year, Insurance.ExpiryDate.Month, Insurance.ExpiryDate.Day, 0, 0, 0);
                 Insurance.ReviewDate = new DateTime(Insurance.ReviewDate.Value.Year, Insurance.ReviewDate.Value.Month, Insurance.ReviewDate.Value.Day, 0, 0, 0);
+                Insurance.RetroactiveDate = new DateTime(Insurance.RetroactiveDate.Value.Year, Insurance.RetroactiveDate.Value.Month, Insurance.RetroactiveDate.Value.Day, 0, 0, 0);
 
                 Insurance.MenuPlanId = menuPlanId;
 
@@ -359,6 +369,7 @@ namespace BrokerIQ.Online.Pages
                 Insurance.StartDate = new DateTime(Insurance.StartDate.Year, Insurance.StartDate.Month, Insurance.StartDate.Day, 0, 0, 0);
                 Insurance.ExpiryDate = new DateTime(Insurance.ExpiryDate.Year, Insurance.ExpiryDate.Month, Insurance.ExpiryDate.Day, 0, 0, 0);
                 Insurance.ReviewDate = new DateTime(Insurance.ReviewDate.Value.Year, Insurance.ReviewDate.Value.Month, Insurance.ReviewDate.Value.Day, 0, 0, 0);
+                Insurance.RetroactiveDate = new DateTime(Insurance.RetroactiveDate.Value.Year, Insurance.RetroactiveDate.Value.Month, Insurance.RetroactiveDate.Value.Day, 0, 0, 0);
 
                 try
                 {
@@ -446,6 +457,17 @@ namespace BrokerIQ.Online.Pages
                 LoadedFiles.Remove(loadedtoRemove);
             }
         }
+
+        protected void ClearLoadedFiles()
+        {
+            foreach (var file in LoadedFiles)
+            {
+                Array.Clear(file.Item2, 0, file.Item2.Length);
+            }
+            LoadedFiles.Clear();
+            StateHasChanged();
+        }
+
         protected async Task UploadInsuranceFile(string filename, byte[] dataBytes)
         {
             if (id == 0)
@@ -508,6 +530,16 @@ namespace BrokerIQ.Online.Pages
                 return GetDTtoDTO(date);
             }
             set => Insurance.ReviewDate = SetDTtoDTO(value);
+        }
+
+        public DateTimeOffset? RetroactiveDate
+        {
+            get
+            {
+                var date = Insurance.RetroactiveDate.HasValue ? Insurance.RetroactiveDate.Value : DateTime.Today;
+                return GetDTtoDTO(date);
+            }
+            set => Insurance.RetroactiveDate = SetDTtoDTO(value);
         }
 
         public DateTimeOffset? GetDTtoDTO(DateTime datetimeIn)
@@ -637,9 +669,8 @@ namespace BrokerIQ.Online.Pages
             }
             finally
             {
-                LoadedFiles.Clear();
+                ClearLoadedFiles();
                 SpinnerVisible = "display:none";
-                StateHasChanged();
             }
         }
 

@@ -1,15 +1,15 @@
 ﻿using System;
 using AutoMapper;
+using BrokerIQ.Dto;
+using BrokerIQ.Dto.Dto;
+using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Models.Account;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Models;
 
 namespace BrokerIQ.Online.Mapper
 {
-    using BrokerIQ.Dto;
-    using BrokerIQ.Dto.Response;
-    using BrokerIQ.Online.Models.Account;
-    using BrokerIQ.Online.Server.Models;
-    using Dto.Models;
-    using Models;
-
     public class ReviewItMapper : Profile
     {
         public ReviewItMapper()
@@ -34,8 +34,10 @@ namespace BrokerIQ.Online.Mapper
             BrokerDefinedMessageMapper();
             ClientReferralMapper();
             BrokerReminderOptionsMapper();
+            BrokerSubscriptionMapper();
         }
-        public void CustomerMapper()
+
+        private void CustomerMapper()
         {
             CreateMap<CustomerDto, Customer>()
                 .ForMember(d => d.Id, action => action.MapFrom(s => s.Id))
@@ -62,6 +64,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.ProfilePicture, action => action.MapFrom(s => s.ProfilePicture))
                 .ForMember(d => d.Mortgages, action => action.MapFrom(s => s.Mortgages))
                 .ForMember(d => d.AppVersion, action => action.MapFrom(s => s.AppVersion))
+                .ForMember(d => d.CustomerCategory, action => action.MapFrom(s => s.CustomerCategory))
                 .ForMember(d => d.VideoNotificationsAllowed, opt => opt.MapFrom((src, dest) =>
                 {
                     bool videoOptOut = true;
@@ -71,7 +74,12 @@ namespace BrokerIQ.Online.Mapper
                     }
                     return !videoOptOut;
                 }))
-                .ForMember(d => d.IsWhiteLabel, action => action.MapFrom(s => s.IsWhiteLabel));
+                .ForMember(d => d.IsWhiteLabel, action => action.MapFrom(s => s.IsWhiteLabel))
+                .ForMember(d => d.IsVulnerable, action => action.MapFrom(s => s.IsVulnerable))
+                .ForMember(d => d.IsSmokerOrVaper, action => action.MapFrom(s => s.IsSmokerOrVaper))
+                .ForMember(d => d.AnnualIncome, action => action.MapFrom(s => s.AnnualIncome))
+                .ForMember(d => d.Gender, action => action.MapFrom(s => s.Gender))
+                .ForMember(d => d.OccupationId, action => action.MapFrom(s => s.OccupationId));
 
             CreateMap<Customer, UpdateCustomerDto>()
                 .ForMember(d => d.Id, action => action.MapFrom(s => s.Id))
@@ -91,10 +99,16 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.PotentialBroker2, action => action.MapFrom(s => s.PotentialBroker2))
                 .ForMember(d => d.PotentialBroker3, action => action.MapFrom(s => s.PotentialBroker3))
                 .ForMember(d => d.VideoOptOut, action => action.MapFrom(s => !s.VideoNotificationsAllowed))
-                .ForMember(d => d.BusinessName, action => action.MapFrom(s => s.BusinessName));
+                .ForMember(d => d.BusinessName, action => action.MapFrom(s => s.BusinessName))
+                .ForMember(d => d.CustomerCategory, action => action.MapFrom(s => s.CustomerCategory))
+                .ForMember(d => d.IsVulnerable, action => action.MapFrom(s => s.IsVulnerable))
+                .ForMember(d => d.IsSmokerOrVaper, action => action.MapFrom(s => s.IsSmokerOrVaper))
+                .ForMember(d => d.AnnualIncome, action => action.MapFrom(s => s.AnnualIncome))
+                .ForMember(d => d.Gender, action => action.MapFrom(s => s.Gender))
+                .ForMember(d => d.OccupationId, action => action.MapFrom(s => s.OccupationId));
         }
 
-        public void InsuranceMapper()
+        private void InsuranceMapper()
         {
             CreateMap<InsuranceDto, Insurance>()
             .ForMember(d => d.TermYears, opt => opt.MapFrom((src, dest) =>
@@ -269,13 +283,13 @@ namespace BrokerIQ.Online.Mapper
             }));
         }
 
-        public void InsuranceDocumentMapper()
+        private void InsuranceDocumentMapper()
         {
             CreateMap<InsuranceDocumentDto, InsuranceDocument>();
             CreateMap<InsuranceDocument, CreateInsuranceDocumentDto>();
         }
 
-        public void MortgageMapper()
+        private void MortgageMapper()
         {
             CreateMap<MortgageDto, Mortgage>()
                 .ForMember(d => d.Id, action => action.MapFrom(s => s.Id))
@@ -566,19 +580,19 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber));
         }
 
-        public void MortgageDocumentMapper()
+        private void MortgageDocumentMapper()
         {
             CreateMap<MortgageDocumentDto, MortgageDocument>();
             CreateMap<MortgageDocument, CreateMortgageDocumentDto>();
         }
 
-        public void CustomerDocumentMapper()
+        private void CustomerDocumentMapper()
         {
             CreateMap<CustomerDocumentDto, CustomerDocument>();
             CreateMap<CustomerDocument, CreateCustomerDocumentDto>();
         }
 
-        public void LoginMapper()
+        private void LoginMapper()
         {
             CreateMap<Login, LoginDto>();
             CreateMap<LoginResponseDto, User>().ForMember(d => d.Token, action => action.MapFrom(s => s.Token))
@@ -613,7 +627,7 @@ namespace BrokerIQ.Online.Mapper
             .ForMember(d => d.Id, action => action.MapFrom(s => s.UserId));
         }
 
-        public void BrokerMapper()
+        private void BrokerMapper()
         {
             CreateMap<AddUser, CreateBrokerDto>()
                 .ForMember(d => d.Name, action => action.MapFrom(s => s.Name))
@@ -630,6 +644,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
                 .ForMember(d => d.TurnOnTwoFactor, action => action.MapFrom(s => true))
                 .ForMember(d => d.Password, action => action.MapFrom(s => s.Password));
+
             CreateMap<BrokerDto, Broker>()
                 .ForMember(d => d.TwoFactorUseBrokerPhoneNumber, action => action.MapFrom((src, dest) =>
             {
@@ -644,6 +659,7 @@ namespace BrokerIQ.Online.Mapper
                 }
                 return matched;
             }));
+
             CreateMap<Broker, BrokerDto>();
 
             CreateMap<Broker, UpdateBrokerDto>()
@@ -663,7 +679,7 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<BrokerIdentifier, UpdateBrokerIdentifierDto>();
         }
 
-        public void BrokerStaffMapper()
+        private void BrokerStaffMapper()
         {
             CreateMap<AddStaff, CreateBrokerStaffDto>()
                 .ForMember(d => d.EmailAddress, action => action.MapFrom(s => s.EmailAddress))
@@ -681,7 +697,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName));
         }
 
-        public void NotificationMapper()
+        private void NotificationMapper()
         {
             CreateMap<NotificationDto, Notification>();
             CreateMap<BrokerNotificationDto, BrokerNotification>();
@@ -715,7 +731,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.Converted, opt => opt.MapFrom(s => s.Converted));
         }
 
-        public void MenuPlanMapper()
+        private void MenuPlanMapper()
         {
             CreateMap<MenuPlanDto, MenuPlan>()
             .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -802,6 +818,11 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.SentTime, opt => opt.MapFrom(r => r.SentTime))
                 .ForMember(p => p.Image, opt => opt.MapFrom(r => r.Image))
                 .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
+                .ForMember(p => p.IsVideo, opt => opt.MapFrom(r => r.IsVideo))
+                .ForMember(p => p.VideoUrl, opt => opt.MapFrom(r => r.VideoUrl))
+                .ForMember(p => p.IsAudio, opt => opt.MapFrom(r => r.IsAudio))
+                .ForMember(p => p.AudioUrl, opt => opt.MapFrom(r => r.AudioUrl))
+                .ForMember(p => p.HasEmbeddedUrl, opt => opt.MapFrom(r => r.HasEmbeddedUrl))
                 .ForMember(p => p.ChatDocumentId, opt => opt.MapFrom(r => r.ChatDocumentId))
                 .ForMember(d => d.ChatDocument, opt => opt.MapFrom((src, dest) =>
                 {
@@ -827,7 +848,11 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.SentTime, opt => opt.MapFrom(r => r.SentTime))
                 .ForMember(p => p.Image, opt => opt.MapFrom(r => r.Image))
                 .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
-                .ForMember(p => p.IsRead, opt => opt.MapFrom(r => r.IsRead))
+                .ForMember(p => p.IsVideo, opt => opt.MapFrom(r => r.IsVideo))
+                .ForMember(p => p.VideoUrl, opt => opt.MapFrom(r => r.VideoUrl))
+                .ForMember(p => p.IsAudio, opt => opt.MapFrom(r => r.IsAudio))
+                .ForMember(p => p.AudioUrl, opt => opt.MapFrom(r => r.AudioUrl))
+                .ForMember(p => p.HasEmbeddedUrl, opt => opt.MapFrom(r => r.HasEmbeddedUrl))
                 .ForMember(p => p.BrokerSource, opt => opt.MapFrom(r => r.BrokerSource));
         }
 
@@ -840,13 +865,13 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<AzureTrainingVideoDto, TrainingVideo>();
         }
 
-        public void DocumentsRequirementMapper()
+        private void DocumentsRequirementMapper()
         {
             CreateMap<DocumentsRequirementDto, DocumentsRequirement>();
             CreateMap<DocumentsRequirement, DocumentsRequirementDto>();
         }
-        
-        public void BrokerDefinedMessageMapper()
+
+        private void BrokerDefinedMessageMapper()
         {
             CreateMap<BrokerDefinedMessageDto, BrokerDefinedMessage>();
             CreateMap<BrokerDefinedMessage, BrokerDefinedMessageDto>();
@@ -858,10 +883,16 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<ClientReferralDto, ClientReferral>();
         }
 
-        public void BrokerReminderOptionsMapper()
+        private void BrokerReminderOptionsMapper()
         {
             CreateMap<BrokerReminderOptionDto, BrokerReminderOption>();
             CreateMap<BrokerReminderOption, BrokerReminderOptionDto>();
+        }
+
+        private void BrokerSubscriptionMapper()
+        {
+            CreateMap<BrokerSubscriptionDto, BrokerSubscription>();
+            CreateMap<BrokerSubscription, BrokerSubscriptionDto>();
         }
     }
 }

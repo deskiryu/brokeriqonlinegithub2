@@ -28,11 +28,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         [Parameter]
         public Online.Models.Broker Broker { get; set; }
 
-        private IEnumerable<ReminderOptionDto> ReminderOptions { get; set; }
+        private ICollection<ReminderOptionDto> ReminderOptions { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            ReminderOptions = await BrokerReminderOptionService.GetAllForCurrentBroker();
+            ReminderOptions = new List<ReminderOptionDto>(await BrokerReminderOptionService.GetAllForCurrentBroker());
         }
 
         protected static string GetReminderTargetName(int targetId)
@@ -49,19 +49,13 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 { "Color", Color.Error }
             };
 
-            var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+            var dialogOptions = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
 
-            var result = await DialogService.Show<ConfirmationDialog>("Delete", parameters, options).Result;
+            var result = await DialogService.Show<ConfirmationDialog>("Delete", parameters, dialogOptions).Result;
 
             if (!result.Cancelled)
             {
-                option.FirstNotificationPeriod = TimeSpan.Zero;
-                option.SecondNotificationPeriod = TimeSpan.Zero;
-                option.ThirdNotificationPeriod = TimeSpan.Zero;
-                option.FourthNotificationPeriod = TimeSpan.Zero;
-                option.FifthNotificationPeriod = TimeSpan.Zero;
-
-                await SaveReminderOptions();
+                await BrokerReminderOptionService.Delete(option);
             }
 
             await ReloadReminderOptions();
@@ -85,14 +79,15 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private async Task ReloadReminderOptions()
         {
-            ReminderOptions = await BrokerReminderOptionService.GetAllForCurrentBroker();
+            ReminderOptions = new List<ReminderOptionDto>(await BrokerReminderOptionService.GetAllForCurrentBroker());
 
             StateHasChanged();
         }
 
         private async Task EditReminderOption(ReminderOptionDto option)
         {
-            var title = $"Edit {Enum.GetName((ReminderTargetEnum)option.ReminderTargetId)} {Enum.GetName((ReminderTypeEnum)option.ReminderTypeId)} reminder";
+            var operation = option.Id == 0 ? "Create" : "Edit";
+            var title = $"{operation} {Enum.GetName((ReminderTargetEnum)option.ReminderTargetId)} {Enum.GetName((ReminderTypeEnum)option.ReminderTypeId)} reminder";
             var parameters = new DialogParameters
             {
                 { "Option", option }
@@ -106,13 +101,15 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             {
                 ReminderOptionDto updated = result.Data as ReminderOptionDto;
 
-                option.FirstNotificationPeriod = updated.FirstNotificationPeriod;
-                option.SecondNotificationPeriod = updated.SecondNotificationPeriod;
-                option.ThirdNotificationPeriod = updated.ThirdNotificationPeriod;
-                option.FourthNotificationPeriod = updated.FourthNotificationPeriod;
-                option.FifthNotificationPeriod = updated.FifthNotificationPeriod;
+                option.ReminderTypeId = updated.ReminderTypeId;
+
+                option.NotificationPeriod = updated.NotificationPeriod;
+
+                option.ReminderTargetId = updated.ReminderTargetId;
 
                 option.MessageContent = updated.MessageContent;
+
+                if (option.Id == 0) ReminderOptions.Add(option);
 
                 await SaveReminderOptions();
             }
