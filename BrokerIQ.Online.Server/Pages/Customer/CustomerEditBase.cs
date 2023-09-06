@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Components;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Server.Services.Interface;
+using BrokerIQ.Online.Server;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using BrokerIQ.Online.AppSettings;
+using Microsoft.Extensions.Options;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -25,9 +29,11 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IOccupationService OccupationService { get; set; }
-
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        public IOptions<ReviewItAPIDetails> api { get; set; }
 
         public Customer Customer { get; set; }
 
@@ -80,7 +86,11 @@ namespace BrokerIQ.Online.Pages
             Message = "Broker updated successfully.";
             try
             {
-                Customer.OccupationId = SelectedOccupation.Id;
+                if (api.Value.ShowProtection)
+                {
+                    Customer.OccupationId = SelectedOccupation.Id;
+                }
+
                 await CustomerService.UpdateCustomer(Customer);
             }
             catch
