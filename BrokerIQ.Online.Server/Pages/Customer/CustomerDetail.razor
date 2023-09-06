@@ -3,8 +3,11 @@
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
+@using BrokerIQ.Online.AppSettings
+@using Microsoft.Extensions.Options
 
 @inherits CustomerDetailBase
+@inject IOptions<ReviewItAPIDetails> api
 @implements IDisposable
 
 <h3>Client Overview</h3>
@@ -147,14 +150,17 @@ else if (!Saved)
                                 <div class="col-lg-4">
                                     <label type="text" readonly class="form-control-plaintext">@Customer.CustomerCategory.GetDisplayName()</label>
                                 </div>
-
-                                 <label class="col-lg-2 col-form-label">Is Smoker/Vaper</label>
-                                <div class="col-lg-4">
+                                @if (this.api.Value.ShowProtection)
+                                {
+                                    <label class="col-lg-2 col-form-label">Is Smoker/Vaper</label>
+                                    <div class="col-lg-4">
                                     <MudCheckBox ReadOnly Checked="@Customer.IsSmokerOrVaper" Style="margin-left: -15px" TriState="true" />
                                 </div>
+                                }
                             </div>
-
-                            <div class="form-group row">
+                        @if (this.api.Value.ShowProtection)
+                        {
+                        <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">Occupation</label>
                                 <div class="col-lg-4">
                                     <label type="text" readonly class="form-control-plaintext"> @(Occupation == null ? String.Empty : $"{Occupation.Description} ({Occupation.OrigoCode})")</label>
@@ -172,7 +178,9 @@ else if (!Saved)
                                 <div class="col-lg-4">
                                     <label type="text" readonly class="form-control-plaintext">@Customer.Gender.GetDisplayName()</label>
                                 </div>
-                            </div>
+                            </div>                            
+                        }
+
 
                             <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">App Version</label>
