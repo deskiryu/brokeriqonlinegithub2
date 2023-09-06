@@ -683,7 +683,9 @@ namespace BrokerIQ.Online.Pages
                 IsMinorAdmin = verified;
 
                 var user = await AccountService.GetUser();
-                verified = IsBroker = user.IsBroker;
+                IsBroker = user.IsBroker;
+
+                verified = IsBroker || IsMinorAdmin || IsAdmin;
             }
             catch
             {
