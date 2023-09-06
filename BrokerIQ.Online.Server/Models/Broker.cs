@@ -77,9 +77,9 @@ namespace BrokerIQ.Online.Models
 
         public bool ShouldProfileCustomers { get; set; }
 
-        public bool NotifyBrokerOfVulnerability { get; set; }
+        public bool NotifyBrokerOfNeeds { get; set; }
 
-        public bool NotifyCustomerOfVulnerability { get; set; }
+        public bool NotifyCustomerOfNeeds { get; set; }
 
         public virtual ICollection<BrokerStaff> BrokerStaff { get; set; }
 

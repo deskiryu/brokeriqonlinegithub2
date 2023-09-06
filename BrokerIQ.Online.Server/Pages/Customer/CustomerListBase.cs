@@ -56,13 +56,13 @@ namespace BrokerIQ.Online.Pages
         public int CustomerCategory { get; set; }
         public int AgeRange { get; set; }
 
-        private bool isVulnerable;
-        public bool IsVulnerable
+        private bool hasNeeds;
+        public bool HasNeeds
         {
-            get { return isVulnerable; }
+            get { return hasNeeds; }
             set
             {
-                isVulnerable = value;
+                hasNeeds = value;
                 RefreshListFromFilterValues();
             }
         }
@@ -238,7 +238,7 @@ namespace BrokerIQ.Online.Pages
                 Category = CustomerCategory,
                 AgeRange = AgeRange,
                 ProfilePictures = true,
-                IsVulnerable = IsVulnerable,
+                HasNeeds = HasNeeds,
                 WithoutIncomeProtection = WithoutIncomeProtection,
                 WithoutLifeInsurance = WithoutLifeInsurance,
                 WithoutLifeCritical = WithoutLifeCritical
