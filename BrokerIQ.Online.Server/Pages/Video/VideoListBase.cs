@@ -211,7 +211,7 @@ namespace BrokerIQ.Online.Pages
         {
             await VerifyAccess();
 
-            if (await CheckIsAdmin() && FilterBrokerId == 0)
+            if (IsAdmin || IsMinorAdmin && FilterBrokerId == 0)
             {
                 await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
                 return;
@@ -257,7 +257,7 @@ namespace BrokerIQ.Online.Pages
         {
             await VerifyAccess();
 
-            if (await CheckIsAdmin() && FilterBrokerId == 0)
+            if (IsAdmin || IsMinorAdmin && FilterBrokerId == 0)
             {
                 await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
                 return;
@@ -295,7 +295,7 @@ namespace BrokerIQ.Online.Pages
         {
             await VerifyAccess();
 
-            if (await CheckIsAdmin() && FilterBrokerId == 0)
+            if (IsAdmin || IsMinorAdmin && FilterBrokerId == 0)
             {
                 await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
                 return false;
@@ -319,7 +319,7 @@ namespace BrokerIQ.Online.Pages
         {
             await VerifyAccess();
 
-            if (await CheckIsAdmin() && FilterBrokerId == 0)
+            if (IsAdmin || IsMinorAdmin && FilterBrokerId == 0)
             {
                 await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
                 return;
@@ -341,7 +341,7 @@ namespace BrokerIQ.Online.Pages
                 dialogParams.Add("Message", "This video will be sent to all cilents on this date. Continue?");
             }
 
-            var brokerId = IsAdmin ? FilterBrokerId : BrokerId;
+            var brokerId = IsAdmin||IsMinorAdmin ? FilterBrokerId : BrokerId;
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
