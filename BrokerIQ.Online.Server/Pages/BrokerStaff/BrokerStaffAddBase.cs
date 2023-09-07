@@ -14,6 +14,11 @@
     using Services.Interface;
     using BrokerIQ.Online.Server.Helper;
     using Microsoft.JSInterop;
+    using System.Collections.Generic;
+    using BrokerIQ.Online.Services;
+    using System.ComponentModel.DataAnnotations;
+    using BrokerIQ.Dto.Enum;
+    using Microsoft.AspNetCore.WebUtilities;
 
     public class BrokerStaffAddBase : ComponentBase
     {
@@ -26,6 +31,10 @@
 
         [Inject]
         public IAlertService AlertService { get; set; }
+
+        [Inject]
+        public IBrokerService BrokerService { get; set; }
+
 
         [Inject]
         public IAccountService AccountService { get; set; }
@@ -49,14 +58,53 @@
         [Parameter]
         public string BrokerStaffId { get; set; }
 
+        public IEnumerable<Broker> Brokers { get; set; }
+        public Broker Broker { get; set; }
+
+        public bool IsAdmin { get; set; }
+
+
+        [Required]
+        public int BrokerListId = 0;
+
         public BrokerStaffAddBase()
         {
             BrokerStaff = new AddStaff();
         }
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnParametersSetAsync()
         {
+            var user = await AccountService.GetUser();
+            IsAdmin = user.IsAdmin;
+            if (user.IsBroker || user.IsBrokerStaff)
+            {
+                var brokerId = user.MasterBrokerId;
 
+                BrokerListId = brokerId;
+                try
+                {
+                    Broker = await BrokerService.GetBroker(brokerId);
+                }
+                catch
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong getting broker details";
+                    Saved = true;
+                }
+            }
+            else
+            {
+                try
+                {
+                    Brokers = await BrokerService.GetBrokers();
+                }
+                catch
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong getting broker details";
+                    Saved = true;
+                }
+            }
         }
 
         protected void HandleInvalidSubmit()
@@ -84,6 +132,11 @@
                         brokerId = Int32.Parse(user.Id);
                     }
                 }
+                else
+                {
+                    brokerId = BrokerListId;
+                }
+
                 if (brokerId == 0)
                 {
                     throw new Exception("No broker found");

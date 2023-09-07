@@ -83,12 +83,12 @@ namespace BrokerIQ.Online.Pages
         protected async Task HandleValidSubmit()
         {
             StatusClass = "alert-success";
-            Message = "Broker updated successfully.";
+            Message = "Customer updated successfully.";
             try
             {
                 if (api.Value.ShowProtection)
                 {
-                    Customer.OccupationId = SelectedOccupation.Id;
+                    Customer.OccupationId = SelectedOccupation?.Id ?? 0;
                 }
 
                 await CustomerService.UpdateCustomer(Customer);

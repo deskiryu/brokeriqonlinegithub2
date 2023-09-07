@@ -80,7 +80,22 @@
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Cancel</MudButton>
                         </div>
 
+                            @if (IsAdmin)
+                            {
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Choose Broker</label>
+                                    <div class="col-sm-8">
+                                        <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId">
 
+                                            @foreach (var broker in @Brokers)
+                                            {
+                                                <option value=@broker.Id>@broker.Name</option>
+                                            }
+                                        </InputSelect>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerListId)" />
+                                    </div>
+                                </div>
+                            }
                     </div>
 
                 </div>
