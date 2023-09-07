@@ -1240,5 +1240,15 @@ namespace BrokerIQ.Online.Pages
 
             }
         }
+
+        protected bool ShowGetQuote()
+        {
+            if (!BrokerHasActiveInsuranceQuoteSubscription) return false;
+
+            if (Customer.HasNeeds) return true;
+
+            return (Customer.Employment == EmploymentEnum.Employed || Customer.Employment == EmploymentEnum.SelfEmployed) &&
+                !Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > DateTime.UtcNow);
+        }
     }
 }
