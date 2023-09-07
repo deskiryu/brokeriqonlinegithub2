@@ -1255,16 +1255,6 @@ namespace BrokerIQ.Online.Pages
                 if (!hasIncomeProtection && !hasLifeAndIlness) return "Customer is self employed, but has neither Income Protection nor Life and Ilness insurance.";
                 if (!hasIncomeProtection) return "Customer is self employed, but does not have Income Protection.";
                 if (!hasLifeAndIlness) return "Customer is self employed, but does not have Life and Ilness insurance.";
-
-                protected bool ShowGetQuote()
-                {
-                    if (!BrokerHasActiveInsuranceQuoteSubscription) return false;
-
-                    if (Customer.HasNeeds) return true;
-
-                    return (Customer.Employment == EmploymentEnum.Employed || Customer.Employment == EmploymentEnum.SelfEmployed) &&
-                        !Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > DateTime.UtcNow);
-                }
             }
 
             if (Customer.Employment == EmploymentEnum.Employed)
@@ -1273,6 +1263,16 @@ namespace BrokerIQ.Online.Pages
             }
 
             return string.Empty;
+        }
+
+        protected bool ShowGetQuote()
+        {
+            if (!BrokerHasActiveInsuranceQuoteSubscription) return false;
+
+            if (Customer.HasNeeds) return true;
+
+            return (Customer.Employment == EmploymentEnum.Employed || Customer.Employment == EmploymentEnum.SelfEmployed) &&
+                !Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > DateTime.UtcNow);
         }
     }
 }
