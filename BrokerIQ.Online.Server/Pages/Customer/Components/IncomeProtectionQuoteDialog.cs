@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Online.Server.Services.Interface;
@@ -25,6 +26,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         public Online.Models.Customer Customer { get; set; }
 
         MudForm form;
+
+        private const string DEFAULT_CUSTOMER_MESSAGE = "Hi, I have been reviewing your case and would like to talk to you. Have you considered Income protection? I quickly ran a quote for you with basic criteria and you can get Income protection for £{0:0.00} per month for £{1:0.00} per month cover.";
 
         private IncomeProtectionQuoteDataDto LastQuoteData { get; set; }
 
@@ -62,6 +65,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         protected string QuoteText { get; set; } = string.Empty;
 
+        protected string CustomerMessage { get; set; } = string.Empty;
+
         protected async Task GetQuote()
         {
             isProcessing = true;
@@ -83,8 +88,10 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             LastPremiumAmount = quoteResult.PremiumAmount;
 
             QuoteText = LastPremiumAmount > 0 ?
-                $"Customer might be able to get insurance with a premium of £{LastPremiumAmount} for a benefit of £{LastBenefitAmount}." :
-                "No insurance quotes available for this customer with the provided options. Is there some client information missing ?";
+                $"Monthly premium of £{LastPremiumAmount:0.00} for monthly benefit of £{LastBenefitAmount:0.00}." :
+                "No quote available. Could there be client information missing ?";
+
+            CustomerMessage = string.Format(DEFAULT_CUSTOMER_MESSAGE, LastPremiumAmount, LastBenefitAmount);
 
             isProcessing = false;
         }
@@ -93,7 +100,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         protected async Task SendChatToCustomer()
         {
-            if (await ChatService.Send("Your broker is currently studying your case file. If they do not contact you in the meantime, please get in touch.", Customer.Id))
+            if (await ChatService.Send(CustomerMessage, Customer.Id))
             {
                 Snackbar.Add("Customer chat message was sent.", Severity.Success);
             }
