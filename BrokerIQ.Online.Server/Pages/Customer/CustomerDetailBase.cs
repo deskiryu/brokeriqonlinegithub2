@@ -1252,14 +1252,14 @@ namespace BrokerIQ.Online.Pages
 
             if (Customer.Employment == EmploymentEnum.SelfEmployed)
             {
-                if (!hasIncomeProtection && !hasLifeAndIlness) return "Customer is self employed, but has neither Income Protection nor Life and Ilness insurance.";
-                if (!hasIncomeProtection) return "Customer is self employed, but does not have Income Protection.";
-                if (!hasLifeAndIlness) return "Customer is self employed, but does not have Life and Ilness insurance.";
+                if (!hasIncomeProtection && !hasLifeAndIlness) return "Customer is self employed, but has neither Income Protection nor Life and Ilness cover.";
+                if (!hasIncomeProtection) return "Customer is self employed, but does not have Income Protection cover.";
+                if (!hasLifeAndIlness) return "Customer is self employed, but does not have Life and Ilness cover.";
             }
 
             if (Customer.Employment == EmploymentEnum.Employed)
             {
-                return "Customer is employed, but does not have Life and Ilness insurance.";
+                return "Customer is employed, but does not have Life and Ilness cover.";
             }
 
             return string.Empty;

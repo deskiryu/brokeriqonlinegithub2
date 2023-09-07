@@ -18,7 +18,14 @@ namespace BrokerIQ.Online.Server.Services
 
         public async Task<IncomeProtectionQuoteDto> GetIncomeProtectionQuoteFor(IncomeProtectionQuoteDataDto quoteData)
         {
-            return await RequestProviderService.Post<IncomeProtectionQuoteDataDto, IncomeProtectionQuoteDto>(URL, quoteData);
+            try
+            {
+                return await RequestProviderService.Post<IncomeProtectionQuoteDataDto, IncomeProtectionQuoteDto>(URL, quoteData);
+            }
+            catch (System.Exception)
+            {
+                return new IncomeProtectionQuoteDto();
+            }
         }
     }
 }
