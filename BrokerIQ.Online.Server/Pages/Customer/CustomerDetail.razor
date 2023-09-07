@@ -44,6 +44,11 @@ else if (!Saved)
                 <div class="card-header">Details</div>
                 <div class="card-body">
                     <div class="row">
+                        @if(Customer.HasNeeds){
+                        <div class="col-12 mb-1">
+                            <MudAlert Severity="Severity.Warning" ContentAlignment="HorizontalAlignment.Center">@GetNeedsContent()</MudAlert>
+                        </div>
+                        }
                         <div class="col-lg-2">
 
                         @if (CustomerProfilePicture != null)
