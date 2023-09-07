@@ -1240,5 +1240,29 @@ namespace BrokerIQ.Online.Pages
 
             }
         }
+
+        protected string GetNeedsContent()
+        {
+            if (!Customer.HasNeeds) return string.Empty;
+
+            var currentDate = DateTime.UtcNow;
+
+            var hasIncomeProtection = Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > currentDate);
+            var hasLifeAndIlness = Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Illness && i.ExpiryDate > currentDate);
+
+            if (Customer.Employment == EmploymentEnum.SelfEmployed)
+            {
+                if (!hasIncomeProtection && !hasLifeAndIlness) return "Customer is self employed, but has neither Income Protection nor Life and Ilness insurance.";
+                if (!hasIncomeProtection) return "Customer is self employed, but does not have Income Protection.";
+                if (!hasLifeAndIlness) return "Customer is self employed, but does not have Life and Ilness insurance.";
+            }
+
+            if (Customer.Employment == EmploymentEnum.Employed)
+            {
+                return "Customer is employed, but does not have Life and Ilness insurance.";
+            }
+
+            return string.Empty;
+        }
     }
 }
