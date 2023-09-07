@@ -13,7 +13,7 @@ namespace BrokerIQ.Online.Server.Models
         public int Category { get; set; }
         public int AgeRange { get; set; }
         public bool ProfilePictures { get; set; }
-        public bool IsVulnerable { get; set; }
+        public bool HasNeeds { get; set; }
         public bool WithoutIncomeProtection { get; set; }
         public bool WithoutLifeInsurance { get; set; }
         public bool WithoutLifeCritical { get; set; }

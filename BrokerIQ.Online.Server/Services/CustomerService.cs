@@ -127,7 +127,7 @@ namespace BrokerIQ.Online.Services
                 MortgagePromotionRecentPeriod = ts,
                 CustomerCategory = (CustomerCategoryEnum)filter.Category,
                 AgeRange = (AgeRangeEnum)filter.AgeRange,
-                IsVulnerable = filter.IsVulnerable,
+                HasNeeds = filter.HasNeeds,
                 WithoutIncomeProtection = filter.WithoutIncomeProtection,
                 WithoutLifeInsurance = filter.WithoutLifeInsurance,
                 WithoutLifeCritical = filter.WithoutLifeCritical,
@@ -156,15 +156,15 @@ namespace BrokerIQ.Online.Services
             return mapper.Map<IEnumerable<Customer>>(answer);
         }
 
-        public async Task<bool> SetCustomerVulnerability(int customerid, bool isVulnerable)
+        public async Task<bool> SetCustomerNeeds(int customerid, bool hasNeeds)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             var patchDoc = new JsonPatchDocument<Customer>();
-            patchDoc.Replace(x => x.IsVulnerable, isVulnerable);
+            patchDoc.Replace(x => x.HasNeeds, hasNeeds);
 
             var answer = await this.requestProviderService.Patch<JsonPatchDocument<Customer>, CustomerDto>(this.customerUrl + $"/patch?customerid={customerid}", patchDoc);
-            return answer.IsVulnerable;
+            return answer.HasNeeds;
         }
     }
 }

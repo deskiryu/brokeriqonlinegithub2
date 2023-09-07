@@ -28,6 +28,6 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory);
 
-        Task<bool> SetCustomerVulnerability(int customerid, bool isVulnerable);
+        Task<bool> SetCustomerNeeds(int customerid, bool hasNeeds);
     }
 }

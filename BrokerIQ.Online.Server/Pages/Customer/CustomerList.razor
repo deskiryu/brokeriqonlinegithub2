@@ -128,7 +128,7 @@ else
             @if(this.api.Value.ShowProtection){
             <div class="row">
                 <div class="col-lg-4">
-                    <MudSwitch T="bool" @bind-checked="@IsVulnerable" Label="Is Vulnerable" Color="Color.Primary"/>
+                    <MudSwitch T="bool" @bind-checked="@HasNeeds" Label="Has Needs" Color="Color.Primary"/>
                 </div>
                 <div class="col-lg-4">
                     <MudSwitch T="bool" @bind-checked="@WithoutIncomeProtection" Label="Without Income Protection" Color="Color.Primary"/>
@@ -189,7 +189,29 @@ else
                 <MudTh></MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd><img src="@context.PPAsImage" class="rounded-pill" style="width:30px;"/></MudTd>
+                <MudTd>
+                    @if (!string.IsNullOrWhiteSpace(context.PPAsImage))
+                    {
+                        @if(context.HasNeeds){
+                            <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
+                                <MudAvatar><img src="@context.PPAsImage" style="width:30px;"/></MudAvatar>
+                            </MudBadge>
+                        }
+                        else{
+                            <MudAvatar><img src="@context.PPAsImage" style="width:30px;"/></MudAvatar>
+                        }
+                    }
+                    else{
+                        @if(context.HasNeeds){
+                            <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
+                                <MudAvatar Color="Color.Secondary">@context.FirstName.ToUpper().First()@context.LastName.ToUpper().First()</MudAvatar>
+                            </MudBadge>
+                        }
+                        else{
+                            <MudAvatar Color="Color.Secondary">@context.FirstName.ToUpper().First()@context.LastName.ToUpper().First()</MudAvatar>
+                        }
+                    }
+                </MudTd>
                 <MudTd DataLabel="First name">@context.FirstName</MudTd>
                 <MudTd DataLabel="Last name">@context.LastName</MudTd>
                 <MudTd DataLabel="Telephone">@context.TelephoneNumber</MudTd>

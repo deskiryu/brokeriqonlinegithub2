@@ -44,6 +44,11 @@ else if (!Saved)
                 <div class="card-header">Details</div>
                 <div class="card-body">
                     <div class="row">
+                        @if(Customer.HasNeeds){
+                        <div class="col-12 mb-1">
+                            <MudAlert Severity="Severity.Warning" ContentAlignment="HorizontalAlignment.Center">@GetNeedsContent()</MudAlert>
+                        </div>
+                        }
                         <div class="col-lg-2">
 
                         @if (CustomerProfilePicture != null)
@@ -270,7 +275,7 @@ else if (!Saved)
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
                         Add New Insurance
                     </MudButton>
-                    @if(Customer.IsVulnerable && BrokerHasActiveInsuranceQuoteSubscription){
+                    @if(ShowGetQuote()){
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick=@(r=> GetInsuranceQuote()) class="ml-2 mb-2">
                             Get Quote
                         </MudButton>
