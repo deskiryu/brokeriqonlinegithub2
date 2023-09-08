@@ -276,10 +276,7 @@ namespace BrokerIQ.Online.Pages
             if (!result.Cancelled)
             {
                 var returned = await VideoService.SetMortgageVideo(name, brokerId, !isMortgageVideo);
-                if (returned.Item1)
-                {
-                    returned.Item1 = await BrokerService.UpdateBrokerBirthdayVideoUrl(brokerId, returned.Item2);
-                }
+
                 if (returned.Item1)
                 {
                     await RefreshVideosWithDialogMessage(true, "Mortgage video set successfully");
@@ -341,7 +338,7 @@ namespace BrokerIQ.Online.Pages
                 dialogParams.Add("Message", "This video will be sent to all cilents on this date. Continue?");
             }
 
-            var brokerId = IsAdmin||IsMinorAdmin ? FilterBrokerId : BrokerId;
+            var brokerId = IsAdmin || IsMinorAdmin ? FilterBrokerId : BrokerId;
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
