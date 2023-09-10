@@ -142,7 +142,7 @@
                     remaining = await jsRuntime.InvokeAsync<int>("MyJSMethods.saveRecording");
                     completeString += await AudioRecordingService.GetAudioRecordingAsBase64();
 
-                }               
+                }
             }
 
 
@@ -152,8 +152,7 @@
             var bytes = Convert.FromBase64String(completeString);
             var stream = new MemoryStream(bytes);
             var fileName = AudioName + ".wav";
-
-            bool safe = await ScanAudio(fileName, stream);
+            var safe = false;
 
             if (isRunningWasm)
             {
@@ -285,18 +284,18 @@
                         else
                         {
                             Console.WriteLine($"Scan failed for {fileName} dataId {dataId} result {result} fileType {resultFiletype}");
-                            await DisplayErrorDialog($"The antivirus scan failed for {fileName}. Result - {result} - {resultFiletype}");
+                            ErrorMessage = $"The antivirus scan failed for {fileName}. Result - {result} - {resultFiletype}";
                         }
                         return scanPass;
                     }
                 }
                 attempts--;
             }
-            await DisplayErrorDialog($"Something went wrong retrieving the results of the anti-virus scan. Try uploading the file again.");
+            ErrorMessage = $"Something went wrong retrieving the results of the anti-virus scan. Try uploading the file again.";
         }
         else
         {
-            await DisplayErrorDialog($"Something went wrong uploading {fileName} to anti-virus scanning service. Try again.");
+            ErrorMessage = $"Something went wrong uploading {fileName} to anti-virus scanning service. Try again.";
         }
 
         return scanPass;
