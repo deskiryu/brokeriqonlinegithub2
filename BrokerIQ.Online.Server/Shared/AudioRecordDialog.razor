@@ -142,7 +142,7 @@
                     remaining = await jsRuntime.InvokeAsync<int>("MyJSMethods.saveRecording");
                     completeString += await AudioRecordingService.GetAudioRecordingAsBase64();
 
-                }               
+                }
             }
 
 
@@ -152,8 +152,17 @@
             var bytes = Convert.FromBase64String(completeString);
             var stream = new MemoryStream(bytes);
             var fileName = AudioName + ".wav";
+            var safe = false;
 
-            bool safe = await ScanAudio(fileName, stream);
+            if (isRunningWasm)
+            {
+                safe = await ScanAudioWasm(fileName, stream);
+            }
+            else
+            {
+                safe = await ScanAudio(fileName, stream);
+            }
+
             if (safe)
             {
                 AudioUploading = true;
@@ -227,6 +236,66 @@
         else
         {
             ErrorMessage=$"Something went wrong uploading {fileName} to anti-virus scanning service. Try again.";
+        }
+
+        return scanPass;
+    }
+
+
+    /// <summary>
+    /// Uploads a file to the OPSWAT service which scans the file for viruses.
+    /// Once uploaded, probes the OPSWAT service for the result of the scan.
+    /// Updates the UI to reflect the status of the scan.
+    /// </summary>
+    /// <param name="fileName">Video to be uploaded</param>
+    /// <param name="ms">Memory stream representation of video</param>
+    /// <returns>boolean result of scan</returns>
+    private async Task<bool> ScanAudioWasm(string fileName, MemoryStream ms)
+    {
+        bool scanPass = false;
+        string dataId = await VideoService.MetaDefenderAnalyseFile(fileName, ms);
+
+        AudioScanUploading = false;
+        StateHasChanged();
+
+        if (dataId != null && !string.IsNullOrEmpty(dataId))
+        {
+            int attempts = 60;
+            AudioScanning = true;
+            StateHasChanged();
+
+            while (attempts > 0)
+            {
+                dynamic resultJson = await VideoService.MetaDefenderFetchAnalysisResult(dataId);
+                if (resultJson != null)
+                {
+                    var progressPercentage = resultJson["scan_results"]["progress_percentage"];
+                    AudioScanningProgress = progressPercentage;
+                    StateHasChanged();
+
+                    if (progressPercentage == 100)
+                    {
+                        string result = resultJson["process_info"]["result"];
+                        string resultFiletype = resultJson["file_info"]["file_type_category"];
+                        if (result.Equals("Allowed") && resultFiletype.Equals("M"))
+                        {
+                            scanPass = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Scan failed for {fileName} dataId {dataId} result {result} fileType {resultFiletype}");
+                            ErrorMessage = $"The antivirus scan failed for {fileName}. Result - {result} - {resultFiletype}";
+                        }
+                        return scanPass;
+                    }
+                }
+                attempts--;
+            }
+            ErrorMessage = $"Something went wrong retrieving the results of the anti-virus scan. Try uploading the file again.";
+        }
+        else
+        {
+            ErrorMessage = $"Something went wrong uploading {fileName} to anti-virus scanning service. Try again.";
         }
 
         return scanPass;
