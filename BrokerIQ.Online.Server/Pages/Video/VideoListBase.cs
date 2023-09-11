@@ -207,6 +207,52 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected async Task SetWelcomeVideo(string name)
+        {
+            await VerifyAccess();
+
+            if (IsAdmin || IsMinorAdmin && FilterBrokerId == 0)
+            {
+                await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
+                return;
+            }
+
+            var dialogParams = new DialogParameters();
+            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Name == name);
+            bool alreadyChecked = false;
+            if (videoAlreadyChecked != null)
+            {
+                alreadyChecked = videoAlreadyChecked.WelcomeVideo;
+            }
+            if (alreadyChecked)
+            {
+                dialogParams.Add("Message", "There will be no welcome video. Continue?");
+            }
+            else
+            {
+                dialogParams.Add("Message", "This video will be sent to clients when they sign up. Continue?");
+            }
+
+            var brokerId = IsAdmin ? FilterBrokerId : BrokerId;
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            if (!result.Cancelled)
+            {
+                var returned = await VideoService.SetWelcomeVideo(name, brokerId, !alreadyChecked);
+                if (returned.Item1)
+                {
+                    returned.Item1 = await BrokerService.UpdateBrokerWelcomeVideoUrl(brokerId, returned.Item2);
+                }
+                if (returned.Item1)
+                {
+                    await RefreshVideosWithDialogMessage(true, "Welcome video set successfully");
+                }
+                else
+                {
+                    await RefreshVideosWithDialogMessage(false, "Something went wrong setting the welcome video. Please try again.");
+                }
+            }
+        }
+
         protected async Task SetBirthdayVideo(string name)
         {
             await VerifyAccess();
