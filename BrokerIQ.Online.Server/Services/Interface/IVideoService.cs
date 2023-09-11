@@ -27,6 +27,8 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<bool> NameAvailable(string name, int brokerId);
 
+        Task<(bool, string)> SetWelcomeVideo(string fileName, int brokerId, bool welcomeVideo = true);
+
         Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool birthdayVideo = true);
 
         Task<(bool, string)> SetMortgageVideo(string fileName, int brokerId, bool isMortgageVideo = true);
