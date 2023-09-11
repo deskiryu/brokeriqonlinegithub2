@@ -127,7 +127,7 @@
             SpinnerVisible = "display:block";
             AudioSaving = true;
             StateHasChanged();
-
+            AlertService.Info("Before string");
             var isRunningWasm = await RunningWasm.IsWebAssembly(jsRuntime);
             string completeString = "";
             if(isRunningWasm)
@@ -145,10 +145,10 @@
                 }
             }
 
-
+            AlertService.Info("Before delete");
             await AudioRecordingService.Delete();
             AudioSaving = false;
-
+            AlertService.Info("Before convert");
             var bytes = Convert.FromBase64String(completeString);
             var stream = new MemoryStream(bytes);
             var fileName = AudioName + ".wav";
@@ -156,6 +156,7 @@
 
             if (isRunningWasm)
             {
+                AlertService.Info("Before scan");
                 safe = await ScanAudioWasm(fileName, stream);
             }
             else
@@ -163,11 +164,12 @@
                 safe = await ScanAudio(fileName, stream);
             }
 
+            AlertService.Info("Before safe");
             if (safe)
             {
                 AudioUploading = true;
                 StateHasChanged();
-
+                AlertService.Info("Before upload");
                 await AudioService.UploadAudio(AudioName+".wav", stream, BrokerId);
             }
 
