@@ -111,6 +111,10 @@ namespace BrokerIQ.Online.Models
 
         public bool ShowTerritorialLimit { get; set; }
 
+        public bool? IsInTrust { get; set; }
+
+        public bool? HasWill { get; set; }
+
         public virtual ICollection<InsuranceDocument> SupportingDocuments { get; set; }
     }
 }
