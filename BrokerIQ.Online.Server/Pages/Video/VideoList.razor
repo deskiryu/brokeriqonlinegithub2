@@ -27,27 +27,17 @@
 </div>
 
         <div class="">
-    @if (VideoScanUploading)
+            @if (VideoUploading)
             {
                 <div class="mt-5">
-                    Uploading video to virus scanning service...
+                        Uploading video to BrokerIQ...
                 </div>
+
+                <div class="spin-row spin-row-bg mt-5">
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
+                </div>                
             }
-            else if (VideoScanning)
-            {
-                <div class="mt-5">
-                    Scanning video for viruses (@VideoScanningProgress %)
-                </div>
-            }
-            else if (VideoUploading)
-            {
-                <div class="mt-5">
-                    Scan complete. Uploading video to BrokerIQ...
-                </div>
-            }
-            <div class="spin-row spin-row-bg mt-5">
-                <MudProgressCircular Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
-            </div>
+
         </div>
 
         <MudDialog @bind-IsVisible="RenameUploadVisibility">

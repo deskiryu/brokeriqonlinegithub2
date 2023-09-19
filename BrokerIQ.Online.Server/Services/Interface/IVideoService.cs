@@ -17,7 +17,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<VideoThumbnail> GetVideoThumbnail(string fileName, int brokerId);
 
-        Task<bool> UploadAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId);
+        Task<bool> UploadAnalyseAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId);
 
         Task<bool> DeleteVideo(string fileName, int brokerId);
 
@@ -38,10 +38,6 @@ namespace BrokerIQ.Online.Services.Interface
         Task<(bool, string)> SetVetted(string fileName, bool value);
 
         Task<(bool, string)> SetBroker(string fileName, int brokerId);
-
-        Task<string> MetaDefenderAnalyseFile(string fileName, MemoryStream videoStream);
-
-        Task<object> MetaDefenderFetchAnalysisResult(string dataId);
 
     }
 }
