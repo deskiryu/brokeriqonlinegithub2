@@ -33,11 +33,11 @@ namespace BrokerIQ.Online.Services
             this.accountService = accountService;
         }
 
-        public async Task<Chat> Get(int customerId, int brokerId=0)
+        public async Task<Chat> Get(int customerId, int brokerId = 0)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var localBrokerId = brokerId > 0 ? brokerId :  user.MasterBrokerId;
+            var localBrokerId = brokerId > 0 ? brokerId : user.MasterBrokerId;
             string newUrl = this.ChatUrl + $"/{customerId}/{localBrokerId}?markAsReadByBroker=true";
 
             var ChatDto = await requestProviderService.Get<ChatDto>(newUrl);
@@ -61,8 +61,8 @@ namespace BrokerIQ.Online.Services
                 HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--")
             };
 
-            var answer = await requestProviderService.Post<CreateChatMessageDto,ChatMessageDto>(this.ChatUrl, createChatMessage);
-            return answer!=null&&answer.Id>0;
+            var answer = await requestProviderService.Post<CreateChatMessageDto, ChatMessageDto>(this.ChatUrl, createChatMessage);
+            return answer != null && answer.Id > 0;
         }
 
         public async Task<bool> SendWithDoc(string message, int customerId, ChatDocument chatDocument, bool NoNotification = false)
@@ -79,8 +79,9 @@ namespace BrokerIQ.Online.Services
                 NoNotification = NoNotification,
                 ChatDocument = new CreateChatDocumentDto
                 {
-                     File = chatDocument.File,
-                     FileName = chatDocument.FileName,
+                    File = chatDocument.File,
+                    FileName = chatDocument.FileName,
+                    SupportingDocumentType = chatDocument.SupportingDocumentType
                 }
             };
 
@@ -112,7 +113,7 @@ namespace BrokerIQ.Online.Services
                 NoNotification = false,
             };
 
-            var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl+"/multiple", createChatMessage);
+            var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
             return answer;
         }
 
