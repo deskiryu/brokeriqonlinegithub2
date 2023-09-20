@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Dto.Request;
 
 namespace BrokerIQ.Online.Services.Interface
 {
-    using Dto.Models;
-    using Models;
-    using BrokerIQ.Dto.Request;
-
     public interface IBrokerService
     {
         Task<Broker> GetBroker(int id, bool eagerload = false);
@@ -22,6 +18,8 @@ namespace BrokerIQ.Online.Services.Interface
         Task<Broker> AddBroker(Broker ins);
 
         Task<bool> DeleteBroker(int id);
+
+        Task<bool> UpdateBrokerWelcomeVideoUrl(int id, string url);
 
         Task<bool> UpdateBrokerBirthdayVideoUrl(int id, string url);
 

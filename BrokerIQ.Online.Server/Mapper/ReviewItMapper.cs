@@ -280,7 +280,9 @@ namespace BrokerIQ.Online.Mapper
                     }
                 }
                 return rd;
-            }));
+            }))
+            .ForMember(d => d.IsInTrust, action => action.MapFrom(s => s.IsInTrust))
+            .ForMember(d => d.HasWill, action => action.MapFrom(s => s.HasWill));
         }
 
         private void InsuranceDocumentMapper()

@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Online.Services.Abstract;
 
 namespace BrokerIQ.Online.Server.Services
 {
-    using System.Linq;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Newtonsoft.Json;
-    using BrokerIQ.Dto.Models;
-    using BrokerIQ.Online.Models;
-    using BrokerIQ.Online.Services.Interface;
-    using BrokerIQ.Online.Services.Abstract;
-
     public class NotificationService : INotificationService
     {
         private readonly string notificationUrl = "Notification";
@@ -28,7 +22,7 @@ namespace BrokerIQ.Online.Server.Services
             this.accountService = accountService;
         }
 
-        public async Task<bool> SendMessageNotification(string message, List<int> targets,int brokerId, bool sendAll = false, bool chat = false, bool updateAppAlert = true)
+        public async Task<bool> SendMessageNotification(string message, List<int> targets, int brokerId, bool sendAll = false, bool chat = false, bool updateAppAlert = true)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -102,7 +96,7 @@ namespace BrokerIQ.Online.Server.Services
                 BrokerStaffId = user.StaffBrokerId,
                 IsChat = false
             };
-            var answer = await this.requestProviderService.Post<CreateNotificationDto, bool>(this.notificationUrl+"/functionSendMortgageVideo", notification);
+            var answer = await this.requestProviderService.Post<CreateNotificationDto, bool>(this.notificationUrl + "/functionSendMortgageVideo", notification);
             return answer;
         }
 
@@ -111,17 +105,17 @@ namespace BrokerIQ.Online.Server.Services
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             bool sent = true;
-            foreach(var target in targets)
+            foreach (var target in targets)
             {
                 var notification = new CreateBrokerNotificationDto
                 {
                     Message = message,
                     BrokerId = target,
-                    SendBrokerNotificationToPhone = true,  
+                    SendBrokerNotificationToPhone = true,
                     SendBrokerNotificationToStaffPhone = true,
-                    
+
                 };
-                sent = await this.requestProviderService.Post<CreateBrokerNotificationDto, bool>(this.notificationUrl+"/broker", notification);
+                sent = await this.requestProviderService.Post<CreateBrokerNotificationDto, bool>(this.notificationUrl + "/broker", notification);
                 if (!sent)
                     break;
             }
@@ -143,7 +137,7 @@ namespace BrokerIQ.Online.Server.Services
             this.requestProviderService.Token = user?.Token;
             var brokerId = user.MasterBrokerId;
 
-            var answer = await this.requestProviderService.Get<IEnumerable<NotificationDto>>(this.notificationUrl+$"/customer?customerId={customerId}&brokerId={brokerId}");
+            var answer = await this.requestProviderService.Get<IEnumerable<NotificationDto>>(this.notificationUrl + $"/customer?customerId={customerId}&brokerId={brokerId}");
             return this.mapper.Map<IEnumerable<Notification>>(answer);
         }
 
@@ -188,7 +182,15 @@ namespace BrokerIQ.Online.Server.Services
             this.requestProviderService.Token = user?.Token;
             var brokerId = user.MasterBrokerId;
 
-            await this.requestProviderService.Post<int>(this.notificationUrl + $"/brokerById/markread?brokerid={brokerId}",brokerId);
+            await this.requestProviderService.Post<int>(this.notificationUrl + $"/brokerById/markread?brokerid={brokerId}", brokerId);
+        }
+
+        public async Task ToggleNotificationReadStatus(int notificationId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            await this.requestProviderService.Post<int>(this.notificationUrl + $"/{notificationId}/{user.MasterBrokerId}/toggleread");
         }
     }
 }

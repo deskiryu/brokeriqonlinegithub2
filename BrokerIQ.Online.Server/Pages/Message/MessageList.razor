@@ -7,7 +7,6 @@
 @using BrokerIQ.Online.Services.Interface
 @using BrokerIQ.Online.Server.Helper
 @inject IEmailService EmailService
-@inject MessageCountState MyMessageCountState
 
 <h3 class="page-title">Reminders</h3>
 
@@ -30,6 +29,9 @@
                 {
                     <MudTh>Broker</MudTh>
                 }
+                else{
+                    <MudTh Style="text-align:center"><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.Read)">Actioned</MudTableSortLabel></MudTh>
+                }
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Message">
@@ -45,14 +47,22 @@
                     {
                         @context.Message           
                     }
-
                 </MudTd>
                 <MudTd DataLabel="Sent">@context.SentDate.ToBiqDateTimeString()</MudTd>   
                 @if (IsAdmin)
                 {
                     <MudTd>@Brokers.FirstOrDefault(x => x.Id == context.BrokerId)?.Name</MudTd>
                 }
-
+                else{
+                <MudTd Style="text-align:center">
+                    @if (!context.Read){
+                    <MudCheckBox @bind-Checked="@context.Read" @onclick="async f => await SetReminderReadStatus(context.Id)" />
+                    }
+                    else{
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" />
+                    }
+                </MudTd>
+                }
             </RowTemplate>
             <PagerContent>
                 <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
@@ -64,13 +74,5 @@
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to messge list</MudButton>
-}
-
-@code{
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        MyMessageCountState.MessageCount = 0;
-    }
-
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to message list</MudButton>
 }
