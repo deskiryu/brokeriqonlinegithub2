@@ -44,11 +44,11 @@ namespace BrokerIQ.Online.Server.Services
             return this.mapper.Map<List<Audio>>(answer);
         }
 
-        public async Task<bool> UploadAudio(string fileName, MemoryStream audioStream, int brokerId)
+        public async Task<bool> UploadAndAnalyseAudio(string fileName, MemoryStream audioStream, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.audioUrl + $"?brokerId={brokerId}&fileName={fileName}";
+            var url = this.audioUrl + $"/UploadAndAnalyseAudio?brokerId={brokerId}&fileName={fileName}";
             var answer = false;
             try
             {
