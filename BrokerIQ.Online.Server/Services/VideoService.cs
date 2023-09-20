@@ -74,11 +74,11 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<bool> UploadAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
+        public async Task<bool> UploadAnalyseAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/UploadAndConvertVideo?brokerId={brokerId}&fileName={fileName}";
+            var url = this.videoUrl + $"/UploadAnalyseAndConvertVideo?brokerId={brokerId}&fileName={fileName}";
             var answer = false;
             try
             {
@@ -87,38 +87,6 @@ namespace BrokerIQ.Online.Server.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"UploadVideo: exception {ex.Message}");
-            }
-            return answer;
-        }
-
-        public async Task<string> MetaDefenderAnalyseFile(string fileName, MemoryStream videoStream)
-        {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/MetaDefenderAnalyseFile?&fileName={fileName}";
-            var answer = "";
-            try
-            {
-                answer = await this.requestProviderService.Post<MemoryStream, string>(url, videoStream, "application/octet-stream");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"MetaDefenderAnalyseFile: exception {ex.Message}");
-            }
-            return answer;
-        }
-
-        public async Task<object> MetaDefenderFetchAnalysisResult(string dataId)
-        {
-            var url = this.videoUrl + $"/MetaDefenderFetchAnalysisResult?dataId={dataId}";
-            var answer = new object();
-            try
-            {
-                answer = await this.requestProviderService.Get<object>(url);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"ConvertVideo: exception {ex.Message}");
             }
             return answer;
         }
