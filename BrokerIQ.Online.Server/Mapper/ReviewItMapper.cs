@@ -31,7 +31,7 @@ namespace BrokerIQ.Online.Mapper
             ChatMapper();
             AzureStorageMapper();
             DocumentsRequirementMapper();
-            BrokerDefinedMessageMapper();
+            // BrokerDefinedMessageMapper();
             ClientReferralMapper();
             BrokerReminderOptionsMapper();
             BrokerSubscriptionMapper();
@@ -873,11 +873,11 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<DocumentsRequirement, DocumentsRequirementDto>();
         }
 
-        private void BrokerDefinedMessageMapper()
-        {
-            CreateMap<BrokerDefinedMessageDto, BrokerDefinedMessage>();
-            CreateMap<BrokerDefinedMessage, BrokerDefinedMessageDto>();
-        }
+        // private void BrokerDefinedMessageMapper()
+        // {
+        //     CreateMap<BrokerDefinedMessageDto, BrokerDefinedMessage>();
+        //     CreateMap<BrokerDefinedMessage, BrokerDefinedMessageDto>();
+        // }
 
         private void ClientReferralMapper()
         {

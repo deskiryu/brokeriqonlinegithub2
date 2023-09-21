@@ -710,9 +710,9 @@ else if (!Saved)
                                             ? String.Empty
                                             : $"<br/><br/><i class=\"fa fa-file-pdf\"> &nbsp;{message.FileName}</i>";
 
-                                            var itemContent = $"{message.BrokerDefinedMessage}{@attachment}";
+                                            var itemContent = $"{message.Message}{@attachment}";
 
-                                            <MudSelectItem Value="@(((int)message.BrokerDefinedMessageEnumValue).ToString())">@((MarkupString)itemContent)</MudSelectItem>
+                                            <MudSelectItem Value="@(((int)message.Id).ToString())">@message.Prompt</MudSelectItem>
                                         }
                                 </MudSelect>
                             </div>

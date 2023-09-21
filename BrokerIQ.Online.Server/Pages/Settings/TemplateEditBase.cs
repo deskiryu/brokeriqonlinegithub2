@@ -133,36 +133,37 @@ namespace BrokerIQ.Online.Pages
             {
                 NavigationManager.NavigateTo($"account/logout");
             }
-            await PopulateBrokerDefinedMessages();
+
+            // await PopulateBrokerDefinedMessages();
 
             fileUploadSettings = this.FileUploadSettingsOption.Value;
         }
 
-        protected async Task PopulateBrokerDefinedMessages()
-        {
-            BrokerDefinedMessage definedMessages = await BrokerDefinedMessageService.Get();
-            MessageElements = new List<MessageElement>();
+        // protected async Task PopulateBrokerDefinedMessages()
+        // {
+        //     BrokerDefinedMessage definedMessages = await BrokerDefinedMessageService.Get();
+        //     MessageElements = new List<MessageElement>();
 
-            foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
-            {
-                if (enumVal.IsSystemMessage()) continue;
+        //     foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
+        //     {
+        //         if (enumVal.IsSystemMessage()) continue;
 
-                var message = definedMessages.BrokerDefinedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == enumVal);
+        //         var message = definedMessages.BrokerDefinedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == enumVal);
 
-                var element = new MessageElement()
-                {
-                    Index = (int)enumVal,
-                    Message = message == null ? enumVal.GetDisplayName() : message.BrokerDefinedMessage,
-                    Prompt = enumVal.GetDisplayPrompt(),
-                    FileName = message?.FileName,
-                    FileContent = message?.File
-                };
+        //         var element = new MessageElement()
+        //         {
+        //             Index = (int)enumVal,
+        //             Message = message == null ? enumVal.GetDisplayName() : message.BrokerDefinedMessage,
+        //             Prompt = enumVal.GetDisplayPrompt(),
+        //             FileName = message?.FileName,
+        //             FileContent = message?.File
+        //         };
 
-                MessageElements.Add(element);
-            }
+        //         MessageElements.Add(element);
+        //     }
 
-            StateHasChanged();
-        }
+        //     StateHasChanged();
+        // }
 
         protected void LoadFiles(InputFileChangeEventArgs e)
         {
@@ -193,35 +194,35 @@ namespace BrokerIQ.Online.Pages
             IsCurrentFileToBeRemoved = true;
         }
 
-        protected async void CommitMessage(object element)
-        {
-            // update defined messages in database
-            List<DefinedMessagesDto> definedMessages = new List<DefinedMessagesDto>();
+        // protected async void CommitMessage(object element)
+        // {
+        //     // update defined messages in database
+        //     List<DefinedMessagesDto> definedMessages = new List<DefinedMessagesDto>();
 
-            var message = new DefinedMessagesDto
-            {
-                BrokerDefinedMessageEnumValue = (BrokerDefinedMessageEnum)((MessageElement)element).Index,
-                BrokerDefinedMessage = ((MessageElement)element).Message,
-            };
+        //     var message = new DefinedMessagesDto
+        //     {
+        //         BrokerDefinedMessageEnumValue = (BrokerDefinedMessageEnum)((MessageElement)element).Index,
+        //         BrokerDefinedMessage = ((MessageElement)element).Message,
+        //     };
 
-            var uploadedFile = SelectedFiles.FirstOrDefault();
+        //     var uploadedFile = SelectedFiles.FirstOrDefault();
 
-            if (uploadedFile != null)
-            {
-                message.FileName = uploadedFile.Name;
+        //     if (uploadedFile != null)
+        //     {
+        //         message.FileName = uploadedFile.Name;
 
-                var contents = new MemoryStream(); ;
-                await uploadedFile.OpenReadStream(fileUploadSettings.MaxFileSize).CopyToAsync(contents);
-                message.File = contents.ToArray();
-            }
+        //         var contents = new MemoryStream(); ;
+        //         await uploadedFile.OpenReadStream(fileUploadSettings.MaxFileSize).CopyToAsync(contents);
+        //         message.File = contents.ToArray();
+        //     }
 
-            definedMessages.Add(message);
-            await BrokerDefinedMessageService.UpdateOrCreate(definedMessages);
-            await PopulateBrokerDefinedMessages();
+        //     definedMessages.Add(message);
+        //     await BrokerDefinedMessageService.UpdateOrCreate(definedMessages);
+        //     await PopulateBrokerDefinedMessages();
 
-            SelectedFiles.Clear();
-            IsCurrentFileToBeRemoved = false;
-        }
+        //     SelectedFiles.Clear();
+        //     IsCurrentFileToBeRemoved = false;
+        // }
 
         protected bool GetEmailPreference(EmailNotificationPreferencesEnum enpm, bool staff = false)
         {

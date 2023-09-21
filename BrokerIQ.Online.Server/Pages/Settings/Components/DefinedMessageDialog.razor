@@ -1,0 +1,61 @@
+@using BrokerIQ.Online.Server.Extensions 
+
+@inject IJSRuntime js
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form">
+            <MudTextField Class="mb-2" @bind-Value=Template.Prompt Label="Prompt" Required="true" RequiredError="Prompt cannot be empty" />
+            <div class="mb-2">
+                <p><b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.</p>
+                <p><b>INSERT_BROKER_NAME</b> is replaced in message by your brokerage name.</p>
+                <p><b>INSERT_DATE</b> is replaced by the final date.</p>
+            </div>
+            <MudTextField Class="mb-2" Lines="5" @bind-Value=Template.Message Label="Message Content" Required="true" RequiredError="Message content cannot be empty" /> @if (!IsCurrentFileToBeRemoved)
+            {
+                var toggleHiddenClass = SelectedFiles.Any() ? "card d-none" : "card"; if (String.IsNullOrWhiteSpace(@Template.FileName))
+                {
+                    <div class="@toggleHiddenClass @HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave">
+                        <MudPaper class="drag-drop-zone">
+                            <InputFile OnChange="LoadFiles" Class="drag-drop-input" accept="application/pdf" />
+                            <MudText Typo="Typo.subtitle1">Click or drag pdf file to attach to message</MudText>
+                        </MudPaper>
+                    </div> @if (SelectedFiles.Any())
+                    {
+                        var fileName = SelectedFiles[0].Name;
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteDefinedDocument())" class="btn btn-link">Remove @fileName</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => PreviewAttachment(SelectedFiles.FirstOrDefault())">
+                            <i class="fa fa-eye" />
+                        </MudButton>
+                    }                      }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => RemoveCurrentFile())" class="btn btn-link">Remove @Template.FileName</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => PreviewAttachment(Template.File)">
+                        <i class="fa fa-eye" />
+                    </MudButton>
+                }
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    protected async Task PreviewAttachment(byte[] attachment)
+    {
+        await Extensions.PreviewFile(js, new System.IO.MemoryStream(attachment));
+    }
+
+    protected async Task PreviewAttachment(IBrowserFile uploadedFile)
+    {
+        if (uploadedFile == null) return;
+
+        var contents = new System.IO.MemoryStream(); ;
+        await uploadedFile.OpenReadStream(fileUploadSettings.MaxFileSize).CopyToAsync(contents);
+        await Extensions.PreviewFile(js, contents);
+    }
+}
