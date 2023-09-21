@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using BrokerIQ.Online.Models;
+using System.Threading.Tasks;
 
 namespace BrokerIQ.Online.Services.Interface
 {
-    using BrokerIQ.Online.Models;
-    using System.Threading.Tasks;
-
     public interface INotificationService
     {
         Task<bool> SendMessageNotification(string message, List<int> targets, int brokerId, bool sendAll = false, bool chat = false, bool updateAppAlert = true);
@@ -33,5 +30,6 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task MarkAsReadByBrokerId();
 
+        Task ToggleNotificationReadStatus(int notificationId);
     }
 }

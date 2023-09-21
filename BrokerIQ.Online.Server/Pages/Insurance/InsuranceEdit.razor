@@ -138,8 +138,7 @@
                                 <ValidationMessage class="offset-sm-3" For="@(() => Insurance.ReviewDate)" />
                             </div>
                             <div class="col-sm-2">
-                                <label>Show</label>
-                                <MudCheckBox @bind-Checked="@Insurance.ShowReviewDate" />
+                                <MudCheckBox @bind-Checked="@Insurance.ShowReviewDate" Label="Show"/>
                             </div>
                         </div>
 
@@ -174,8 +173,7 @@
                                     </MudItem>
                                 </div>
                                 <div class="col-sm-2 mt-5">
-                                    <label>Show</label>
-                                    <MudCheckBox @bind-Checked="@Insurance.ShowTermYears" />
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowTermYears" Label="Show"/>
                                 </div>
                             </div>
 
@@ -188,8 +186,7 @@
                                     </MudItem>
                                 </div>
                                 <div class="col-sm-2 mt-5">
-                                    <label>Show</label>
-                                    <MudCheckBox @bind-Checked="@Insurance.ShowTermAmount" />
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowTermAmount" Label="Show"/>
                                 </div>
                             </div>
 
@@ -202,8 +199,7 @@
                                     </MudItem>
                                 </div>
                                 <div class="col-sm-2 mt-5">
-                                    <label>Show</label>
-                                    <MudCheckBox @bind-Checked="@Insurance.ShowDeferredPeriodWeeks" />
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowDeferredPeriodWeeks" Label="Show" />
                                 </div>
                             </div>
                         }
@@ -219,26 +215,41 @@
                                     </MudItem>
                                 </div>
                                 <div class="col-sm-2 mt-5">
-                                    <label>Show</label>
-                                    <MudCheckBox @bind-Checked="@Insurance.ShowSecondTermAmount" />
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowSecondTermAmount" Label="Show" />
                                 </div>
                             </div>
                         }
 
                         @if (BrokerIQ.Dto.Extensions.Extensions.IsFractureCoverInsurance(Insurance.InsType))
                         {
-
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Fracture cover</label>
                                 <div class="col-sm-5">
                                     <MudCheckBox @bind-Checked="@Insurance.FractureCover" />
                                 </div>
                                 <div class="col-sm-2">
-                                    <label>Show</label>
-                                    <MudCheckBox @bind-Checked="@Insurance.ShowFractureCover" />
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowFractureCover" Label="Show" />
                                 </div>
                             </div>
                         }
+
+                        @if (Insurance.InsType == InsuranceEnum.Life || Insurance.InsType == InsuranceEnum.CriticalIllness)
+                        {
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Is In Trust</label>
+                                <div class="col-sm-5">
+                                    <MudCheckBox @bind-Checked="@Insurance.IsInTrust" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Has Will</label>
+                                <div class="col-sm-5">
+                                    <MudCheckBox @bind-Checked="@Insurance.HasWill" />
+                                </div>
+                            </div>
+                        }
+                        
                         @if (BrokerHasWhiteLabelAndIsInsuranceOnly && BrokerIQ.Dto.Extensions.Extensions.IsBusinessInsurance(Insurance.InsType))
                         {
                             <div class="form-group row">

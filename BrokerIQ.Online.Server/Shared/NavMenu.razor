@@ -230,8 +230,10 @@
         });
     }
 
-    private async Task UpdateMessageCount(bool refresh = false)
+    private async Task UpdateMessageCount()
     {
+        NewMessageHide = true;
+
         if (MyLoggedInAppState.LoggedIn && MyLoggedInAppState.IsAdmin == false && MyLoggedInAppState.IsMinorAdmin == false)
         {
             var count = await NotificationService.GetNewBrokerNotificationsCountByBrokerId();

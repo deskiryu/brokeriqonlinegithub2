@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AutoMapper;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Dto.Models;
 
 namespace BrokerIQ.Online.Server.Services
 {
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Online.Services.Abstract;
-    using BrokerIQ.Online.Services.Interface;
-    using BrokerIQ.Dto.Models;
-
     public class VideoService : IVideoService
     {
         private readonly string videoUrl = "Video";
@@ -76,11 +74,11 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<bool> UploadAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
+        public async Task<bool> UploadAnalyseAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/UploadAndConvertVideo?brokerId={brokerId}&fileName={fileName}";
+            var url = this.videoUrl + $"/UploadAnalyseAndConvertVideo?brokerId={brokerId}&fileName={fileName}";
             var answer = false;
             try
             {
@@ -89,38 +87,6 @@ namespace BrokerIQ.Online.Server.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"UploadVideo: exception {ex.Message}");
-            }
-            return answer;
-        }
-
-        public async Task<string> MetaDefenderAnalyseFile(string fileName, MemoryStream videoStream)
-        {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/MetaDefenderAnalyseFile?&fileName={fileName}";
-            var answer = "";
-            try
-            {
-                answer = await this.requestProviderService.Post<MemoryStream, string>(url, videoStream, "application/octet-stream");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"MetaDefenderAnalyseFile: exception {ex.Message}");
-            }
-            return answer;
-        }
-
-        public async Task<object> MetaDefenderFetchAnalysisResult(string dataId)
-        {
-            var url = this.videoUrl + $"/MetaDefenderFetchAnalysisResult?dataId={dataId}";
-            var answer = new object();
-            try
-            {
-                answer = await this.requestProviderService.Get<object>(url);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"ConvertVideo: exception {ex.Message}");
             }
             return answer;
         }
@@ -195,12 +161,29 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool birthdayVideo = true)
+        public async Task<(bool, string)> SetWelcomeVideo(string fileName, int brokerId, bool isWelcomeVideo = true)
         {
             var answer = (false, string.Empty);
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/setbirthdayvideo?brokerId={brokerId}&fileName={fileName}&isBirthdayVideo={birthdayVideo}";
+            var url = this.videoUrl + $"/setwelcomevideo?brokerId={brokerId}&fileName={fileName}&iswelcomeVideo={isWelcomeVideo}";
+            try
+            {
+                answer = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetWelcomeVideo: exception {ex.Message}");
+            }
+            return answer;
+        }
+
+        public async Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool isBirthdayVideo = true)
+        {
+            var answer = (false, string.Empty);
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/setbirthdayvideo?brokerId={brokerId}&fileName={fileName}&isbirthdayVideo={isBirthdayVideo}";
             try
             {
                 answer = await this.requestProviderService.Post<(bool, string)>(url);

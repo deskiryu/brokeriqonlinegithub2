@@ -14,6 +14,8 @@ namespace BrokerIQ.Online.Server.Models
 
         public bool Vetted { get; set; }
 
+        public bool WelcomeVideo { get; set; }
+
         public bool BirthdayVideo { get; set; }
 
         public bool MortgageVideo { get; set; }
