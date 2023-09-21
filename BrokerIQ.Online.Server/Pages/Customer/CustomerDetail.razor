@@ -560,7 +560,7 @@ else if (!Saved)
                                         DocumentTypeEnumValues.TryGetValue((int)context.DocuVaultType, out strDocType);
                                         @strDocType
                                     }</MudTd>
-                                            <MudTd DataLabel="Email">@context.CreatedDate</MudTd>
+                                            <MudTd DataLabel="Email">@context.CreatedDate.ToBiqDateTimeString()</MudTd>
                                 <MudTd DataLabel="Type">@context.TypeDesc</MudTd>
                                 <MudTd DataLabel="Description">@context.Description</MudTd>
                                 <MudTd>

@@ -1,23 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BrokerIQ.Online.Services.Abstract;
+using AutoMapper;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Dto.Request;
 
 namespace BrokerIQ.Online.Services
 {
-    using System.Net.Http;
-    using System.Text.Json;
-    using Abstract;
-    using AppSettings;
-    using AutoMapper;
-    using Dto.Models;
-    using Interface;
-    using Mapper;
-    using Microsoft.Extensions.Options;
-    using Models;
-    using BrokerIQ.Dto.Request;
-    using BrokerIQ.Online.Services.Interface;
-
     public class BrokerService : IBrokerService
     {
         private readonly string BrokerUrl = "Broker";
@@ -32,7 +23,7 @@ namespace BrokerIQ.Online.Services
             this.accountService = accountService;
         }
 
-        public async Task<Broker> GetBroker(int id, bool eagerload=false)
+        public async Task<Broker> GetBroker(int id, bool eagerload = false)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -53,7 +44,8 @@ namespace BrokerIQ.Online.Services
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             var url = this.BrokerUrl + "/list?";
-            foreach(var id in ids){
+            foreach (var id in ids)
+            {
                 url += $"ids={id}&";
             }
             url.TrimEnd('&');
@@ -86,17 +78,31 @@ namespace BrokerIQ.Online.Services
             return await this.requestProviderService.Delete(this.BrokerUrl, id);
         }
 
+        public async Task<bool> UpdateBrokerWelcomeVideoUrl(int id, string url)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var toSend = new UpdateVideoUrlDto
+            {
+                Id = id,
+                VideoUrl = url
+            };
+            var urlToGo = this.BrokerUrl + $"/welcomevideourl";
+            var answer = await this.requestProviderService.Post<UpdateVideoUrlDto, bool>(urlToGo, toSend);
+            return answer;
+        }
+
         public async Task<bool> UpdateBrokerBirthdayVideoUrl(int id, string url)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var toSend = new UpdateBirthdayVideoUrlDto
+            var toSend = new UpdateVideoUrlDto
             {
                 Id = id,
-                BirthdayVideoUrl = url
+                VideoUrl = url
             };
             var urlToGo = this.BrokerUrl + $"/birthdayvideourl";
-            var answer = await this.requestProviderService.Post<UpdateBirthdayVideoUrlDto,bool>(urlToGo,toSend);
+            var answer = await this.requestProviderService.Post<UpdateVideoUrlDto, bool>(urlToGo, toSend);
             return answer;
         }
 
@@ -107,6 +113,5 @@ namespace BrokerIQ.Online.Services
             var urlToGo = this.BrokerUrl + $"/verifybroker/{id}";
             return await this.requestProviderService.Post<BoolResponseDto>(urlToGo);
         }
-
     }
 }

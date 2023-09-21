@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.IO;
+
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Online.Server.Helper;
 
 namespace BrokerIQ.Online.Pages
 {
-    
-    using Microsoft.AspNetCore.Components;
-    using MudBlazor;
-    using BrokerIQ.Online.Models;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Online.Services.Interface;
-
     public class MessageListBase : ComponentBase
     {
         protected string Message = string.Empty;
@@ -40,6 +37,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IDialogService DialogService { get; set; }
 
+        [Inject]
+        protected MessageCountState CurrentMessageCount { get; set; }
+
         public List<BrokerNotification> BrokerNotifications { get; set; }
 
         public bool IsAdmin { get; set; }
@@ -54,8 +54,8 @@ namespace BrokerIQ.Online.Pages
                 IsAdmin = user.IsAdmin;
                 if (user.IsBroker || user.IsBrokerStaff)
                 {
-                    BrokerNotifications = (await NotificationService.GetBrokerNotificationsByBrokerId()).OrderByDescending(x => x.SentDate).ToList();
-                    await NotificationService.MarkAsReadByBrokerId();
+                    BrokerNotifications = (await NotificationService.GetBrokerNotificationsByBrokerId()).OrderBy(n => n.Read).ThenByDescending(x => x.SentDate).ToList();
+                    CurrentMessageCount.MessageCount = BrokerNotifications.Count;
                 }
                 else
                 {
@@ -82,6 +82,13 @@ namespace BrokerIQ.Online.Pages
         protected void NavigateToOverview()
         {
             Saved = false;
+        }
+
+        protected async Task SetReminderReadStatus(int reminderId)
+        {
+            await NotificationService.ToggleNotificationReadStatus(reminderId);
+
+            CurrentMessageCount.MessageCount--;
         }
     }
 }

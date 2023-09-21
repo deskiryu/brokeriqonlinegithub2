@@ -632,7 +632,7 @@ namespace BrokerIQ.Online.Pages
                     if (SelectedTemplateDateReplacement.HasValue)
                     {
                         DateTime value = SelectedTemplateDateReplacement.Value;
-                        message.BrokerDefinedMessage = message.BrokerDefinedMessage.Replace("INSERT_DATE", value.ToShortDateString());
+                        message.BrokerDefinedMessage = message.BrokerDefinedMessage.Replace("INSERT_DATE", value.ToBiqDateTimeString());
                     }
                     else
                     {
@@ -754,12 +754,13 @@ namespace BrokerIQ.Online.Pages
                                 for (int i = 0; i < memoryStreams.Count; i++)
                                 {
                                     var noNotification = i > 0;
-                                    var loopSdoc = new ChatDocument
+                                    var file = new ChatDocument
                                     {
                                         FileName = filenames[i],
-                                        File = memoryStreams[i].ToArray()
+                                        File = memoryStreams[i].ToArray(),
+                                        SupportingDocumentType = DocumentTypeEnum.PDF
                                     };
-                                    succeeded = (await ChatService.SendWithDoc(noNotification ? string.Empty : message, Customer.Id, loopSdoc, noNotification));
+                                    succeeded = (await ChatService.SendWithDoc(noNotification ? string.Empty : message, Customer.Id, file, noNotification));
                                 }
                             }
 
