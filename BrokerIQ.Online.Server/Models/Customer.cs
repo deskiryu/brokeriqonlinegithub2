@@ -73,6 +73,8 @@ namespace BrokerIQ.Online.Models
 
         public bool HasNeeds { get; set; }
 
+        public string NotificationTag { get; set; }
+
         public virtual ICollection<Insurance> Insurances { get; set; }
 
         public virtual ICollection<Mortgage> Mortgages { get; set; }
