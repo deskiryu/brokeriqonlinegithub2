@@ -128,7 +128,7 @@ else
             @if(this.api.Value.ShowProtection){
             <div class="row">
                 <div class="col-lg-4">
-                    <MudSwitch T="bool" @bind-checked="@HasNeeds" Label="Has Needs" Color="Color.Primary"/>
+                    <MudSwitch T="bool" @bind-checked="@HasNeeds" Label="Client profiling *" Color="Color.Primary"/>
                 </div>
                 <div class="col-lg-4">
                     <MudSwitch T="bool" @bind-checked="@WithoutIncomeProtection" Label="Without Income Protection" Color="Color.Primary"/>
@@ -139,9 +139,13 @@ else
                 <div class="col-lg-4">
                     <MudSwitch T="bool" @bind-checked="@WithoutLifeCritical" Label="Without Life & Critical Ilness" Color="Color.Primary" />
                 </div>
-            </div>  
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <MudText Typo="Typo.body2">* Profiling highlights customers who would benefit from additional insurance, for example, when client is self-employed, has a mortgage & life & critical illness and doesn't have income protection.</MudText>
+                </div>
+            </div>
             }
-
 
             @if (IsAdmin)
             {   
@@ -255,4 +259,3 @@ else
     </div>
 </div>
 }
-

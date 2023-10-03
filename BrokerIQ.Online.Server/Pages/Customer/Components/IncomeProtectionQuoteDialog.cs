@@ -27,7 +27,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         MudForm form;
 
-        private const string DEFAULT_CUSTOMER_MESSAGE = "Hi, I have been reviewing your case and would like to talk to you. Have you considered Income protection? I quickly ran a quote for you with basic criteria and you can get Income protection for £{0:0.00} per month for £{1:0.00} per month cover.";
+        private const string DEFAULT_CUSTOMER_MESSAGE = "Hi {0}, I have been reviewing your case and would like to talk to you. Have you considered Income protection? I quickly ran a quote for you with basic criteria and you can get Income protection for £{1:0.00} per month for £{2:0.00} per month cover.";
 
         private IncomeProtectionQuoteDataDto LastQuoteData { get; set; }
 
@@ -91,7 +91,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 $"Monthly premium of £{LastPremiumAmount:0.00} for monthly benefit of £{LastBenefitAmount:0.00}." :
                 "No quote available. Could there be client information missing ?";
 
-            CustomerMessage = string.Format(DEFAULT_CUSTOMER_MESSAGE, LastPremiumAmount, LastBenefitAmount);
+            CustomerMessage = string.Format(DEFAULT_CUSTOMER_MESSAGE, Customer.FirstName, LastPremiumAmount, LastBenefitAmount);
 
             isProcessing = false;
         }
