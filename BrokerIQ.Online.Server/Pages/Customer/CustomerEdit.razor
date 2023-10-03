@@ -126,7 +126,7 @@
                     <div class="col-sm-8">
                         <MudAutocomplete T="OccupationDto" @bind-Value="SelectedOccupation" SearchFunc="@SearchOccupations"
                         AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
-                        MinCharacters="3" SelectValueOnTab="true"
+                        MinCharacters="3" SelectValueOnTab="true" Label="Type in 3 letters" MaxItems="100"
                         ToStringFunc="@(o=> o == null ? null : $"{o.Description} ({o.OrigoCode})")" />
                     </div>
                 </div>
