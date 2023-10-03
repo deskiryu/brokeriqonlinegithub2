@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Components;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Server.Services.Interface;
-using BrokerIQ.Online.Server;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using BrokerIQ.Online.AppSettings;
 using Microsoft.Extensions.Options;
 
@@ -17,6 +15,8 @@ namespace BrokerIQ.Online.Pages
 {
     public class CustomerEditBase : ComponentBase
     {
+        protected const int MIN_OCCUPATION_CHARS = 2;
+
         private int id;
         private int customerId;
         private string strCustomerId;
