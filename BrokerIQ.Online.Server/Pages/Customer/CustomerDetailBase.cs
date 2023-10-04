@@ -1016,8 +1016,6 @@ namespace BrokerIQ.Online.Pages
 
             foreach (var template in templates)
             {
-                if (template.BrokerDefinedMessageId != BrokerDefinedMessageEnum.BrokerDefined) continue;
-
                 if (!string.IsNullOrWhiteSpace(template.Message))
                 {
                     // display broker defined message

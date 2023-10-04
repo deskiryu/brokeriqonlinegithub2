@@ -44,7 +44,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             var parameters = new DialogParameters
             {
-                { "ContentText", $"Do you really want to delete \"{message.Prompt}\" message? This process cannot be undone." },
+                { "ContentText", $"Do you really want to delete \"{message.Prompt}\" message? This cannot be undone." },
                 { "ButtonText", "Delete" },
                 { "Color", Color.Error }
             };
@@ -79,7 +79,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 var newTemplate = new CreateBrokerDefinedMessageDto()
                 {
                     BrokerId = template.BrokerId,
-                    BrokerDefinedMessageId = template.BrokerDefinedMessageId,
                     Prompt = template.Prompt,
                     Message = template.Message,
                     FileName = template.FileName,
