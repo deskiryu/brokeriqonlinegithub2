@@ -117,13 +117,50 @@
                         </div>
                     </div>
 
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Employment Status</label>
+                <div class="col-sm-8">
+                    <MudSelect T="int"
+                               Margin="Margin.Dense"
+                               Dense="true"
+                    @bind-Value="@SelectedEmploymentStatus">
+                        @{
+                            var names = Enum.GetNames(typeof(EmploymentEnum));
+                            for (int i = 0; i < names.Length; i++)
+                            {
+                                EmploymentEnum looped = (EmploymentEnum)i;
+                                <MudSelectItem Value=@i>@looped.GetDisplayName()</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </div>
+            </div>
 
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Residential Status</label>
+                <div class="col-sm-8">
+                    <MudSelect T="int"
+                               Margin="Margin.Dense"
+                               Dense="true"
+                    @bind-Value="@SelectedResidentialStatus">
+                        @{
+                            var names = Enum.GetNames(typeof(ResidentialStatusEnum));
+                            for (int i = 0; i < names.Length; i++)
+                            {
+                                ResidentialStatusEnum looped = (ResidentialStatusEnum)i;
+                                <MudSelectItem Value=@i>@looped.GetDisplayName()</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </div>
+            </div>
 
             @if (this.api.Value.ShowProtection)
             {
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Occupation</label>
                     <div class="col-sm-8">
+
                         <MudAutocomplete T="OccupationDto" @bind-Value="SelectedOccupation" SearchFunc="@SearchOccupations"
                         AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
                         MinCharacters="@MIN_OCCUPATION_CHARS" SelectValueOnTab="true" Label="@($"Type in {MIN_OCCUPATION_CHARS} letters")" MaxItems="100"
