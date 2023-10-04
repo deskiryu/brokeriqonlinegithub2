@@ -79,7 +79,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.IsSmokerOrVaper, action => action.MapFrom(s => s.IsSmokerOrVaper))
                 .ForMember(d => d.AnnualIncome, action => action.MapFrom(s => s.AnnualIncome))
                 .ForMember(d => d.Gender, action => action.MapFrom(s => s.Gender))
-                .ForMember(d => d.OccupationId, action => action.MapFrom(s => s.OccupationId));
+                .ForMember(d => d.OccupationId, action => action.MapFrom(s => s.OccupationId))
+                .ForMember(d => d.NotificationTag, action => action.MapFrom(s => s.NotificationTag));
 
             CreateMap<Customer, UpdateCustomerDto>()
                 .ForMember(d => d.Id, action => action.MapFrom(s => s.Id))
@@ -105,7 +106,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.IsSmokerOrVaper, action => action.MapFrom(s => s.IsSmokerOrVaper))
                 .ForMember(d => d.AnnualIncome, action => action.MapFrom(s => s.AnnualIncome))
                 .ForMember(d => d.Gender, action => action.MapFrom(s => s.Gender))
-                .ForMember(d => d.OccupationId, action => action.MapFrom(s => s.OccupationId));
+                .ForMember(d => d.OccupationId, action => action.MapFrom(s => s.OccupationId))
+                .ForMember(d => d.NotificationTag, action => action.MapFrom(s => s.NotificationTag));
         }
 
         private void InsuranceMapper()
