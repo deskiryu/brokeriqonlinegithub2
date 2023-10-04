@@ -43,6 +43,11 @@ namespace BrokerIQ.Online.Pages
 
         public int SelectedGender { get { return (int)Customer.Gender; } set { Customer.Gender = (GenderEnum)value; } }
 
+        public int SelectedEmploymentStatus { get { return (int)Customer.Employment; } set { Customer.Employment = (EmploymentEnum)value; } }
+
+        public int SelectedResidentialStatus { get { return (int)Customer.ResidentialStatus; } set { Customer.ResidentialStatus = (ResidentialStatusEnum)value; } }
+
+
         protected string Message = string.Empty;
 
         protected string StatusClass = string.Empty;
