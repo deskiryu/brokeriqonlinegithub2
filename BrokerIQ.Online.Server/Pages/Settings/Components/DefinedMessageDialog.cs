@@ -38,7 +38,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         readonly string[] MESSAGE_TEMPLATES = new string[] {
             "",
-            "Hi INSERT_CLIENT_NAME. Thank you for downloading our new App. All communications will be carried out on here going forward. Please keep an eye out for communications from us.",
+            "Hi INSERT_CLIENT_NAME, Thank you for downloading our new App. All communications will be carried out on here going forward. Please keep an eye out for communications from us.",
             "Please can you now upload all of the requested documents in the uploads section of the App.",
             "Great News! Your Decision in Principle has been accepted. Please see a copy of your Decision in Principle attached. The next stage is to find the right property.Happy House Hunting!",
             "Hi INSERT_CLIENT_NAME, Congratulations! Your mortgage Offer has now been issued. I have attached my copy. A copy will be sent to you and also to your solicitor. You will find a copy of your mortgage offer in the Mortgage section of the app. Any questions please let me know.",
