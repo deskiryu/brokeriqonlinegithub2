@@ -5,6 +5,17 @@
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form">
+            <MudSelect T="int" Label="Starter template" @bind-Value=SelectedStarterTemplate class="mb-2" @ref="StarterTemplate" ToStringFunc="@promptText">
+                @for (var i = 1; i < MESSAGE_PROMPTS.Length; i++)
+                {
+                    var currentPrompt = i;
+                    <MudSelectItem Value="@currentPrompt"/>
+                }
+            </MudSelect>
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" class="mb-3"
+                OnClick="FillTemplate">Fill with starter template</MudButton>
+
             <MudTextField Class="mb-2" @bind-Value=Template.Prompt Label="Prompt" Required="true" RequiredError="Prompt cannot be empty" />
             <div class="mb-2">
                 <p><b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.</p>

@@ -24,6 +24,36 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
 
+        static string[] MESSAGE_PROMPTS = new string[] {
+            "Empty",
+            "Thank you for registering",
+            "Please upload documents",
+            "Decision in principle",
+            "Mortgage offer",
+            "Survey instructed",
+            "Survey booked",
+            "Survey came back",
+            "Completion list date"
+        };
+
+        readonly string[] MESSAGE_TEMPLATES = new string[] {
+            "",
+            "Hi INSERT_CLIENT_NAME. Thank you for downloading our new App. All communications will be carried out on here going forward. Please keep an eye out for communications from us.",
+            "Please can you now upload all of the requested documents in the uploads section of the App.",
+            "Great News! Your Decision in Principle has been accepted. Please see a copy of your Decision in Principle attached. The next stage is to find the right property.Happy House Hunting!",
+            "Hi INSERT_CLIENT_NAME, Congratulations! Your mortgage Offer has now been issued. I have attached my copy. A copy will be sent to you and also to your solicitor. You will find a copy of your mortgage offer in the Mortgage section of the app. Any questions please let me know.",
+            "Hi INSERT_CLIENT_NAME, Just a quick update to let you know your survey has been instructed today. We will keep you updated on the progress.",
+            "Hi INSERT_CLIENT_NAME, Your survey has been booked for INSERT_DATE we will keep you updated on the progress.",
+            "Hi INSERT_CLIENT_NAME, Just a quick note to let you know your survey has come back and you application is now with the underwriters. We will keep you updated on the progress.",
+            "Hi INSERT_CLIENT_NAME, Your completion list has been set for INSERT_DATE."
+        };
+
+        MudSelect<int> StarterTemplate;
+
+        int SelectedStarterTemplate;
+
+        Func<int, string> promptText = i => MESSAGE_PROMPTS[i];
+
         protected FileUploadSettings fileUploadSettings { get; set; }
 
         MudForm form;
@@ -99,6 +129,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         protected void RemoveCurrentFile()
         {
             IsCurrentFileToBeRemoved = true;
+        }
+
+        async Task FillTemplate()
+        {
+            Template.Prompt = MESSAGE_PROMPTS[SelectedStarterTemplate];
+            Template.Message = MESSAGE_TEMPLATES[SelectedStarterTemplate];
         }
     }
 }
