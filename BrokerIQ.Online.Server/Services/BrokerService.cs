@@ -78,34 +78,6 @@ namespace BrokerIQ.Online.Services
             return await this.requestProviderService.Delete(this.BrokerUrl, id);
         }
 
-        public async Task<bool> UpdateBrokerWelcomeVideoUrl(int id, string url)
-        {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var toSend = new UpdateVideoUrlDto
-            {
-                Id = id,
-                VideoUrl = url
-            };
-            var urlToGo = this.BrokerUrl + $"/welcomevideourl";
-            var answer = await this.requestProviderService.Post<UpdateVideoUrlDto, bool>(urlToGo, toSend);
-            return answer;
-        }
-
-        public async Task<bool> UpdateBrokerBirthdayVideoUrl(int id, string url)
-        {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var toSend = new UpdateVideoUrlDto
-            {
-                Id = id,
-                VideoUrl = url
-            };
-            var urlToGo = this.BrokerUrl + $"/birthdayvideourl";
-            var answer = await this.requestProviderService.Post<UpdateVideoUrlDto, bool>(urlToGo, toSend);
-            return answer;
-        }
-
         public async Task<BoolResponseDto> VerifyBroker(int id)
         {
             var user = await this.accountService.GetUser();

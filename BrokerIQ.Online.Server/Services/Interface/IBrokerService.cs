@@ -19,10 +19,6 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<bool> DeleteBroker(int id);
 
-        Task<bool> UpdateBrokerWelcomeVideoUrl(int id, string url);
-
-        Task<bool> UpdateBrokerBirthdayVideoUrl(int id, string url);
-
         Task<BoolResponseDto> VerifyBroker(int id);
     }
 }
