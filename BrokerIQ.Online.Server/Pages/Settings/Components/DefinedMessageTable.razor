@@ -1,0 +1,45 @@
+@using BrokerIQ.Dto.Enum 
+@using BrokerIQ.Online.Server.Extensions 
+
+@inject IJSRuntime js
+
+<div class="mb-2">
+    <MudButton StartIcon="@Icons.Material.Filled.AddBox" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium" 
+                OnClick=@(r=> EditDefinedMessage(new Dto.Models.BrokerDefinedMessageDto()))>
+        Add defined message 
+    </MudButton>
+</div>
+<MudTable Items="@DefinedMessages" Dense="true">
+    <NoRecordsContent>
+        <MudText>No defined messages have been defined.</MudText>
+    </NoRecordsContent>
+    <HeaderContent>
+        <MudTh>Prompt</MudTh>
+        <MudTh>Message</MudTh>
+        <MudTh>File</MudTh>
+        <MudTh></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Prompt</MudTd>
+            <MudTd> @context.Message</MudTd>
+            <MudTd>
+                @if (!string.IsNullOrWhiteSpace(context.FileName)){
+                    <MudIconButton Icon="@Icons.Material.Filled.FilePresent" Color="Color.Secondary" OnClick=@(r => PreviewAttachment(context.File))></MudIconButton>
+                }
+            </MudTd>
+            <MudTd>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" OnClick=@(r => EditDefinedMessage(context))></MudIconButton>
+            </MudTd>
+            <MudTd>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r => RemoveDefinedMessage(context)) />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    @code {
+        protected async Task PreviewAttachment(byte[] attachment)
+        {
+            await Extensions.PreviewFile(js, new System.IO.MemoryStream(attachment));
+        }
+    }

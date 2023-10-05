@@ -1,10 +1,12 @@
 @page "/templateedit/{BrokerId}"
+
+@inherits TemplateEditBase
+
 @using System.IO
 @using BrokerIQ.Online.Server.Pages.Settings.Components
 @using Dto.Enum
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
-@inherits TemplateEditBase
 @using MudBlazor
 @using Microsoft.Extensions.Options
 @using BrokerIQ.Online.AppSettings
@@ -14,7 +16,8 @@
 
 <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
     <MudTabPanel Text="Templates">
-        <p><b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.</p>
+        <DefinedMessageTable Broker="@Broker" User="@User"/>
+        @* <p><b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.</p>
         <p><b>INSERT_BROKER_NAME</b> is replaced in message by your brokerage name.</p>
         <p><b>INSERT_DATE</b> is be replaced by a date selected by you on the client chat page.</p>
         <MudTable Items="@MessageElements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" SortLabel="Sort By"
@@ -93,7 +96,7 @@
             <PagerContent>
                 <MudTablePager />
             </PagerContent>
-        </MudTable>
+        </MudTable> *@
     </MudTabPanel>
     <MudTabPanel Text="Notifications">
         @if (IsBrokerStaff)

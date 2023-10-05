@@ -149,7 +149,7 @@ namespace BrokerIQ.Online.Pages
 
         public Dictionary<DocuVaultTypeEnum, int> RequestedDocuments = new Dictionary<DocuVaultTypeEnum, int>();
 
-        public List<DefinedMessagesDto> MergedMessages = new();
+        public List<BrokerDefinedMessageDto> MergedMessages = new();
 
         public string SelectedTemplateMessage { get; set; }
 
@@ -621,18 +621,18 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task InsertTemplateMessage()
         {
-            int.TryParse(SelectedTemplateMessage, out int selectedMessageEnum);
+            int.TryParse(SelectedTemplateMessage, out int id);
 
-            var message = MergedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == (BrokerDefinedMessageEnum)selectedMessageEnum);
+            var message = MergedMessages.FirstOrDefault(m => m.Id == id);
 
             if (message != null)
             {
-                if (message.BrokerDefinedMessage.Contains("INSERT_DATE"))
+                if (message.Message.Contains("INSERT_DATE"))
                 {
                     if (SelectedTemplateDateReplacement.HasValue)
                     {
                         DateTime value = SelectedTemplateDateReplacement.Value;
-                        message.BrokerDefinedMessage = message.BrokerDefinedMessage.Replace("INSERT_DATE", value.ToBiqDateTimeString());
+                        message.Message = message.Message.Replace("INSERT_DATE", value.ToBiqDateTimeString());
                     }
                     else
                     {
@@ -656,7 +656,7 @@ namespace BrokerIQ.Online.Pages
                         };
                     }
 
-                    await NewChat(message.BrokerDefinedMessage, attachment);
+                    await NewChat(message.Message, attachment);
                 }
                 catch (Exception ex)
                 {
@@ -1011,28 +1011,18 @@ namespace BrokerIQ.Online.Pages
 
         private async Task PopulateBrokerDefinedMessages()
         {
-            MergedMessages = new List<DefinedMessagesDto>();
-            BrokerDefinedMessage definedMessages = await BrokerDefinedMessageService.Get();
+            MergedMessages = new List<BrokerDefinedMessageDto>();
+            var templates = await BrokerDefinedMessageService.GetAllForCurrentBroker();
 
-            foreach (BrokerDefinedMessageEnum enumVal in Enum.GetValues(typeof(BrokerDefinedMessageEnum)))
+            foreach (var template in templates)
             {
-                if (enumVal.IsSystemMessage()) continue;
-
-                var message = definedMessages.BrokerDefinedMessages.FirstOrDefault(m => m.BrokerDefinedMessageEnumValue == enumVal) ??
-                                new DefinedMessagesDto() { BrokerDefinedMessageEnumValue = enumVal };
-
-                if (String.IsNullOrWhiteSpace(message.BrokerDefinedMessage))
-                {
-                    // display default
-                    message.BrokerDefinedMessage = enumVal.GetDisplayName().Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName);
-                }
-                else
+                if (!string.IsNullOrWhiteSpace(template.Message))
                 {
                     // display broker defined message
-                    message.BrokerDefinedMessage = message.BrokerDefinedMessage.Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName);
+                    template.Message = template.Message.Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName);
                 }
 
-                MergedMessages.Add(message);
+                MergedMessages.Add(template);
             }
         }
 
@@ -1192,13 +1182,13 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task MessageTemplateChanged()
         {
-            var isConverted = int.TryParse(SelectedTemplateMessage, out int selectedMessageEnum);
+            var isConverted = int.TryParse(SelectedTemplateMessage, out int selectedMessageId);
 
             if (isConverted)
             {
-                BrokerDefinedMessage definedMessages = await BrokerDefinedMessageService.Get();
+                var definedMessages = await BrokerDefinedMessageService.GetAllForCurrentBroker();
 
-                var message = definedMessages.BrokerDefinedMessages.FirstOrDefault(m => (int)m.BrokerDefinedMessageEnumValue == selectedMessageEnum);
+                var message = definedMessages.FirstOrDefault(m => (int)m.Id == selectedMessageId);
 
                 UploadSectionClass = DEFAULT_UPLOAD_CLASS;
 
