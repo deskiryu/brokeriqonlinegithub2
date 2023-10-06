@@ -2,7 +2,11 @@
 @using Dto.Enum
 @using BrokerIQ.Online.Server.Extensions
 @using BrokerIQ.Online.Pages
+@using BrokerIQ.Online.AppSettings
+@using Microsoft.Extensions.Options
 @inherits VideoDetailBase
+
+@inject IOptions<ReviewItAPIDetails> Options
 
 @if (Customers == null)
 {
@@ -103,6 +107,27 @@ else
                     </MudSelect>
                 </div>
             </div>
+            @if(Options.Value.ShowProtection){
+            <div class="row">
+                <div class="col-lg-4">
+                    <MudSwitch T="bool" @bind-checked="@HasNeeds" Label="Client profiling *" Color="Color.Primary"/>
+                </div>
+                <div class="col-lg-4">
+                    <MudSwitch T="bool" @bind-checked="@WithoutIncomeProtection" Label="Without Income Protection" Color="Color.Primary"/>
+                </div>
+                <div class="col-lg-4">
+                    <MudSwitch T="bool" @bind-checked="@WithoutLifeInsurance" Label="Without Life Insurance" Color="Color.Primary" />
+                </div>
+                <div class="col-lg-4">
+                    <MudSwitch T="bool" @bind-checked="@WithoutLifeCritical" Label="Without Life & Critical Ilness" Color="Color.Primary" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <MudText Typo="Typo.body2">* Profiling highlights customers who would benefit from additional insurance, for example, when client is self-employed, has a mortgage & life & critical illness and doesn't have income protection.</MudText>
+                </div>
+            </div>
+            }
         </div>
     </div>
 
