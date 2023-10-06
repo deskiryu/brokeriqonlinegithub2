@@ -48,8 +48,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             "Hi INSERT_CLIENT_NAME, Your completion list has been set for INSERT_DATE."
         };
 
-        MudSelect<int> StarterTemplate;
-
         int SelectedStarterTemplate;
 
         Func<int, string> promptText = i => MESSAGE_PROMPTS[i];
@@ -79,8 +77,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             if (form.IsValid)
             {
-                Template.FileName = null;
-                Template.File = null;
+                if (IsCurrentFileToBeRemoved)
+                {
+                    Template.FileName = null;
+                    Template.File = null;
+                }
 
                 var uploadedFile = SelectedFiles.FirstOrDefault();
 
