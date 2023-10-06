@@ -24,8 +24,8 @@
         <MudTable Items="@BrokerNotifications" Hover="true" SortLabel="Sort By" >
             <HeaderContent>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.SentDate)">Sent</MudTableSortLabel></MudTh>
-                @if (IsAdmin)
+                <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.SentDate)">Sent</MudTableSortLabel></MudTh>
+                @if (User.IsAdmin)
                 {
                     <MudTh>Broker</MudTh>
                 }
@@ -49,7 +49,7 @@
                     }
                 </MudTd>
                 <MudTd DataLabel="Sent">@context.SentDate.ToBiqDateTimeString()</MudTd>   
-                @if (IsAdmin)
+                @if (User.IsAdmin)
                 {
                     <MudTd>@Brokers.FirstOrDefault(x => x.Id == context.BrokerId)?.Name</MudTd>
                 }
@@ -59,7 +59,7 @@
                     <MudCheckBox @bind-Checked="@context.Read" @onclick="async f => await SetReminderReadStatus(context.Id)" />
                     }
                     else{
-                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" />
+                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" @onclick="async f => await SetReminderReadStatus(context.Id)" />
                     }
                 </MudTd>
                 }
