@@ -82,7 +82,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                     Prompt = template.Prompt,
                     Message = template.Message,
                     FileName = template.FileName,
-                    File = template.File
+                    File = template.File,
+                    WelcomeChat = template.WelcomeChat
                 };
 
                 wasSuccessfull = await BrokerDefinedMessageService.Create(newTemplate);

@@ -16,6 +16,7 @@
     <HeaderContent>
         <MudTh>Prompt</MudTh>
         <MudTh>Message</MudTh>
+        <MudTh>Welcome</MudTh>
         <MudTh>File</MudTh>
         <MudTh></MudTh>
         <MudTh></MudTh>
@@ -23,6 +24,12 @@
     <RowTemplate>
         <MudTd>@context.Prompt</MudTd>
             <MudTd> @context.Message</MudTd>
+        <MudTd>
+            @if (context.WelcomeChat)
+            {
+                <MudCheckBox ReadOnly Checked="true"></MudCheckBox>
+            }
+        </MudTd>
             <MudTd>
                 @if (!string.IsNullOrWhiteSpace(context.FileName)){
                     <MudIconButton Icon="@Icons.Material.Filled.FilePresent" Color="Color.Secondary" OnClick=@(r => PreviewAttachment(context.File))></MudIconButton>

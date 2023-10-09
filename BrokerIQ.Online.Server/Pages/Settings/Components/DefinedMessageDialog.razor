@@ -46,14 +46,18 @@
                             <InputFile OnChange="LoadFiles" Class="drag-drop-input" accept="application/pdf" />
                             <MudText Typo="Typo.subtitle1">Click or drag pdf file to attach to message</MudText>
                         </MudPaper>
-                    </div> @if (SelectedFiles.Any())
+                    </div>
+                    
+                    @if (SelectedFiles.Any())
                     {
                         var fileName = SelectedFiles[0].Name;
                         <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteDefinedDocument())" class="btn btn-link">Remove @fileName</MudButton>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => PreviewAttachment(SelectedFiles.FirstOrDefault())">
                             <i class="fa fa-eye" />
                         </MudButton>
-                    }                      }
+                    }
+                    
+                }
                 else
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => RemoveCurrentFile())" class="btn btn-link">Remove @Template.FileName</MudButton>
@@ -61,6 +65,7 @@
                         <i class="fa fa-eye" />
                     </MudButton>
                 }
+                <MudCheckBox Label="Send as welcome chat message" @bind-Checked="Template.WelcomeChat" Style="margin-left: -15px" TriState="true"></MudCheckBox>
             }
         </MudForm>
     </DialogContent>
@@ -71,6 +76,7 @@
 </MudDialog>
 
 @code {
+
     protected async Task PreviewAttachment(byte[] attachment)
     {
         await Extensions.PreviewFile(js, new System.IO.MemoryStream(attachment));
