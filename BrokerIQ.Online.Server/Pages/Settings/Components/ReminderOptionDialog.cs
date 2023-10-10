@@ -19,6 +19,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         MudSelect<TimeSpan> Notification;
         MudSelect<int> ReminderTargetId;
 
+        private TimeSpan FromDays270 = TimeSpan.FromDays(270);
+        private TimeSpan FromDays240 = TimeSpan.FromDays(240);
+        private TimeSpan FromDays210 = TimeSpan.FromDays(210);
         private TimeSpan FromDays180 = TimeSpan.FromDays(180);
         private TimeSpan FromDays150 = TimeSpan.FromDays(150);
         private TimeSpan FromDays120 = TimeSpan.FromDays(120);

@@ -11,6 +11,9 @@
                 }
             </MudSelect>
             <MudSelect Validation="@(new Func<TimeSpan, string>(IsValidNotificationInterval))" Class="mb-2" T="TimeSpan" Label="Notification Interval" @bind-Value=Option.NotificationPeriod @ref="Notification">
+                <MudSelectItem Value="@FromDays180">270 days (9 months) before final date</MudSelectItem>
+                <MudSelectItem Value="@FromDays150">240 days (8 months) before final date</MudSelectItem>
+                <MudSelectItem Value="@FromDays120">210 days (7 months) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays180">180 days (6 months) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays150">150 days (5 months) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays120">120 days (4 months) before final date</MudSelectItem>
@@ -40,6 +43,7 @@
                 <p><b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.</p>
                 <p><b>INSERT_BROKER_NAME</b> is replaced in message by your brokerage name.</p>
                 <p><b>INSERT_DATE</b> is replaced by the final date.</p>
+                <p><b>INSERT_INSURANCE_NAME</b> is replaced by the insurance type for insurance reminders.</p>
             </div>
             <MudTextField Lines="5" @bind-Value=Option.MessageContent Label="Message Content" Required="true" RequiredError="Message content cannot be empty" />
         </MudForm>
