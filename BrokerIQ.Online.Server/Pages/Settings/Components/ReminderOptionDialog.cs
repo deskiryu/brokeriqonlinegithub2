@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
 using MudBlazor;
@@ -37,6 +38,19 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         private TimeSpan FromDays2 = TimeSpan.FromDays(2);
         private TimeSpan FromDays1 = TimeSpan.FromDays(1);
 
+        static string[] REMINDER_MESSAGES = new string[] {
+            "",
+            "The INSERT_INSURANCE_NAME insurance policy of your client INSERT_CLIENT_NAME ends on INSERT_DATE.",
+            "Hi INSERT_CLIENT_NAME, your INSERT_INSURANCE_NAME insurance policy is due for renewal on INSERT_DATE.Contact your Broker for a new quote and prevent your policy being automatically renewed.",
+            "Hi INSERT_CLIENT_NAME, your INSERT_INSURANCE_NAME insurance policy is due for renewal on INSERT_DATE.Contact your Broker for a new quote.",
+            "The mortgage promotional period of your client INSERT_CLIENT_NAME ends on INSERT_DATE.",
+            "Hi INSERT_CLIENT_NAME, your mortgage promotional period ends on INSERT_DATE. Contact your Broker to discuss your mortgage options.",
+        };
+
+        int SelectedStarterTemplate;
+
+        Func<int, string> promptText = i => REMINDER_MESSAGES[i];
+
         void Submit()
         {
             form.Validate();
@@ -59,6 +73,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         protected static string IsValidNotificationInterval(TimeSpan ts)
         {
             return ts != TimeSpan.Zero ? null : "Please select a notification interval";
+        }
+
+        async Task FillTemplate()
+        {
+            Option.MessageContent = REMINDER_MESSAGES[SelectedStarterTemplate];
         }
     }
 }
