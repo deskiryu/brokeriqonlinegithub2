@@ -103,13 +103,13 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             if (await ChatService.Send(CustomerMessage, Customer.Id))
             {
                 Snackbar.Add("Customer chat message was sent.", Severity.Success);
+                MudDialog.Close();
             }
             else
             {
                 Snackbar.Add("Unable to send chat message to customer. Please try again", Severity.Error);
             }
 
-            MudDialog.Cancel();
         }
     }
 }

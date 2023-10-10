@@ -979,6 +979,8 @@ namespace BrokerIQ.Online.Pages
                 if (!result.Cancelled)
                 {
                     DocumentsRequirement = await DocumentsRequirementService.Create(int.Parse(CustomerId), documentsRequiredList);
+                    await UpdateChat(true);
+
                     StateHasChanged();
                 }
             }
@@ -1229,10 +1231,7 @@ namespace BrokerIQ.Online.Pages
 
             if (!result.Cancelled)
             {
-
-
-
-
+                await UpdateChat(true);
             }
         }
 
