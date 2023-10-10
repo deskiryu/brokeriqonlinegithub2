@@ -40,9 +40,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         protected MessageCountState CurrentMessageCount { get; set; }
 
-        public List<BrokerNotification> BrokerNotifications { get; set; }
+        protected User User { get; set; }
 
-        public bool IsAdmin { get; set; }
+        public List<BrokerNotification> BrokerNotifications { get; set; }
 
         public IEnumerable<Broker> Brokers { get; set; }
 
@@ -50,33 +50,37 @@ namespace BrokerIQ.Online.Pages
         {
             try
             {
-                var user = await AccountService.GetUser();
-                IsAdmin = user.IsAdmin;
-                if (user.IsBroker || user.IsBrokerStaff)
-                {
-                    BrokerNotifications = (await NotificationService.GetBrokerNotificationsByBrokerId()).OrderBy(n => n.Read).ThenByDescending(x => x.SentDate).ToList();
-                    CurrentMessageCount.MessageCount = BrokerNotifications.Count;
-                }
-                else
-                {
-                    BrokerNotifications = (await NotificationService.GetBrokerNotifications()).OrderByDescending(x => x.SentDate).ToList();
-                    try
-                    {
-                        Brokers = await BrokerService.GetBrokers();
-                    }
-                    catch
-                    {
-                        StatusClass = "alert-danger";
-                        Message = "Something went wrong getting customer details";
-                        Saved = true;
-                    }
-                }
-                StateHasChanged();
+                User = await AccountService.GetUser();
+                await RefreshMessages();
             }
             catch
             {
                 NavigationManager.NavigateTo($"account/logout");
             }
+        }
+
+        private async Task RefreshMessages()
+        {
+            if (User.IsBroker || User.IsBrokerStaff)
+            {
+                BrokerNotifications = (await NotificationService.GetBrokerNotificationsByBrokerId()).ToList();
+                CurrentMessageCount.MessageCount = BrokerNotifications.Count;
+            }
+            else
+            {
+                BrokerNotifications = (await NotificationService.GetBrokerNotifications()).ToList();
+                try
+                {
+                    Brokers = await BrokerService.GetBrokers();
+                }
+                catch
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong getting customer details";
+                    Saved = true;
+                }
+            }
+            StateHasChanged();
         }
 
         protected void NavigateToOverview()
@@ -88,7 +92,7 @@ namespace BrokerIQ.Online.Pages
         {
             await NotificationService.ToggleNotificationReadStatus(reminderId);
 
-            CurrentMessageCount.MessageCount--;
+            await RefreshMessages();
         }
     }
 }
