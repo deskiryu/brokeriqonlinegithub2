@@ -7,6 +7,7 @@ using MudBlazor;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Server.Helper;
+using BrokerIQ.Online.Services;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -44,7 +45,11 @@ namespace BrokerIQ.Online.Pages
 
         public List<BrokerNotification> BrokerNotifications { get; set; }
 
+        public List<BrokerNotification> BrokerNotificationsSubset { get; set; }
+
         public IEnumerable<Broker> Brokers { get; set; }
+
+        public int BrokerId { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -59,16 +64,27 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected async Task AutoCompleteClickBroker()
+        {
+            if (BrokerId == 0)
+            {
+                BrokerNotificationsSubset = BrokerNotifications;
+            }
+            else if (BrokerId > 0)
+            {
+                BrokerNotificationsSubset = BrokerNotifications.Where(x => x.BrokerId == BrokerId).ToList();
+            }
+        }
         private async Task RefreshMessages()
         {
             if (User.IsBroker || User.IsBrokerStaff)
             {
-                BrokerNotifications = (await NotificationService.GetBrokerNotificationsByBrokerId()).ToList();
+                BrokerNotificationsSubset = BrokerNotifications = (await NotificationService.GetBrokerNotificationsByBrokerId()).ToList();
                 CurrentMessageCount.MessageCount = BrokerNotifications.Count;
             }
             else
             {
-                BrokerNotifications = (await NotificationService.GetBrokerNotifications()).ToList();
+                BrokerNotificationsSubset = BrokerNotifications = (await NotificationService.GetBrokerNotifications()).ToList();
                 try
                 {
                     Brokers = await BrokerService.GetBrokers();
