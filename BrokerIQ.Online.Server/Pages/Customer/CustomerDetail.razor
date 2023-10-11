@@ -5,6 +5,7 @@
 @using BrokerIQ.Online.Server.Extensions
 @using BrokerIQ.Online.AppSettings
 @using Microsoft.Extensions.Options
+@using System.Globalization
 
 @inherits CustomerDetailBase
 @inject IOptions<ReviewItAPIDetails> api
@@ -646,8 +647,8 @@ else if (!Saved)
                                             Date="@noteFilterStartDate" DateChanged="FilterStartDateChanged" />
                                         </div>
                                         <div class="col-4">
-                                            <MudDatePicker Label="To"  DisableToolbar="true" @ref="NoteFilterTo" 
-                                            Date="@noteFilterEndDate" DateChanged="FilterEndDateChanged" />
+                                    <MudDatePicker DateFormat="dd/MM/yyyy" Label="To" DisableToolbar="true" @ref="NoteFilterTo"
+                                               Date="@noteFilterEndDate" DateChanged="FilterEndDateChanged" />
                                         </div>
                                         <div class="col-4 text-right">
                                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@NewNote" class="btn btn-primary align-bottom">
@@ -717,7 +718,7 @@ else if (!Saved)
                                 </MudSelect>
                             </div>
                             <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                                <MudDatePicker Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement"/>
+                            <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
                                 <MudSpacer />
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
                             </div>
