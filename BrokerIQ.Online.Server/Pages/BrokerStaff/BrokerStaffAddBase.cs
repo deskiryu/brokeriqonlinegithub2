@@ -69,10 +69,7 @@
 
         public BrokerStaffAddBase()
         {
-            BrokerStaff = new AddStaff
-            {
-                StaffTypeId = StaffTypeEnum.Advisor
-            };
+            BrokerStaff = new AddStaff();
         }
 
         protected override async Task OnParametersSetAsync()
