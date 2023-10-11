@@ -34,5 +34,7 @@ namespace BrokerIQ.Online.Models.Account
         [Compare("Password")]
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
+
+        public StaffTypeEnum StaffTypeId { get; set; }
     }
 }

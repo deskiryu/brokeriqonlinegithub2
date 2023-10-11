@@ -1,10 +1,5 @@
 ﻿using BrokerIQ.Dto.Enum;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BrokerIQ.Online.Models
 {
@@ -33,6 +28,9 @@ namespace BrokerIQ.Online.Models
         public TwoFactorEnum TwoFactorType { get; set; }
 
         public bool TwoFactorEnabled { get; set; }
+
+        public StaffTypeEnum StaffTypeId { get; set; }
+
         public EmailNotificationPreferencesEnum EmailNotificationPreferences { get; set; }
 
         public MobileNotificationPreferencesEnum MobileNotificationPreferences { get; set; }
