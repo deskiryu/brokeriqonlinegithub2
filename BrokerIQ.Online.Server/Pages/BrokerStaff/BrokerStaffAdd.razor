@@ -1,16 +1,19 @@
-﻿
+﻿@page "/brokerstaffadd"
 
-@page "/brokerstaffadd"
+@using System.IO
+@using Microsoft.Extensions.Options
+
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.AppSettings
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
-@using BlazorDateRangePicker
-@using System.IO
 @using BrokerIQ.Online.Services.Interface
+@using BlazorDateRangePicker
 
 @inherits BrokerStaffAddBase
 
+@inject IOptions<ReviewItAPIDetails> Options
 
 @if (!Saved)
 {
@@ -45,6 +48,8 @@
                                 <ValidationMessage For="@(() => BrokerStaff.EmailAddress)" />
                             </div>
 
+                            @if(this.Options.Value.ShowStaffType)
+                            {
                             <div class="form-group col-6">
                                 <label>Position</label>
                                 <MudSelect T="StaffTypeEnum" 
@@ -59,7 +64,8 @@
                                             }
                                         }
                                 </MudSelect> 
-                            </div>    
+                            </div>
+                            }
                         </div>
 
                             <div class="form-group row">

@@ -1,11 +1,17 @@
 ﻿@page "/brokerstafflist"
+
+@using Microsoft.Extensions.Options
+
 @using BrokerIQ.Online.Pages
+@using BrokerIQ.Online.AppSettings
 @using BrokerIQ.Online.Services.Interface
+
 @inherits BrokerStaffListBase
 
 @inject INotificationService NotificationService
 @inject NavigationManager NavigationManager
 @inject IAlertService AlertService
+@inject IOptions<ReviewItAPIDetails> Options
 
 <h3 class="page-title">Employees</h3>
 
@@ -60,7 +66,10 @@
                             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.BrokerId)">Broker</MudTableSortLabel></MudTh>
                             <MudTh>Two Factor</MudTh>                
                         }
+                        @if(this.Options.Value.ShowStaffType)
+                        {
                         <MudTh>Type</MudTh>
+                        }
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
@@ -73,7 +82,10 @@
                             <MudTd>@broker.Name</MudTd>
                             <MudTd DataLabel="Two Factor"><MudCheckBox @bind-Checked="@context.TwoFactorEnabled" Disabled="true"></MudCheckBox></MudTd>                        
                         }
+                        @if(this.Options.Value.ShowStaffType)
+                        {
                         <MudTd>@context.StaffTypeId.ToString()</MudTd>
+                        }
                         <MudTd>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"brokerstaffedit/{context.Id}")" class="btn btn-primary table-btn">
                                 <i class="fas fa-edit"></i>
