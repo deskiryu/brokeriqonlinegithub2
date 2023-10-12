@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.Enum;
 using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
@@ -355,6 +357,17 @@ namespace BrokerIQ.Online.Pages
             var responseParams = new DialogParameters();
             responseParams.Add("Message", message);
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+        }
+
+        protected async Task OnConvertedToProductClick(ClientReferral clientReferral, int ConvertedToProduct)
+        {
+            clientReferral.ConvertedToProduct = (ConvertedToProductEnum) ConvertedToProduct;
+            await UpdateCR(clientReferral);
+        }
+
+        protected string GetConvertedToProductDisplayName(ClientReferral c)
+        {
+            return c.ConvertedToProduct.GetDisplayName();
         }
     }
 }

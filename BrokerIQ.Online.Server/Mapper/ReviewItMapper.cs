@@ -31,7 +31,6 @@ namespace BrokerIQ.Online.Mapper
             ChatMapper();
             AzureStorageMapper();
             DocumentsRequirementMapper();
-            BrokerDefinedMessageMapper();
             ClientReferralMapper();
             BrokerReminderOptionsMapper();
             BrokerSubscriptionMapper();
@@ -694,14 +693,16 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName))
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
-                .ForMember(d => d.Password, action => action.MapFrom(s => s.Password));
+                .ForMember(d => d.Password, action => action.MapFrom(s => s.Password))
+                .ForMember(d => d.StaffTypeId, action => action.MapFrom(s => s.StaffTypeId));
             CreateMap<BrokerStaffDto, BrokerStaff>();
             CreateMap<BrokerStaff, BrokerStaffDto>();
             CreateMap<BrokerStaff, UpdateBrokerStaffDto>()
                 .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
-                .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName));
+                .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName))
+                .ForMember(d => d.StaffTypeId, action => action.MapFrom(s => s.StaffTypeId));
         }
 
         private void NotificationMapper()
@@ -876,12 +877,6 @@ namespace BrokerIQ.Online.Mapper
         {
             CreateMap<DocumentsRequirementDto, DocumentsRequirement>();
             CreateMap<DocumentsRequirement, DocumentsRequirementDto>();
-        }
-
-        private void BrokerDefinedMessageMapper()
-        {
-            CreateMap<BrokerDefinedMessageDto, BrokerDefinedMessage>();
-            CreateMap<BrokerDefinedMessage, BrokerDefinedMessageDto>();
         }
 
         private void ClientReferralMapper()

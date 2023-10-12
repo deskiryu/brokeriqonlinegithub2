@@ -2,6 +2,8 @@
 @inherits ClientReferralBase
 @using BrokerIQ.Online.Pages
 @using System
+@using BrokerIQ.Online.Server.Extensions
+@using Dto.Enum
 @inject NavigationManager NavigationManager
 
 <h3>Referrals</h3>
@@ -83,8 +85,8 @@
                                         SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralTelephoneNumber)">
                                         Phone</MudTableSortLabel>
                                 </MudTh>
-                                <MudTh>Converted</MudTh>
-                                <MudTh>Product Bought</MudTh>
+                                <MudTh>App Registered</MudTh>
+                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ConvertedToProduct.GetDisplayName())">Status</MudTableSortLabel></MudTh>
                                 <MudTh>Prize Awarded</MudTh>
                                 <MudTh>Notes</MudTh>
                                 <MudTh>Delete</MudTh>
@@ -102,12 +104,22 @@
                                 <MudTd DataLabel="Name">@context.ReferralName</MudTd>
                                 <MudTd DataLabel="Email">@context.ReferralEmailAddress</MudTd>
                                 <MudTd DataLabel="Phone">@context.ReferralTelephoneNumber</MudTd>
-                                <MudTd DataLabel="Converted">
+                                <MudTd DataLabel="App Registered">
                                     <MudCheckBox @bind-Checked="@context.ConvertedLoggedIn" Disabled="true"></MudCheckBox>
                                 </MudTd>
-                                <MudTd DataLabel="Product bought">
-                                    <MudCheckBox @bind-Checked="@context.ConvertedToProduct" @onclick="() => UpdateCR(context)">
-                                    </MudCheckBox>
+                                <MudTd DataLabel="Status">
+                                    <MudMenu Dense="true">
+                                        <ActivatorContent>
+                                            <MudButton style="text-transform: none;" Variant="Variant.Text" Size="Size.Small" EndIcon="@Icons.Material.Filled.ArrowDropDown">@GetConvertedToProductDisplayName(context)</MudButton>
+                                        </ActivatorContent>
+                                        <ChildContent>
+                                            @for (int i = 0; i < Enum.GetValues(typeof(ConvertedToProductEnum)).Length; i++)
+                                            {
+                                                var looped = (ConvertedToProductEnum)i;
+                                                <MudMenuItem OnClick="@(e => OnConvertedToProductClick(context, (int)looped))">@looped.GetDisplayName()</MudMenuItem>
+                                            }
+                                        </ChildContent>
+                                    </MudMenu>
                                 </MudTd>
                                 <MudTd DataLabel="Prize Awarded">
                                     <MudCheckBox @bind-Checked="@context.PrizeAwarded" @onclick="() => UpdateCR(context)">

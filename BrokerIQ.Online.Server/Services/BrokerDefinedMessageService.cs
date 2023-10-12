@@ -2,71 +2,90 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Models;
-using BrokerIQ.Online.Server.Extensions;
-using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Server.Services.Base;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Interface;
 
-namespace BrokerIQ.Online.Server.Services
+namespace BrokerIQ.Online.Services
 {
-    public class BrokerDefinedMessageService : IBrokerDefinedMessageService
+    public class BrokerDefinedMessageService : BrokerIQService, IBrokerDefinedMessageService
     {
-        private readonly string brokerDefinedMessageUrl = "BrokerDefinedMessage";
-        private readonly IRequestProviderService requestProviderService;
-        private readonly IMapper mapper;
-        private readonly IAccountService accountService;
+        private const string API_CONTROLLER = "BrokerDefinedMessage";
 
-        public BrokerDefinedMessageService(IMapper mapper, IRequestProviderService requestProviderService, IAccountService accountService)
+        private readonly IMapper mapper;
+
+        public BrokerDefinedMessageService(IMapper mapper, IRequestProviderService requestProviderService, IAccountService accountService) : base(accountService, requestProviderService)
         {
             this.mapper = mapper;
-            this.requestProviderService = requestProviderService;
-            this.accountService = accountService;
         }
 
-        public async Task<BrokerDefinedMessage> Get()
+        public async Task<IEnumerable<BrokerDefinedMessageDto>> GetAllForCurrentBroker()
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var brokerId = user.MasterBrokerId;
+            var brokerId = await GetCurrentBrokerId();
 
-            var url = this.brokerDefinedMessageUrl + $"/{brokerId}";
             try
             {
-                var messagesDto = await requestProviderService.Get<BrokerDefinedMessageDto>(url);
-                return this.mapper.Map<BrokerDefinedMessage>(messagesDto);
+                var messages = await requestProviderService.Get<IEnumerable<BrokerDefinedMessageDto>>($"{API_CONTROLLER}/{brokerId}");
+
+                return mapper.Map<IEnumerable<BrokerDefinedMessageDto>>(messages);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Get: exception {ex.Message}");
             }
 
-            return null;
+            return Array.Empty<BrokerDefinedMessageDto>();
         }
 
-        public async Task<bool> UpdateOrCreate(List<DefinedMessagesDto> definedMessages)
+        public async Task<bool> Create(CreateBrokerDefinedMessageDto message)
         {
-            var url = this.brokerDefinedMessageUrl;
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var brokerId = user.MasterBrokerId;
-            CreateBrokerDefinedMessageDto brokerDefinedMessage = new CreateBrokerDefinedMessageDto
-            {
-                BrokerId = brokerId,
-                BrokerDefinedMessages = definedMessages
-            };
+            message.BrokerId = await GetCurrentBrokerId();
 
-            bool response = false;
-            try 
+            try
             {
-                response = await requestProviderService.Post<CreateBrokerDefinedMessageDto, bool>(url, brokerDefinedMessage);
+                var response = await requestProviderService.Post<CreateBrokerDefinedMessageDto, BrokerDefinedMessageDto>(API_CONTROLLER, message);
+
+                return response.Id > 0;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"UpdateOrCreate: exception {ex.Message}");
+                Console.WriteLine($"Create: exception {ex.Message}");
+
+                return false;
             }
-            return response;
+        }
+
+        public async Task<bool> Update(BrokerDefinedMessageDto message)
+        {
+            message.BrokerId = await GetCurrentBrokerId();
+
+            try
+            {
+                var response = await requestProviderService.Put<BrokerDefinedMessageDto, BrokerDefinedMessageDto>(API_CONTROLLER, message);
+
+                return response.Id > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Update: exception {ex.Message}");
+
+                return false;
+            }
+        }
+
+        public async Task<bool> Delete(BrokerDefinedMessageDto message)
+        {
+            try
+            {
+                return await requestProviderService.Delete($"{API_CONTROLLER}?brokerId={message.BrokerId}&id={message.Id}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Delete: exception {ex.Message}");
+
+                return false;
+            }
         }
     }
 }

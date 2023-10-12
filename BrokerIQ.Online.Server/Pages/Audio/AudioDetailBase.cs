@@ -65,6 +65,50 @@ namespace BrokerIQ.Online.Server.Pages.Audio
         public int CustomerCategory { get; set; }
         public int AgeRange { get; set; }
 
+        private bool hasNeeds;
+        public bool HasNeeds
+        {
+            get { return hasNeeds; }
+            set
+            {
+                hasNeeds = value;
+                RecentFilterSelect();
+            }
+        }
+
+        private bool withoutIncomeProtection;
+        public bool WithoutIncomeProtection
+        {
+            get { return withoutIncomeProtection; }
+            set
+            {
+                withoutIncomeProtection = value;
+                RecentFilterSelect();
+            }
+        }
+
+        private bool withoutLifeInsurance;
+        public bool WithoutLifeInsurance
+        {
+            get { return withoutLifeInsurance; }
+            set
+            {
+                withoutLifeInsurance = value;
+                RecentFilterSelect();
+            }
+        }
+
+        private bool withoutLifeAndCritical;
+        public bool WithoutLifeCritical
+        {
+            get { return withoutLifeAndCritical; }
+            set
+            {
+                withoutLifeAndCritical = value;
+                RecentFilterSelect();
+            }
+        }
+
         //filter
         protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
@@ -212,7 +256,19 @@ namespace BrokerIQ.Online.Server.Pages.Audio
         {
             Customers.Clear();
             Customers = null;
-            Customers = (await CustomerService.GetAllCustomers(BrokerId, filterCategory: CustomerCategory, filterAgeRange: AgeRange, profilePictures: false)).ToList();
+            Customers = (await CustomerService.GetFilteredCustomers(new CustomerFilter()
+            {
+                BrokerId = BrokerId,
+                Category = CustomerCategory,
+                AgeRange = AgeRange,
+                ProfilePictures = false,
+                HasNeeds = HasNeeds,
+                WithoutIncomeProtection = WithoutIncomeProtection,
+                WithoutLifeInsurance = WithoutLifeInsurance,
+                WithoutLifeCritical = WithoutLifeCritical
+            })).ToList();
+
+            StateHasChanged();
         }
 
         protected async Task SendChatMessageToSelected()

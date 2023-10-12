@@ -7,6 +7,7 @@ using MudBlazor;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Server.Helper;
+using BrokerIQ.Online.Services;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -40,43 +41,62 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         protected MessageCountState CurrentMessageCount { get; set; }
 
+        protected User User { get; set; }
+
         public List<BrokerNotification> BrokerNotifications { get; set; }
 
-        public bool IsAdmin { get; set; }
+        public List<BrokerNotification> BrokerNotificationsSubset { get; set; }
 
         public IEnumerable<Broker> Brokers { get; set; }
+
+        public int BrokerId { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             try
             {
-                var user = await AccountService.GetUser();
-                IsAdmin = user.IsAdmin;
-                if (user.IsBroker || user.IsBrokerStaff)
-                {
-                    BrokerNotifications = (await NotificationService.GetBrokerNotificationsByBrokerId()).OrderBy(n => n.Read).ThenByDescending(x => x.SentDate).ToList();
-                    CurrentMessageCount.MessageCount = BrokerNotifications.Count;
-                }
-                else
-                {
-                    BrokerNotifications = (await NotificationService.GetBrokerNotifications()).OrderByDescending(x => x.SentDate).ToList();
-                    try
-                    {
-                        Brokers = await BrokerService.GetBrokers();
-                    }
-                    catch
-                    {
-                        StatusClass = "alert-danger";
-                        Message = "Something went wrong getting customer details";
-                        Saved = true;
-                    }
-                }
-                StateHasChanged();
+                User = await AccountService.GetUser();
+                await RefreshMessages();
             }
             catch
             {
                 NavigationManager.NavigateTo($"account/logout");
             }
+        }
+
+        protected async Task AutoCompleteClickBroker()
+        {
+            if (BrokerId == 0)
+            {
+                BrokerNotificationsSubset = BrokerNotifications;
+            }
+            else if (BrokerId > 0)
+            {
+                BrokerNotificationsSubset = BrokerNotifications.Where(x => x.BrokerId == BrokerId).ToList();
+            }
+        }
+        private async Task RefreshMessages()
+        {
+            if (User.IsBroker || User.IsBrokerStaff)
+            {
+                BrokerNotificationsSubset = BrokerNotifications = (await NotificationService.GetBrokerNotificationsByBrokerId()).ToList();
+                CurrentMessageCount.MessageCount = BrokerNotifications.Count;
+            }
+            else
+            {
+                BrokerNotificationsSubset = BrokerNotifications = (await NotificationService.GetBrokerNotifications()).ToList();
+                try
+                {
+                    Brokers = await BrokerService.GetBrokers();
+                }
+                catch
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong getting customer details";
+                    Saved = true;
+                }
+            }
+            StateHasChanged();
         }
 
         protected void NavigateToOverview()
@@ -88,7 +108,7 @@ namespace BrokerIQ.Online.Pages
         {
             await NotificationService.ToggleNotificationReadStatus(reminderId);
 
-            CurrentMessageCount.MessageCount--;
+            await RefreshMessages();
         }
     }
 }
