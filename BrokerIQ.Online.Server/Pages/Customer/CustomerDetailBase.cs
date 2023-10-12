@@ -979,6 +979,8 @@ namespace BrokerIQ.Online.Pages
                 if (!result.Cancelled)
                 {
                     DocumentsRequirement = await DocumentsRequirementService.Create(int.Parse(CustomerId), documentsRequiredList);
+                    await UpdateChat(true);
+
                     StateHasChanged();
                 }
             }
@@ -1022,7 +1024,11 @@ namespace BrokerIQ.Online.Pages
                     template.Message = template.Message.Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName);
                 }
 
-                MergedMessages.Add(template);
+                if (template.WelcomeChat==false)
+                {
+                    MergedMessages.Add(template);
+                }
+
             }
         }
 
@@ -1225,10 +1231,7 @@ namespace BrokerIQ.Online.Pages
 
             if (!result.Cancelled)
             {
-
-
-
-
+                await UpdateChat(true);
             }
         }
 

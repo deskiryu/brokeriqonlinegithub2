@@ -1,4 +1,6 @@
-@using BrokerIQ.Online.Server.Extensions <MudDialog>
+@using BrokerIQ.Online.Server.Extensions
+@using System.Globalization
+<MudDialog>
     <DialogContent>
         <MudForm @ref="form">
             <MudSelect Validation="@(new Func<int, string>(IsValidSubscriptionService))" Class="mb-2" T="int" Label="Service" @bind-Value="Subscription.SubscriptionServiceId">
@@ -10,8 +12,8 @@
                     }
                 }
             </MudSelect>
-            <MudDatePicker Label="Start Date" DisableToolbar="true" @bind-Date="StartDate" />
-            <MudDatePicker Label="End Date" DisableToolbar="true" @bind-Date="EndDate" />
+            <MudDatePicker Label="Start Date" DisableToolbar="true" @bind-Date="StartDate" Culture=@(new CultureInfo("en-GB")) />
+            <MudDatePicker Label="End Date" DisableToolbar="true" @bind-Date="EndDate" Culture=@(new CultureInfo("en-GB")) />
         </MudForm>
     </DialogContent>
     <DialogActions>

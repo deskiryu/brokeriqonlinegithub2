@@ -12,7 +12,7 @@
 
 @if (!Saved)
 {
-    @if (BrokerNotifications == null)
+    @if (BrokerNotificationsSubset == null)
     {
         <div>
             <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
@@ -20,8 +20,33 @@
     }
     else
     {
+        <div class="card">
+            <div class="card-header">Filter</div>
+            <div class="card-body">
+                @if (User.IsAdmin)
+                {
+                    <div class="row">
 
-        <MudTable Items="@BrokerNotifications" Hover="true" SortLabel="Sort By" >
+                        <div class="col-lg-4 control_wrapper">
+                            <MudSelect T="int"
+                                       Label="Filter By Broker"
+                                       Placeholder="Select"
+                                       Clearable="true"
+                            @bind-Value="BrokerId"
+                                       SelectedValuesChanged="@AutoCompleteClickBroker"
+                                       AdornmentColor="Color.Primary">
+                                <MudSelectItem Value="0">Select</MudSelectItem>
+                                @foreach (var item in @Brokers)
+                                {
+                                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <MudTable Items="@BrokerNotificationsSubset" Hover="true" SortLabel="Sort By">
             <HeaderContent>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.SentDate)">Sent</MudTableSortLabel></MudTh>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrokerIQ.Dto.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace BrokerIQ.Online.Models
         public int? BrokerStaffId { get; set; }
         public string ReferralNote { get; set; }
         public bool ConvertedLoggedIn { get; set; }
-        public bool ConvertedToProduct { get; set; }
+        public ConvertedToProductEnum ConvertedToProduct { get; set; }
         public bool PrizeAwarded { get; set; }
         public string BrokerStaffName { get; set; }
         public string BrokerName { get; set; }
