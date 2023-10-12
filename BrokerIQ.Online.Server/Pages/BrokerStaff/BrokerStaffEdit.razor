@@ -1,8 +1,10 @@
-﻿
+﻿@page "/brokerStaffedit/{BrokerStaffId}"
 
-@page "/brokerStaffedit/{BrokerStaffId}"
+@using Microsoft.Extensions.Options
+
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.AppSettings
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
 @using BlazorDateRangePicker
@@ -11,6 +13,7 @@
 
 @inherits BrokerStaffEditBase
 
+@inject IOptions<ReviewItAPIDetails> Options
 
 @if (!Saved)
 {
@@ -18,95 +21,113 @@
 
     <h4 class="page-title">Edit Employee</h4>
 
-    <EditForm Model="@_brokerStaff" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+    @* <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Details"> *@
 
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+                <EditForm Model="@_brokerStaff" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
 
-        <div class="col-12 row">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-            <div class="col-xs-12 col-sm-12 com-md-12 col-lg-12">
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">First Name</label>
+                    <div class="col-12 row">
 
-                    <div class="col-sm-8">
-                        <InputText id="lastName" class="form-control col-sm-8" @bind-Value="_brokerStaff.FirstName" placeholder="Enter first name for this customer"></InputText>
-                        <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => _brokerStaff.FirstName)" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Last Name</label>
+                        <div class="col-xs-12 col-sm-12 com-md-12 col-lg-12">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">First Name</label>
 
-                    <div class="col-sm-8">
-                        <InputText id="lastName" class="form-control col-sm-8" @bind-Value="_brokerStaff.LastName" placeholder="Enter last name for this customer"></InputText>
-                        <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => _brokerStaff.LastName)" />
-                    </div>
-                </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Two Factor Type</label>
-                        <MudRadioGroup class="col-sm-4" @bind-SelectedOption="@_brokerStaff.TwoFactorType">
-                            <MudRadio Option="@TwoFactorEnum.Email">Email</MudRadio>
-                            <MudRadio Option="@TwoFactorEnum.Sms">Mobile Phone</MudRadio>
-                        </MudRadioGroup>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Two Factor SMS Phone Number</label>
-                        <div class="col-sm-8">
-                            <InputText @bind-Value="_brokerStaff.TwoFactorPhoneNumber" class="form-control col-sm-8" />
-                        <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => _brokerStaff.TwoFactorPhoneNumber)" />
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Email Address</label>
-                    <div class="col-sm-8">
-                        <label type="text" readonly class="form-control-plaintext">@_brokerStaff.EmailAddress</label>
-                    </div>
-                </div>
-
-     
-
-
-                <div class="form-group row">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Update employee</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-outline-primary edit-outline-btn" OnClick="@NavigateToOverview">Cancel</MudButton>
-                </div>
-
-                    @if (IsAdmin)
-                    {
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Two Factor Enabled</label>
-                            <div class="col-sm-8">
-
-                                <MudCheckBox @bind-Checked="@_brokerStaff.TwoFactorEnabled" @onclick="async f => await SetTwoFactorEnabled()" Style="margin-left: -15px" />
-
+                                <div class="col-sm-8">
+                                    <InputText id="lastName" class="form-control col-sm-8" @bind-Value="_brokerStaff.FirstName" placeholder="Enter first name for this customer"></InputText>
+                                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => _brokerStaff.FirstName)" />
+                                </div>
                             </div>
-                        </div>                        
-                    }
 
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Last Name</label>
 
-            </div>
+                                <div class="col-sm-8">
+                                    <InputText id="lastName" class="form-control col-sm-8" @bind-Value="_brokerStaff.LastName" placeholder="Enter last name for this customer"></InputText>
+                                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => _brokerStaff.LastName)" />
+                                </div>
+                            </div>
 
-        </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Email Address</label>
+                                <div class="col-sm-8">
+                                    <label type="text" readonly class="form-control-plaintext">@_brokerStaff.EmailAddress</label>
+                                </div>
+                            </div>
 
-    </EditForm>
-    <div class="row col-6 mt-1">
-            @if (!IsMinorAdmin)
-            {
-                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteCustomer">
-                Delete Employee
-            </MudButton>               
-            }
+                            @if(this.Options.Value.ShowStaffType){
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Position</label>
+                                <div class="col-sm-8">
+                                    <MudSelect T="StaffTypeEnum" 
+                                    Margin="Margin.Dense"
+                                    @bind-Value="@_brokerStaff.StaffTypeId">
+                                        @{
+                                            var names = Enum.GetNames(typeof(StaffTypeEnum));
+                                            for (int i = 0; i < names.Length; i++)
+                                            {
+                                                StaffTypeEnum looped = (StaffTypeEnum)i;
+                                                <MudSelectItem Value=@looped>@looped.ToString()</MudSelectItem>
+                                            }
+                                        }
+                                    </MudSelect> 
+                                </div>
+                            </div>
+                            }
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="ResendEmailBrokerStaff">
-                Resend Verify Email
-            </MudButton>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Two Factor Type</label>
+                                <MudRadioGroup class="col-sm-4" @bind-SelectedOption="@_brokerStaff.TwoFactorType">
+                                    <MudRadio Option="@TwoFactorEnum.Email">Email</MudRadio>
+                                    <MudRadio Option="@TwoFactorEnum.Sms">Mobile Phone</MudRadio>
+                                </MudRadioGroup>
+                            </div>
 
-    </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Two Factor SMS Phone Number</label>
+                                <div class="col-sm-8">
+                                    <InputText @bind-Value="_brokerStaff.TwoFactorPhoneNumber" class="form-control col-sm-8" />
+                                <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => _brokerStaff.TwoFactorPhoneNumber)" />
+                                </div>
+                            </div>
+
+                            @if (IsAdmin)
+                            {
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Two Factor Enabled</label>
+                                <div class="col-sm-8">
+                                    <MudCheckBox @bind-Checked="@_brokerStaff.TwoFactorEnabled" @onclick="async f => await SetTwoFactorEnabled()" Style="margin-left: -15px" />
+                                </div>
+                            </div>                        
+                            }                
+
+                            <div class="form-group row">
+                                @if (!IsMinorAdmin)
+                                {
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mr-8" @onclick="DeleteCustomer">
+                                    Delete Employee
+                                </MudButton>               
+                                }
+
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="mr-5" @onclick="ResendEmailBrokerStaff">
+                                    Resend Verify Email
+                                </MudButton>
+
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-outline-primary edit-outline-btn mr-1" OnClick="@NavigateToOverview">Cancel</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Update employee</MudButton>
+                            </div>
+
+                        </div>
+                    </div>
+                </EditForm>
+        @* </MudTabPanel> 
+        <MudTabPanel Text="Assigned Customers">
+
+        </MudTabPanel>
+    </MudTabs> *@
 </section>
-
 
 }
 else
