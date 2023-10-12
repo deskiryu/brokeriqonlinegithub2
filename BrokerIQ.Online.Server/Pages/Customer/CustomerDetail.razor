@@ -647,7 +647,7 @@ else if (!Saved)
                                             Date="@noteFilterStartDate" DateChanged="FilterStartDateChanged" />
                                         </div>
                                         <div class="col-4">
-                                    <MudDatePicker DateFormat="dd/MM/yyyy" Label="To" DisableToolbar="true" @ref="NoteFilterTo"
+                                <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="To" DisableToolbar="true" @ref="NoteFilterTo"
                                                Date="@noteFilterEndDate" DateChanged="FilterEndDateChanged" />
                                         </div>
                                         <div class="col-4 text-right">
