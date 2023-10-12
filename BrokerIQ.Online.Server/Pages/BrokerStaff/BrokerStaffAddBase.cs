@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    
+
     using Microsoft.AspNetCore.Components;
     using Models;
     using BrokerIQ.Dto.Models;
@@ -39,7 +39,7 @@
         [Inject]
         public IAccountService AccountService { get; set; }
 
-        [Inject] 
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -119,7 +119,7 @@
             AlertService.Clear();
 
             loading = true;
-            
+
             try
             {
                 var user = await AccountService.GetUser();

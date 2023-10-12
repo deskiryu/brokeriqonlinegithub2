@@ -46,7 +46,7 @@ namespace BrokerIQ.Online.Server.Extensions
 
         public async static Task OpenLinkInNewTab(IJSRuntime js, string url)
         {
-             await js.InvokeVoidAsync("open", url, "_blank");
+            await js.InvokeVoidAsync("open", url, "_blank");
         }
 
         public async static Task StartWarningTimer(IJSRuntime js, int timeoutIntervalms)
@@ -102,20 +102,6 @@ namespace BrokerIQ.Online.Server.Extensions
                 .Except(result);
 
             return result.Concat(remainingValues).ToArray();
-        }
-
-
-        public static bool IsSystemMessage(this BrokerDefinedMessageEnum message)
-        {
-            var systemMessages = new BrokerDefinedMessageEnum[] {
-                        BrokerDefinedMessageEnum.FirstLoginMessage,
-                        BrokerDefinedMessageEnum.FirstLoginDelayMessage,
-                        BrokerDefinedMessageEnum.FirstDocumentRequirementsMessage,
-                        BrokerDefinedMessageEnum.ProgressDocumentRequirementsMessage,
-                        BrokerDefinedMessageEnum.CompleteDocumentRequirementsMessage
-            };
-
-            return systemMessages.Contains(message);
         }
 
         public static int GetOrderValue(this Enum enumValue)

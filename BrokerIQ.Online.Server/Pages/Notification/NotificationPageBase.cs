@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BrokerIQ.Online.Server.Extensions;
+using Microsoft.JSInterop;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -33,6 +35,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        protected IJSRuntime js { get; set; }
 
         public List<Notification> NotificationsSent { get; set; }
 
@@ -211,6 +216,11 @@ namespace BrokerIQ.Online.Pages
                     break;
             }
             
+        }
+
+        protected async Task ViewLink(string url)
+        {
+            await Extensions.OpenLinkInNewTab(js, url);
         }
     }
 }

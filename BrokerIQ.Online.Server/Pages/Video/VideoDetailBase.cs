@@ -20,15 +20,15 @@ namespace BrokerIQ.Online.Server.Pages.Video
         protected ICustomerService CustomerService { get; set; }
 
         [Inject]
-        protected NavigationManager NavigationManager{ get; set; }
+        protected NavigationManager NavigationManager { get; set; }
         [Inject]
-        protected INotificationService NotificationService{ get; set; }
+        protected INotificationService NotificationService { get; set; }
 
         [Inject]
-        protected IAlertService AlertService{ get; set; }
+        protected IAlertService AlertService { get; set; }
 
         [Inject]
-        protected IDialogService DialogService{ get; set; }
+        protected IDialogService DialogService { get; set; }
 
         [Inject]
         public IVideoService VideoService { get; set; }
@@ -62,7 +62,52 @@ namespace BrokerIQ.Online.Server.Pages.Video
         protected bool IsAdmin { get; set; }
 
         public int CustomerCategory { get; set; }
-        public int AgeRange { get; set; }         
+        public int AgeRange { get; set; }
+
+        private bool hasNeeds;
+        public bool HasNeeds
+        {
+            get { return hasNeeds; }
+            set
+            {
+                hasNeeds = value;
+                RecentFilterSelect();
+            }
+        }
+
+        private bool withoutIncomeProtection;
+        public bool WithoutIncomeProtection
+        {
+            get { return withoutIncomeProtection; }
+            set
+            {
+                withoutIncomeProtection = value;
+                RecentFilterSelect();
+            }
+        }
+
+        private bool withoutLifeInsurance;
+        public bool WithoutLifeInsurance
+        {
+            get { return withoutLifeInsurance; }
+            set
+            {
+                withoutLifeInsurance = value;
+                RecentFilterSelect();
+            }
+        }
+
+        private bool withoutLifeAndCritical;
+        public bool WithoutLifeCritical
+        {
+            get { return withoutLifeAndCritical; }
+            set
+            {
+                withoutLifeAndCritical = value;
+                RecentFilterSelect();
+            }
+        }
+
 
         //filter
         protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
@@ -99,7 +144,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
                     AlertService.Error("Get Videos failed");
                 }
             }
-            
+
             try
             {
                 if (user == null)
@@ -109,7 +154,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
                 Vetted = await VideoService.IsVetted(VideoName, user.MasterBrokerId);
                 var queryCust = await CustomerService.GetAllCustomers();
-                Customers = queryCust.Where(x =>x.VideoNotificationsAllowed==true).ToList();
+                Customers = queryCust.Where(x => x.VideoNotificationsAllowed == true).ToList();
             }
             catch
             {
@@ -128,7 +173,6 @@ namespace BrokerIQ.Online.Server.Pages.Video
         {
             await OpenNotificationDialog(false);
         }
-
 
         protected async Task<IEnumerable<string>> OnFilterBroker(string value)
         {
@@ -239,11 +283,24 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 };
             }
         }
+
         protected async Task RecentFilterSelect()
         {
             Customers.Clear();
             Customers = null;
-            Customers = (await CustomerService.GetAllCustomers(BrokerId, filterCategory:CustomerCategory, filterAgeRange:AgeRange, profilePictures: false)).ToList();
+            Customers = (await CustomerService.GetFilteredCustomers(new CustomerFilter()
+            {
+                BrokerId = BrokerId,
+                Category = CustomerCategory,
+                AgeRange = AgeRange,
+                ProfilePictures = false,
+                HasNeeds = HasNeeds,
+                WithoutIncomeProtection = WithoutIncomeProtection,
+                WithoutLifeInsurance = WithoutLifeInsurance,
+                WithoutLifeCritical = WithoutLifeCritical
+            })).ToList();
+
+            StateHasChanged();
         }
 
         protected async Task SendChatMessageToSelected()
@@ -276,7 +333,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
             dialogParams.Add("Customers", targets);
             dialogParams.Add("VideoUrl", Url);
             dialogParams.Add("VideoName", VideoNameNoExtension);
-            dialogParams.Add("VideoThumbnailData", thumbnail?.Data??"");
+            dialogParams.Add("VideoThumbnailData", thumbnail?.Data ?? "");
 
 
             var dialogOptions = new DialogOptions()

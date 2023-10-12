@@ -13,5 +13,7 @@
         public string VideoConvertUrl { get; set; }
 
         public bool ShowProtection { get; set; }
+
+        public bool ShowStaffType { get; set; }
     }
 }
