@@ -26,7 +26,7 @@ namespace BrokerIQ.Online.Models.Account
         public TwoFactorEnum TwoFactorType { get; set; }
 
         [Required]
-        [MinLength(8, ErrorMessage = "The Password field must be a minimum of 8 characters")]
+        [MinLength(12, ErrorMessage = "The Password field must be a minimum of 12 characters")]
         [MaxLength(16, ErrorMessage = "The Password field must be a maximum of 16 characters")]
         [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$", ErrorMessage = "Passwords should contain at least one capital letter, one lowercase letter and one number")]
         public string Password { get; set; }
