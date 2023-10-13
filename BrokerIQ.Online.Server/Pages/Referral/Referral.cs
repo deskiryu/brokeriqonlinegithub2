@@ -359,6 +359,12 @@ namespace BrokerIQ.Online.Pages
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
 
+        protected async Task OnPrizeClick(ClientReferral clientReferral)
+        {
+            clientReferral.PrizeAwarded = !clientReferral.PrizeAwarded;
+            await UpdateCR(clientReferral);
+        }
+
         protected async Task OnConvertedToProductClick(ClientReferral clientReferral, int ConvertedToProduct)
         {
             clientReferral.ConvertedToProduct = (ConvertedToProductEnum) ConvertedToProduct;
