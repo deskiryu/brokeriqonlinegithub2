@@ -1,15 +1,15 @@
-﻿namespace BrokerIQ.Online.Pages
-{
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using BrokerIQ.Online.Server.Shared;
-    using Microsoft.AspNetCore.Components;
-    using Models;
-    using MudBlazor;
-    using Services.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using BrokerIQ.Online.Models;
+using MudBlazor;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Online.Server.Services.Interface;
 
+namespace BrokerIQ.Online.Pages
+{
     public class BrokerStaffEditBase : ComponentBase
     {
         private int id;
@@ -20,8 +20,11 @@
         [Inject]
         public IAccountService AccountService { get; set; }
 
+        [Inject]
+        public IAssignmentService AssignmentService { get; set; }
 
-        [Inject] 
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -41,6 +44,8 @@
         public bool IsAdmin { get; set; }
         public bool IsMinorAdmin { get; set; }
 
+        protected IEnumerable<Customer> AssignedCustomers;
+
         public BrokerStaffEditBase()
         {
             _brokerStaff = new BrokerStaff();
@@ -51,7 +56,7 @@
             try
             {
                 var user = await AccountService.GetUser();
-                BrokerId = 0;                    
+                BrokerId = 0;
                 id = Int32.Parse(BrokerStaffId);
                 IsAdmin = user.IsAdmin;
                 IsMinorAdmin = user.IsMinorAdmin;
@@ -60,7 +65,9 @@
                 {
                     if (id > 0)
                     {
-                        _brokerStaff = (await BrokerStaffService.GetBrokerStaff(id));
+                        _brokerStaff = await BrokerStaffService.GetBrokerStaff(id);
+
+                        AssignedCustomers = await AssignmentService.GetForEmployee(id);
                     }
                 }
             }
