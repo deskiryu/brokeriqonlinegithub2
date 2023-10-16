@@ -7,12 +7,16 @@ using MudBlazor;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Server.Services.Interface;
+using System.Linq;
 
 namespace BrokerIQ.Online.Pages
 {
     public class BrokerStaffEditBase : ComponentBase
     {
         private int id;
+
+        [Inject]
+        public ISnackbar Snackbar { get; set; }
 
         [Inject]
         public IBrokerStaffService BrokerStaffService { get; set; }
@@ -43,6 +47,8 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsAdmin { get; set; }
         public bool IsMinorAdmin { get; set; }
+
+        public HashSet<Customer> SelectedCustomers { get; set; }
 
         protected IEnumerable<Customer> AssignedCustomers;
 
@@ -160,6 +166,39 @@ namespace BrokerIQ.Online.Pages
                 await DialogService.Show<AlertDialog>("Information", responseParams).Result;
             }
             NavigationManager.NavigateTo($"/brokerstafflist");
+        }
+
+        protected string AssignVisibilityClass()
+        {
+            return SelectedCustomers != null && SelectedCustomers.Count > 0 ? "visible" : "invisible";
+        }
+
+        protected async Task UnassignFromStaff()
+        {
+            bool? result = await DialogService.ShowMessageBox(
+                "Unassign selected customers",
+                "Are you sure you want to unassign from this staff member?",
+                yesText: "Unassign", cancelText: "Cancel");
+
+            if (result != null)
+            {
+                try
+                {
+                    await AssignmentService.Unassign(_brokerStaff, SelectedCustomers.Select(c => c.Id).ToArray());
+
+                    Snackbar.Add("Unassignment was successfull", Severity.Success);
+
+                    SelectedCustomers = null;
+
+                    AssignedCustomers = await AssignmentService.GetForEmployee(id);
+
+                    StateHasChanged();
+                }
+                catch
+                {
+                    Snackbar.Add("Unable to remove assignment. Please try again", Severity.Error);
+                }
+            }
         }
     }
 }

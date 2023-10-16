@@ -127,19 +127,26 @@
         @if(_brokerStaff.StaffTypeId != StaffTypeEnum.Unassigned)
         {
         <MudTabPanel Text="Assigned Customers">
-        <MudTable Items="@AssignedCustomers" Hover="true" SortLabel="Sort By" Dense="true">
+        <MudTable Items="@AssignedCustomers" Hover="true" SortLabel="Sort By" Dense="true" MultiSelection="true" @bind-SelectedItems="SelectedCustomers">
             <NoRecordsContent>
                 No customers assigned to this employee.
             </NoRecordsContent>
             <HeaderContent>
-                <MudTh></MudTh>
+                <MudTh>
+                    <MudIconButton Class="@(AssignVisibilityClass())" 
+                                      Icon="@Icons.Material.Filled.GroupRemove" 
+                                      Size="Size.Small"
+                                      Variant="Variant.Filled"
+                                      Color="Color.Error" 
+                                      Style="@($"color:{Colors.Shades.Black}")"
+                                      OnClick="UnassignFromStaff"/>
+                </MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.DateOfBirth)">Date Of Birth</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.CustomerCategory.GetDisplayName())">Category</MudTableSortLabel></MudTh>
-                <MudTh></MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd>
