@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Services.Base;
@@ -34,12 +35,28 @@ namespace BrokerIQ.Online.Server.Services
 
         public async Task<IEnumerable<Customer>> Assign(BrokerStaff staff, IEnumerable<int> customerIds)
         {
-            throw new System.NotImplementedException();
+            var user = await accountService.GetUser();
+            requestProviderService.Token = user?.Token;
+
+            var dto = new CustomerAssignmentDto() { EmployeeId = staff.Id, CustomerIds = customerIds };
+
+            var answer = await requestProviderService.Post<CustomerAssignmentDto, IEnumerable<CustomerDto>>($"{_assignmentUrl}/assign", dto);
+            var mapped = _mapper.Map<IEnumerable<Customer>>(answer);
+
+            return mapped;
         }
 
         public async Task<IEnumerable<Customer>> Unassign(BrokerStaff staff, IEnumerable<int> customerIds)
         {
-            throw new System.NotImplementedException();
+            var user = await accountService.GetUser();
+            requestProviderService.Token = user?.Token;
+
+            var dto = new CustomerAssignmentDto() { EmployeeId = staff.Id, CustomerIds = customerIds };
+
+            var answer = await requestProviderService.Post<CustomerAssignmentDto, IEnumerable<CustomerDto>>($"{_assignmentUrl}/unassign", dto);
+            var mapped = _mapper.Map<IEnumerable<Customer>>(answer);
+
+            return mapped;
         }
     }
 }

@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Server.Shared;
+using Microsoft.AspNetCore.Components;
+using BrokerIQ.Online.Models;
+using MudBlazor;
+using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Online.Server.Pages.Customer.Components;
 
 namespace BrokerIQ.Online.Pages
 {
-    using BrokerIQ.Dto.Enum;
-    using BrokerIQ.Online.Server.Extensions;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Online.Server.Shared;
-    using Microsoft.AspNetCore.Components;
-    using Models;
-    using MudBlazor;
-    using Services.Interface;
-
     public class CustomerListBase : ComponentBase
     {
         [Inject]
@@ -376,6 +376,30 @@ namespace BrokerIQ.Online.Pages
         protected string GetCategoryDisplayName(Customer c)
         {
             return c.CustomerCategory.GetDisplayName();
+        }
+
+        protected string AssignVisibilityClass()
+        {
+            return SelectedCustomers != null && SelectedCustomers.Count > 0 ? "visible" : "invisible";
+        }
+
+        protected async Task AssignToStaff()
+        {
+
+            var dialogParams = new DialogParameters
+            {
+                { "BrokerId", BrokerId},
+                { "SelectedCustomerIds", SelectedCustomers.Select(c => c.Id).ToArray() }
+            };
+
+            var result = await DialogService.Show<AssignmentDialog>("Assign to Employee", dialogParams).Result;
+
+            if (!result.Cancelled)
+            {
+                SelectedCustomers = null;
+
+                StateHasChanged();
+            }
         }
     }
 }
