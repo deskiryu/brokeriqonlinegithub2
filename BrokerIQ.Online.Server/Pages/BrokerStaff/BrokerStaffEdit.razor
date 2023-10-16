@@ -132,7 +132,7 @@
                 No customers assigned to this employee.
             </NoRecordsContent>
             <HeaderContent>
-                <MudTh>
+                <MudTh Style="text-align:center">
                     <MudIconButton Class="@(AssignVisibilityClass())" 
                                       Icon="@Icons.Material.Filled.GroupRemove" 
                                       Size="Size.Small"
@@ -149,7 +149,7 @@
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.CustomerCategory.GetDisplayName())">Category</MudTableSortLabel></MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd>
+                <MudTd Style="text-align:center">
                     @if (!string.IsNullOrWhiteSpace(context.PPAsImage))
                     {
                         @if(context.HasNeeds){
