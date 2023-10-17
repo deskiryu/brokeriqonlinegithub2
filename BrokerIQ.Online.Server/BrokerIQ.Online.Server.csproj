@@ -71,6 +71,9 @@
 		<SearchDirectory Remove="@(SearchDirectory)" />
 		<SearchDirectory Include="$(Obfuscate1Dir)" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="wwwroot\js\" />
+	</ItemGroup>
 	<Target Name="Obfuscate1" AfterTargets="CoreCompile">
 		<Babel SearchDirectories="@(SearchDirectory)" DetectIfObfuscated="$(DetectIfObfuscated)" ModuleVersionId="false" InputFile="$(Obfuscate1Dir)/BrokerIQ.Online.Server.dll" OutputFile="$(Obfuscate2Dir)/BrokerIQ.Online.Server.dll" GenerateDebug="$(GenerateDebug)" GenerateMapOutFile="$(GenerateMapOutFile)" ObfuscateEvents="$(ObfuscateEvents)" ObfuscateFields="$(ObfuscateFields)" ObfuscateMethods="$(ObfuscateMethods)" ObfuscateParameters="$(ObfuscateParameters)" ObfuscateProperties="$(ObfuscateProperties)" ObfuscateTypes="$(ObfuscateTypes)" OverloadedRenaming="$(OverloadedRenaming)" VirtualFunctions="$(VirtualFunctions)" FlattenNamespaces="$(FlattenNamespaces)" ShowStatistics="$(ShowStatistics)" StringEncryption="$(StringEncryption)" ControlFlowObfuscation="$(ControlFlowObfuscation)" SuppressIldasm="$(SuppressIldasm)" UnicodeNormalization="$(UnicodeNormalization)" VerboseLevel="$(VerboseLevel)" />
 	</Target>
