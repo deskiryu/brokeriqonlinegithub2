@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- develop
+- uat/live
 
 pool:
   vmImage: 'windows-latest'
@@ -21,7 +21,7 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
     feedsToUse: 'select'
-    vstsFeed: 'a4e5bddc-300e-45b4-bc64-d4675804cc09/e120d8a0-8927-4e52-a034-a8ee0f11b119'      
+    vstsFeed: 'a4e5bddc-300e-45b4-bc64-d4675804cc09/e120d8a0-8927-4e52-a034-a8ee0f11b119/69ba92ab-08ce-40f0-b119-37ac77d6c646'      
     includeNuGetOrg: true
 
 - task: VSBuild@1
