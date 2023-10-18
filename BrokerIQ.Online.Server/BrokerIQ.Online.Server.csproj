@@ -20,6 +20,10 @@
         <PackageReference Include="Azure.Core" Version="1.21.0" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
         <PackageReference Include="Azure.Storage.Queues" Version="12.8.0" />
+        <PackageReference Include="Babel.Obfuscator" Version="10.2.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="BlazorDateRangePicker" Version="4.0.0" />
         <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.1" />
@@ -43,7 +47,6 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
-	<UsingTask TaskName="Babel" AssemblyName="Babel.Build, Version=9.8.0.0, Culture=neutral, PublicKeyToken=138d17b5bd621ab7" />
 	<PropertyGroup>
 		<NameLength>3</NameLength>
 		<ObfuscateEvents>true</ObfuscateEvents>
@@ -62,19 +65,5 @@
 		<VerboseLevel>10</VerboseLevel>
 		<VirtualFunctions>true</VirtualFunctions>
 		<GenerateDebug>false</GenerateDebug>
-		<GenerateMapOutFile>false</GenerateMapOutFile>
-		<DetectIfObfuscated>exit</DetectIfObfuscated>
-		<Obfuscate1Dir>$(SolutionDir)/BrokerIq.Online.Server/bin/$(Configuration)/net7.0/</Obfuscate1Dir>
-		<Obfuscate2Dir>$(SolutionDir)/BrokerIq.Online.Server/obj/$(Configuration)/net7.0/</Obfuscate2Dir>
 	</PropertyGroup>
-	<ItemGroup>
-		<SearchDirectory Remove="@(SearchDirectory)" />
-		<SearchDirectory Include="$(Obfuscate1Dir)" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="wwwroot\js\" />
-	</ItemGroup>
-	<Target Name="Obfuscate1" AfterTargets="CoreCompile">
-		<Babel SearchDirectories="@(SearchDirectory)" DetectIfObfuscated="$(DetectIfObfuscated)" ModuleVersionId="false" InputFile="$(Obfuscate1Dir)/BrokerIQ.Online.Server.dll" OutputFile="$(Obfuscate2Dir)/BrokerIQ.Online.Server.dll" GenerateDebug="$(GenerateDebug)" GenerateMapOutFile="$(GenerateMapOutFile)" ObfuscateEvents="$(ObfuscateEvents)" ObfuscateFields="$(ObfuscateFields)" ObfuscateMethods="$(ObfuscateMethods)" ObfuscateParameters="$(ObfuscateParameters)" ObfuscateProperties="$(ObfuscateProperties)" ObfuscateTypes="$(ObfuscateTypes)" OverloadedRenaming="$(OverloadedRenaming)" VirtualFunctions="$(VirtualFunctions)" FlattenNamespaces="$(FlattenNamespaces)" ShowStatistics="$(ShowStatistics)" StringEncryption="$(StringEncryption)" ControlFlowObfuscation="$(ControlFlowObfuscation)" SuppressIldasm="$(SuppressIldasm)" UnicodeNormalization="$(UnicodeNormalization)" VerboseLevel="$(VerboseLevel)" />
-	</Target>
 </Project>
