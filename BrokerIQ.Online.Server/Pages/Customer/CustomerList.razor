@@ -147,7 +147,7 @@ else
             </div>
             }
 
-            @if (IsAdmin)
+            @if (User.IsAdmin)
             {   
                 <div class="row">
                     <div class="col-lg-8 control_wrapper">
@@ -197,7 +197,7 @@ else
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.DateOfBirth)">Date Of Birth</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.CustomerCategory.GetDisplayName())">Category</MudTableSortLabel></MudTh>
-            @if (IsAdmin)
+            @if (User.IsAdmin)
             {
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.AppVersion)">App</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>                           
@@ -249,7 +249,7 @@ else
                         </ChildContent>
                     </MudMenu>
                 </MudTd>
-            @if (IsAdmin)
+            @if (User.IsAdmin)
             {
                 <MudTd DataLabel="App">@context.AppVersion</MudTd>
                 <MudTd DataLabel="WL"><MudCheckBox @bind-Checked="@context.IsWhiteLabel" Disabled="true"></MudCheckBox></MudTd>

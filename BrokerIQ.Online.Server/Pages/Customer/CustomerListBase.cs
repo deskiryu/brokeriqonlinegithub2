@@ -36,6 +36,8 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         IAccountService AccountService { get; set; }
 
+        public User User { get; set; }
+
         public List<Customer> Customers { get; set; }
 
         public List<Broker> Brokers { get; set; }
@@ -50,7 +52,6 @@ namespace BrokerIQ.Online.Pages
         protected string selectedNotification;
         protected string SearchTerm { get; set; } = "";
 
-        protected bool IsAdmin { get; set; }
         public int FilterRecent { get; set; }
         public int FilterPeriod { get; set; }
         public int CustomerCategory { get; set; }
@@ -116,19 +117,18 @@ namespace BrokerIQ.Online.Pages
             {
                 SelectFilled = false;
                 await GetCustomers();
-                var user = await AccountService.GetUser();
-                IsAdmin = user.IsAdmin;
+                User = await AccountService.GetUser();
 
                 CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
 
-                if (IsAdmin)
+                if (User.IsAdmin)
                 {
                     Brokers = (await BrokerService.GetBrokers()).ToList();
                 }
                 else
                 {
                     Brokers = new List<Broker>();
-                    BrokerId = user.MasterBrokerId;
+                    BrokerId = User.MasterBrokerId;
                 }
             }
             catch
@@ -268,7 +268,7 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            if (IsAdmin)
+            if (User.IsAdmin)
             {
                 if (BrokerId <= 0)
                 {
@@ -380,6 +380,8 @@ namespace BrokerIQ.Online.Pages
 
         protected string AssignVisibilityClass()
         {
+            if (User.IsBrokerStaff) return "invisible";
+
             return SelectedCustomers != null && SelectedCustomers.Count > 0 ? "visible" : "invisible";
         }
 
