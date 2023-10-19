@@ -1,18 +1,22 @@
-﻿namespace BrokerIQ.Online.Pages
-{
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using BrokerIQ.Online.Server.Shared;
-    using Microsoft.AspNetCore.Components;
-    using Models;
-    using MudBlazor;
-    using Services.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using BrokerIQ.Online.Models;
+using MudBlazor;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Online.Server.Services.Interface;
+using System.Linq;
 
+namespace BrokerIQ.Online.Pages
+{
     public class BrokerStaffEditBase : ComponentBase
     {
         private int id;
+
+        [Inject]
+        public ISnackbar Snackbar { get; set; }
 
         [Inject]
         public IBrokerStaffService BrokerStaffService { get; set; }
@@ -20,8 +24,11 @@
         [Inject]
         public IAccountService AccountService { get; set; }
 
+        [Inject]
+        public IAssignmentService AssignmentService { get; set; }
 
-        [Inject] 
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -41,6 +48,10 @@
         public bool IsAdmin { get; set; }
         public bool IsMinorAdmin { get; set; }
 
+        public HashSet<Customer> SelectedCustomers { get; set; }
+
+        protected IEnumerable<Customer> AssignedCustomers;
+
         public BrokerStaffEditBase()
         {
             _brokerStaff = new BrokerStaff();
@@ -51,7 +62,7 @@
             try
             {
                 var user = await AccountService.GetUser();
-                BrokerId = 0;                    
+                BrokerId = 0;
                 id = Int32.Parse(BrokerStaffId);
                 IsAdmin = user.IsAdmin;
                 IsMinorAdmin = user.IsMinorAdmin;
@@ -60,7 +71,9 @@
                 {
                     if (id > 0)
                     {
-                        _brokerStaff = (await BrokerStaffService.GetBrokerStaff(id));
+                        _brokerStaff = await BrokerStaffService.GetBrokerStaff(id);
+
+                        AssignedCustomers = await AssignmentService.GetForEmployee(id);
                     }
                 }
             }
@@ -153,6 +166,39 @@
                 await DialogService.Show<AlertDialog>("Information", responseParams).Result;
             }
             NavigationManager.NavigateTo($"/brokerstafflist");
+        }
+
+        protected string AssignVisibilityClass()
+        {
+            return SelectedCustomers != null && SelectedCustomers.Count > 0 ? "visible" : "invisible";
+        }
+
+        protected async Task UnassignFromStaff()
+        {
+            bool? result = await DialogService.ShowMessageBox(
+                "Unassign selected customers",
+                "Are you sure you want to unassign from this staff member?",
+                yesText: "Unassign", cancelText: "Cancel");
+
+            if (result != null)
+            {
+                try
+                {
+                    await AssignmentService.Unassign(_brokerStaff, SelectedCustomers.Select(c => c.Id).ToArray());
+
+                    Snackbar.Add("Unassignment was successfull", Severity.Success);
+
+                    SelectedCustomers = null;
+
+                    AssignedCustomers = await AssignmentService.GetForEmployee(id);
+
+                    StateHasChanged();
+                }
+                catch
+                {
+                    Snackbar.Add("Unable to remove assignment. Please try again", Severity.Error);
+                }
+            }
         }
     }
 }
