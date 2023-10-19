@@ -47,7 +47,7 @@
             <DialogContent>
                 <MudTextField Label="Video Name" ID="inVal" @bind-Value="@VideoName" Type="InputType.Text" Placeholder=""
                     HelperText="Enter video name" />
-                @if (IsAdmin)
+                @if (IsAdmin || IsMinorAdmin)
                 {
                     <MudSelect id="brokerVideo" class="form-control" @bind-Value="@BrokerListId">
                         <MudSelectItem Value=0>No Broker</MudSelectItem>
@@ -67,7 +67,7 @@
 
         </MudDialog>
 
-        @if (IsAdmin)
+        @if (IsAdmin || IsMinorAdmin)
         {
             <div class="row mt-1">
 
@@ -100,15 +100,16 @@
                     <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.SendDate)">Send Date
                     </MudTableSortLabel>
                 </MudTh>
-                @if (IsAdmin)
+                @if (IsAdmin || IsMinorAdmin)
                 {
                     <MudTh class="">
                         <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.Broker)">Broker
                         </MudTableSortLabel>
                     </MudTh>
                 }
-                
-                @if(IsAdmin || IsBroker){
+
+                @if (IsAdmin || IsMinorAdmin || IsBroker)
+                {
                     <MudTh class="">
                         Vetted
                     </MudTh>
@@ -182,7 +183,8 @@
                 {
                     <MudTd DataLabel="Broker">@context.Broker</MudTd>
                 }
-                @if(IsAdmin || IsBroker){
+                @if (IsAdmin || IsMinorAdmin || IsBroker)
+                {
                     <MudTd>
                         <MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Name)" />
                     </MudTd>
