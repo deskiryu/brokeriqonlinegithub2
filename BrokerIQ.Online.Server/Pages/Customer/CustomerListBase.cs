@@ -57,49 +57,7 @@ namespace BrokerIQ.Online.Pages
         public int CustomerCategory { get; set; }
         public int AgeRange { get; set; }
 
-        private bool hasNeeds;
-        public bool HasNeeds
-        {
-            get { return hasNeeds; }
-            set
-            {
-                hasNeeds = value;
-                RefreshListFromFilterValues();
-            }
-        }
-
-        private bool withoutIncomeProtection;
-        public bool WithoutIncomeProtection
-        {
-            get { return withoutIncomeProtection; }
-            set
-            {
-                withoutIncomeProtection = value;
-                RefreshListFromFilterValues();
-            }
-        }
-
-        private bool withoutLifeInsurance;
-        public bool WithoutLifeInsurance
-        {
-            get { return withoutLifeInsurance; }
-            set
-            {
-                withoutLifeInsurance = value;
-                RefreshListFromFilterValues();
-            }
-        }
-
-        private bool withoutLifeAndCritical;
-        public bool WithoutLifeCritical
-        {
-            get { return withoutLifeAndCritical; }
-            set
-            {
-                withoutLifeAndCritical = value;
-                RefreshListFromFilterValues();
-            }
-        }
+        protected int? ProfilingOption { get; set; }
 
         //filter
         protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
@@ -230,7 +188,7 @@ namespace BrokerIQ.Online.Pages
             Customers.Clear();
             Customers = null;
 
-            Customers = (await CustomerService.GetFilteredCustomers(new CustomerFilter()
+            var filterValues = new CustomerFilter()
             {
                 BrokerId = BrokerId,
                 Recent = FilterRecent,
@@ -238,11 +196,10 @@ namespace BrokerIQ.Online.Pages
                 Category = CustomerCategory,
                 AgeRange = AgeRange,
                 ProfilePictures = true,
-                HasNeeds = HasNeeds,
-                WithoutIncomeProtection = WithoutIncomeProtection,
-                WithoutLifeInsurance = WithoutLifeInsurance,
-                WithoutLifeCritical = WithoutLifeCritical
-            })).ToList();
+                ProfilingOption = ProfilingOption.HasValue ? (ProfilingOptionEnum)ProfilingOption : null
+            };
+
+            Customers = (await CustomerService.GetFilteredCustomers(filterValues)).ToList();
 
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
