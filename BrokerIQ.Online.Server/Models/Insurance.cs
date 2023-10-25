@@ -115,6 +115,8 @@ namespace BrokerIQ.Online.Models
 
         public bool? HasWill { get; set; }
 
+        public bool AvailableToClient { get; set; }
+
         public virtual ICollection<InsuranceDocument> SupportingDocuments { get; set; }
     }
 }
