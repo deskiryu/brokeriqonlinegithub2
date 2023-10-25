@@ -249,6 +249,22 @@
                                 </div>
                             </div>
                         }
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Is Available to Client</label>
+                            <div class="col-sm-5">
+                                <MudCheckBox @bind-Checked="@AvailableToClient" />
+                            </div>
+                        </div>
+
+                        @if(Insurance.Id == 0){
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Send Notification</label>
+                            <div class="col-sm-5">
+                                <MudCheckBox @bind-Checked="@SendNotification" Disabled="@(!Insurance.AvailableToClient)"/>
+                            </div>
+                        </div>
+                        }
                         
                         @if (BrokerHasWhiteLabelAndIsInsuranceOnly && BrokerIQ.Dto.Extensions.Extensions.IsBusinessInsurance(Insurance.InsType))
                         {
@@ -415,8 +431,6 @@
         }
         else
         {
-            <MudCheckBox @bind-Checked="@SendNotification"/>
-            <label class="mr-1">Send Notification</label>
             <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" form="@FormId" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add insurance</MudButton>
         }
     </div>
