@@ -1,0 +1,16 @@
+<MudDialog>
+    <DialogContent>
+        <MudSelect T="Online.Models.BrokerStaff" Label="Employee" @bind-Value="@SelectedStaff" @ref="StaffSelectCtl"> @foreach
+            (Online.Models.BrokerStaff staff in AssignableStaff)
+            {
+                var current = staff;
+                <MudSelectItem Value="@current">@current.FullName
+                </MudSelectItem>
+            } </MudSelect>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton OnClick="AssignToEmployee" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")"
+                Disabled="@NoStaffSelected">Assign</MudButton>
+        </DialogActions>
+    </MudDialog>
