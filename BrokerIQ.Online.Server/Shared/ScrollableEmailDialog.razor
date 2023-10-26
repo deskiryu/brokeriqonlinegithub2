@@ -23,7 +23,10 @@
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Cancel">Cancel</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"  OnClick="Ok">Send</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"  OnClick="Ok">@OkText</MudButton>
+        @if(UseWhatsApp){
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"  OnClick="Invite">Add & Invite</MudButton>
+        }
     </DialogActions>
 </MudDialog>
 
@@ -39,10 +42,16 @@
 
     [Parameter] public bool Delete { get; set; }
 
+    [Parameter] public bool UseWhatsApp { get; set; }
+
+    private string OkText; 
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         Loading = false;
+
+        OkText = Delete? "Delete": "Add";
 
         if(EmailInvitation!=null && EmailInvitation.Count > 0)
         {
@@ -60,7 +69,6 @@
  
             }
         }
-
     }
 
 
@@ -68,7 +76,12 @@
 
     private void Ok()
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        MudDialog.Close(DialogResult.Ok("OK"));
+    }
+
+    private void Invite()
+    {
+        MudDialog.Close(DialogResult.Ok("Invite"));
     }
 
     private void Cancel()

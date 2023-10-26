@@ -34,7 +34,6 @@
                             </div>
                         </div>
 
-
                         @if (IsAdmin)
                         {
                             <div class="row mt-1">
@@ -94,51 +93,44 @@
                         </div>
                     </div>
                 </MudTabPanel>
-                <MudTabPanel Text="By Phone">
+                <MudTabPanel Text="By WhatsApp">
                     <div class="card-body">
+                        <MudAlert Severity="Severity.Info">Be aware that you need WhatsApp installed to use this functionality.</MudAlert>
                         <div class="card-body">
                             <div>
-                                <div>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <MudInput class="form-control ml-2 " @bind-Value="@CustomerName" placeholder="Enter customer name"/>
+                                        <MudInput class="form-control mt-2 mb-2 ml-2" @bind-Value="@TelephoneNumber" placeholder="Enter phone number"/>
 
-                                    <div class="col-sm-6">
-                                        <div class="row">
-                                            <MudInput class="form-control ml-2 " @bind-Value="@CustomerName" placeholder="Enter customer name">
-
-                                            </MudInput>
-                                            <MudInput class="form-control mt-2 mb-2 ml-2" @bind-Value="@TelephoneNumber" placeholder="Enter phone number">
-
-
-                                            </MudInput>
-
-                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 ml-2" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@SendTelephoneInvites">Make connection</MudButton>
-                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 ml-2" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@DeleteSelectedInviteListTelephone">Delete selected connections</MudButton>
-                                            @if (IsAdmin)
-                                            {
-                                                <div class="col-sm-6">
-                                                    <MudSelect T="int"
-                                                   Label="Choose Broker"
-                                                   Placeholder="None chosen"
-                                                   Disabled="false"
-                                                   @bind-Value="BrokerListIdTelephone"
-                                                   AdornmentColor="Color.Primary">
-
-                                                        <MudSelectItem Value="0">Select</MudSelectItem>
-                                                        @foreach (var broker in @Brokers)
-                                                        {
-                                                            <MudSelectItem Value=@broker.Id>@broker.Name</MudSelectItem>
-                                                        }
-                                                    </MudSelect>
-                                                </div>
-                                            }
-
-                                        </div>
-
-
+                                        <MudButton Variant="Variant.Filled" 
+                                            Color="Color.Primary" 
+                                            Class="mt-2 ml-2" 
+                                            Style="@($"color:{Colors.Shades.Black};width:max-content")" 
+                                            OnClick="@SendTelephoneInvites" >
+                                            Add to List
+                                        </MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2 ml-2" Style="@($"color:{Colors.Shades.Black};width:max-content")" OnClick="@DeleteSelectedInviteListTelephone">Delete selected connections</MudButton>
+                                        @if (IsAdmin)
+                                        {
+                                            <div class="col-sm-6">
+                                                <MudSelect T="int"
+                                                Label="Choose Broker"
+                                                Placeholder="None chosen"
+                                                Disabled="false"
+                                                @bind-Value="BrokerListIdTelephone"
+                                                AdornmentColor="Color.Primary">
+                                                    <MudSelectItem Value="0">Select</MudSelectItem>
+                                                    @foreach (var broker in @Brokers)
+                                                    {
+                                                        <MudSelectItem Value=@broker.Id>@broker.Name</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+                                            </div>
+                                        }
                                     </div>
-
                                 </div>
                             </div>
-
                         </div>
                         <div class="row mt-5">
                             <div class="col-lg-8 control_wrapper mb-5">
@@ -171,7 +163,7 @@
                             <HeaderContent>
                                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.TelephoneInvite, object>(x=>x.CustomerName)">Name</MudTableSortLabel></MudTh>
                                 <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.TelephoneInvite, object>(x=>x.TelephoneNumber)">Telephone</MudTableSortLabel></MudTh>
-                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.TelephoneInvite, object>(x=>x.CreatedDate)">Connection Date</MudTableSortLabel></MudTh>
+                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.TelephoneInvite, object>(x=>x.CreatedDate)">Created On</MudTableSortLabel></MudTh>
                                 <MudTh>Converted</MudTh>
                                 <MudTh>Notes</MudTh>
                                 <MudTh>Whats App</MudTh>
@@ -214,4 +206,3 @@ else
     <div class="alert @StatusClass">@Message</div>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to invite list</MudButton>
 }
-
