@@ -126,18 +126,24 @@ else
                 </div>                    
             </div>
             @if(this.api.Value.ShowProtection){
-            <div class="row">
-                <div class="col-lg-4">
-                    <MudSwitch T="bool" @bind-checked="@HasNeeds" Label="Client profiling *" Color="Color.Primary"/>
-                </div>
-                <div class="col-lg-4">
-                    <MudSwitch T="bool" @bind-checked="@WithoutIncomeProtection" Label="Without Income Protection" Color="Color.Primary"/>
-                </div>
-                <div class="col-lg-4">
-                    <MudSwitch T="bool" @bind-checked="@WithoutLifeInsurance" Label="Without Life Insurance" Color="Color.Primary" />
-                </div>
-                <div class="col-lg-4">
-                    <MudSwitch T="bool" @bind-checked="@WithoutLifeCritical" Label="Without Life & Critical Ilness" Color="Color.Primary" />
+            <div class="row mb-2">
+                <div class="col-6">
+                    <MudSelect T="int?"
+                                Label="Client Profiling *"
+                                Placeholder="Select"
+                                Clearable="true"
+                                @bind-Value="ProfilingOption"
+                                SelectedValuesChanged="@RefreshListFromFilterValues"
+                                AdornmentColor="Color.Primary">
+                                @{
+                                    var names = Enum.GetNames(typeof(ProfilingOptionEnum));
+                                    @for (int? i = 0; i <= names.Length; i++)
+                                        {
+                                            ProfilingOptionEnum looped = (ProfilingOptionEnum)i;
+                                            <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                        }
+                                }
+                    </MudSelect>
                 </div>
             </div>
             <div class="row">
@@ -147,7 +153,7 @@ else
             </div>
             }
 
-            @if (IsAdmin)
+            @if (User.IsAdmin)
             {   
                 <div class="row">
                     <div class="col-lg-8 control_wrapper">
@@ -175,16 +181,29 @@ else
 <div class="card">
     <div class="card-header">Clients</div>
         <div class="card-body">
-        <MudTable Items="@FilteredCustomers" Hover="true" SortLabel="Sort By" MultiSelection="true" Dense="true" @bind-SelectedItems="SelectedCustomers">
+        <MudTable Items="@FilteredCustomers" 
+                  Hover="true" 
+                  SortLabel="Sort By" 
+                  MultiSelection="true" 
+                  Dense="true" 
+                  @bind-SelectedItems="SelectedCustomers">
             <HeaderContent>
-                <MudTh></MudTh>
+                <MudTh Style="text-align:center">
+                    <MudIconButton Class="@(AssignVisibilityClass())" 
+                                      Icon="@Icons.Material.Filled.GroupAdd" 
+                                      Size="Size.Small"
+                                      Variant="Variant.Filled"
+                                      Color="Color.Primary" 
+                                      Style="@($"color:{Colors.Shades.Black}")"
+                                      OnClick="AssignToStaff"/>
+                </MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.DateOfBirth)">Date Of Birth</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.CustomerCategory.GetDisplayName())">Category</MudTableSortLabel></MudTh>
-            @if (IsAdmin)
+            @if (User.IsAdmin)
             {
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.AppVersion)">App</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>                           
@@ -193,7 +212,7 @@ else
                 <MudTh></MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd>
+                <MudTd Style="text-align:center">
                     @if (!string.IsNullOrWhiteSpace(context.PPAsImage))
                     {
                         @if(context.HasNeeds){
@@ -236,7 +255,7 @@ else
                         </ChildContent>
                     </MudMenu>
                 </MudTd>
-            @if (IsAdmin)
+            @if (User.IsAdmin)
             {
                 <MudTd DataLabel="App">@context.AppVersion</MudTd>
                 <MudTd DataLabel="WL"><MudCheckBox @bind-Checked="@context.IsWhiteLabel" Disabled="true"></MudCheckBox></MudTd>

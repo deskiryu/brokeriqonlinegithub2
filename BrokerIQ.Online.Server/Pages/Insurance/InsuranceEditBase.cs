@@ -110,9 +110,11 @@ namespace BrokerIQ.Online.Pages
         }
 
         public string SpinnerVisible { get; set; }
+
         public string LoadFileStatus { get; set; }
 
         public bool SendNotification { get; set; }
+
         public bool BrokerHasWhiteLabelAndIsInsuranceOnly { get; set; }
 
         public List<(int, string)> ConsumerInsurances { get; set; }
@@ -123,6 +125,19 @@ namespace BrokerIQ.Online.Pages
 
         protected string HoverClass;
 
+        public bool AvailableToClient
+        {
+            get
+            {
+                return Insurance.AvailableToClient;
+            }
+            set
+            {
+                Insurance.AvailableToClient = value;
+                SendNotification = Insurance.AvailableToClient;
+            }
+        }
+
         protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
 
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
@@ -131,7 +146,8 @@ namespace BrokerIQ.Online.Pages
         {
             Insurance = new Insurance
             {
-                SupportingDocuments = new List<InsuranceDocument>()
+                SupportingDocuments = new List<InsuranceDocument>(),
+                AvailableToClient = true
             };
             var insurancevalues = Enum.GetValues(typeof(InsuranceEnum)).Cast<InsuranceEnum>().ToList();
             var consumerInsuranceValues = insurancevalues.Where(x => (int)x < 1000).OrderBy(y => y.GetOrderValue()).ToList();
@@ -753,8 +769,6 @@ namespace BrokerIQ.Online.Pages
             return Task.CompletedTask;
         }
 
-
-
         private async Task<byte[]> GetFileBytes(IBrowserFile file)
         {
             var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -767,7 +781,5 @@ namespace BrokerIQ.Online.Pages
             File.Delete(path);
             return bytes;
         }
-
-
     }
 }

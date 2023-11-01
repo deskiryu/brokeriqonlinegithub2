@@ -127,10 +127,7 @@ namespace BrokerIQ.Online.Services
                 MortgagePromotionRecentPeriod = ts,
                 CustomerCategory = (CustomerCategoryEnum)filter.Category,
                 AgeRange = (AgeRangeEnum)filter.AgeRange,
-                HasNeeds = filter.HasNeeds,
-                WithoutIncomeProtection = filter.WithoutIncomeProtection,
-                WithoutLifeInsurance = filter.WithoutLifeInsurance,
-                WithoutLifeCritical = filter.WithoutLifeCritical,
+                ProfilingOption = filter.ProfilingOption
             };
 
             var url = this.customerUrl;
