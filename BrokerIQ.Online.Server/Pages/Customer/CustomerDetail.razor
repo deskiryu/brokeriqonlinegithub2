@@ -40,7 +40,6 @@ else if (!Saved)
                 </div>
             </div>
 
-
             <div class="card">
                 <div class="card-header">Details</div>
                 <div class="card-body">
@@ -287,6 +286,7 @@ else if (!Saved)
                                 <th>Type</th>
                                 <th>Insurer</th>
                                 <th>Expiry</th>
+                                <th Style="text-align:center">Available to Client</th>
                             @if (IsAdmin)
                             {
                                 <th>Broker</th>
@@ -309,6 +309,12 @@ else if (!Saved)
                                                 <td>@insurance.InsType.GetDisplayName()</td>
                                                 <td>@insurance.Name</td>
                                                 <td>@insurance.ExpiryDate.ToBiqDateString()</td>
+                                                <td Style="text-align:center">@if (insurance.AvailableToClient){
+                                                    <span>Yes</span>
+                                                    }
+                                                    else {
+                                                        <b>No</b>
+                                                    }</td>
                                     @if (IsAdmin)
                                     {
                                                         <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
