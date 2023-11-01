@@ -89,6 +89,8 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsBroker { get; set; }
 
+        public bool IsBrokerStaff { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
@@ -117,6 +119,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     IsBroker = user.IsBroker;
                     BrokerId = user.MasterBrokerId;
+                    IsBrokerStaff = user.IsBrokerStaff;
                 }
                 else
                 {
@@ -395,9 +398,24 @@ namespace BrokerIQ.Online.Pages
 
             if (!(await CheckIsAdmin()))
             {
-                await RefreshVideosWithDialogMessage(true, "Only admin can vet");
+                if (IsBrokerStaff)
+                {
+                    await RefreshVideosWithDialogMessage(true, "Only the main broker can vet the video");
+                }
+                else
+                {
+                    await RefreshVideosWithDialogMessage(true, "Only admin can vet");
+                }
+
                 return;
             }
+
+            if (IsMinorAdmin)
+            {
+                await RefreshVideosWithDialogMessage(true, "Only brokeriq admin can vet the video");
+                return;
+            }
+
 
             var dialogParams = new DialogParameters();
             var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Name == name);

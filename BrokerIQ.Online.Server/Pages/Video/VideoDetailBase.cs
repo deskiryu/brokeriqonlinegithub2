@@ -1,19 +1,19 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Services.Interface;
+using MudBlazor;
+using Microsoft.AspNetCore.WebUtilities;
+using System.IO;
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Server.Shared;
+
 namespace BrokerIQ.Online.Server.Pages.Video
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Components;
-    using BrokerIQ.Online.Models;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Online.Services.Interface;
-    using MudBlazor;
-    using Microsoft.AspNetCore.WebUtilities;
-    using System.IO;
-    using BrokerIQ.Online.Server.Shared;
-
     public class VideoDetailBase : ComponentBase
     {
         [Inject]
@@ -21,6 +21,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
+
         [Inject]
         protected INotificationService NotificationService { get; set; }
 
@@ -39,14 +40,13 @@ namespace BrokerIQ.Online.Server.Pages.Video
         [Inject]
         public IBrokerService BrokerService { get; set; }
 
+        protected Models.Video Video { get; set; }
 
-        protected Video Video { get; set; }
+        protected List<Online.Models.Customer> Customers { get; set; }
 
-        protected List<Customer> Customers { get; set; }
+        protected HashSet<Online.Models.Customer> SelectedCustomers { get; set; }
 
-        protected HashSet<Customer> SelectedCustomers { get; set; }
-
-        public List<Broker> Brokers { get; set; }
+        public List<Online.Models.Broker> Brokers { get; set; }
 
         public int BrokerId { get; set; }
 
@@ -64,53 +64,10 @@ namespace BrokerIQ.Online.Server.Pages.Video
         public int CustomerCategory { get; set; }
         public int AgeRange { get; set; }
 
-        private bool hasNeeds;
-        public bool HasNeeds
-        {
-            get { return hasNeeds; }
-            set
-            {
-                hasNeeds = value;
-                RecentFilterSelect();
-            }
-        }
-
-        private bool withoutIncomeProtection;
-        public bool WithoutIncomeProtection
-        {
-            get { return withoutIncomeProtection; }
-            set
-            {
-                withoutIncomeProtection = value;
-                RecentFilterSelect();
-            }
-        }
-
-        private bool withoutLifeInsurance;
-        public bool WithoutLifeInsurance
-        {
-            get { return withoutLifeInsurance; }
-            set
-            {
-                withoutLifeInsurance = value;
-                RecentFilterSelect();
-            }
-        }
-
-        private bool withoutLifeAndCritical;
-        public bool WithoutLifeCritical
-        {
-            get { return withoutLifeAndCritical; }
-            set
-            {
-                withoutLifeAndCritical = value;
-                RecentFilterSelect();
-            }
-        }
-
+        protected int? ProfilingOption { get; set; }
 
         //filter
-        protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        protected List<Online.Models.Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         protected override async Task OnInitializedAsync()
         {
@@ -125,7 +82,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
             }
             else
             {
-                Brokers = new List<Broker>();
+                Brokers = new List<Online.Models.Broker>();
                 BrokerId = user.MasterBrokerId;
             }
 
@@ -179,7 +136,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
             if (Brokers != null && Brokers.Any())
             {
                 // In real life use an asynchronous function for fetching data from an api.
-                IEnumerable<Broker> filtered = null;
+                IEnumerable<Online.Models.Broker> filtered = null;
                 if (string.IsNullOrEmpty(value))
                 {
                     filtered = Brokers;
@@ -294,10 +251,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 Category = CustomerCategory,
                 AgeRange = AgeRange,
                 ProfilePictures = false,
-                HasNeeds = HasNeeds,
-                WithoutIncomeProtection = WithoutIncomeProtection,
-                WithoutLifeInsurance = WithoutLifeInsurance,
-                WithoutLifeCritical = WithoutLifeCritical
+                ProfilingOption = (ProfilingOptionEnum)ProfilingOption
             })).ToList();
 
             StateHasChanged();

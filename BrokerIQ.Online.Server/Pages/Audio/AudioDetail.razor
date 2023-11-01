@@ -109,18 +109,24 @@ else
             </div>
 
             @if(Options.Value.ShowProtection){
-            <div class="row">
-                <div class="col-lg-4">
-                    <MudSwitch T="bool" @bind-checked="@HasNeeds" Label="Client profiling *" Color="Color.Primary"/>
-                </div>
-                <div class="col-lg-4">
-                    <MudSwitch T="bool" @bind-checked="@WithoutIncomeProtection" Label="Without Income Protection" Color="Color.Primary"/>
-                </div>
-                <div class="col-lg-4">
-                    <MudSwitch T="bool" @bind-checked="@WithoutLifeInsurance" Label="Without Life Insurance" Color="Color.Primary" />
-                </div>
-                <div class="col-lg-4">
-                    <MudSwitch T="bool" @bind-checked="@WithoutLifeCritical" Label="Without Life & Critical Ilness" Color="Color.Primary" />
+            <div class="row mb-2">
+                <div class="col-6">
+                    <MudSelect T="int?"
+                                Label="Client Profiling *"
+                                Placeholder="Select"
+                                Clearable="true"
+                                @bind-Value="ProfilingOption"
+                                SelectedValuesChanged="@RecentFilterSelect"
+                                AdornmentColor="Color.Primary">
+                                @{
+                                    var names = Enum.GetNames(typeof(ProfilingOptionEnum));
+                                    @for (int? i = 0; i <= names.Length; i++)
+                                        {
+                                            ProfilingOptionEnum looped = (ProfilingOptionEnum)i;
+                                            <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                        }
+                                }
+                    </MudSelect>
                 </div>
             </div>
             <div class="row">

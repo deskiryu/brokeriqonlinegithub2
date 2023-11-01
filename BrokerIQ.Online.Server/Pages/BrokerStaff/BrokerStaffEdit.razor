@@ -109,11 +109,12 @@
                                 Delete Employee
                             </MudButton>               
                             }
-
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="mr-5" @onclick="ResendEmailBrokerStaff">
-                                Resend Verify Email
-                            </MudButton>
-
+                            @if (IsAdmin)
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="mr-5" @onclick="ResendEmailBrokerStaff">
+                                    Resend Verify Email
+                                </MudButton>
+                            }
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-outline-primary edit-outline-btn mr-1" OnClick="@NavigateToOverview">Cancel</MudButton>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Update employee</MudButton>
                         </div>
