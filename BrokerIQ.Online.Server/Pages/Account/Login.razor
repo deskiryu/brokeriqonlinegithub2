@@ -112,12 +112,12 @@
             }
             else
             {
-                
                 var user = await AccountService.GetUser();
                 MyLoggedInAppState.IsAdmin = user.IsAdmin;
                 MyLoggedInAppState.IsBroker = user.IsBroker;
                 MyLoggedInAppState.IsMinorAdmin = user.IsMinorAdmin;
                 MyLoggedInAppState.LoggedIn = response.LoggedIn;
+                MyLoggedInAppState.FullName = $"{response.FirstName} {response.LastName}";
 
                 try
                 {
