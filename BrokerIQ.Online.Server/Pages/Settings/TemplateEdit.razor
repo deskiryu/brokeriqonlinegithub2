@@ -17,86 +17,6 @@
 <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
     <MudTabPanel Text="Templates">
         <DefinedMessageTable Broker="@Broker" User="@User"/>
-        @* <p><b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.</p>
-        <p><b>INSERT_BROKER_NAME</b> is replaced in message by your brokerage name.</p>
-        <p><b>INSERT_DATE</b> is be replaced by a date selected by you on the client chat page.</p>
-        <MudTable Items="@MessageElements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" SortLabel="Sort By"
-            CommitEditTooltip="Commit Edit" RowEditPreview="BackupMessage" CanCancelEdit="@canCancelEdit"
-            RowEditCancel="ResetMessage" RowEditCommit="CommitMessage">
-            <ColGroup>
-                <col style="width:250px;" />
-                <col />
-                <col style="width:250px;" />
-            </ColGroup>
-            <HeaderContent>
-                <MudTh>Type</MudTh>
-                <MudTh>Template</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Type">@(context.Prompt)</MudTd>
-                    <MudTd DataLabel="Name" style="white-space: pre-line">
-                        <MudText>@context.Message</MudText>
-                        <div>
-                            @if (!String.IsNullOrWhiteSpace(@context.FileName))
-                        {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                                Style="@($"color:{Colors.Shades.Black};")"
-                                OnClick="f => PreviewAttachment(context.FileContent)" Size="Size.Small">
-                                <i class="fa fa-file-pdf"> &nbsp;@context.FileName</i>
-                            </MudButton>
-                        }
-                    </div>
-                </MudTd>
-            </RowTemplate>
-            <RowEditingTemplate>
-                <MudTd DataLabel="Type">@context.Prompt</MudTd>
-                <MudTd DataLabel="Name">
-                    <MudTextField Lines="5" style="white-space: pre-line" @bind-Value="@context.Message" Required />
-                     @if (!IsCurrentFileToBeRemoved)
-                    {
-                        var toggleHiddenClass = SelectedFiles.Any() ? "card d-none" : "card";
-
-                        if (String.IsNullOrWhiteSpace(@context.FileName))
-                        {
-                            <div class="@toggleHiddenClass @HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
-                                    <MudPaper class="drag-drop-zone">
-                                        <InputFile OnChange="LoadFiles" Class="drag-drop-input" accept="application/pdf" />
-                                        <MudText Typo="Typo.subtitle1">Click or drag pdf file to attach to message</MudText>
-                                    </MudPaper>
-                            </div>
-
-                            @if (SelectedFiles.Any())
-                            {
-                                var fileName = SelectedFiles[0].Name;
-                                <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
-                                    Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteDefinedDocument())"
-                                    class="btn btn-link">Remove @fileName</MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                    Style="@($"color:{Colors.Shades.Black};")"
-                                    OnClick="f => PreviewAttachment(SelectedFiles.FirstOrDefault())">
-                                    <i class="fa fa-eye" />
-                                </MudButton>
-                            }
-                        }
-                        else
-                        {
-                            <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
-                                Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => RemoveCurrentFile())"
-                                class="btn btn-link">Remove @context.FileName</MudButton>
-
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
-                                Style="@($"color:{Colors.Shades.Black};")"
-                                OnClick="f => PreviewAttachment(context.FileContent)">
-                                <i class="fa fa-eye" />
-                            </MudButton>
-                        }
-                    }
-                </MudTd>
-            </RowEditingTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable> *@
     </MudTabPanel>
     <MudTabPanel Text="Notifications">
         @if (IsBrokerStaff)
@@ -319,8 +239,6 @@
 
 </MudTabs>
 
-
-
 @code {
     private List<string> editEvents = new();
     private bool dense = false;
@@ -330,7 +248,6 @@
     private MessageElement elementBeforeEdit;
 
     public string DragEnterStyle { get; set; }
-
 
     private void BackupMessage(object element)
     {
@@ -354,7 +271,7 @@
     {
         await Extensions.PreviewFile(js, new MemoryStream(attachment));
     }
-
+    
     protected async Task PreviewAttachment(IBrowserFile uploadedFile)
     {
         if (uploadedFile == null) return;
