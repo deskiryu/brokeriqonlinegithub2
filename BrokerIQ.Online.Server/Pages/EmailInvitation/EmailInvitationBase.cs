@@ -260,7 +260,6 @@ namespace BrokerIQ.Online.Pages
             EmailTargets.Add(Email);
         }
 
-
         public async Task DeleteSelectedInviteList()
         {
             var dialogParams = new DialogParameters();
@@ -308,7 +307,6 @@ namespace BrokerIQ.Online.Pages
                 Saved = true;
             }
         }
-
 
         public async Task ShowSecondEmailList()
         {
@@ -399,7 +397,6 @@ namespace BrokerIQ.Online.Pages
         public async Task SendInvites()
         {
             var dialogParams = new DialogParameters();
-
 
             bool validEmails = true;
             foreach (var item in EmailTargets)
@@ -513,7 +510,6 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-
         public async Task SendTelephoneInvites()
         {
             var dialogParams = new DialogParameters();
@@ -522,7 +518,7 @@ namespace BrokerIQ.Online.Pages
             bool validTelephones = true;
             foreach (var item in NameTelephoneTargets)
             {
-                validTelephones &= Regex.IsMatch(item.Item2,
+                validTelephones &= !string.IsNullOrWhiteSpace(item.Item2) && Regex.IsMatch(item.Item2,
                                     TelephoneRegex,
                                     RegexOptions.IgnoreCase,
                                     TimeSpan.FromMilliseconds(250));
@@ -559,9 +555,10 @@ namespace BrokerIQ.Online.Pages
                 }
 
                 dialogParams.Add("Customers", NameTelephoneTargets.Select(x => x.Item1).ToList());
-                dialogParams.Add("Heading", "The invitation connection with your brokerage will be made to ");
+                dialogParams.Add("Heading", "Potential customer contact details will be added for");
                 dialogParams.Add("Delete", false);
-                var result = await DialogService.Show<ScrollableEmailDialog>("Make Connections", dialogParams).Result;
+                dialogParams.Add("UseWhatsApp", true);
+                var result = await DialogService.Show<ScrollableEmailDialog>("Add Contact", dialogParams).Result;
 
                 if (!result.Cancelled)
                 {
@@ -579,6 +576,12 @@ namespace BrokerIQ.Online.Pages
                     {
                         CustomerName = string.Empty;
                         TelephoneNumber = string.Empty;
+
+                        if (result.Data.ToString().Equals("Invite"))
+                        {
+                            await WhatsApp(TelephoneNumber);
+                        }
+
                         await RefreshInvitationsWithDialogMessage(succeeded, "Telephone connection made successfully");
                     }
                     else
@@ -709,8 +712,6 @@ namespace BrokerIQ.Online.Pages
                 await RefreshInvitationsWithDialogMessage(succeeded, "The invite connection did not delete, check your invite list");
             }
         }
-
-
 
         protected void NavigateToOverview()
         {
