@@ -74,6 +74,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         protected IJSRuntime js { get; set; }
 
+
+        protected User User { get; set; }
+
         protected const int DefaultMonthsToShow = -1;
 
         private const string DEFAULT_UPLOAD_CLASS = "col-sm-6 mt-1";
@@ -116,8 +119,6 @@ namespace BrokerIQ.Online.Pages
 
         [Parameter]
         public string CustomerId { get; set; }
-
-        public bool IsAdmin { get; set; }
 
         protected string Message = string.Empty;
 
@@ -189,8 +190,8 @@ namespace BrokerIQ.Online.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var user = await AccountService.GetUser();
-            IsAdmin = user.IsAdmin;
+            User = await AccountService.GetUser();
+
             ClearUnReadChat();
 
             CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
@@ -221,9 +222,9 @@ namespace BrokerIQ.Online.Pages
 
                 BrokerHasWhiteLabel = false;
                 BrokerHasWhiteLabelAndIsInsuranceOnly = false;
-                if (!IsAdmin)
+                if (!User.IsAdmin)
                 {
-                    var broker = await BrokerService.GetBroker(user.MasterBrokerId, true);
+                    var broker = await BrokerService.GetBroker(User.MasterBrokerId, true);
                     var today = DateTime.UtcNow;
                     BrokerName = broker.Name;
                     BrokerHasWhiteLabel = broker.BrokerIdentifier != null && broker.BrokerIdentifier.IdentifierFound;
@@ -244,7 +245,7 @@ namespace BrokerIQ.Online.Pages
                 Saved = true;
             }
 
-            if (IsAdmin)
+            if (User.IsAdmin)
             {
                 try
                 {
@@ -258,7 +259,7 @@ namespace BrokerIQ.Online.Pages
                 }
             }
 
-            if (!IsAdmin)
+            if (!User.IsAdmin)
             {
                 UpdateChat(firstTime: true);
 
@@ -1021,10 +1022,13 @@ namespace BrokerIQ.Online.Pages
                 if (!string.IsNullOrWhiteSpace(template.Message))
                 {
                     // display broker defined message
-                    template.Message = template.Message.Replace("INSERT_CLIENT_NAME", Customer.FirstName).Replace("INSERT_BROKER_NAME", BrokerName);
+                    template.Message = template.Message
+                        .Replace("INSERT_CLIENT_NAME", Customer.FirstName)
+                        .Replace("INSERT_PERSONAL_NAME", User.FirstName)
+                        .Replace("INSERT_BROKER_NAME", BrokerName);
                 }
 
-                if (template.WelcomeChat==false)
+                if (template.WelcomeChat == false)
                 {
                     MergedMessages.Add(template);
                 }
