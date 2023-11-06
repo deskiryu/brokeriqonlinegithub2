@@ -29,11 +29,15 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IOccupationService OccupationService { get; set; }
+
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
         public IOptions<ReviewItAPIDetails> api { get; set; }
+
+        [Inject]
+        public IBrokerService BrokerService { get; set; }
 
         public Customer Customer { get; set; }
 
@@ -46,7 +50,6 @@ namespace BrokerIQ.Online.Pages
         public int SelectedEmploymentStatus { get { return (int)Customer.Employment; } set { Customer.Employment = (EmploymentEnum)value; } }
 
         public int SelectedResidentialStatus { get { return (int)Customer.ResidentialStatus; } set { Customer.ResidentialStatus = (ResidentialStatusEnum)value; } }
-
 
         protected string Message = string.Empty;
 
@@ -66,7 +69,7 @@ namespace BrokerIQ.Online.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
+            CustomerCategoriesByRelevance = Extensions.GetAllCustomerCategories();
 
             id = Int32.Parse(CustomerId);
 
@@ -75,6 +78,13 @@ namespace BrokerIQ.Online.Pages
                 Customer = await CustomerService.GetCustomer(id);
 
                 SelectedOccupation = await OccupationService.GetById(Customer.OccupationId);
+
+                var broker = await BrokerService.GetBroker(Customer.ChosenBrokerId);
+
+                if (broker.BrokerIdentifier.InsuranceOnly)
+                {
+                    CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                }
             }
         }
 

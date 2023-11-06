@@ -70,21 +70,18 @@ else
                 
                 <div class="col-lg-4">
                     <MudSelect T="int"
-                           Label="Mortgage Category"
+                           Label="Customer Category"
                            Placeholder="Select"
                            Clearable="true"
                            @bind-Value="CustomerCategory"
                            SelectedValuesChanged="@RecentFilterSelect"
                            AdornmentColor="Color.Primary">
-                        @if (true)
-                        {
-                            var names = Enum.GetNames(typeof(CustomerCategoryEnum));
-                            @for (int i = 0; i <= names.Length; i++)
+                            @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
                             {
-                                CustomerCategoryEnum looped = (CustomerCategoryEnum)i;
-                                <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
+                                int id = (int)looped;
+                                <MudSelectItem Value="@id">@looped.GetDisplayName()</MudSelectItem>
                             }
-                        }
                     </MudSelect>
                 </div>
                 <div class="col-lg-4">

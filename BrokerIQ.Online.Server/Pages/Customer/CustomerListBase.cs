@@ -77,7 +77,7 @@ namespace BrokerIQ.Online.Pages
                 await GetCustomers();
                 User = await AccountService.GetUser();
 
-                CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
+                CustomerCategoriesByRelevance = Extensions.GetAllCustomerCategories();
 
                 if (User.IsAdmin)
                 {
@@ -87,6 +87,12 @@ namespace BrokerIQ.Online.Pages
                 {
                     Brokers = new List<Broker>();
                     BrokerId = User.MasterBrokerId;
+                    var broker = await BrokerService.GetBroker(User.MasterBrokerId);
+
+                    if (broker.BrokerIdentifier.InsuranceOnly)
+                    {
+                        CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                    }
                 }
             }
             catch
