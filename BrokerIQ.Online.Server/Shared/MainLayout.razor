@@ -1,26 +1,31 @@
 ﻿@inherits LayoutComponentBase
+@using BrokerIQ.Online.Server.Helper
+
 @inject IDialogService DialogService
-@*<div class="page">*@
-    <div class="sidebar">
-        <NavMenu />
+@inject LoggedInAppState AppState
+
+<div class="sidebar">
+    <NavMenu />
+</div>
+
+<div class="main">
+    <div class="top-row px-4" style="background-color:black">
+        <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Class="mr-2" Variant="Variant.Outlined" @onclick="OpenDialog" >About</MudButton>
+        @if (AppState.LoggedIn)
+        {
+            <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")" >@AppState.FullName</MudText>
+        }
     </div>
 
-    <div class="main">
-        <div class="top-row px-4" style="background-color:black">
-            <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Variant="Variant.Text" @onclick="OpenDialog" class="float-right" >About</MudButton>
-        </div>
-
-        <div class="content px-4">
-            <Alert />
-            @Body
-        </div>
+    <div class="content px-4">
+        <Alert />
+        @Body
     </div>
-
+</div>
 
 <MudDialogProvider />
 <MudSnackbarProvider/>
 <MudThemeProvider Theme="MyCustomTheme2" />
-
 
 @code{
     MudTheme MyCustomTheme2 = new MudTheme()
@@ -45,7 +50,17 @@
         }
     };
 
-    private void OpenDialog()
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += AppStateChangeHandler;
+    }
+
+    private void AppStateChangeHandler()
+    {
+        StateHasChanged();
+    }
+
+        private void OpenDialog()
     {
         DialogService.Show<VersionDialog>("About BrokerIQ");
     }

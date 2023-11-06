@@ -211,7 +211,7 @@ else if (!Saved)
 
                             </div>
 
-                        @if (IsAdmin)
+                        @if (User.IsAdmin)
                         {
                             var broker = @Brokers.FirstOrDefault(x => x.Id == Customer.ChosenBrokerId);
                             var name = broker?.Name ?? "None chosen";
@@ -249,7 +249,7 @@ else if (!Saved)
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/0/{Customer.Id}")" class="ml-lg-2 mt-1">
                                 Add a Menu Plan
                             </MudButton>
-                            @if (IsAdmin)
+                            @if (User.IsAdmin)
                             {
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="DeleteCustomer">
                                         Delete Client
@@ -287,7 +287,7 @@ else if (!Saved)
                                 <th>Insurer</th>
                                 <th>Expiry</th>
                                 <th Style="text-align:center">Available to Client</th>
-                            @if (IsAdmin)
+                            @if (User.IsAdmin)
                             {
                                 <th>Broker</th>
                             }
@@ -315,7 +315,7 @@ else if (!Saved)
                                                     else {
                                                         <b>No</b>
                                                     }</td>
-                                    @if (IsAdmin)
+                                    @if (User.IsAdmin)
                                     {
                                                         <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
                                     }
@@ -365,7 +365,7 @@ else if (!Saved)
                                         <th>Type</th>
                                         <th>Rate</th>
                                         <th>Promotion End</th>
-                                @if (IsAdmin)
+                                @if (User.IsAdmin)
                                 {
                                                 <th>Broker</th>
                                 }
@@ -391,7 +391,7 @@ else if (!Saved)
                                         {
                                             <td>@mortgage.PromotionalEndDate.Value.ToBiqDateString()</td>
                                         }
-                                        @if (IsAdmin)
+                                        @if (User.IsAdmin)
                                         {
                                             <td>@Brokers.First(x => x.Id == mortgage.BrokerId)?.Name</td>
                                         }
@@ -610,7 +610,7 @@ else if (!Saved)
                                             <th>Type</th>
                                             <th>Insurer</th>
                                             <th>Expiry</th>
-                                    @if (IsAdmin)
+                                    @if (User.IsAdmin)
                                     {
                                                     <th>Broker</th>
                                     }
@@ -626,7 +626,7 @@ else if (!Saved)
                                                             <td>@insurance.InsType.GetDisplayName()</td>
                                                             <td>@insurance.Name</td>
                                                             <td>@insurance.ExpiryDate.ToBiqDateString()</td>
-                                            @if (IsAdmin)
+                                            @if (User.IsAdmin)
                                             {
                                                                     <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
                                             }
@@ -674,7 +674,7 @@ else if (!Saved)
                                         <MudCardHeader>
                                             <CardHeaderContent>
                                                 <MudText Typo="Typo.h6">@note.DateTaken.ToBiqDateString()</MudText>
-                                        @if (IsAdmin)
+                                        @if (User.IsAdmin)
                                         {
                                             @if (note.BrokerId > 0)
                                             {
@@ -701,7 +701,7 @@ else if (!Saved)
                 </MudTabPanel>
                 <MudTabPanel Text="Chat" BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@ChatBadgeDot' OnClick="@(f => ClearUnReadChat())">
                     <div @onclick="this.ClearUnReadChat">
-                        @if (!IsAdmin)
+                        @if (!User.IsAdmin)
                         {
                             <div class="col-sm-6 control_wrapper mb-5">
                                 <MudSelect T="string" @ref="TemplateSelect" 
@@ -802,7 +802,7 @@ else if (!Saved)
                                 <div class="card-body">
                                     @if (Chat != null && Chat.Messages.Any())
                                     {                    
-                                        @if (IsAdmin)
+                                        @if (User.IsAdmin)
                                         {
                                             @if (Chat.BrokerId > 0)
                                             {
