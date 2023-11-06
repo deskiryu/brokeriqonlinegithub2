@@ -194,7 +194,7 @@ namespace BrokerIQ.Online.Pages
 
             ClearUnReadChat();
 
-            CustomerCategoriesByRelevance = Extensions.BuildCustomerCategoriesByRelevance();
+            CustomerCategoriesByRelevance = Extensions.GetAllCustomerCategories();
 
             try
             {
@@ -231,7 +231,13 @@ namespace BrokerIQ.Online.Pages
                     BrokerHasWhiteLabelAndIsInsuranceOnly = BrokerHasWhiteLabel && broker.BrokerIdentifier != null && broker.BrokerIdentifier.InsuranceOnly;
                     BrokerHasActiveInsuranceQuoteSubscription = broker.Subscriptions.Any(s => s.SubscriptionServiceId == SubscriptionServiceEnum.InsuranceQuote &&
                             s.StartDate <= today && today <= s.EndDate);
+
                     await PopulateBrokerDefinedMessages();
+
+                    if (broker.BrokerIdentifier.InsuranceOnly)
+                    {
+                        CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                    }
                 }
                 else
                 {

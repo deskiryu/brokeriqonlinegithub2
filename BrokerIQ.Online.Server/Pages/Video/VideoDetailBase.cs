@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Services.Interface;
 using MudBlazor;
 using Microsoft.AspNetCore.WebUtilities;
@@ -66,6 +67,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
         protected int? ProfilingOption { get; set; }
 
+        public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
+
         //filter
         protected List<Online.Models.Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
@@ -73,6 +76,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
         {
             var query = new Uri(NavigationManager.Uri).Query;
             selectedNotification = "A new video has arrived";
+
+            CustomerCategoriesByRelevance = Extensions.Extensions.GetAllCustomerCategories();
 
             var user = await AccountService.GetUser();
             IsAdmin = user.IsAdmin;
@@ -84,8 +89,14 @@ namespace BrokerIQ.Online.Server.Pages.Video
             {
                 Brokers = new List<Online.Models.Broker>();
                 BrokerId = user.MasterBrokerId;
-            }
 
+                var broker = await BrokerService.GetBroker(user.MasterBrokerId);
+
+                if (broker.BrokerIdentifier.InsuranceOnly)
+                {
+                    CustomerCategoriesByRelevance = Extensions.Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                }
+            }
 
             if (QueryHelpers.ParseQuery(query).TryGetValue("Url", out var value))
             {
@@ -251,7 +262,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 Category = CustomerCategory,
                 AgeRange = AgeRange,
                 ProfilePictures = false,
-                ProfilingOption = (ProfilingOptionEnum)ProfilingOption
+                ProfilingOption = ProfilingOption.HasValue ? (ProfilingOptionEnum)ProfilingOption : null
             })).ToList();
 
             StateHasChanged();
