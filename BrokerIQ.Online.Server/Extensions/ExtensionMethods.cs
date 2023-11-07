@@ -1,16 +1,14 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using BrokerIQ.Dto.Enum;
+using Microsoft.JSInterop;
 
 namespace BrokerIQ.Online.Server.Extensions
 {
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading.Tasks;
-    using BrokerIQ.Dto.Enum;
-    using Microsoft.JSInterop;
-
     public static class Extensions
     {
         public async static Task SaveAs(IJSRuntime js, string filename, byte[] data)
@@ -90,18 +88,18 @@ namespace BrokerIQ.Online.Server.Extensions
                 location);
         }
 
-        public static CustomerCategoryEnum[] BuildCustomerCategoriesByRelevance()
+        public static CustomerCategoryEnum[] GetAllCustomerCategories()
         {
-            var result = new CustomerCategoryEnum[]{
-                CustomerCategoryEnum.None,
-                CustomerCategoryEnum.NewProspect
-            };
+            return GetFilteredCustomerCategories(new int[] { 0, 1, 2 });
+        }
 
-            var remainingValues = Enum.GetValues(typeof(CustomerCategoryEnum))
-                .Cast<CustomerCategoryEnum>()
-                .Except(result);
-
-            return result.Concat(remainingValues).ToArray();
+        public static CustomerCategoryEnum[] GetFilteredCustomerCategories(int[] toInclude)
+        {
+            return Enum.GetValues(typeof(CustomerCategoryEnum))
+               .Cast<CustomerCategoryEnum>()
+               .Where(e => toInclude.Contains(e.GetOrderValue()))
+               .OrderBy(e => e.GetOrderValue())
+               .ToArray();
         }
 
         public static int GetOrderValue(this Enum enumValue)

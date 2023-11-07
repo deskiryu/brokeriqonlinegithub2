@@ -66,6 +66,8 @@ namespace BrokerIQ.Online.Server.Pages.Audio
 
         protected int? ProfilingOption { get; set; }
 
+        public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
+
         //filter
         protected List<Online.Models.Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
@@ -73,6 +75,8 @@ namespace BrokerIQ.Online.Server.Pages.Audio
         {
             var query = new Uri(NavigationManager.Uri).Query;
             selectedNotification = "A new voice recording has arrived";
+
+            CustomerCategoriesByRelevance = Extensions.Extensions.GetAllCustomerCategories();
 
             if (QueryHelpers.ParseQuery(query).TryGetValue("Url", out var value))
             {
@@ -100,6 +104,13 @@ namespace BrokerIQ.Online.Server.Pages.Audio
             {
                 Brokers = new List<Online.Models.Broker>();
                 BrokerId = user.MasterBrokerId;
+
+                var broker = await BrokerService.GetBroker(user.MasterBrokerId);
+
+                if (broker.BrokerIdentifier.InsuranceOnly)
+                {
+                    CustomerCategoriesByRelevance = Extensions.Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                }
             }
 
             try
@@ -219,7 +230,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
                 Category = CustomerCategory,
                 AgeRange = AgeRange,
                 ProfilePictures = false,
-                ProfilingOption = (ProfilingOptionEnum)ProfilingOption
+                ProfilingOption = ProfilingOption.HasValue ? (ProfilingOptionEnum)ProfilingOption : null
             })).ToList();
 
             StateHasChanged();
