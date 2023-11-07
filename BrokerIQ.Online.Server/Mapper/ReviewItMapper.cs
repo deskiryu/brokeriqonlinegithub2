@@ -605,6 +605,8 @@ namespace BrokerIQ.Online.Mapper
             .ForMember(d => d.IsCustomer, action => action.MapFrom(s => s.IsCustomer))
             .ForMember(d => d.IsBrokerStaff, action => action.MapFrom(s => s.IsBrokerStaff))
             .ForMember(d => d.IsMinorAdmin, action => action.MapFrom(s => s.IsMinorAdmin))
+            .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
+            .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName))
             .ForMember(d => d.MasterBrokerId, opt => opt.MapFrom((src, dest) =>
             {
                 var masterBrokerId = 0;

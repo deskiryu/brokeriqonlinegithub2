@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BrokerIQ.Online.Server.Helper
 {
@@ -26,6 +24,8 @@ namespace BrokerIQ.Online.Server.Helper
         public bool IsBroker { get; set; }
 
         public bool IsMinorAdmin { get; set; }
+
+        public string FullName { get; set; }
 
         private void NotifyStateChanged() => OnChange?.Invoke();
     }
