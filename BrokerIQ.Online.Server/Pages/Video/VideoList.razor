@@ -108,12 +108,11 @@
                     </MudTh>
                 }
 
-                @if (IsAdmin || IsMinorAdmin || IsBroker)
-                {
+
                     <MudTh class="">
                         Vetted
                     </MudTh>
-                }
+
 
 
                 <MudTh class="">Welcome</MudTh> 
@@ -184,12 +183,11 @@
                 {
                     <MudTd DataLabel="Broker">@context.Broker</MudTd>
                 }
-                @if (IsAdmin || IsMinorAdmin || IsBroker)
-                {
+
                     <MudTd>
                         <MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Name)" />
                     </MudTd>
-                }
+
                 <MudTd DataLabel="Welcome">
                     <MudCheckBox Checked="@context.WelcomeVideo" @onclick="async f => await SetWelcomeVideo(context.Name)" />
                 </MudTd>
