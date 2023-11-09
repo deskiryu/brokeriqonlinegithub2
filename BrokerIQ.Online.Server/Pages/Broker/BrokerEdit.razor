@@ -354,6 +354,22 @@
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.FirebaseClient)" />
                                     </div>
                                 </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Invitation Message </label>
+                                    <div class="col-sm-10 ">
+                                        <MudTextField Lines="5" style="white-space: pre-line; background-color: white;" @bind-Value="@BrokerIdentifier.InvitationMessage" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">HeaderColumnBGColour </label>
+                                    <div class="col-sm-10 ">
+                                        <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.HeaderColumnBGColour" ></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.HeaderColumnBGColour)" />
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                         <div>
