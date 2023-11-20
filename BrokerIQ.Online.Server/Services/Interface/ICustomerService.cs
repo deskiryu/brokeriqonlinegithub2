@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Models;
 
 namespace BrokerIQ.Online.Services.Interface
 {
-    using BrokerIQ.Dto.Enum;
-    using BrokerIQ.Online.Server.Models;
-    using Dto.Models;
-    using Models;
-
     public interface ICustomerService
     {
         Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures = false);
@@ -29,5 +26,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory);
 
         Task<bool> SetCustomerNeeds(int customerid, bool hasNeeds);
+
+        Task<Customer> GetConnection(int id);
     }
 }

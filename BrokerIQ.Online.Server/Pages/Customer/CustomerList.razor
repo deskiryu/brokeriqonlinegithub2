@@ -145,18 +145,10 @@ else
                                 }
                     </MudSelect>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <MudText Typo="Typo.body2">* Profiling highlights customers who would benefit from additional insurance, for example, when client is self-employed, has a mortgage & life & critical illness and doesn't have income protection.</MudText>
-                </div>
-            </div>
-            }
 
             @if (User.IsAdmin)
             {   
-                <div class="row">
-                    <div class="col-lg-8 control_wrapper">
+                    <div class="col-6">
                         <MudSelect T="int"
                                     Label="Filter By Broker"
                                     Placeholder="Select"
@@ -171,8 +163,17 @@ else
                             }
                         </MudSelect>                   
                     </div>
-                </div>            
             }
+
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <MudText Typo="Typo.body2">* Profiling highlights customers who would benefit from additional insurance, for example, when client is self-employed, has a mortgage & life & critical illness and doesn't have income protection.</MudText>
+                </div>
+            </div>
+            }
+
+
          
         </div>
     </div>

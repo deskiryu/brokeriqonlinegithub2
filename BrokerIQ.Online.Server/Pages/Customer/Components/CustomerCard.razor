@@ -1,0 +1,234 @@
+@using Microsoft.Extensions.Options
+
+@using BrokerIQ.Online.AppSettings
+@using BrokerIQ.Online.Server.Extensions
+
+@inject IOptions<ReviewItAPIDetails> api
+
+<div class="card">
+    <div class="card-header">
+        Details
+    </div>
+    <div class="card-body">
+        <div class="row">
+            @if(Customer.HasNeeds){
+            <div class="col-12 mb-1">
+                <MudAlert Severity="Severity.Warning" ContentAlignment="HorizontalAlignment.Center">@GetNeedsContent()</MudAlert>
+            </div>
+            }
+            <div class="col-lg-2">
+
+            @if (CustomerProfilePicture != null)
+            {
+                var base64 = Convert.ToBase64String(CustomerProfilePicture.File);
+                var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                        <img src="@imgSrc" class="img-responsive customer-detail-img" style="width: 100%" />
+            }
+            </div>
+            <div class="col-lg-10">
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Name</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.Name</label>
+                    </div>
+
+                    <label class="col-lg-2 ">Email</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.EmailAddress</label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Date Of Birth</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.DateOfBirth.ToBiqDateString()</label>
+                    </div>
+
+                    <label class="col-lg-2 col-form-label">Employment</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.Employment.GetDisplayName()</label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Nationality</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.Nationality.GetDisplayName()</label>
+                    </div>
+
+                    <label class="col-lg-2 col-form-label">Residential Status</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.ResidentialStatus.GetDisplayName()</label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Phone type</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.OperatingSystem.GetDisplayName()</label>
+                    </div>
+
+                    <label class="col-lg-2 col-form-label">Email confirmed</label>
+                @if (Customer.EmailConfirmed)
+                {
+                    <div class="col-lg-4">
+                        <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-lg-4">
+                        <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                    </div>
+                }
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Address</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.Address</label>
+                    </div>
+
+                    <label class="col-lg-2 ">Business Name</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.BusinessName</label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Telephone</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.TelephoneNumber</label>
+                    </div>
+
+                    <label class="col-lg-2 ">Video Notifications Allowed</label>
+
+                @if (Customer.VideoNotificationsAllowed)
+                {
+                    <div class="col-lg-4">
+                        <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-lg-4">
+                        <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                    </div>
+                }      
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Category</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.CustomerCategory.GetDisplayName()</label>
+                    </div>
+                    @if (this.api.Value.ShowProtection)
+                    {
+                        <label class="col-lg-2 col-form-label">Is Smoker/Vaper</label>
+                        <div class="col-lg-4">
+                        <MudCheckBox ReadOnly Checked="@Customer.IsSmokerOrVaper" Style="margin-left: -15px" TriState="true" />
+                    </div>
+                    }
+                </div>
+            @if (this.api.Value.ShowProtection)
+            {
+            <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Occupation</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext"> @(Occupation == null ? String.Empty : $"{Occupation.Description} ({Occupation.OrigoCode})")</label>
+                    </div>
+
+                    <label class="col-lg-2 col-form-label">Annual Income</label>
+                    
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">£ @Customer.AnnualIncome</label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Gender</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.Gender.GetDisplayName()</label>
+                    </div>
+                </div>                            
+            }
+
+
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">App Version</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.AppVersion</label>
+                    </div>
+                @if (Broker.HasWhiteLabel)
+                {
+                    <label class="col-lg-2 ">Using Branded App</label>
+                    @if (Customer.IsWhiteLabel)
+                    {
+                        <div class="col-lg-4">
+                            <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-4">
+                            <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                        </div>
+                    }                                
+                }
+
+                </div>
+
+            @if (User.IsAdmin)
+            {
+                var broker = @Brokers.FirstOrDefault(x => x.Id == Customer.ChosenBrokerId);
+                var name = broker?.Name ?? "None chosen";
+
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Broker</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@name</label>
+                            </div>
+
+                            <label class="col-lg-2 col-form-label">Suggested Broker 1</label>
+                            <div class="col-lg-4">
+                                <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker1</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Suggested Broker 2</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker2</label>
+                    </div>
+
+                    <label class="col-lg-2 col-form-label">Suggested Broker 3</label>
+                    <div class="col-lg-4">
+                        <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker3</label>
+                    </div>
+                </div>
+
+            }
+                <div class="row col-12 mt-1">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientedit/{Customer.Id}")" class="ml-1">
+                        Edit Client
+                    </MudButton>                            
+                @if (!Customer.ConnectedToCustomerId.HasValue){
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/0/{Customer.Id}")" class="ml-1">
+                        Add a Menu Plan
+                    </MudButton>
+                    @if (User.IsAdmin)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="ResendEmailCustomer">
+                            Resend Verify Email
+                        </MudButton>
+
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="DeleteCustomer">
+                            Delete Client
+                        </MudButton>
+                    }
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

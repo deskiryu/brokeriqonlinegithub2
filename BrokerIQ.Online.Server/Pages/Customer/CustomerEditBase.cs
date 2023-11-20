@@ -121,7 +121,7 @@ namespace BrokerIQ.Online.Pages
 
         protected void NavigateToOverview()
         {
-            NavigationManager.NavigateTo($"/clientdetail/{CustomerId}");
+            NavigationManager.NavigateTo($"/clientdetail/{Customer.TargetCustomerId}");
         }
 
         protected async Task<IEnumerable<OccupationDto>> SearchOccupations(string partial)

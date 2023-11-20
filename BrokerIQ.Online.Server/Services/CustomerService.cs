@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.JsonPatch;
+
+using AutoMapper;
+
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services
 {
-    using Abstract;
-    using AutoMapper;
-    using Dto.Models;
-    using Interface;
-    using Models;
-    using BrokerIQ.Online.Server.Extensions;
-    using BrokerIQ.Dto.Enum;
-    using Microsoft.AspNetCore.JsonPatch;
-    using BrokerIQ.Online.Server.Models;
-
     public class CustomerService : ICustomerService
     {
         private readonly string customerUrl = "Customer";
@@ -27,6 +28,10 @@ namespace BrokerIQ.Online.Services
             this.mapper = mapper;
             this.requestProviderService = requestProviderService;
             this.accountService = accountService;
+        }
+
+        public CustomerService()
+        {
         }
 
         public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures = false)
@@ -162,6 +167,17 @@ namespace BrokerIQ.Online.Services
 
             var answer = await this.requestProviderService.Patch<JsonPatchDocument<Customer>, CustomerDto>(this.customerUrl + $"/patch?customerid={customerid}", patchDoc);
             return answer.HasNeeds;
+        }
+
+        public async Task<Customer> GetConnection(int id)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = $"{this.customerUrl}/{id}/connection";
+            var answer = await this.requestProviderService.Get<CustomerDto>(url);
+
+            return this.mapper.Map<Customer>(answer);
         }
     }
 }
