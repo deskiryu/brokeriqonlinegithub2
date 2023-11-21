@@ -124,7 +124,7 @@
                 <MudTd DataLabel="Watch">
                     <div class="card video_table_col_width">
                         <div class="card_body video_card-body">
-                            @if (DisplayEmbeddedVideo[context.Name])
+                            @if (DisplayEmbeddedVideo[context.Id])
                             {
                                 <div class="video_play">
                                     <video id="movie" class="video_play_size" controls preload autoplay>
@@ -137,7 +137,7 @@
                             {
                                 <div class="video_thumb">
                                     <img class="img-thumbnail" src="@context.VideoThumbnailData" style="width:150px;" />
-                                    <div class="play-button" @onclick="@( () => ShowVideoPlayer(@context.Name) )"></div>
+                                    <div class="play-button" @onclick="@( () => ShowVideoPlayer(@context.Id) )"></div>
                                 </div>
                             }
                         </div>
@@ -172,7 +172,7 @@
                 </MudTd>
 
                 <MudTd DataLabel="Welcome">
-                    <MudCheckBox Checked="@context.VideoSendTypeId" @onclick="async f => await SetWelcomeVideo(context.Id)" />
+                    <MudCheckBox Checked="@context.WelcomeVideo" @onclick="async f => await SetWelcomeVideo(context.Id)" />
                 </MudTd>
                 <MudTd DataLabel="Birthday">
                     <MudCheckBox Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Id)" />

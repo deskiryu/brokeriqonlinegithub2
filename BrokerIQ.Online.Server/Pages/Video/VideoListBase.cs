@@ -67,7 +67,7 @@ namespace BrokerIQ.Online.Pages
 
         public List<Broker> Brokers { get; set; }
 
-        public Dictionary<string, bool> DisplayEmbeddedVideo { get; set; }
+        public Dictionary<int, bool> DisplayEmbeddedVideo { get; set; }
 
         public int BrokerId { get; set; }
 
@@ -126,10 +126,10 @@ namespace BrokerIQ.Online.Pages
                 }
 
                 Videos = (await VideoService.GetVideos(BrokerId)).ToList();
-                DisplayEmbeddedVideo = new Dictionary<string, bool>();
+                DisplayEmbeddedVideo = new Dictionary<int, bool>();
                 foreach (Video video in Videos)
                 {
-                    DisplayEmbeddedVideo[video.Name] = false;
+                    DisplayEmbeddedVideo[video.Id] = false;
                     if (IsAdmin)
                     {
                         video.BrokerName = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
@@ -203,7 +203,7 @@ namespace BrokerIQ.Online.Pages
             }
 
             var dialogParams = new DialogParameters();
-            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.WelcomeVideo);
+            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.WelcomeVideo && x.Id==id);
             bool alreadyChecked = false;
             if (videoAlreadyChecked != null)
             {
@@ -245,7 +245,7 @@ namespace BrokerIQ.Online.Pages
             }
 
             var dialogParams = new DialogParameters();
-            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.BirthdayVideo);
+            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.BirthdayVideo && x.Id == id && x.Id == id);
             bool alreadyChecked = false;
             if (videoAlreadyChecked != null)
             {
@@ -287,7 +287,7 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            var selectedVideo = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.MortgageVideo);
+            var selectedVideo = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.MortgageVideo && x.Id == id);
             var isMortgageVideo = selectedVideo != null;
 
             var dialogParams = new DialogParameters();
@@ -467,14 +467,13 @@ namespace BrokerIQ.Online.Pages
                         var thumbnail = await VideoService.GetVideoThumbnail(uploadedVideoId, BrokerId);
                         if (thumbnail != null && thumbnail.Data != null)
                         {
-                            Videos.FirstOrDefault(x => x.Id == uploadedVideoId);
                             break;
                         }
                         await Task.Delay(1000);
                         attempts--;
                     }
 
-                    DisplayEmbeddedVideo[$"{VideoName}{ExtensionName}"] = false;
+                    DisplayEmbeddedVideo[uploadedVideoId] = false;
                     await RefreshVideosWithDialogMessage(true, $"Uploaded successfully");
 
                 }
@@ -566,9 +565,9 @@ namespace BrokerIQ.Online.Pages
             NavigationManager.NavigateTo("/videolist/");
         }
 
-        protected void ShowVideoPlayer(string videoName)
+        protected void ShowVideoPlayer(int id)
         {
-            DisplayEmbeddedVideo[videoName] = true;
+            DisplayEmbeddedVideo[id] = true;
             StateHasChanged();
         }
 
