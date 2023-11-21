@@ -103,7 +103,8 @@
                 @if (IsAdmin)
                 {
                     <MudTh class="">
-                        <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.Broker)">Broker
+                        <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.BrokerName)">
+                            Broker
                         </MudTableSortLabel>
                     </MudTh>
                 }
@@ -123,7 +124,7 @@
                 <MudTd DataLabel="Watch">
                     <div class="card video_table_col_width">
                         <div class="card_body video_card-body">
-                            @if (DisplayEmbeddedVideo[context.Name])
+                            @if (DisplayEmbeddedVideo[context.Id])
                             {
                                 <div class="video_play">
                                     <video id="movie" class="video_play_size" controls preload autoplay>
@@ -134,26 +135,10 @@
                             }
                             else
                             {
-                                // thumbnails are always {Video.Name}.jpeg
-                                string thumbnailKey = $"{context.Name}.jpeg";
-                                if (VideoThumbnails.ContainsKey(thumbnailKey))
-                                {
-                                    <div class="video_thumb">
-                                        <img class="img-thumbnail" src="@VideoThumbnails[thumbnailKey].Data" style="width:150px;" />
-                                        <div class="play-button" @onclick="@( () => ShowVideoPlayer(@context.Name) )"></div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div>
-                                        <i class="bi bi-play-circle" style="cursor:pointer;"
-                                        @onclick="@( () => ShowVideoPlayer(@context.Name) )">
-                                            <span>Play</span>
-                                        </i>
-                                        <img class="img-thumbnail" style="cursor:pointer; width:100%;"
-                                        @onclick="@( () => ShowVideoPlayer(@context.Name) )" />
-                                    </div>
-                                }
+                                <div class="video_thumb">
+                                    <img class="img-thumbnail" src="@context.VideoThumbnailData" style="width:150px;" />
+                                    <div class="play-button" @onclick="@( () => ShowVideoPlayer(@context.Id) )"></div>
+                                </div>
                             }
                         </div>
                     </div>
@@ -166,45 +151,45 @@
                         <div class="row">
                             <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
                                 PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@context.SendDate"
-                                DateChanged="async (x) => await UpdateVideoSendDate(x, context.Name)"
+                                DateChanged="async (x) => await UpdateVideoSendDate(x, context.Id)"
                                 style="font-size: 14px; margin-top: -10px">
                             </MudDatePicker>
                         </div>
                         <div class="row mt-2">
                             <MudCheckBox Checked="@context.SendDateTick"
-                            @onclick="async f => await SetSendDateTick(context.Name)" />
+                            @onclick="async f => await SetSendDateTick(context.Id)" />
                             <label class="video_checkbox_label">Send on this date</label>
 
                         </div>
                     </MudTd>
                     @if (IsAdmin)
                 {
-                    <MudTd DataLabel="Broker">@context.Broker</MudTd>
+                    <MudTd DataLabel="Broker">@context.BrokerName</MudTd>
                 }
 
                 <MudTd>
-                    <MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Name)" />
+                    <MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Id)" />
                 </MudTd>
 
                 <MudTd DataLabel="Welcome">
-                    <MudCheckBox Checked="@context.WelcomeVideo" @onclick="async f => await SetWelcomeVideo(context.Name)" />
+                    <MudCheckBox Checked="@context.WelcomeVideo" @onclick="async f => await SetWelcomeVideo(context.Id)" />
                 </MudTd>
                 <MudTd DataLabel="Birthday">
-                    <MudCheckBox Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Name)" />
+                    <MudCheckBox Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Id)" />
                 </MudTd>
                 <MudTd DataLabel="Mortgage">
-                    <MudCheckBox Checked="@context.MortgageVideo" @onclick="async f => await SetMortgageVideo(context.Name)" />
+                    <MudCheckBox Checked="@context.MortgageVideo" @onclick="async f => await SetMortgageVideo(context.Id)" />
                 </MudTd>
                 <MudTd DataLabel="Send">
                     @if (!IsMinorAdmin)
                     {
                         <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.Send"
-                            Link="@($"videodetail?url={context.Url}")" />
+                            Link="@($"videodetail/{context.Id}")" />
                     }
                 </MudTd>
                 <MudTd DataLabel="Delete">
                     <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.DeleteForever"
-                        @onclick="f => DeleteVideo(context.Name)" />
+                        @onclick="f => DeleteVideo(context.Id)" />
                 </MudTd>
             </RowTemplate>
         </MudTable>

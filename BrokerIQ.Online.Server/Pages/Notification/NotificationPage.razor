@@ -97,10 +97,9 @@ else
                 {
                     <MudTd DataLabel="Message">
                         @context.Message
-                        <MudLink href="@($"videodetail?url={@context.VideoUrl}")" Color="Color.Tertiary">
+                        <MudLink @onclick="f => ViewLink(context.VideoUrl)" Color="Color.Tertiary">
                             View
                         </MudLink>
-                    
                     </MudTd>
                 }
                 else if (context.IsAudio && !string.IsNullOrEmpty(context.AudioUrl))

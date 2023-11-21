@@ -870,8 +870,34 @@ namespace BrokerIQ.Online.Mapper
 
         private void AzureStorageMapper()
         {
-            CreateMap<Video, AzureVideoDto>();
-            CreateMap<AzureVideoDto, Video>();
+            CreateMap<Video, VideoDto>()
+                .ForMember(p => p.Id, opt => opt.MapFrom(r => r.Id))
+                .ForMember(p => p.Name, opt => opt.MapFrom(r => r.Name))
+                .ForMember(p => p.Url, opt => opt.MapFrom(r => r.Url))
+                .ForMember(p => p.AvailableToAll, opt => opt.MapFrom(r => r.AvailableToAll))
+                .ForMember(p => p.BrokerId, opt => opt.MapFrom(r => r.BrokerId))
+                .ForMember(p => p.UploadDate, opt => opt.MapFrom(r => r.UploadDate))
+                .ForMember(p => p.Vetted, opt => opt.MapFrom(r => r.Vetted))
+                .ForMember(p => p.VideoThumbnailData, opt => opt.MapFrom(r => r.VideoThumbnailData))
+                .ForMember(d => d.VideoSendTypeId, opt => opt.MapFrom(r => r.VideoSendTypeId))
+                .ForMember(p => p.SendDate, opt => opt.MapFrom(r => r.SendDate))
+                .ForMember(p => p.MessageContent, opt => opt.MapFrom(r => r.MessageContent))
+                .ForMember(p => p.GuidId, opt => opt.MapFrom(r => r.GuidId));
+
+            CreateMap<VideoDto, Video>()
+                .ForMember(p => p.Id, opt => opt.MapFrom(r => r.Id))
+                .ForMember(p => p.Name, opt => opt.MapFrom(r => r.Name))
+                .ForMember(p => p.Url, opt => opt.MapFrom(r => r.Url))
+                .ForMember(p => p.AvailableToAll, opt => opt.MapFrom(r => r.AvailableToAll))
+                .ForMember(p => p.BrokerId, opt => opt.MapFrom(r => r.BrokerId))
+                .ForMember(p => p.UploadDate, opt => opt.MapFrom(r => r.UploadDate))
+                .ForMember(p => p.Vetted, opt => opt.MapFrom(r => r.Vetted))
+                .ForMember(p => p.VideoThumbnailData, opt => opt.MapFrom(r => r.VideoThumbnailData))
+                .ForMember(d => d.VideoSendTypeId, opt => opt.MapFrom(r => r.VideoSendTypeId))
+                .ForMember(p => p.SendDate, opt => opt.MapFrom(r => r.SendDate))
+                .ForMember(p => p.MessageContent, opt => opt.MapFrom(r => r.MessageContent))
+                .ForMember(p => p.GuidId, opt => opt.MapFrom(r => r.GuidId));
+
             CreateMap<Audio, AudioDto>();
             CreateMap<AudioDto, Audio>();
             CreateMap<AzureTrainingVideoDto, TrainingVideo>();
