@@ -52,11 +52,18 @@ namespace BrokerIQ.Online.Server.Pages.Video
         public int BrokerId { get; set; }
 
         protected string Url { get; set; }
-        protected string VideoName { get; set; }
+
+        [Parameter]
+        public string VideoId { get; set; }
+
+        protected VideoThumbnail VideoThumbnail { get; set; }
+
         protected string VideoNameNoExtension { get; set; }
         protected string selectedNotification;
 
         protected string SearchTerm { get; set; } = "";
+
+        protected Models.Video ThisVideo { get; set; }
 
         protected bool Vetted { get; set; }
 
@@ -74,7 +81,6 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
         protected override async Task OnInitializedAsync()
         {
-            var query = new Uri(NavigationManager.Uri).Query;
             selectedNotification = "A new video has arrived";
 
             CustomerCategoriesByRelevance = Extensions.Extensions.GetAllCustomerCategories();
@@ -84,6 +90,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
             if (IsAdmin)
             {
                 Brokers = (await BrokerService.GetBrokers()).ToList();
+                BrokerId = 0;
             }
             else
             {
@@ -98,21 +105,6 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 }
             }
 
-            if (QueryHelpers.ParseQuery(query).TryGetValue("Url", out var value))
-            {
-                Url = value;
-                try
-                {
-                    int pos = Url.LastIndexOf("/") + 1;
-                    VideoName = Url.Substring(pos, Url.Length - pos);
-                    VideoNameNoExtension = Path.GetFileNameWithoutExtension(VideoName);
-                }
-                catch
-                {
-                    AlertService.Error("Get Videos failed");
-                }
-            }
-
             try
             {
                 if (user == null)
@@ -120,9 +112,14 @@ namespace BrokerIQ.Online.Server.Pages.Video
                     throw new Exception();
                 }
 
-                Vetted = await VideoService.IsVetted(VideoName, user.MasterBrokerId);
+                ThisVideo = await VideoService.GetVideo(int.Parse(VideoId), BrokerId);
+                Url = ThisVideo.Url;
+                Vetted = ThisVideo.Vetted;
                 var queryCust = await CustomerService.GetAllCustomers();
                 Customers = queryCust.Where(x => x.VideoNotificationsAllowed == true).ToList();
+
+                Url = ThisVideo.Url;
+
             }
             catch
             {
@@ -292,13 +289,12 @@ namespace BrokerIQ.Online.Server.Pages.Video
                     return;
                 }
             }
-            var thumbnail = await VideoService.GetVideoThumbnail($"{VideoName}.jpeg", BrokerId);
 
             dialogParams.Add("BrokerId", BrokerId);
             dialogParams.Add("Customers", targets);
-            dialogParams.Add("VideoUrl", Url);
-            dialogParams.Add("VideoName", VideoNameNoExtension);
-            dialogParams.Add("VideoThumbnailData", thumbnail?.Data ?? "");
+            dialogParams.Add("VideoUrl", ThisVideo.Url);
+            dialogParams.Add("VideoName", ThisVideo.Name);
+            dialogParams.Add("VideoThumbnailData", ThisVideo.VideoThumbnailData);
 
 
             var dialogOptions = new DialogOptions()

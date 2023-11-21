@@ -29,16 +29,34 @@ namespace BrokerIQ.Online.Server.Services
             this.requestProviderService.Token = user?.Token;
 
             var url = this.videoUrl + $"?brokerId={brokerId}";
-            var answer = new List<AzureVideoDto>();
+            var answer = new List<VideoDto>();
             try
             {
-                answer = await this.requestProviderService.Get<List<AzureVideoDto>>(url);
+                answer = await this.requestProviderService.Get<List<VideoDto>>(url);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"GetVideos: exception {ex.Message}");
             }
             return this.mapper.Map<List<Video>>(answer);
+        }
+
+        public async Task<Video> GetVideo(int id, int brokerId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = this.videoUrl + $"/single/{id}?brokerid={brokerId}";
+            var answer = new VideoDto();
+            try
+            {
+                answer = await this.requestProviderService.Get<VideoDto>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"GetVideos: exception {ex.Message}");
+            }
+            return this.mapper.Map<Video>(answer);
         }
 
         public async Task<Dictionary<string, VideoThumbnail>> GetVideoThumbnails(int brokerId)
@@ -56,12 +74,12 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<VideoThumbnail> GetVideoThumbnail(string fileName, int brokerId)
+        public async Task<VideoThumbnail> GetVideoThumbnail(int uploadedVideoId, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
 
-            var url = this.videoUrl + $"/thumbnail/{fileName}?brokerId={brokerId}";
+            var url = this.videoUrl + $"/thumbnail/{uploadedVideoId}?brokerId={brokerId}";
             VideoThumbnail answer = null;
             try
             {
@@ -74,28 +92,28 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<bool> UploadAnalyseAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
+        public async Task<int> UploadAnalyseAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             var url = this.videoUrl + $"/UploadAnalyseAndConvertVideo?brokerId={brokerId}&fileName={fileName}";
-            var answer = false;
+            var videoId = 0;
             try
             {
-                answer = await this.requestProviderService.Post<MemoryStream, bool>(url, videoStream, "application/octet-stream");
+                videoId = await this.requestProviderService.Post<MemoryStream, int>(url, videoStream, "application/octet-stream");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"UploadVideo: exception {ex.Message}");
             }
-            return answer;
+            return videoId;
         }
 
-        public async Task<bool> DeleteVideo(string fileName, int brokerId)
+        public async Task<bool> DeleteVideo(int id, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"?brokerId={brokerId}&fileName={fileName}";
+            var url = this.videoUrl + $"?brokerId={brokerId}&id={id}";
             var answer = false;
             try
             {
@@ -108,29 +126,12 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<bool> DeleteVideoThumbnail(string fileName, int brokerId)
-        {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/thumbnail?brokerId={brokerId}&fileName={fileName}";
-            var answer = false;
-            try
-            {
-                answer = await this.requestProviderService.Delete(url);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"DeleteVideoThumbnail: exception {ex.Message}");
-            }
-            return answer;
-        }
-
-        public async Task<bool> IsVetted(string fileName, int brokerId)
+        public async Task<bool> IsVetted(int id, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
 
-            var url = this.videoUrl + $"/vetted?brokerId={brokerId}&fileName={fileName}";
+            var url = this.videoUrl + $"/vetted?brokerId={brokerId}&id={id}";
             var answer = false;
             try
             {
@@ -143,30 +144,12 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<bool> NameAvailable(string fileName, int brokerId)
-        {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
-            var url = this.videoUrl + $"/nameavailable/{fileName}?brokerId={brokerId}";
-            var answer = false;
-            try
-            {
-                answer = await this.requestProviderService.Get<bool>(url);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"NameAvailable: exception {ex.Message}");
-            }
-            return answer;
-        }
-
-        public async Task<(bool, string)> SetWelcomeVideo(string fileName, int brokerId, bool isWelcomeVideo = true)
+        public async Task<(bool, string)> SetWelcomeVideo(int id, int brokerId, bool isWelcomeVideo = true)
         {
             var answer = (false, string.Empty);
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/setwelcomevideo?brokerId={brokerId}&fileName={fileName}&iswelcomeVideo={isWelcomeVideo}";
+            var url = this.videoUrl + $"/setwelcomevideo?brokerId={brokerId}&id={id}&iswelcomeVideo={isWelcomeVideo}";
             try
             {
                 answer = await this.requestProviderService.Post<(bool, string)>(url);
@@ -178,12 +161,12 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<(bool, string)> SetBirthdayVideo(string fileName, int brokerId, bool isBirthdayVideo = true)
+        public async Task<(bool, string)> SetBirthdayVideo(int id, int brokerId, bool isBirthdayVideo = true)
         {
             var answer = (false, string.Empty);
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/setbirthdayvideo?brokerId={brokerId}&fileName={fileName}&isbirthdayVideo={isBirthdayVideo}";
+            var url = this.videoUrl + $"/setbirthdayvideo?brokerId={brokerId}&id={id}&isbirthdayVideo={isBirthdayVideo}";
             try
             {
                 answer = await this.requestProviderService.Post<(bool, string)>(url);
@@ -195,13 +178,13 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<(bool, string)> SetMortgageVideo(string fileName, int brokerId, bool isMortgageVideo = true)
+        public async Task<(bool, string)> SetMortgageVideo(int id, int brokerId, bool isMortgageVideo = true)
         {
             var result = (false, string.Empty);
 
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/setmortgagevideo?brokerId={brokerId}&fileName={fileName}&isMortgageVideo={isMortgageVideo}";
+            var url = this.videoUrl + $"/setmortgagevideo?brokerId={brokerId}&id={id}&isMortgageVideo={isMortgageVideo}";
 
             try
             {
@@ -215,12 +198,12 @@ namespace BrokerIQ.Online.Server.Services
             return result;
         }
 
-        public async Task<(bool, string)> SetVideoSendDate(string fileName, int brokerId, DateTime? sendDate)
+        public async Task<(bool, string)> SetVideoSendDate(int id, int brokerId, DateTime? sendDate)
         {
             var answer = (false, string.Empty);
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/setsenddate?brokerId={brokerId}&fileName={fileName}&sendDate={sendDate.Value.ToString("yyyy-MM-dd")}";
+            var url = this.videoUrl + $"/setsenddate?brokerId={brokerId}&id={id}&sendDate={sendDate.Value.ToString("yyyy-MM-dd")}";
             try
             {
                 answer = await this.requestProviderService.Post<(bool, string)>(url);
@@ -232,12 +215,12 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<(bool, string)> SetVideoSendDateTick(string fileName, int brokerId, bool value)
+        public async Task<(bool, string)> SetVideoSendDateTick(int id, int brokerId, bool value)
         {
             var answer = (false, string.Empty);
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/setsenddatetick?brokerId={brokerId}&fileName={fileName}&value={value}";
+            var url = this.videoUrl + $"/setsenddatetick?brokerId={brokerId}&id={id}&value={value}";
             try
             {
                 answer = await this.requestProviderService.Post<(bool, string)>(url);
@@ -249,12 +232,12 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<(bool, string)> SetVetted(string fileName, bool value)
+        public async Task<(bool, string)> SetVetted(int id, bool value)
         {
             var answer = (false, string.Empty);
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/vetted?fileName={fileName}&vetted={value}";
+            var url = this.videoUrl + $"/vetted?id={id}&vetted={value}";
             try
             {
                 answer = await this.requestProviderService.Post<(bool, string)>(url);
@@ -266,12 +249,12 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<(bool, string)> SetBroker(string fileName, int brokerId)
+        public async Task<(bool, string)> SetBroker(int id, int brokerId)
         {
             var answer = (false, string.Empty);
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/brokerid?brokerId={brokerId}&fileName={fileName}";
+            var url = this.videoUrl + $"/brokerid?brokerId={brokerId}&id={id}";
             try
             {
                 answer = await this.requestProviderService.Post<(bool, string)>(url);
