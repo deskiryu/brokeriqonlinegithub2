@@ -13,7 +13,7 @@ namespace BrokerIQ.Online.Services.Interface
     {
         Task<List<Video>> GetVideos(int brokerId);
 
-        Task<Video> GetVideo(int id);
+        Task<Video> GetVideo(int id, int brokerId);
 
         Task<Dictionary<string, VideoThumbnail>> GetVideoThumbnails(int brokerId);
 

@@ -52,7 +52,9 @@ namespace BrokerIQ.Online.Server.Pages.Video
         public int BrokerId { get; set; }
 
         protected string Url { get; set; }
-        protected int VideoId { get; set; }
+
+        [Parameter]
+        public string VideoId { get; set; }
 
         protected VideoThumbnail VideoThumbnail { get; set; }
 
@@ -79,7 +81,6 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
         protected override async Task OnInitializedAsync()
         {
-            var query = new Uri(NavigationManager.Uri).Query;
             selectedNotification = "A new video has arrived";
 
             CustomerCategoriesByRelevance = Extensions.Extensions.GetAllCustomerCategories();
@@ -89,6 +90,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
             if (IsAdmin)
             {
                 Brokers = (await BrokerService.GetBrokers()).ToList();
+                BrokerId = 0;
             }
             else
             {
@@ -110,7 +112,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
                     throw new Exception();
                 }
 
-                ThisVideo = await VideoService.GetVideo(VideoId);
+                ThisVideo = await VideoService.GetVideo(int.Parse(VideoId), BrokerId);
+                Url = ThisVideo.Url;
                 Vetted = ThisVideo.Vetted;
                 var queryCust = await CustomerService.GetAllCustomers();
                 Customers = queryCust.Where(x => x.VideoNotificationsAllowed == true).ToList();

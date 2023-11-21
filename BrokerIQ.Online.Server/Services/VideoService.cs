@@ -41,12 +41,12 @@ namespace BrokerIQ.Online.Server.Services
             return this.mapper.Map<List<Video>>(answer);
         }
 
-        public async Task<Video> GetVideo(int id)
+        public async Task<Video> GetVideo(int id, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
 
-            var url = this.videoUrl + $"?id={id}";
+            var url = this.videoUrl + $"/single/{id}?brokerid={brokerId}";
             var answer = new VideoDto();
             try
             {

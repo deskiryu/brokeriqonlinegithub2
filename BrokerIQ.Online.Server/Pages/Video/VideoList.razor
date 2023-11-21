@@ -184,7 +184,7 @@
                     @if (!IsMinorAdmin)
                     {
                         <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.Send"
-                            Link="@($"videodetail?url={context.Id}")" />
+                            Link="@($"videodetail/{context.Id}")" />
                     }
                 </MudTd>
                 <MudTd DataLabel="Delete">
