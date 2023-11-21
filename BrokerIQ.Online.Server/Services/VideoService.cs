@@ -74,12 +74,12 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
-        public async Task<VideoThumbnail> GetVideoThumbnail(string thumbnailName, int uploadedVideoId, int brokerId)
+        public async Task<VideoThumbnail> GetVideoThumbnail(int uploadedVideoId, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
 
-            var url = this.videoUrl + $"/thumbnail/{thumbnailName}?brokerId={brokerId}&id={uploadedVideoId}";
+            var url = this.videoUrl + $"/thumbnail/{uploadedVideoId}?brokerId={brokerId}";
             VideoThumbnail answer = null;
             try
             {

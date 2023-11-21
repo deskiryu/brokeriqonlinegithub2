@@ -17,7 +17,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<Dictionary<string, VideoThumbnail>> GetVideoThumbnails(int brokerId);
 
-        Task<VideoThumbnail> GetVideoThumbnail(string thumbnailName, int uploadedVideoId, int brokerId);
+        Task<VideoThumbnail> GetVideoThumbnail(int uploadedVideoId, int brokerId);
 
         Task<int> UploadAnalyseAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId);
 

@@ -463,8 +463,8 @@ namespace BrokerIQ.Online.Pages
 
                     while (attempts > 0)
                     {
-                        string thumbnailName = $"{VideoName}{ExtensionName}.jpeg";
-                        var thumbnail = await VideoService.GetVideoThumbnail(thumbnailName, uploadedVideoId, BrokerId);
+                        
+                        var thumbnail = await VideoService.GetVideoThumbnail(uploadedVideoId, BrokerId);
                         if (thumbnail != null && thumbnail.Data != null)
                         {
                             Videos.FirstOrDefault(x => x.Id == uploadedVideoId);
