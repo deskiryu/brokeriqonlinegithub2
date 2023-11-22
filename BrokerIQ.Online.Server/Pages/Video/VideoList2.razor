@@ -214,6 +214,132 @@
                         </div>
                     </MudDropZone>
         </div>
+                <div class="d-flex gap-4 mx-4">
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo1">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Send Date Video 1</div>
+                            <div class="card-body">
+                                @if (SendDateVideo1 != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(SendDateVideo1.Id, VideoSendEnum.SendOnDate) )"></div>
+                                    if (DisplayEmbeddedVideo[SendDateVideo1.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@SendDateVideo1.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@SendDateVideo1.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo1.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="none_block"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo2">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Send Date Video 2</div>
+                            <div class="card-body">
+                                @if (SendDateVideo2 != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(SendDateVideo2.Id, VideoSendEnum.SendOnDate) )"></div>
+                                    if (DisplayEmbeddedVideo[SendDateVideo2.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@SendDateVideo2.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@SendDateVideo2.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo2.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="none_block"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo3">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Send Date Video 3</div>
+                            <div class="card-body">
+                                @if (SendDateVideo3 != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(SendDateVideo3.Id, VideoSendEnum.SendOnDate) )"></div>
+                                    if (DisplayEmbeddedVideo[SendDateVideo3.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@SendDateVideo3.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@SendDateVideo3.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo3.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="none_block"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo4">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Send Date Video 4</div>
+                            <div class="card-body">
+                                @if (SendDateVideo4 != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(SendDateVideo4.Id, VideoSendEnum.SendOnDate) )"></div>
+                                    if (DisplayEmbeddedVideo[SendDateVideo4.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@SendDateVideo4.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@SendDateVideo4.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo4.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="none_block"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                </div>
         <MudListSubheader Class="mt-4 pb-2">Your videos</MudListSubheader>
                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" Identifier="Files"  Class="d-flex flex-wrap flex-grow-1 pa-2 rounded">
 

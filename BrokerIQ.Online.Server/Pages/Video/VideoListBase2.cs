@@ -99,6 +99,13 @@ namespace BrokerIQ.Online.Pages
 
         public Video InsuranceVideo { get; set; }
 
+        public Video SendDateVideo1 { get; set; }
+
+        public Video SendDateVideo2 { get; set; }
+
+        public Video SendDateVideo3 { get; set; }
+
+        public Video SendDateVideo4 { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -193,126 +200,6 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task SetWelcomeVideo(int id)
-        {
-            await VerifyAccess();
-
-            if ((IsAdmin || IsMinorAdmin) && FilterBrokerId == 0)
-            {
-                await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
-                return;
-            }
-
-            var dialogParams = new DialogParameters();
-            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.WelcomeVideo && x.Id==id);
-            bool alreadyChecked = false;
-            if (videoAlreadyChecked != null)
-            {
-                alreadyChecked = true;
-            }
-            if (alreadyChecked)
-            {
-                dialogParams.Add("Message", "There will be no welcome video. Continue?");
-            }
-            else
-            {
-                dialogParams.Add("Message", "This video will be sent to clients when they sign up. Continue?");
-            }
-
-            var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
-            {
-                var returned = await VideoService.SetWelcomeVideo(id, brokerId, !alreadyChecked);
-                if (returned.Item1)
-                {
-                    await RefreshVideosWithDialogMessage(true, "Welcome video set successfully");
-                }
-                else
-                {
-                    await RefreshVideosWithDialogMessage(false, "Something went wrong setting the welcome video. Please try again.");
-                }
-            }
-        }
-
-        protected async Task SetBirthdayVideo(int id)
-        {
-            await VerifyAccess();
-
-            if ((IsAdmin || IsMinorAdmin) && FilterBrokerId == 0)
-            {
-                await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
-                return;
-            }
-
-            var dialogParams = new DialogParameters();
-            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.BirthdayVideo && x.Id == id && x.Id == id);
-            bool alreadyChecked = false;
-            if (videoAlreadyChecked != null)
-            {
-                alreadyChecked = true;
-            }
-            if (alreadyChecked)
-            {
-                dialogParams.Add("Message", "There will be no birthday video. Continue?");
-            }
-            else
-            {
-                dialogParams.Add("Message", "This video will be sent to clients on their birthday. Continue?");
-            }
-
-            var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
-            {
-                var returned = await VideoService.SetBirthdayVideo(id, brokerId, !alreadyChecked);
-
-                if (returned.Item1)
-                {
-                    await RefreshVideosWithDialogMessage(true, "Birthday video set successfully");
-                }
-                else
-                {
-                    await RefreshVideosWithDialogMessage(false, "Something went wrong setting the birthday video. Please try again.");
-                }
-            }
-        }
-
-        protected async Task SetMortgageVideo(int id)
-        {
-            await VerifyAccess();
-
-            if ((IsAdmin || IsMinorAdmin) && FilterBrokerId == 0)
-            {
-                await RefreshVideosWithDialogMessage(true, "Filter videos by broker first");
-                return;
-            }
-
-            var selectedVideo = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.MortgageVideo && x.Id == id);
-            var isMortgageVideo = selectedVideo != null;
-
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", isMortgageVideo ?
-                "There will be no mortgage video. Continue?" :
-                "This video will be sent to clients when a new mortgage is created. Continue?");
-
-            var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
-            {
-                var returned = await VideoService.SetMortgageVideo(id, brokerId, !isMortgageVideo);
-
-                if (returned.Item1)
-                {
-                    await RefreshVideosWithDialogMessage(true, "Mortgage video set successfully");
-                }
-                else
-                {
-                    await RefreshVideosWithDialogMessage(false, "Something went wrong setting the mortgage video. Please try again.");
-                }
-            }
-        }
-
         protected async Task<bool> SetVideoSendDate(int id, DateTime? date)
         {
             await VerifyAccess();
@@ -380,51 +267,6 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task SetVetted(int id)
-        {
-            await VerifyAccess();
-
-            if (!(await CheckIsAdmin()))
-            {
-                if (IsBrokerStaff)
-                {
-                    await RefreshVideosWithDialogMessage(true, "Only the main broker can vet the video");
-                }
-                else
-                {
-                    await RefreshVideosWithDialogMessage(true, "Only admin can vet");
-                }
-
-                return;
-            }
-
-            if (IsMinorAdmin)
-            {
-                await RefreshVideosWithDialogMessage(true, "Only brokeriq admin can vet the video");
-                return;
-            }
-
-
-            var dialogParams = new DialogParameters();
-            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Id == id);
-            bool alreadyChecked = false;
-            if (videoAlreadyChecked != null)
-            {
-                alreadyChecked = videoAlreadyChecked.Vetted;
-            }
-
-            var returned = await VideoService.SetVetted(id, !alreadyChecked);
-
-            if (returned.Item1)
-            {
-                await RefreshVideos();
-            }
-            else
-            {
-                await RefreshVideosWithDialogMessage(false, "Something went wrong setting vetted. Please try again.");
-            }
-
-        }
         public async Task UploadButtonPushed()
         {
             VideoUploading = false;
@@ -824,6 +666,25 @@ namespace BrokerIQ.Online.Pages
                     InsuranceVideo = video;
                     DisplayEmbeddedVideo[video.Id] = false;
                     video.Identifier = "Insurance";
+                }
+                else if(video.SendDateVideo)
+                {
+                    if (SendDateVideo1 == null)
+                    {
+                        SendDateVideo1 = video;
+                    }
+                    else if (SendDateVideo2 == null)
+                    {
+                        SendDateVideo2 = video;
+                    }
+                    else if (SendDateVideo3 == null)
+                    {
+                        SendDateVideo3 = video;
+                    }
+                    else if (SendDateVideo4 == null)
+                    {
+                        SendDateVideo4 = video;
+                    }
                 }
             }
 
