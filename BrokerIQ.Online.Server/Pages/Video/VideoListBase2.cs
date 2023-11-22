@@ -723,6 +723,36 @@ namespace BrokerIQ.Online.Pages
             }
             return message;
         }
+
+        protected async Task RemoveDrag(int videoId, VideoSendEnum videoenum)
+        {
+
+            var video = Videos.FirstOrDefault(x => x.Id == videoId);
+            video.Identifier = "Files";
+
+
+            var message = await CompareDraggedToVideoList();
+            if (!string.IsNullOrEmpty(message))
+            {
+                var responseParams = new DialogParameters();
+                responseParams.Add("Message", message);
+
+                var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
+                if (!result.Cancelled)
+                {
+                    switch (videoenum)
+                    {
+                        case VideoSendEnum.WelcomeVideo: WelcomeVideo = null;break;
+                        case VideoSendEnum.BirthdayVideo: BirthdayVideo = null; break;
+                        case VideoSendEnum.MortgageVideo: MortgageVideo = null; break;
+                        case VideoSendEnum.InsuranceVideo: InsuranceVideo = null; break;
+                    }
+                    await this.VideoService.SetNoVideo(video.Id, BrokerId);
+                }
+            }
+            await RefreshVideos();
+        }
+
         private async Task RefreshVideos()
         {
             if (Videos != null)

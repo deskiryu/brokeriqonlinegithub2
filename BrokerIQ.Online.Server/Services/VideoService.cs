@@ -144,6 +144,23 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
+        public async Task<(bool, string)> SetNoVideo(int id, int brokerId)
+        {
+            var answer = (false, string.Empty);
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/setnovideo?brokerId={brokerId}&id={id}";
+            try
+            {
+                answer = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetWelcomeVideo: exception {ex.Message}");
+            }
+            return answer;
+        }
+
         public async Task<(bool, string)> SetWelcomeVideo(int id, int brokerId, bool isWelcomeVideo = true)
         {
             var answer = (false, string.Empty);

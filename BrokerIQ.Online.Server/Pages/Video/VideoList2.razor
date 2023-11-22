@@ -3,7 +3,7 @@
 @using System.Globalization
 @using System.IO
 @using BrokerIQ.Online.Pages
-
+@using Dto.Enum
 
 <h3 class="page-title">Videos</h3>
 
@@ -95,6 +95,7 @@
                             <div class="card-body">
                                 @if (WelcomeVideo != null)
                                 {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(WelcomeVideo.Id, VideoSendEnum.WelcomeVideo) )"></div>
                                     if (DisplayEmbeddedVideo[WelcomeVideo.Id])
                                     {
                                         <div class="video_play">
@@ -114,7 +115,7 @@
                                 }
                                 else
                                 {
-                                 <div><p>NONE</p></div>
+                                 <div class="none_block"><p>NONE</p></div>
                                 }
                             </div>
                         </div>
@@ -125,6 +126,7 @@
                             <div class="card-body">
                                 @if (BirthdayVideo != null)
                                 {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(BirthdayVideo.Id, VideoSendEnum.BirthdayVideo) )"></div>
                                     if (DisplayEmbeddedVideo[BirthdayVideo.Id])
                                     {
                                         <div class="video_play">
@@ -144,7 +146,7 @@
                                 }
                                 else
                                 {
-                                    <div><p>NONE</p></div>
+                                    <div class="none_block"><p>NONE</p></div>
                                 }
                             </div>
                         </div>
@@ -155,6 +157,7 @@
                             <div class="card-body">
                                 @if (MortgageVideo != null)
                                 {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(MortgageVideo.Id, VideoSendEnum.MortgageVideo) )"></div>
                                     if (DisplayEmbeddedVideo[MortgageVideo.Id])
                                     {
                                         <div class="video_play">
@@ -174,7 +177,7 @@
                                 }
                                 else
                                 {
-                                    <div><p>NONE</p></div>
+                                    <div class="none_block"><p>NONE</p></div>
                                 }
                             </div>
                         </div>
@@ -185,6 +188,7 @@
                             <div class="card-body">
                                 @if (InsuranceVideo != null)
                                 {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(InsuranceVideo.Id, VideoSendEnum.InsuranceVideo) )"></div>
                                     if (DisplayEmbeddedVideo[InsuranceVideo.Id])
                                     {
                                         <div class="video_play">
@@ -204,7 +208,7 @@
                                 }
                                 else
                                 {
-                                    <div><p>NONE</p></div>
+                                    <div class="none_block"><p>NONE</p></div>
                                 }
                             </div>
                         </div>
