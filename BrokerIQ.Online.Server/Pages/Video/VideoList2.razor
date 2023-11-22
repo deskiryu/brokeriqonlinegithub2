@@ -232,12 +232,12 @@
             @context.Name
         </div>*@
 
-                <div DataLabel="Watch">
+                <div DataLabel="Watch" >
                     <div class="card video_table_col_width">
-                        <div class="card_body video_card-body">
+                        <div class="card_body video_card-body" >
                             @if (DisplayEmbeddedVideo[context.Id])
                             {
-                                <div class="video_play">
+                                <div class="video_play" style="border-color : @(context.Vetted ? "green":"red")">
                                     <video id="movie" class="video_play_size" controls preload>
                                         <source src='@context.Url#t=0.1'>
                                     </video>
@@ -246,7 +246,7 @@
                             }
                             else
                             {
-                                <div class="video_thumb">
+                                <div class="video_thumb" style="border-color : @(context.Vetted ? "green":"red")">
                                     <img class="img-thumbnail" src="@context.VideoThumbnailData" style="width:150px;" />
                                     <div class="play-button" @onclick="@( () => ShowVideoPlayer(@context.Id) )"></div>
                                 </div>
@@ -255,8 +255,8 @@
                     </div>
 
                 </div>
-                <div DataLabel="Video Name">@Path.GetFileNameWithoutExtension(context.Name)</div>
-@*                <div DataLabel="Uploaded">
+                @*                <div DataLabel="Video Name">@Path.GetFileNameWithoutExtension(context.Name)</div>
+               <div DataLabel="Uploaded">
                     @((context.UploadDate == null) ? "-" :
                         ((DateTimeOffset)context.UploadDate).ToString("g", new CultureInfo("en-GB")))
                 </div>
@@ -280,9 +280,9 @@
                     <div DataLabel="Broker">@context.BrokerName</div>
                 }*@
 
-                <div>Vetted
+@*                <div>Vetted
                     <MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Id)" />
-                </div>
+                </div>*@
 
 @*                <div DataLabel="Welcome">
                     <MudCheckBox Checked="@context.WelcomeVideo" @onclick="async f => await SetWelcomeVideo(context.Id)" />

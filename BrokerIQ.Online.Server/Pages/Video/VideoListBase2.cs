@@ -563,7 +563,7 @@ namespace BrokerIQ.Online.Pages
         protected void NavigateToOverview()
         {
             Saved = false;
-            NavigationManager.NavigateTo("/videolist/");
+            NavigationManager.NavigateTo("/videolist2/");
         }
 
         protected void ShowVideoPlayer(int id)
@@ -621,7 +621,15 @@ namespace BrokerIQ.Online.Pages
                     }
                     else if (video.Identifier == "Welcome" && video.VideoSendTypeId != VideoSendEnum.WelcomeVideo)
                     {
-                        message += $"Video {video.Name} will be a welcome video. ";
+                        if (video.Vetted)
+                        {
+                            message += $"Video {video.Name} will be a welcome video. ";
+                        }
+                        else
+                        {
+                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a welcome video. ";
+                        }
+
                     }
                     if (video.Identifier != "Mortgage" && video.VideoSendTypeId == VideoSendEnum.MortgageVideo)
                     {
@@ -629,7 +637,14 @@ namespace BrokerIQ.Online.Pages
                     }
                     else if (video.Identifier == "Mortgage" && video.VideoSendTypeId != VideoSendEnum.MortgageVideo)
                     {
-                        message += $"Video {video.Name} will be a mortgage video. ";
+                        if (video.Vetted)
+                        {
+                            message += $"Video {video.Name} will be a mortgage video. ";
+                        }
+                        else
+                        {
+                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a mortgage video. ";
+                        }
                     }
                     if (video.Identifier != "Birthday" && video.VideoSendTypeId == VideoSendEnum.BirthdayVideo)
                     {
@@ -637,7 +652,14 @@ namespace BrokerIQ.Online.Pages
                     }
                     else if (video.Identifier == "Birthday" && video.VideoSendTypeId != VideoSendEnum.BirthdayVideo)
                     {
-                        message += $"Video {video.Name} will be a birthday video. ";
+                        if (video.Vetted)
+                        {
+                            message += $"Video {video.Name} will be a birthday video. ";
+                        }
+                        else
+                        {
+                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a birthday video. ";
+                        }
                     }
                     if (video.Identifier != "Insurance" && video.VideoSendTypeId == VideoSendEnum.InsuranceVideo)
                     {
@@ -645,7 +667,14 @@ namespace BrokerIQ.Online.Pages
                     }
                     else if (video.Identifier == "Insurance" && video.VideoSendTypeId != VideoSendEnum.InsuranceVideo)
                     {
-                        message += $"Video {video.Name} will be a insurance video. ";
+                        if (video.Vetted)
+                        {
+                            message += $"Video {video.Name} will be a insurance video. ";
+                        }
+                        else
+                        {
+                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a insurance video. ";
+                        }
                     }
 
                 }
@@ -663,6 +692,7 @@ namespace BrokerIQ.Online.Pages
             {
                 if (video != null)
                 {
+                    await this.VideoService.SetVetted(video.Id, true);
                     if (video.Identifier == "Welcome" && video.VideoSendTypeId != VideoSendEnum.WelcomeVideo)
                     {
                         await this.VideoService.SetWelcomeVideo(video.Id, BrokerId, true);
