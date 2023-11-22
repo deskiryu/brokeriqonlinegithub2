@@ -194,6 +194,9 @@ namespace BrokerIQ.Online.Pages
                 try
                 {
                     Brokers = await BrokerService.GetBrokers();
+
+                    var customer = await CustomerService.GetCustomer(customerId);
+                    BrokerListId = customer.ChosenBrokerId;
                 }
                 catch
                 {
