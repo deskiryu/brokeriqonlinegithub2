@@ -1,0 +1,309 @@
+﻿@page "/videolist2"
+@inherits VideoListBase2
+@using System.Globalization
+@using System.IO
+@using BrokerIQ.Online.Pages
+
+
+<h3 class="page-title">Videos</h3>
+
+@if (!Saved)
+{
+    @if (Videos == null)
+    {
+        <div>
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+</div>
+    }
+    else
+    {
+        <div class="row">
+    <InputFile id="videofileinput" OnChange="LoadFiles" accept="video/mov,video/mp4,video/*" hidden multiple />
+    <MudButton HtmlTag="label" Class="col-2 ml-4" Variant="Variant.Filled" Color="Color.Primary"
+        Style="@($"color:{Colors.Shades.Black};")" StartIcon="@Icons.Filled.CloudUpload" for="videofileinput">
+        Upload Video
+    </MudButton>
+    <p class="col-5">@status</p>
+</div>
+
+
+
+        <div class="">
+            @if (VideoUploading)
+            {
+                <div class="mt-5">
+                        Uploading video to BrokerIQ...
+                </div>
+
+                <div class="spin-row spin-row-bg mt-5">
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
+                </div>                
+            }
+
+        </div>
+
+        <MudDialog @bind-IsVisible="RenameUploadVisibility">
+            <TitleContent>
+                Upload Video
+            </TitleContent>
+            <DialogContent>
+                <MudTextField Label="Video Name" ID="inVal" @bind-Value="@VideoName" Type="InputType.Text" Placeholder=""
+                    HelperText="Enter video name" />
+                @if (IsAdmin)
+                {
+                    <MudSelect id="brokerVideo" class="form-control" @bind-Value="@BrokerListId">
+                        <MudSelectItem Value=0>No Broker</MudSelectItem>
+                        @foreach (var broker in @Brokers)
+                        {
+                            <MudSelectItem Value=@broker.Id>@broker.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            </DialogContent>
+            <DialogActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+                    OnClick="OnCancelPushed">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+                    OnClick="UploadButtonPushed">Ok</MudButton>
+            </DialogActions>
+
+        </MudDialog>
+
+        @if (IsAdmin)
+        {
+            <div class="row mt-1">
+
+    <div class="col-lg-8 control_wrapper mb-5">
+        <MudSelect T="int" Label="Filter By Broker" Placeholder="Select" Clearable="true" @bind-Value="FilterBrokerId"
+            AdornmentColor="Color.Primary">
+            <MudSelectItem Value="0">Select</MudSelectItem>
+            @foreach (var item in @Brokers)
+                        {
+                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+            </div>
+        }
+
+        <div class="card ">
+            <div class="card-header">Special Events</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="card col-sm-3" style="padding-left: 0px; padding-right: 0px">
+                        <div class="card-header">Welcome Video</div>
+                        <div class="card-body">
+                        @if (WelcomeVideo != null)
+                        {
+                            if (DisplayEmbeddedVideo[WelcomeVideo.Id])
+                            {
+                                <div class="video_play">
+                                    <video id="movie" class="video_play_size" controls preload >
+                                        <source src='@WelcomeVideo.Url#t=0.1'>
+                                    </video>
+                                </div>
+
+                            }
+                            else
+                            {
+                                <div class="video_thumb">
+                                    <img class="img-thumbnail" src="@WelcomeVideo.VideoThumbnailData" style="width:150px;" />
+                                    <div class="play-button" @onclick="@( () => ShowVideoPlayer(@WelcomeVideo.Id) )"></div>
+                                </div>
+                            }                       
+                        }
+                    </div>
+                </div>
+                    <div class="card col-sm-3" style="padding-left: 0px; padding-right: 0px">
+                        <div class="card-header">Birthday Video</div>
+                        <div class="card-body">
+                    @if (BirthdayVideo != null)
+                    {
+                        if (DisplayEmbeddedVideo[BirthdayVideo.Id])
+                        {
+                            <div class="video_play">
+                                <video id="movie" class="video_play_size" controls preload >
+                                    <source src='@BirthdayVideo.Url#t=0.1'>
+                                </video>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="video_thumb">
+                                <img class="img-thumbnail" src="@BirthdayVideo.VideoThumbnailData" style="width:150px;" />
+                                <div class="play-button" @onclick="@( () => ShowVideoPlayer(@BirthdayVideo.Id) )"></div>
+                            </div>
+                        }
+                    }
+                        </div>
+                    </div>
+                                        <div class="card col-sm-3" style="padding-left: 0px; padding-right: 0px">
+                        <div class="card-header">Mortgage Video</div>
+                        <div class="card-body">
+                    @if (MortgageVideo != null)
+                    {
+                        if (DisplayEmbeddedVideo[MortgageVideo.Id])
+                        {
+                            <div class="video_play">
+                                <video id="movie" class="video_play_size" controls preload >
+                                    <source src='@MortgageVideo.Url#t=0.1'>
+                                </video>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="video_thumb">
+                                <img class="img-thumbnail" src="@MortgageVideo.VideoThumbnailData" style="width:150px;" />
+                                <div class="play-button" @onclick="@( () => ShowVideoPlayer(@MortgageVideo.Id) )"></div>
+                            </div>
+                        }                       
+                    }
+                        </div>
+                    </div>
+                                    <div class="card col-sm-3" style="padding-left: 0px; padding-right: 0px">
+                                        <div class="card-header">Insurance Video</div>
+                                        <div class="card-body">
+                    @if (InsuranceVideo != null)
+                    {
+                        if (DisplayEmbeddedVideo[InsuranceVideo.Id])
+                        {
+                            <div class="video_play">
+                                <video id="movie" class="video_play_size" controls preload autoplay>
+                                    <source src='@InsuranceVideo.Url#t=0.1'>
+                                </video>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="video_thumb">
+                                <img class="img-thumbnail" src="@InsuranceVideo.VideoThumbnailData" style="width:150px;" />
+                                <div class="play-button" @onclick="@( () => ShowVideoPlayer(@InsuranceVideo.Id) )"></div>
+                            </div>
+                        }
+                    }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <MudTable Items="@Videos" id="table-video" class="table col-sm-12 table-striped "
+                  Filter="x => x.SpecialVideo==false ">
+            <HeaderContent>
+                <MudTh class="video_table_col_width_parent">Watch</MudTh>
+                <MudTh class="">
+                    <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.Name)">Video Name
+                    </MudTableSortLabel>
+                </MudTh>
+                <MudTh class="">
+                    <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.UploadDate)">Uploaded
+                    </MudTableSortLabel>
+                </MudTh>
+                <MudTh class="">
+                    <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.SendDate)">Send Date
+                    </MudTableSortLabel>
+                </MudTh>
+                @if (IsAdmin)
+                {
+                    <MudTh class="">
+                        <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Server.Models.Video, object>(x=>x.BrokerName)">
+                            Broker
+                        </MudTableSortLabel>
+                    </MudTh>
+                }
+
+                <MudTh class="">
+                    Vetted
+                </MudTh>
+
+
+                <MudTh class="">Welcome</MudTh> 
+                <MudTh class="">Birthday</MudTh>
+                <MudTh class="">Mortgage</MudTh>
+                <MudTh class="">Send</MudTh>
+                <MudTh class="">Delete</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Watch">
+                    <div class="card video_table_col_width">
+                        <div class="card_body video_card-body">
+                            @if (DisplayEmbeddedVideo[context.Id])
+                            {
+                                <div class="video_play">
+                                    <video id="movie" class="video_play_size" controls preload>
+                                        <source src='@context.Url#t=0.1'>
+                                    </video>
+                                </div>
+
+                            }
+                            else
+                            {
+                                <div class="video_thumb">
+                                    <img class="img-thumbnail" src="@context.VideoThumbnailData" style="width:150px;" />
+                                    <div class="play-button" @onclick="@( () => ShowVideoPlayer(@context.Id) )"></div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </MudTd>
+                <MudTd DataLabel="Video Name">@Path.GetFileNameWithoutExtension(context.Name)</MudTd>
+                <MudTd DataLabel="Uploaded">@((context.UploadDate == null) ? "-" :
+            ((DateTimeOffset)context.UploadDate).ToString("g", new CultureInfo("en-GB")))</MudTd>
+                    <MudTd DataLabel="Video Send Date">
+                        <div class="row">
+                            <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
+                                PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@context.SendDate"
+                                DateChanged="async (x) => await UpdateVideoSendDate(x, context.Id)"
+                                style="font-size: 14px; margin-top: -10px">
+                            </MudDatePicker>
+                        </div>
+                        <div class="row mt-2">
+                            <MudCheckBox Checked="@context.SendDateTick"
+                            @onclick="async f => await SetSendDateTick(context.Id)" />
+                            <label class="video_checkbox_label">Send on this date</label>
+
+                        </div>
+                    </MudTd>
+                    @if (IsAdmin)
+                {
+                    <MudTd DataLabel="Broker">@context.BrokerName</MudTd>
+                }
+
+                <MudTd>
+                    <MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Id)" />
+                </MudTd>
+
+                <MudTd DataLabel="Welcome">
+                    <MudCheckBox Checked="@context.WelcomeVideo" @onclick="async f => await SetWelcomeVideo(context.Id)" />
+                </MudTd>
+                <MudTd DataLabel="Birthday">
+                    <MudCheckBox Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Id)" />
+                </MudTd>
+                <MudTd DataLabel="Mortgage">
+                    <MudCheckBox Checked="@context.MortgageVideo" @onclick="async f => await SetMortgageVideo(context.Id)" />
+                </MudTd>
+                <MudTd DataLabel="Send">
+                    @if (!IsMinorAdmin)
+                    {
+                        <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.Send"
+                            Link="@($"videodetail/{context.Id}")" />
+                    }
+                </MudTd>
+                <MudTd DataLabel="Delete">
+                    <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.DeleteForever"
+                        @onclick="f => DeleteVideo(context.Id)" />
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+        OnClick="@NavigateToOverview" class="btn btn-link">Back to video list</MudButton>
+}
