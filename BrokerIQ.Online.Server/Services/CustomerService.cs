@@ -179,5 +179,17 @@ namespace BrokerIQ.Online.Services
 
             return this.mapper.Map<Customer>(answer);
         }
+
+        public async Task Disconnect(int mainCustomerId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = $"{this.customerUrl}/{mainCustomerId}/disconnect";
+
+            await this.requestProviderService.Post<bool>(url);
+
+            return;
+        }
     }
 }

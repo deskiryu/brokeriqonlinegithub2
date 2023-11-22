@@ -21,7 +21,7 @@
 else if (!Saved)
 {
     <h3 class="page-title">@Customer.FirstName @Customer.LastName</h3>
-    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" @ref="Tabs">
         <MudTabPanel Text="Customer">
             <div class="card ">
                 <div class="card-header">Notifications</div>
@@ -43,13 +43,13 @@ else if (!Saved)
                 </div>
             </div>
 
-            <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers"  Customer="@Customer"/>
+            <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Customer"/>
 
         </MudTabPanel>
 
         @if (Connection != null){
         <MudTabPanel Text="Connection" >
-            <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Connection"/>
+            <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Connection" OnDisconnection="@(async () => await OnConnetionRemoved())"/>
         </MudTabPanel>
         }
 

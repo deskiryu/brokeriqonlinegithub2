@@ -28,5 +28,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> SetCustomerNeeds(int customerid, bool hasNeeds);
 
         Task<Customer> GetConnection(int id);
+
+        Task Disconnect(int connectedCustomerId);
     }
 }

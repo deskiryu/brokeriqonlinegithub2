@@ -177,6 +177,8 @@ namespace BrokerIQ.Online.Pages
 
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
+        protected MudTabs Tabs;
+
         protected override async Task OnInitializedAsync()
         {
             User = await AccountService.GetUser();
@@ -1187,6 +1189,17 @@ namespace BrokerIQ.Online.Pages
 
             return (Customer.Employment == EmploymentEnum.Employed || Customer.Employment == EmploymentEnum.SelfEmployed) &&
                 !Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > DateTime.UtcNow);
+        }
+
+        public async Task OnConnetionRemoved()
+        {
+            Connection = null;
+
+            Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
+
+            Tabs.ActivatePanel(0);
+
+            StateHasChanged();
         }
     }
 }

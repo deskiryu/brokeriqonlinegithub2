@@ -48,6 +48,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         [Parameter]
         public Online.Models.Customer Customer { get; set; }
 
+        [Parameter]
+        public Action OnDisconnection { get; set; }
+
         protected CustomerDocumentDto CustomerProfilePicture { get; set; }
 
         protected OccupationDto Occupation { get; set; }
@@ -134,5 +137,20 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             }
         }
 
+        protected async Task Disconnect()
+        {
+            var dialogParams = new DialogParameters
+            {
+                { "Message", $"Are you sure you want to disconnect this client?" }
+            };
+
+            var result = await DialogService.Show<Shared.ConfirmCancelDialog>("Confirmation", dialogParams).Result;
+
+            if (result.Cancelled) return;
+
+            await CustomerService.Disconnect(Customer.TargetCustomerId);
+
+            OnDisconnection();
+        }
     }
 }

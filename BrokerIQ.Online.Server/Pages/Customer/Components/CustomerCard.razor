@@ -211,8 +211,10 @@
                 <div class="row col-12 mt-1">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientedit/{Customer.Id}")" class="ml-1">
                         Edit Client
-                    </MudButton>                            
-                @if (!Customer.ConnectedToCustomerId.HasValue){
+                    </MudButton>
+
+                @if (!Customer.ConnectedToCustomerId.HasValue)
+                {
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/0/{Customer.Id}")" class="ml-1">
                         Add a Menu Plan
                     </MudButton>
@@ -226,6 +228,13 @@
                             Delete Client
                         </MudButton>
                     }
+                }
+
+                @if (Customer.ConnectedToCustomerId.HasValue)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Disconnect" class="ml-1">
+                        Disconnect
+                    </MudButton>
                 }
                 </div>
             </div>
