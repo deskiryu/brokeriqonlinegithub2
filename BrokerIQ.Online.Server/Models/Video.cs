@@ -40,6 +40,8 @@ namespace BrokerIQ.Online.Server.Models
         public bool SpecialVideo { get => BirthdayVideo || InsuranceVideo || MortgageVideo || InsuranceVideo; }
 
         public bool SendDateTick { get => VideoSendTypeId == VideoSendEnum.SendOnDate; }
-        
+
+        public string Identifier { get; set; }
+
     }
 }

@@ -139,6 +139,7 @@ namespace BrokerIQ.Online.Pages
                 DisplayEmbeddedVideo = new Dictionary<int, bool>();
                 foreach (Video video in Videos)
                 {
+                    video.Identifier = "Files";
                     DisplayEmbeddedVideo[video.Id] = false;
                     if (IsAdmin)
                     {

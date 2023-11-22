@@ -85,46 +85,140 @@
                 </div>
             </div>
         }
-<MudDropContainer T="DropItem" Items="_items" Item ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
+        <MudDropContainer T="BrokerIQ.Online.Server.Models.Video" Items="Videos" Item ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
     <ChildContent>
         <MudListSubheader Class="mt-4 pb-2">Folders</MudListSubheader>
         <div class="d-flex gap-4 mx-4">
-            <MudDropZone T="DropItem" OnlyZone="true" Identifier="Propaganda">
-                <MudPaper Outlined="true" Class="d-flex align-center pa-3 gap-2">
-                    <MudIcon Icon="@Icons.Custom.Uncategorized.Folder" Color="Color.Inherit" />Propaganda
-                </MudPaper>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Welcome">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Welcome Video</div>
+                            <div class="card-body">
+                                @if (WelcomeVideo != null)
+                                {
+                                    if (DisplayEmbeddedVideo[WelcomeVideo.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@WelcomeVideo.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@WelcomeVideo.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@WelcomeVideo.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
             </MudDropZone>
-           <MudDropZone T="DropItem" OnlyZone="true" Identifier="Work">
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Birthday">
                 <MudPaper Outlined="true" Class="d-flex align-center pa-3 gap-2">
-                    <MudIcon Icon="@Icons.Custom.Uncategorized.Folder" Color="Color.Inherit" />Work
+                    <MudIcon Icon="@Icons.Custom.Uncategorized.Folder" Color="Color.Inherit" />Birthday
                 </MudPaper>
             </MudDropZone>
         </div>
         <MudListSubheader Class="mt-4 pb-2">Files</MudListSubheader>
-        <MudDropZone T="DropItem" Identifier="Files" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
+                <MudDropZone T="BrokerIQ.Online.Server.Models.Video" Identifier="Files" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded">
+
+
+
+
+
+
+
+                </MudDropZone>
     </ChildContent>
+
     <ItemRenderer>
-        <div Class="rounded mud-paper-outlined d-flex align-center pa-3 ma-2">
+@*        <div Class="rounded mud-paper-outlined d-flex align-center pa-3 ma-2">
             <MudIcon Icon="@(context.Identifier == "Folders" ? Icons.Custom.Uncategorized.Folder : Icons.Custom.FileFormats.FileDocument)" Color="Color.Inherit" Class="mr-2"/>
             @context.Name
-        </div>
+        </div>*@
+
+                <div DataLabel="Watch">
+                    <div class="card video_table_col_width">
+                        <div class="card_body video_card-body">
+                            @if (DisplayEmbeddedVideo[context.Id])
+                            {
+                                <div class="video_play">
+                                    <video id="movie" class="video_play_size" controls preload>
+                                        <source src='@context.Url#t=0.1'>
+                                    </video>
+                                </div>
+
+                            }
+                            else
+                            {
+                                <div class="video_thumb">
+                                    <img class="img-thumbnail" src="@context.VideoThumbnailData" style="width:150px;" />
+                                    <div class="play-button" @onclick="@( () => ShowVideoPlayer(@context.Id) )"></div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+                <div DataLabel="Video Name">@Path.GetFileNameWithoutExtension(context.Name)</div>
+                <div DataLabel="Uploaded">
+                    @((context.UploadDate == null) ? "-" :
+                        ((DateTimeOffset)context.UploadDate).ToString("g", new CultureInfo("en-GB")))
+                </div>
+                <div DataLabel="Video Send Date">
+                    <div class="row">
+                        <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
+                                       PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@context.SendDate"
+                                       DateChanged="async (x) => await UpdateVideoSendDate(x, context.Id)"
+                                       style="font-size: 14px; margin-top: -10px">
+                        </MudDatePicker>
+                    </div>
+                    <div class="row mt-2">
+                        <MudCheckBox Checked="@context.SendDateTick"
+                        @onclick="async f => await SetSendDateTick(context.Id)" />
+                        <label class="video_checkbox_label">Send on this date</label>
+
+                    </div>
+                </div>
+                @if (IsAdmin)
+                {
+                    <div DataLabel="Broker">@context.BrokerName</div>
+                }
+
+                <div>
+                    <MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Id)" />
+                </div>
+
+                <div DataLabel="Welcome">
+                    <MudCheckBox Checked="@context.WelcomeVideo" @onclick="async f => await SetWelcomeVideo(context.Id)" />
+                </div>
+                <div DataLabel="Birthday">
+                    <MudCheckBox Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Id)" />
+                </div>
+                <div DataLabel="Mortgage">
+                    <MudCheckBox Checked="@context.MortgageVideo" @onclick="async f => await SetMortgageVideo(context.Id)" />
+                </div>
+                <div DataLabel="Send">
+                    @if (!IsMinorAdmin)
+                    {
+                        <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.Send"
+                                       Link="@($"videodetail/{context.Id}")" />
+                    }
+                </div>
+                <div DataLabel="Delete">
+                    <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.DeleteForever"
+                    @onclick="f => DeleteVideo(context.Id)" />
+                </div>
     </ItemRenderer>
 </MudDropContainer>
 
         @code {
-    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    private void ItemUpdated(MudItemDropInfo<BrokerIQ.Online.Server.Models.Video> dropItem)
     {
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
     }
-
-    private List<DropItem> _items = new()
-    {
-        new DropItem(){ Name = "Untitled document", Identifier = "Files" },
-        new DropItem(){ Name = "GoonSwarmBestSwarm.png", Identifier = "Files" },
-        new DropItem(){ Name = "co2traitors.txt", Identifier = "Files" },
-        new DropItem(){ Name = "import.csv", Identifier = "Files" },
-        new DropItem(){ Name = "planned_components_2022-2023.txt", Identifier = "Files" },
-    };
 
     public class DropItem
     {
@@ -132,7 +226,7 @@
         public string Identifier { get; set; }
     }
 }
-        <div class="card ">
+@*        <div class="card ">
             <div class="card-header">Special Events</div>
             <div class="card-body">
                 <div class="row">
@@ -344,7 +438,7 @@
                         @onclick="f => DeleteVideo(context.Id)" />
                 </MudTd>
             </RowTemplate>
-        </MudTable>
+        </MudTable>*@
     }
 }
 else
