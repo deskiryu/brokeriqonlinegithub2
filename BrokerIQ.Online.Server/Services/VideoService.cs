@@ -198,6 +198,25 @@ namespace BrokerIQ.Online.Server.Services
             return result;
         }
 
+        public async Task<(bool, string)> SetInsuranceVideo(int id, int brokerId, bool isInsuranceVideo = true)
+        {
+            var result = (false, string.Empty);
+
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/setmortgagevideo?brokerId={brokerId}&id={id}&isMortgageVideo={isInsuranceVideo}";
+
+            try
+            {
+                result = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetMortgageVideo: exception {ex.Message}");
+            }
+
+            return result;
+        }
         public async Task<(bool, string)> SetVideoSendDate(int id, int brokerId, DateTime? sendDate)
         {
             var answer = (false, string.Empty);

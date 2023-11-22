@@ -135,37 +135,7 @@ namespace BrokerIQ.Online.Pages
                     throw new Exception();
                 }
 
-                Videos = (await VideoService.GetVideos(BrokerId)).ToList();
-                DisplayEmbeddedVideo = new Dictionary<int, bool>();
-                foreach (Video video in Videos)
-                {
-                    video.Identifier = "Files";
-                    DisplayEmbeddedVideo[video.Id] = false;
-                    if (IsAdmin)
-                    {
-                        video.BrokerName = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
-                    }
-                    if (video.WelcomeVideo)
-                    {
-                        WelcomeVideo = video;
-                        DisplayEmbeddedVideo[video.Id] = true;
-                    }
-                    else if(video.BirthdayVideo)
-                    {
-                        BirthdayVideo = video;
-                        DisplayEmbeddedVideo[video.Id] = true;
-                    }
-                    else if(video.MortgageVideo) 
-                    { 
-                        MortgageVideo = video;
-                        DisplayEmbeddedVideo[video.Id] = true;
-                    }
-                    else if(video.InsuranceVideo)
-                    {
-                        InsuranceVideo = video;
-                        DisplayEmbeddedVideo[video.Id] = true;
-                    }
-                }
+                await RefreshVideos();
                 StateHasChanged();
             }
             catch
@@ -619,17 +589,184 @@ namespace BrokerIQ.Online.Pages
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
 
+        public async Task RefreshVideoDrag()
+        {
+            var message = await CompareDraggedToVideoList();
+            if (!string.IsNullOrEmpty(message))
+            {
+                var responseParams = new DialogParameters();
+                responseParams.Add("Message", message);
+
+                var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
+                if (!result.Cancelled)
+                {
+                    await ApplyDraggedChanges();
+                }
+            }
+            await RefreshVideos();
+        }
+
+        protected async Task<string> CompareDraggedToVideoList()
+        {
+            await VerifyAccess();
+            var message = string.Empty;
+
+            foreach(var video in Videos)
+            {
+                if(video != null)
+                {
+                    if(video.Identifier!="Welcome" && video.VideoSendTypeId == VideoSendEnum.WelcomeVideo)
+                    {
+                        message += $"Video {video.Name} will no longer be a welcome video. ";                 
+                    }
+                    else if (video.Identifier == "Welcome" && video.VideoSendTypeId != VideoSendEnum.WelcomeVideo)
+                    {
+                        message += $"Video {video.Name} will be a welcome video. ";
+                    }
+                    if (video.Identifier != "Mortgage" && video.VideoSendTypeId == VideoSendEnum.MortgageVideo)
+                    {
+                        message += $"Video {video.Name} will no longer be a mortgage video. ";
+                    }
+                    else if (video.Identifier == "Mortgage" && video.VideoSendTypeId != VideoSendEnum.MortgageVideo)
+                    {
+                        message += $"Video {video.Name} will be a mortgage video. ";
+                    }
+                    if (video.Identifier != "Birthday" && video.VideoSendTypeId == VideoSendEnum.BirthdayVideo)
+                    {
+                        message += $"Video {video.Name} will no longer be a birthday video. ";
+                    }
+                    else if (video.Identifier == "Birthday" && video.VideoSendTypeId != VideoSendEnum.BirthdayVideo)
+                    {
+                        message += $"Video {video.Name} will be a birthday video. ";
+                    }
+                    if (video.Identifier != "Insurance" && video.VideoSendTypeId == VideoSendEnum.InsuranceVideo)
+                    {
+                        message += $"Video {video.Name} will no longer be a insurance video. ";
+                    }
+                    else if (video.Identifier == "Insurance" && video.VideoSendTypeId != VideoSendEnum.InsuranceVideo)
+                    {
+                        message += $"Video {video.Name} will be a insurance video. ";
+                    }
+
+                }
+            }
+            return message;
+        }
+
+
+        protected async Task<string> ApplyDraggedChanges()
+        {
+            await VerifyAccess();
+            var message = string.Empty;
+
+            foreach (var video in Videos)
+            {
+                if (video != null)
+                {
+                    if (video.Identifier == "Welcome" && video.VideoSendTypeId != VideoSendEnum.WelcomeVideo)
+                    {
+                        await this.VideoService.SetWelcomeVideo(video.Id, BrokerId, true);
+                        break;
+                    }
+                    if (video.Identifier == "Mortgage" && video.VideoSendTypeId != VideoSendEnum.MortgageVideo)
+                    {
+                        await this.VideoService.SetMortgageVideo(video.Id, BrokerId, true);
+                        break;
+                    }
+                    if (video.Identifier == "Birthday" && video.VideoSendTypeId != VideoSendEnum.BirthdayVideo)
+                    {
+                        await this.VideoService.SetBirthdayVideo(video.Id, BrokerId, true);
+                        break;
+                    }
+
+                    if (video.Identifier == "Insurance" && video.VideoSendTypeId != VideoSendEnum.InsuranceVideo)
+                    {
+                        await this.VideoService.SetInsuranceVideo(video.Id, BrokerId, true);
+                        break;
+                    }
+
+
+                    //if (video.Identifier == "Welcome" && video.VideoSendTypeId == VideoSendEnum.WelcomeVideo)
+                    //{
+                    //    await this.VideoService.SetWelcomeVideo(video.Id, BrokerId, false);
+                    //}
+                    //else if (video.Identifier == "Welcome" && video.VideoSendTypeId != VideoSendEnum.WelcomeVideo)
+                    //{
+                    //    await this.VideoService.SetWelcomeVideo(video.Id, BrokerId, true);
+                    //}
+                    //if (video.Identifier != "Mortgage" && video.VideoSendTypeId == VideoSendEnum.MortgageVideo)
+                    //{
+                    //    await this.VideoService.SetMortgageVideo(video.Id, BrokerId, false);
+                    //}
+                    //else if (video.Identifier == "Mortgage" && video.VideoSendTypeId != VideoSendEnum.MortgageVideo)
+                    //{
+                    //    await this.VideoService.SetMortgageVideo(video.Id, BrokerId, true);
+                    //}
+                    //if (video.Identifier != "Birthday" && video.VideoSendTypeId == VideoSendEnum.BirthdayVideo)
+                    //{
+                    //    await this.VideoService.SetBirthdayVideo(video.Id, BrokerId, false);
+                    //}
+                    //else if (video.Identifier == "Birthday" && video.VideoSendTypeId != VideoSendEnum.BirthdayVideo)
+                    //{
+                    //    await this.VideoService.SetBirthdayVideo(video.Id, BrokerId, true);
+                    //}
+                    //if (video.Identifier != "Insurance" && video.VideoSendTypeId == VideoSendEnum.InsuranceVideo)
+                    //{
+                    //    await this.VideoService.SetInsuranceVideo(video.Id, BrokerId, false);
+                    //}
+                    //else if (video.Identifier == "Insurance" && video.VideoSendTypeId != VideoSendEnum.InsuranceVideo)
+                    //{
+                    //    await this.VideoService.SetInsuranceVideo(video.Id, BrokerId, true);
+                    //}
+
+                }
+            }
+            return message;
+        }
         private async Task RefreshVideos()
         {
-            Videos.Clear();
-            Videos = (await VideoService.GetVideos(BrokerId)).ToList();
-            if (IsAdmin || IsMinorAdmin)
+            if (Videos != null)
             {
-                foreach (Video video in Videos)
+                Videos.Clear();
+            }
+
+            DisplayEmbeddedVideo = new Dictionary<int, bool>();
+
+            Videos = (await VideoService.GetVideos(BrokerId)).ToList();
+            foreach (Video video in Videos)
+            {
+                video.Identifier = "Files";
+                DisplayEmbeddedVideo[video.Id] = false;
+                if (IsAdmin)
                 {
                     video.BrokerName = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
                 }
+                if (video.WelcomeVideo)
+                {
+                    WelcomeVideo = video;
+                    DisplayEmbeddedVideo[video.Id] = false;
+                    video.Identifier = "Welcome";
+                }
+                else if (video.BirthdayVideo)
+                {
+                    BirthdayVideo = video;
+                    DisplayEmbeddedVideo[video.Id] = false;
+                    video.Identifier = "Birthday";
+                }
+                else if (video.MortgageVideo)
+                {
+                    MortgageVideo = video;
+                    DisplayEmbeddedVideo[video.Id] = false;
+                    video.Identifier = "Mortgage";
+                }
+                else if (video.InsuranceVideo)
+                {
+                    InsuranceVideo = video;
+                    DisplayEmbeddedVideo[video.Id] = false;
+                    video.Identifier = "Insurance";
+                }
             }
+
             StateHasChanged();
         }
 

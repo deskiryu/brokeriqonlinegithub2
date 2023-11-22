@@ -112,17 +112,106 @@
                                         </div>
                                     }
                                 }
+                                else
+                                {
+                                 <div><p>NONE</p></div>
+                                }
                             </div>
                         </div>
             </MudDropZone>
                     <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Birthday">
-                <MudPaper Outlined="true" Class="d-flex align-center pa-3 gap-2">
-                    <MudIcon Icon="@Icons.Custom.Uncategorized.Folder" Color="Color.Inherit" />Birthday
-                </MudPaper>
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Birthday Video</div>
+                            <div class="card-body">
+                                @if (BirthdayVideo != null)
+                                {
+                                    if (DisplayEmbeddedVideo[BirthdayVideo.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@BirthdayVideo.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@BirthdayVideo.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@BirthdayVideo.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
             </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Mortgage">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Mortgage Video</div>
+                            <div class="card-body">
+                                @if (MortgageVideo != null)
+                                {
+                                    if (DisplayEmbeddedVideo[MortgageVideo.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@MortgageVideo.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@MortgageVideo.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(MortgageVideo.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Insurance">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Insurance Video</div>
+                            <div class="card-body">
+                                @if (InsuranceVideo != null)
+                                {
+                                    if (DisplayEmbeddedVideo[InsuranceVideo.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@InsuranceVideo.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@InsuranceVideo.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@InsuranceVideo.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
         </div>
-        <MudListSubheader Class="mt-4 pb-2">Files</MudListSubheader>
-                <MudDropZone T="BrokerIQ.Online.Server.Models.Video" Identifier="Files" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded">
+        <MudListSubheader Class="mt-4 pb-2">Your videos</MudListSubheader>
+                <MudDropZone T="BrokerIQ.Online.Server.Models.Video" Identifier="Files"  Class="d-flex flex-wrap flex-grow-1 pa-2 rounded">
 
 
 
@@ -163,7 +252,7 @@
 
                 </div>
                 <div DataLabel="Video Name">@Path.GetFileNameWithoutExtension(context.Name)</div>
-                <div DataLabel="Uploaded">
+@*                <div DataLabel="Uploaded">
                     @((context.UploadDate == null) ? "-" :
                         ((DateTimeOffset)context.UploadDate).ToString("g", new CultureInfo("en-GB")))
                 </div>
@@ -185,13 +274,13 @@
                 @if (IsAdmin)
                 {
                     <div DataLabel="Broker">@context.BrokerName</div>
-                }
+                }*@
 
-                <div>
+                <div>Vetted
                     <MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Id)" />
                 </div>
 
-                <div DataLabel="Welcome">
+@*                <div DataLabel="Welcome">
                     <MudCheckBox Checked="@context.WelcomeVideo" @onclick="async f => await SetWelcomeVideo(context.Id)" />
                 </div>
                 <div DataLabel="Birthday">
@@ -199,15 +288,15 @@
                 </div>
                 <div DataLabel="Mortgage">
                     <MudCheckBox Checked="@context.MortgageVideo" @onclick="async f => await SetMortgageVideo(context.Id)" />
-                </div>
-                <div DataLabel="Send">
+                </div>*@
+                <div DataLabel="Send">Send
                     @if (!IsMinorAdmin)
                     {
                         <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.Send"
                                        Link="@($"videodetail/{context.Id}")" />
                     }
                 </div>
-                <div DataLabel="Delete">
+                <div DataLabel="Delete">Delete
                     <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.DeleteForever"
                     @onclick="f => DeleteVideo(context.Id)" />
                 </div>
@@ -215,9 +304,10 @@
 </MudDropContainer>
 
         @code {
-    private void ItemUpdated(MudItemDropInfo<BrokerIQ.Online.Server.Models.Video> dropItem)
+    private async Task ItemUpdated(MudItemDropInfo<BrokerIQ.Online.Server.Models.Video> dropItem)
     {
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+        await RefreshVideoDrag();
     }
 
     public class DropItem
