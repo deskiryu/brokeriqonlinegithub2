@@ -431,9 +431,19 @@ namespace BrokerIQ.Online.Pages
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
         }
 
-        public async Task RefreshVideoDrag()
+        public async Task RefreshVideoDrag(string newIdentifier)
         {
-            var message = await CompareDraggedToVideoList();
+            var message = string.Empty;
+
+            if (newIdentifier.Contains("SendDateVideo"))
+            {
+                message = await AddDraggedToVideoSendList(newIdentifier);
+            }
+            else
+            {
+                message = await CompareDraggedToVideoList();
+            }
+
             if (!string.IsNullOrEmpty(message))
             {
                 var responseParams = new DialogParameters();
@@ -446,6 +456,17 @@ namespace BrokerIQ.Online.Pages
                 }
             }
             await RefreshVideos();
+        }
+
+        public async Task DropNotAllowed()
+        {
+            var message = "Please remove existing send date video first";
+
+            var responseParams = new DialogParameters();
+            responseParams.Add("Message", message);
+
+            await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+   
         }
 
         protected async Task<string> CompareDraggedToVideoList()
@@ -518,66 +539,75 @@ namespace BrokerIQ.Online.Pages
                             message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a insurance video. ";
                         }
                     }
+                }
+            }
+            return message;
+        }
 
-                    if (video.Identifier != "SendDateVideo1" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
-                    {
-                        message += $"Video {video.Name} will no longer be a send on date video. ";
-                    }
-                    else if (video.Identifier == "SendDateVideo1" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
-                    {
-                        if (video.Vetted)
-                        {
-                            message += $"Video {video.Name} will be a send on date video. ";
-                        }
-                        else
-                        {
-                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
-                        }
+        protected async Task<string> AddDraggedToVideoSendList(string newIdentifier)
+        {
+            await VerifyAccess();
+            var message = string.Empty;
 
-                    }
-                    if (video.Identifier != "SendDateVideo2" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
+            foreach (var video in Videos)
+            {
+                if (video != null)
+                {
+                    if (newIdentifier == "SendDateVideo1")
                     {
-                        message += $"Video {video.Name} will no longer be a send on date video. ";
-                    }
-                    else if (video.Identifier == "SendDateVideo2" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
-                    {
-                        if (video.Vetted)
+                        if (video.Identifier == "SendDateVideo1" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
                         {
-                            message += $"Video {video.Name} will be a send on date video. ";
-                        }
-                        else
-                        {
-                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
-                        }
-                    }
-                    if (video.Identifier != "SendDateVideo3" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
-                    {
-                        message += $"Video {video.Name} will no longer be a send on date video. ";
-                    }
-                    else if (video.Identifier == "SendDateVideo3" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
-                    {
-                        if (video.Vetted)
-                        {
-                            message += $"Video {video.Name} will be a send on date video. ";
-                        }
-                        else
-                        {
-                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                            if (video.Vetted)
+                            {
+                                message += $"Video {video.Name} will be a send on date video. ";
+                            }
+                            else
+                            {
+                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                            }
+
                         }
                     }
-                    if (video.Identifier != "SendDateVideo4" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
+                    if (newIdentifier == "SendDateVideo2")
                     {
-                        message += $"Video {video.Name} will no longer be a send on date video. ";
-                    }
-                    else if (video.Identifier == "SendDateVideo4" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
-                    {
-                        if (video.Vetted)
+                        if (video.Identifier == "SendDateVideo2" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
                         {
-                            message += $"Video {video.Name} will be a send on date video. ";
+                            if (video.Vetted)
+                            {
+                                message += $"Video {video.Name} will be a send on date video. ";
+                            }
+                            else
+                            {
+                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                            }
                         }
-                        else
+                    }
+                    if (newIdentifier == "SendDateVideo3")
+                    {
+                        if (video.Identifier == "SendDateVideo3" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
                         {
-                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                            if (video.Vetted)
+                            {
+                                message += $"Video {video.Name} will be a send on date video. ";
+                            }
+                            else
+                            {
+                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                            }
+                        }
+                    }
+                    if (newIdentifier == "SendDateVideo4")
+                    {
+                        if (video.Identifier == "SendDateVideo4" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
+                        {
+                            if (video.Vetted)
+                            {
+                                message += $"Video {video.Name} will be a send on date video. ";
+                            }
+                            else
+                            {
+                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                            }
                         }
                     }
 
@@ -586,6 +616,47 @@ namespace BrokerIQ.Online.Pages
             return message;
         }
 
+        protected async Task<string> RemoveDraggedToVideoSendList(string oldIdentifier)
+        {
+            await VerifyAccess();
+            var message = string.Empty;
+
+            foreach (var video in Videos)
+            {
+                if (video != null)
+                {
+                    if (oldIdentifier == "SendDateVideo1")
+                    {
+                        if (video.Identifier == "SendDateVideo1" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
+                        {
+                            message += $"Video {video.Name} will no longer be a welcome video. ";
+                        }
+                    }
+                    if (oldIdentifier == "SendDateVideo2")
+                    {
+                        if (video.Identifier == "SendDateVideo2" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
+                        {
+                            message += $"Video {video.Name} will no longer be a welcome video. ";
+                        }
+                    }
+                    if (oldIdentifier == "SendDateVideo3")
+                    {
+                        if (video.Identifier == "SendDateVideo3" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
+                        {
+                            message += $"Video {video.Name} will no longer be a welcome video. ";
+                        }
+                    }
+                    if (oldIdentifier == "SendDateVideo4")
+                    {
+                        if (video.Identifier == "SendDateVideo4" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
+                        {
+                            message += $"Video {video.Name} will no longer be a welcome video. ";
+                        }
+                    }
+                }
+            }
+            return message;
+        }
 
         protected async Task<string> ApplyDraggedChanges()
         {
@@ -635,10 +706,20 @@ namespace BrokerIQ.Online.Pages
 
             var video = Videos.FirstOrDefault(x => x.Id == videoId);
             var previousIdentifier = video.Identifier;
+
+            var message = string.Empty;
+
+            if (previousIdentifier.Contains("SendDateVideo"))
+            {
+                message = await RemoveDraggedToVideoSendList(previousIdentifier);
+            }
+            else
+            {
+                message = await CompareDraggedToVideoList();
+            }
+
             video.Identifier = "Files";
 
-
-            var message = await CompareDraggedToVideoList();
             if (!string.IsNullOrEmpty(message))
             {
                 var responseParams = new DialogParameters();
@@ -702,6 +783,10 @@ namespace BrokerIQ.Online.Pages
             if (Videos != null)
             {
                 Videos.Clear();
+                SendDateVideo1 = null;
+                SendDateVideo2 = null;
+                SendDateVideo3 = null;
+                SendDateVideo4 = null;
             }
 
             DisplayEmbeddedVideo = new Dictionary<int, bool>();

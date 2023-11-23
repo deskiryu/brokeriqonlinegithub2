@@ -459,8 +459,22 @@
         @code {
     private async Task ItemUpdated(MudItemDropInfo<BrokerIQ.Online.Server.Models.Video> dropItem)
     {
+        if (dropItem.DropzoneIdentifier.Contains("SendDateVideo"))
+        {
+            if (    (dropItem.DropzoneIdentifier == "SendDateVideo1" && SendDateVideo1 != null) ||
+                    (dropItem.DropzoneIdentifier == "SendDateVideo2" && SendDateVideo2 != null) ||
+                    (dropItem.DropzoneIdentifier == "SendDateVideo3" && SendDateVideo3 != null) ||
+                    (dropItem.DropzoneIdentifier == "SendDateVideo4" && SendDateVideo4 != null) )
+
+            {
+                await DropNotAllowed();
+                return;
+            }
+        }
+
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
-        await RefreshVideoDrag();
+        await RefreshVideoDrag(dropItem.Item.Identifier);            
+
     }
 
     public class DropItem
