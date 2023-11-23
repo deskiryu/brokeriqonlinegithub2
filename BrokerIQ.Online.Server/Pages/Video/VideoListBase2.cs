@@ -712,13 +712,15 @@ namespace BrokerIQ.Online.Pages
             if (previousIdentifier.Contains("SendDateVideo"))
             {
                 message = await RemoveDraggedToVideoSendList(previousIdentifier);
+                video.Identifier = "Files";
             }
             else
-            {
+            {            
+                video.Identifier = "Files";
                 message = await CompareDraggedToVideoList();
             }
 
-            video.Identifier = "Files";
+
 
             if (!string.IsNullOrEmpty(message))
             {
