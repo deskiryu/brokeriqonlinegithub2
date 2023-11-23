@@ -519,6 +519,68 @@ namespace BrokerIQ.Online.Pages
                         }
                     }
 
+                    if (video.Identifier != "SendDateVideo1" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
+                    {
+                        message += $"Video {video.Name} will no longer be a send on date video. ";
+                    }
+                    else if (video.Identifier == "SendDateVideo1" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
+                    {
+                        if (video.Vetted)
+                        {
+                            message += $"Video {video.Name} will be a send on date video. ";
+                        }
+                        else
+                        {
+                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                        }
+
+                    }
+                    if (video.Identifier != "SendDateVideo2" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
+                    {
+                        message += $"Video {video.Name} will no longer be a send on date video. ";
+                    }
+                    else if (video.Identifier == "SendDateVideo2" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
+                    {
+                        if (video.Vetted)
+                        {
+                            message += $"Video {video.Name} will be a send on date video. ";
+                        }
+                        else
+                        {
+                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                        }
+                    }
+                    if (video.Identifier != "SendDateVideo3" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
+                    {
+                        message += $"Video {video.Name} will no longer be a send on date video. ";
+                    }
+                    else if (video.Identifier == "SendDateVideo3" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
+                    {
+                        if (video.Vetted)
+                        {
+                            message += $"Video {video.Name} will be a send on date video. ";
+                        }
+                        else
+                        {
+                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                        }
+                    }
+                    if (video.Identifier != "SendDateVideo4" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
+                    {
+                        message += $"Video {video.Name} will no longer be a send on date video. ";
+                    }
+                    else if (video.Identifier == "SendDateVideo4" && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
+                    {
+                        if (video.Vetted)
+                        {
+                            message += $"Video {video.Name} will be a send on date video. ";
+                        }
+                        else
+                        {
+                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                        }
+                    }
+
                 }
             }
             return message;
@@ -557,39 +619,11 @@ namespace BrokerIQ.Online.Pages
                         break;
                     }
 
-
-                    //if (video.Identifier == "Welcome" && video.VideoSendTypeId == VideoSendEnum.WelcomeVideo)
-                    //{
-                    //    await this.VideoService.SetWelcomeVideo(video.Id, BrokerId, false);
-                    //}
-                    //else if (video.Identifier == "Welcome" && video.VideoSendTypeId != VideoSendEnum.WelcomeVideo)
-                    //{
-                    //    await this.VideoService.SetWelcomeVideo(video.Id, BrokerId, true);
-                    //}
-                    //if (video.Identifier != "Mortgage" && video.VideoSendTypeId == VideoSendEnum.MortgageVideo)
-                    //{
-                    //    await this.VideoService.SetMortgageVideo(video.Id, BrokerId, false);
-                    //}
-                    //else if (video.Identifier == "Mortgage" && video.VideoSendTypeId != VideoSendEnum.MortgageVideo)
-                    //{
-                    //    await this.VideoService.SetMortgageVideo(video.Id, BrokerId, true);
-                    //}
-                    //if (video.Identifier != "Birthday" && video.VideoSendTypeId == VideoSendEnum.BirthdayVideo)
-                    //{
-                    //    await this.VideoService.SetBirthdayVideo(video.Id, BrokerId, false);
-                    //}
-                    //else if (video.Identifier == "Birthday" && video.VideoSendTypeId != VideoSendEnum.BirthdayVideo)
-                    //{
-                    //    await this.VideoService.SetBirthdayVideo(video.Id, BrokerId, true);
-                    //}
-                    //if (video.Identifier != "Insurance" && video.VideoSendTypeId == VideoSendEnum.InsuranceVideo)
-                    //{
-                    //    await this.VideoService.SetInsuranceVideo(video.Id, BrokerId, false);
-                    //}
-                    //else if (video.Identifier == "Insurance" && video.VideoSendTypeId != VideoSendEnum.InsuranceVideo)
-                    //{
-                    //    await this.VideoService.SetInsuranceVideo(video.Id, BrokerId, true);
-                    //}
+                    if (video.Identifier.Contains("SendDateVideo") && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
+                    {
+                        await this.VideoService.SetVideoSendDateTick(video.Id, BrokerId, true);
+                        break;
+                    }
 
                 }
             }
@@ -600,6 +634,7 @@ namespace BrokerIQ.Online.Pages
         {
 
             var video = Videos.FirstOrDefault(x => x.Id == videoId);
+            var previousIdentifier = video.Identifier;
             video.Identifier = "Files";
 
 
@@ -618,6 +653,17 @@ namespace BrokerIQ.Online.Pages
                         case VideoSendEnum.BirthdayVideo: BirthdayVideo = null; break;
                         case VideoSendEnum.MortgageVideo: MortgageVideo = null; break;
                         case VideoSendEnum.InsuranceVideo: InsuranceVideo = null; break;
+                        case VideoSendEnum.SendOnDate:
+                            {
+                                switch (previousIdentifier)
+                                {
+                                    case "SendDateVideo1": SendDateVideo1 = null; break;
+                                    case "SendDateVideo2": SendDateVideo2 = null; break;
+                                    case "SendDateVideo3": SendDateVideo3 = null; break;
+                                    case "SendDateVideo4": SendDateVideo4 = null; break;
+                                }
+                                break;
+                            }
                     }
                     await this.VideoService.SetNoVideo(video.Id, BrokerId);
                 }
@@ -698,18 +744,26 @@ namespace BrokerIQ.Online.Pages
                     if (SendDateVideo1 == null)
                     {
                         SendDateVideo1 = video;
+                        DisplayEmbeddedVideo[video.Id] = false;
+                        video.Identifier = "SendDateVideo1";
                     }
                     else if (SendDateVideo2 == null)
                     {
                         SendDateVideo2 = video;
+                        DisplayEmbeddedVideo[video.Id] = false;
+                        video.Identifier = "SendDateVideo2";
                     }
                     else if (SendDateVideo3 == null)
                     {
                         SendDateVideo3 = video;
+                        DisplayEmbeddedVideo[video.Id] = false;
+                        video.Identifier = "SendDateVideo3";
                     }
                     else if (SendDateVideo4 == null)
                     {
                         SendDateVideo4 = video;
+                        DisplayEmbeddedVideo[video.Id] = false;
+                        video.Identifier = "SendDateVideo4";
                     }
                 }
             }

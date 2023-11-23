@@ -499,17 +499,14 @@ app {
     margin-bottom: 14px;
 }
 
+ none_block_date {
+    margin-bottom: 28px!important;
+}
+
 .video_card-body {
     padding: 0rem;
 }
 
-.video_card-body red {
-    border-color: red;
-}
-
-.video_card-body green {
-    border-color: green;
-}
 
 .video_table_col_width_parent {
     width: 190px !important;

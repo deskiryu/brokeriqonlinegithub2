@@ -238,11 +238,19 @@
                                             <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo1.Id) )"></div>
                                         </div>
                                     }
+                                    <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
+                                                   PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo1.SendDate"
+                                                   DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo1.Id)"
+                                                   style="font-size: 14px; margin-top: -10px">
+                                    </MudDatePicker>
                                 }
                                 else
                                 {
-                                    <div class="none_block"><p>NONE</p></div>
+                                    <div class="none_block none_block_date"><p>NONE</p></div>
                                 }
+                                <div class="row">
+
+                                </div>
                             </div>
                         </div>
                     </MudDropZone>
@@ -269,10 +277,15 @@
                                             <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo2.Id) )"></div>
                                         </div>
                                     }
+                                    <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
+                                                   PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo2.SendDate"
+                                                   DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo2.Id)"
+                                                   style="font-size: 14px; margin-top: -10px">
+                                    </MudDatePicker>
                                 }
                                 else
                                 {
-                                    <div class="none_block"><p>NONE</p></div>
+                                    <div class="none_block none_block_date"><p>NONE</p></div>
                                 }
                             </div>
                         </div>
@@ -300,10 +313,15 @@
                                             <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo3.Id) )"></div>
                                         </div>
                                     }
+                                    <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
+                                                   PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo3.SendDate"
+                                                   DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo3.Id)"
+                                                   style="font-size: 14px; margin-top: -10px">
+                                    </MudDatePicker>
                                 }
                                 else
                                 {
-                                    <div class="none_block"><p>NONE</p></div>
+                                    <div class="none_block none_block_date"><p>NONE</p></div>
                                 }
                             </div>
                         </div>
@@ -331,10 +349,15 @@
                                             <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo4.Id) )"></div>
                                         </div>
                                     }
+                                    <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
+                                                   PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo4.SendDate"
+                                                   DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo4.Id)"
+                                                   style="font-size: 14px; margin-top: -10px">
+                                    </MudDatePicker>
                                 }
                                 else
                                 {
-                                    <div class="none_block"><p>NONE</p></div>
+                                    <div class="none_block none_block_date"><p>NONE</p></div>
                                 }
                             </div>
                         </div>
