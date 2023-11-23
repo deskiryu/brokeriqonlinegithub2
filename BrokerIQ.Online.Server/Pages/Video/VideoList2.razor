@@ -243,10 +243,10 @@
                                             <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo1.Id) )"></div>
                                         </div>
                                     }
-                                    <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
+                                    <MudDatePicker Class="my_send_date_chooser" Culture=@(new CultureInfo("en-GB"))
                                                    PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo1.SendDate"
                                                    DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo1.Id)"
-                                                   style="font-size: 14px; margin-top: -10px">
+                                                   >
                                     </MudDatePicker>
                                 }
                                 else
@@ -280,10 +280,10 @@
                                             <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo2.Id) )"></div>
                                         </div>
                                     }
-                                    <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
+                                    <MudDatePicker Class="my_send_date_chooser" Culture=@(new CultureInfo("en-GB"))
                                                    PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo2.SendDate"
                                                    DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo2.Id)"
-                                                   style="font-size: 14px; margin-top: -10px">
+                                                   >
                                     </MudDatePicker>
                                 }
                                 else
@@ -317,10 +317,10 @@
                                             <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo3.Id) )"></div>
                                         </div>
                                     }
-                                    <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
+                                    <MudDatePicker Class="my_send_date_chooser" Culture=@(new CultureInfo("en-GB"))
                                                    PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo3.SendDate"
                                                    DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo3.Id)"
-                                                   style="font-size: 14px; margin-top: -10px">
+                                                   >
                                     </MudDatePicker>
                                 }
                                 else
@@ -334,7 +334,7 @@
                         <div class="card " style="padding-left: 0px; padding-right: 0px">
                             <div class="card-header">Send Date Video 4</div>
                             <div class="card-title my_card_title">@(SendDateVideo4 !=null ? SendDateVideo4.Name : "")</div>
-                            <div class="card-body my_card_body">
+                            <div class="card-body my_card_body_date">
                                 @if (SendDateVideo4 != null)
                                 {
                                     <div class="close" @onclick="@( async () => await RemoveDrag(SendDateVideo4.Id, VideoSendEnum.SendOnDate) )"></div>
@@ -354,10 +354,10 @@
                                             <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo4.Id) )"></div>
                                         </div>
                                     }
-                                    <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
+                                    <MudDatePicker Class="my_send_date_chooser" Culture=@(new CultureInfo("en-GB"))
                                                    PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo4.SendDate"
                                                    DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo4.Id)"
-                                                   style="font-size: 14px; margin-top: -10px">
+                                                   >
                                     </MudDatePicker>
                                 }
                                 else
