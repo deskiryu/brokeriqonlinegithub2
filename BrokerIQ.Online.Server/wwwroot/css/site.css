@@ -496,7 +496,7 @@ app {
     height: 140px;
     color: white;
     margin-top: 10px;
-    top: 64;
+    margin-bottom: 14px;
 }
 
 .video_card-body {

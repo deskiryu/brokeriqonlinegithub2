@@ -625,6 +625,32 @@ namespace BrokerIQ.Online.Pages
             await RefreshVideos();
         }
 
+        protected async Task SendVideo(int videoId)
+        {
+            var video = Videos.FirstOrDefault(x => x.Id == videoId);
+            if (video != null)
+            {
+                var message = string.Empty;
+                if (!video.Vetted)
+                {
+                    message = $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content.";
+                    var responseParams = new DialogParameters();
+                    responseParams.Add("Message", message);
+
+                    var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
+                    if (!result.Cancelled)
+                    {
+                        await this.VideoService.SetVetted(video.Id, true);
+                    }
+                    else 
+                    { 
+                        return; 
+                    }
+                }
+            }
+            NavigationManager.NavigateTo($"videodetail/{videoId}");
+        }
+
         private async Task RefreshVideos()
         {
             if (Videos != null)
