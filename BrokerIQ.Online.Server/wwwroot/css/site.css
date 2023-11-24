@@ -415,10 +415,10 @@ app {
 
 .video_play {
     width: 150px;
-    height: 150px;
+    height: 130px;
     display: block;
     border: 2px solid #fff;
-    margin: 2em auto;
+    margin: 1em auto;
     overflow: hidden;
 }
 
@@ -438,6 +438,15 @@ app {
     background-color: rgba(0, 0, 0, 0.6);
     transition: background-color 0.5s ease;
     cursor: pointer;
+}
+
+.play-button-no-header {
+    top: calc(0% + 201px);
+    left: calc(0% + 5px);
+}
+.send_position {
+    top: -43px;
+    left: calc(0% + 156px);
 }
 
 .play-button:after {
@@ -509,6 +518,13 @@ app {
     .close:after {
         transform: rotate(-45deg);
     }
+
+.close_no_header {
+
+    right: calc(0% + 12px);
+    top: 57px;
+
+}
 
 .card {
     background-color: #FAFAFA;

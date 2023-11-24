@@ -87,7 +87,7 @@
         }
         <MudDropContainer T="BrokerIQ.Online.Server.Models.Video" Items="Videos" Item ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
     <ChildContent>
-        <MudListSubheader Class="mt-4 pb-2">Folders</MudListSubheader>
+        <MudListSubheader Class="mt-4 pb-2">Automated Videos</MudListSubheader>
         <div class="d-flex gap-4 mx-4">
                     <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Welcome">
                         <div class="card " style="padding-left: 0px; padding-right: 0px">
@@ -368,7 +368,7 @@
                         </div>
                     </MudDropZone>
                 </div>
-        <MudListSubheader Class="mt-4 pb-2">Your videos</MudListSubheader>
+        <MudListSubheader Class="mt-4 pb-2">Available Videos - Drag and Drop to the automated videos</MudListSubheader>
                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" Identifier="Files"  Class="d-flex flex-wrap flex-grow-1 pa-2 rounded">
 
 
@@ -381,14 +381,11 @@
     </ChildContent>
 
     <ItemRenderer>
-@*        <div Class="rounded mud-paper-outlined d-flex align-center pa-3 ma-2">
-            <MudIcon Icon="@(context.Identifier == "Folders" ? Icons.Custom.Uncategorized.Folder : Icons.Custom.FileFormats.FileDocument)" Color="Color.Inherit" Class="mr-2"/>
-            @context.Name
-        </div>*@
 
-                <div DataLabel="Watch" >
-                    <div class="card video_table_col_width">
-                        <div class="card_body video_card-body" >
+                <div class="card " style="padding-left: 0px; padding-right: 0px">
+                    <div class="card-title my_card_title">@context.Name</div>
+                    <div class="card-body my_card_body">
+                        <div class="close close_no_header" @onclick="@( async () => await RemoveDrag(BirthdayVideo.Id, VideoSendEnum.BirthdayVideo) )"></div>
                             @if (DisplayEmbeddedVideo[context.Id])
                             {
                                 <div class="video_play" style="border-color : @(context.Vetted ? "green":"red")">
@@ -402,62 +399,20 @@
                             {
                                 <div class="video_thumb" style="border-color : @(context.Vetted ? "green":"red")">
                                     <img class="img-thumbnail" src="@context.VideoThumbnailData" style="width:150px;" />
-                                    <div class="play-button" @onclick="@( () => ShowVideoPlayer(@context.Id) )"></div>
+                                <div class="play-button play-button-no-header" @onclick="@( () => ShowVideoPlayer(@context.Id) )"></div>
                                 </div>
                             }
                         </div>
                     </div>
 
-                </div>
-                @*                <div DataLabel="Video Name">@Path.GetFileNameWithoutExtension(context.Name)</div>
-               <div DataLabel="Uploaded">
-                    @((context.UploadDate == null) ? "-" :
-                        ((DateTimeOffset)context.UploadDate).ToString("g", new CultureInfo("en-GB")))
-                </div>
-                <div DataLabel="Video Send Date">
-                    <div class="row">
-                        <MudDatePicker Class="video_send_date" Culture=@(new CultureInfo("en-GB"))
-                                       PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@context.SendDate"
-                                       DateChanged="async (x) => await UpdateVideoSendDate(x, context.Id)"
-                                       style="font-size: 14px; margin-top: -10px">
-                        </MudDatePicker>
+                    <div DataLabel="Send">
+                        @if (!IsMinorAdmin)
+                        {
+                            <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Class = "send_position" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.Send"
+                                           @onclick="@( () => SendVideo(@context.Id) )" />
+                        }
                     </div>
-                    <div class="row mt-2">
-                        <MudCheckBox Checked="@context.SendDateTick"
-                        @onclick="async f => await SetSendDateTick(context.Id)" />
-                        <label class="video_checkbox_label">Send on this date</label>
 
-                    </div>
-                </div>
-                @if (IsAdmin)
-                {
-                    <div DataLabel="Broker">@context.BrokerName</div>
-                }*@
-
-@*                <div>Vetted
-                    <MudCheckBox Checked="@context.Vetted" @onclick="async f => await SetVetted(context.Id)" />
-                </div>*@
-
-@*                <div DataLabel="Welcome">
-                    <MudCheckBox Checked="@context.WelcomeVideo" @onclick="async f => await SetWelcomeVideo(context.Id)" />
-                </div>
-                <div DataLabel="Birthday">
-                    <MudCheckBox Checked="@context.BirthdayVideo" @onclick="async f => await SetBirthdayVideo(context.Id)" />
-                </div>
-                <div DataLabel="Mortgage">
-                    <MudCheckBox Checked="@context.MortgageVideo" @onclick="async f => await SetMortgageVideo(context.Id)" />
-                </div>*@
-                <div DataLabel="Send">Send
-                    @if (!IsMinorAdmin)
-                    {
-                        <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.Send"
-                                       @onclick="@( () => SendVideo(@context.Id) )" />
-                    }
-                </div>
-                <div DataLabel="Delete">Delete
-                    <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.DeleteForever"
-                    @onclick="f => DeleteVideo(context.Id)" />
-                </div>
     </ItemRenderer>
 </MudDropContainer>
 
