@@ -88,8 +88,10 @@
 
         <MudDropContainer T="BrokerIQ.Online.Server.Models.Video" Items="Videos" Item ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
     <ChildContent>
-        <MudListSubheader Class="mt-4 pb-2">Automated Videos</MudListSubheader>
-        <div class="d-flex gap-4 mx-4">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                    <div class="card-header"><h6>Automated Videos</h6></div>
+                            <div class="card-body">
+                <div class="d-flex gap-1 mx-1  flex-wrap " >
                     <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Welcome">
                         <div class="card " style="padding-left: 0px; padding-right: 0px">
                             <div class="card-header">Welcome Video</div>
@@ -218,8 +220,6 @@
                             </div>
                         </div>
                     </MudDropZone>
-        </div>
-                <div class="d-flex gap-4 mx-4">
                     <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo1">
                         <div class="card " style="padding-left: 0px; padding-right: 0px">
                             <div class="card-header">Send Date Video 1</div>
@@ -368,9 +368,12 @@
                             </div>
                         </div>
                     </MudDropZone>
-                </div>
-        <MudListSubheader Class="mt-4 pb-2">Available Videos - Drag and Drop to the automated videos</MudListSubheader>
-                <MudDropZone T="BrokerIQ.Online.Server.Models.Video" Identifier="Files"  Class="d-flex flex-wrap flex-grow-1 pa-2 rounded">
+                </div></div></div>
+
+                <div class="card " style="padding-left: 0px; padding-right: 0px">
+                    <div class="card-header"><h6>Available Videos - Drag and Drop to the automated videos</h6></div>
+                    <div class="card-body">
+                <MudDropZone T="BrokerIQ.Online.Server.Models.Video" Identifier="Files"  Class="d-flex gap-1 mx-1 flex-wrap flex-grow-1 pa-2 rounded">
 
 
 
@@ -378,7 +381,8 @@
 
 
 
-                </MudDropZone>
+                </MudDropZone></div></div>
+                
     </ChildContent>
 
     <ItemRenderer>
