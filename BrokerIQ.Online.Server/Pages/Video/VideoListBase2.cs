@@ -25,11 +25,19 @@ namespace BrokerIQ.Online.Pages
     using MudBlazor;
     using BrokerIQ.Online.Server.Extensions;
 
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Identifier { get; set; }
+    }
+
     public class VideoListBase2 : ComponentBase
     {
         protected string Message = string.Empty;
         protected string StatusClass = string.Empty;
         protected bool Saved;
+        protected MudDropContainer<Video> _dropContainer;
+
         public string VideoName { get; set; }
         public DateTime? VideoSendDate { get; set; }
 
@@ -635,32 +643,54 @@ namespace BrokerIQ.Online.Pages
                     {
                         if (video.Identifier == "SendDateVideo1" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
                         {  
-                            message += $"Video {video.Name} will no longer be sont on date {dateStr}.";
+                            message += $"Video {video.Name} will no longer be sent on date {dateStr}.";
                         }
                     }
                     if (oldIdentifier == "SendDateVideo2")
                     {
                         if (video.Identifier == "SendDateVideo2" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
                         {
-                            message += $"Video {video.Name} will no longer be sont on date {dateStr}.";
+                            message += $"Video {video.Name} will no longer be sent on date {dateStr}.";
                         }
                     }
                     if (oldIdentifier == "SendDateVideo3")
                     {
                         if (video.Identifier == "SendDateVideo3" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
                         {
-                            message += $"Video {video.Name} will no longer be sont on date {dateStr}.";
+                            message += $"Video {video.Name} will no longer be sent on date {dateStr}.";
                         }
                     }
                     if (oldIdentifier == "SendDateVideo4")
                     {
                         if (video.Identifier == "SendDateVideo4" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
                         {
-                            message += $"Video {video.Name} will no longer be sont on date {dateStr}.";
+                            message += $"Video {video.Name} will no longer be sent on date {dateStr}.";
+                        }
+                    }
+                    if (oldIdentifier == "Files")
+                    {
+                        if (video.Identifier == "Files" && video.VideoSendTypeId == VideoSendEnum.NotAssigned)
+                        {
+                            message += $"Video {video.Name} will no deleted";
                         }
                     }
                 }
             }
+            return message;
+        }
+
+        protected async Task<string> RemoveDraggedById(int id)
+        {
+            await VerifyAccess();
+            var message = string.Empty;
+
+            var videoToDelete = Videos.FirstOrDefault(x => x.Id == id);
+
+            if (videoToDelete != null)
+            {
+                message += $"Video {videoToDelete.Name} will be deleted.";
+            }
+
             return message;
         }
 
@@ -719,7 +749,7 @@ namespace BrokerIQ.Online.Pages
             {
                 message = await RemoveDraggedToVideoSendList(previousIdentifier);
                 video.Identifier = "Files";
-            }
+            }   
             else
             {            
                 video.Identifier = "Files";
@@ -758,6 +788,30 @@ namespace BrokerIQ.Online.Pages
                 }
             }
             await RefreshVideos();
+
+        }
+
+        protected async Task DeleteVideoBottom(int videoId)
+        {
+
+            var video = Videos.FirstOrDefault(x => x.Id == videoId);
+            var previousIdentifier = video.Identifier;
+
+            var message = await RemoveDraggedById(videoId);
+
+            if (!string.IsNullOrEmpty(message))
+            {
+                var responseParams = new DialogParameters();
+                responseParams.Add("Message", message);
+
+                var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
+                if (!result.Cancelled)
+                {
+                    await this.VideoService.DeleteVideo(video.Id, BrokerId);
+                }
+            }
+            await RefreshVideos();
+            _dropContainer.Refresh();
         }
 
         protected async Task SendVideo(int videoId)
@@ -819,25 +873,21 @@ namespace BrokerIQ.Online.Pages
                 if (video.WelcomeVideo)
                 {
                     WelcomeVideo = video;
-                    DisplayEmbeddedVideo[video.Id] = false;
                     video.Identifier = "Welcome";
                 }
                 else if (video.BirthdayVideo)
                 {
                     BirthdayVideo = video;
-                    DisplayEmbeddedVideo[video.Id] = false;
                     video.Identifier = "Birthday";
                 }
                 else if (video.MortgageVideo)
                 {
                     MortgageVideo = video;
-                    DisplayEmbeddedVideo[video.Id] = false;
                     video.Identifier = "Mortgage";
                 }
                 else if (video.InsuranceVideo)
                 {
                     InsuranceVideo = video;
-                    DisplayEmbeddedVideo[video.Id] = false;
                     video.Identifier = "Insurance";
                 }
                 else if(video.SendDateVideo)
@@ -845,25 +895,21 @@ namespace BrokerIQ.Online.Pages
                     if (SendDateVideo1 == null)
                     {
                         SendDateVideo1 = video;
-                        DisplayEmbeddedVideo[video.Id] = false;
                         video.Identifier = "SendDateVideo1";
                     }
                     else if (SendDateVideo2 == null)
                     {
                         SendDateVideo2 = video;
-                        DisplayEmbeddedVideo[video.Id] = false;
                         video.Identifier = "SendDateVideo2";
                     }
                     else if (SendDateVideo3 == null)
                     {
                         SendDateVideo3 = video;
-                        DisplayEmbeddedVideo[video.Id] = false;
                         video.Identifier = "SendDateVideo3";
                     }
                     else if (SendDateVideo4 == null)
                     {
                         SendDateVideo4 = video;
-                        DisplayEmbeddedVideo[video.Id] = false;
                         video.Identifier = "SendDateVideo4";
                     }
                 }
@@ -892,5 +938,26 @@ namespace BrokerIQ.Online.Pages
 
             await SetVideoSendDate(id, sendDate);
         }
+
+        protected async Task ItemUpdated(MudItemDropInfo<BrokerIQ.Online.Server.Models.Video> dropItem)
+        {
+            if (dropItem.DropzoneIdentifier.Contains("SendDateVideo"))
+            {
+                if ((dropItem.DropzoneIdentifier == "SendDateVideo1" && SendDateVideo1 != null) ||
+                        (dropItem.DropzoneIdentifier == "SendDateVideo2" && SendDateVideo2 != null) ||
+                        (dropItem.DropzoneIdentifier == "SendDateVideo3" && SendDateVideo3 != null) ||
+                        (dropItem.DropzoneIdentifier == "SendDateVideo4" && SendDateVideo4 != null))
+
+                {
+                    await DropNotAllowed();
+                    return;
+                }
+            }
+
+            dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+            await RefreshVideoDrag(dropItem.Item.Identifier);
+
+        }
+
     }
 }
