@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Threading.Tasks;
+
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Server.Models;
 
 namespace BrokerIQ.Online.Models
 {
-    using BrokerIQ.Dto.Enum;
-    using BrokerIQ.Online.Server.Models;
-    using System.ComponentModel.DataAnnotations;
-
     public class Broker
     {
         [Key]
@@ -86,5 +85,22 @@ namespace BrokerIQ.Online.Models
         public BrokerIdentifier BrokerIdentifier { get; set; }
 
         public virtual ICollection<BrokerSubscription> Subscriptions { get; set; }
+
+        public bool HasWhiteLabel { get => BrokerIdentifier != null && BrokerIdentifier.IdentifierFound; }
+
+        public bool IsInsuranceOnly { get => BrokerIdentifier != null && BrokerIdentifier.InsuranceOnly; }
+
+        public bool HasWhiteLabelAndIsInsuranceOnly { get => HasWhiteLabel && IsInsuranceOnly; }
+
+        public bool HasActiveInsuranceQuoteSubscription
+        {
+            get
+            {
+                var today = DateTime.UtcNow;
+
+                return Subscriptions.Any(s => s.SubscriptionServiceId == SubscriptionServiceEnum.InsuranceQuote &&
+                                s.StartDate <= today && today <= s.EndDate);
+            }
+        }
     }
 }

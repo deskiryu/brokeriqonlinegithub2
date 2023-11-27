@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Components;
-using BrokerIQ.Online.Models;
-using BrokerIQ.Online.Server.Models;
-using BrokerIQ.Online.Server.Extensions;
-using BrokerIQ.Online.Services.Interface;
-using MudBlazor;
 using Microsoft.AspNetCore.WebUtilities;
-using System.IO;
+
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Models;
 using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+
+using MudBlazor;
 
 namespace BrokerIQ.Online.Server.Pages.Video
 {
