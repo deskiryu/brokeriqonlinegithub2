@@ -25,11 +25,15 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<bool> IsVetted(int id, int brokerId);
 
+        Task<(bool, string)> SetNoVideo(int id, int brokerId);
+
         Task<(bool, string)> SetWelcomeVideo(int id, int brokerId, bool welcomeVideo = true);
 
         Task<(bool, string)> SetBirthdayVideo(int id, int brokerId, bool birthdayVideo = true);
 
         Task<(bool, string)> SetMortgageVideo(int id, int brokerId, bool isMortgageVideo = true);
+
+        Task<(bool, string)> SetInsuranceVideo(int id, int brokerId, bool isInsuranceVideo = true);
 
         Task<(bool, string)> SetVideoSendDate(int id, int brokerId, DateTime? sendDate);
 

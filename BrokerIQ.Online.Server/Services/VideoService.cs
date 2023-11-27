@@ -144,6 +144,23 @@ namespace BrokerIQ.Online.Server.Services
             return answer;
         }
 
+        public async Task<(bool, string)> SetNoVideo(int id, int brokerId)
+        {
+            var answer = (false, string.Empty);
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/setnovideo?brokerId={brokerId}&id={id}";
+            try
+            {
+                answer = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetWelcomeVideo: exception {ex.Message}");
+            }
+            return answer;
+        }
+
         public async Task<(bool, string)> SetWelcomeVideo(int id, int brokerId, bool isWelcomeVideo = true)
         {
             var answer = (false, string.Empty);
@@ -198,6 +215,25 @@ namespace BrokerIQ.Online.Server.Services
             return result;
         }
 
+        public async Task<(bool, string)> SetInsuranceVideo(int id, int brokerId, bool isInsuranceVideo = true)
+        {
+            var result = (false, string.Empty);
+
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var url = this.videoUrl + $"/setinsurancevideo?brokerId={brokerId}&id={id}&isMortgageVideo={isInsuranceVideo}";
+
+            try
+            {
+                result = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetMortgageVideo: exception {ex.Message}");
+            }
+
+            return result;
+        }
         public async Task<(bool, string)> SetVideoSendDate(int id, int brokerId, DateTime? sendDate)
         {
             var answer = (false, string.Empty);

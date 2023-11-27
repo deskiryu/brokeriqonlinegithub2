@@ -415,17 +415,17 @@ app {
 
 .video_play {
     width: 150px;
-    height: 150px;
+    height: 130px;
     display: block;
     border: 2px solid #fff;
-    margin: 2em auto;
+    margin: 1em auto;
     overflow: hidden;
 }
 
 
 .play-button {
     position: absolute;
-    top: calc(100% - 55px);
+    top: calc(0% + 240px);
     left: calc(0% + 18px);
     width: 40px;
     height: 40px;
@@ -438,6 +438,15 @@ app {
     background-color: rgba(0, 0, 0, 0.6);
     transition: background-color 0.5s ease;
     cursor: pointer;
+}
+
+.play-button-no-header {
+    top: calc(0% + 201px);
+    left: calc(0% + 5px);
+}
+.send_position {
+    top: -43px;
+    left: calc(0% + 156px);
 }
 
 .play-button:after {
@@ -456,13 +465,88 @@ app {
     background-color: lightgrey;
 }
 
+.my_card_title {
+    max-width: 180px;
+    font-size: small;
+    margin: 10px;
+    height: 25px;
+}
+
+.my_card_body {
+    width: 200px;
+    height: 200px;
+}
+
+.my_card_body_date {
+    width: 200px;
+    height: 235px;
+}
+
+.my_send_date_chooser {
+    font-size: 14px;
+    margin-top: -10px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.close {
+    position: absolute;
+    right: calc(0% + 13px);
+    top: 104px;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+}
+
+    .close:hover {
+        opacity: 1;
+    }
+
+    .close:before, .close:after {
+        position: absolute;
+        left: 15px;
+        content: ' ';
+        height: 33px;
+        width: 5px;
+        background-color: red;
+    }
+
+    .close:before {
+        transform: rotate(45deg);
+    }
+
+    .close:after {
+        transform: rotate(-45deg);
+    }
+
+.close_no_header {
+
+    right: calc(0% + 12px);
+    top: 57px;
+
+}
+
 .card {
     background-color: #FAFAFA;
+}
+
+.none_block {
+    width: 140px;
+    background-color: black;
+    height: 140px;
+    color: white;
+    margin-top: 10px;
+    margin-bottom: 14px;
+}
+
+ none_block_date {
+    margin-bottom: 28px!important;
 }
 
 .video_card-body {
     padding: 0rem;
 }
+
 
 .video_table_col_width_parent {
     width: 190px !important;
@@ -489,6 +573,9 @@ app {
 .video_send_date {
     margin-right: 15px;
 }
+
+
+
 
 #components-reconnect-modal {
     display: flex !important;

@@ -35,8 +35,14 @@ namespace BrokerIQ.Online.Server.Models
         public bool WelcomeVideo { get => VideoSendTypeId == VideoSendEnum.WelcomeVideo; }
 
         public bool MortgageVideo { get => VideoSendTypeId == VideoSendEnum.MortgageVideo; }
+        public bool InsuranceVideo { get => VideoSendTypeId == VideoSendEnum.InsuranceVideo; }
+        public bool SendDateVideo { get => VideoSendTypeId == VideoSendEnum.SendOnDate; }
+
+        public bool SpecialVideo { get => BirthdayVideo || InsuranceVideo || MortgageVideo || InsuranceVideo; }
 
         public bool SendDateTick { get => VideoSendTypeId == VideoSendEnum.SendOnDate; }
-        
+
+        public string Identifier { get; set; }
+
     }
 }
