@@ -43,15 +43,17 @@
                     </NavLink>
                 </li>
             }
-
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="videolist">
-                    <span class="oi oi-monitor" aria-hidden="true"></span> Videos
+            @if (MyLoggedInAppState.IsAdmin || MyLoggedInAppState.IsMinorAdmin)
+            {
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="videolist">
+                    <span class="oi oi-monitor" aria-hidden="true"></span> Videos (admin)
                 </NavLink>
             </li>
+            }
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="videolist2">
-                    <span class="oi oi-monitor" aria-hidden="true"></span> Videos 2
+                    <span class="oi oi-monitor" aria-hidden="true"></span> Videos 
                 </NavLink>
             </li>
             @if (!MyLoggedInAppState.IsMinorAdmin)

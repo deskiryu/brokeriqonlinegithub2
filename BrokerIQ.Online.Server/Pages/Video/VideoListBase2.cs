@@ -23,6 +23,7 @@ namespace BrokerIQ.Online.Pages
     using static System.Runtime.InteropServices.JavaScript.JSType;
     using Dto.Enum;
     using MudBlazor;
+    using BrokerIQ.Online.Server.Extensions;
 
     public class VideoListBase2 : ComponentBase
     {
@@ -142,8 +143,12 @@ namespace BrokerIQ.Online.Pages
                     throw new Exception();
                 }
 
-                await RefreshVideos();
-                StateHasChanged();
+                if (user.IsBroker || user.IsBrokerStaff)
+                {
+                    await RefreshVideos();
+                    StateHasChanged();
+                }
+
             }
             catch
             {
@@ -625,32 +630,33 @@ namespace BrokerIQ.Online.Pages
             {
                 if (video != null)
                 {
+                    var dateStr = video.SendDate.HasValue ? video.SendDate.Value.ToString() : "n/a";
                     if (oldIdentifier == "SendDateVideo1")
                     {
                         if (video.Identifier == "SendDateVideo1" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
-                        {
-                            message += $"Video {video.Name} will no longer be a welcome video. ";
+                        {  
+                            message += $"Video {video.Name} will no longer be sont on date {dateStr}.";
                         }
                     }
                     if (oldIdentifier == "SendDateVideo2")
                     {
                         if (video.Identifier == "SendDateVideo2" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
                         {
-                            message += $"Video {video.Name} will no longer be a welcome video. ";
+                            message += $"Video {video.Name} will no longer be sont on date {dateStr}.";
                         }
                     }
                     if (oldIdentifier == "SendDateVideo3")
                     {
                         if (video.Identifier == "SendDateVideo3" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
                         {
-                            message += $"Video {video.Name} will no longer be a welcome video. ";
+                            message += $"Video {video.Name} will no longer be sont on date {dateStr}.";
                         }
                     }
                     if (oldIdentifier == "SendDateVideo4")
                     {
                         if (video.Identifier == "SendDateVideo4" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
                         {
-                            message += $"Video {video.Name} will no longer be a welcome video. ";
+                            message += $"Video {video.Name} will no longer be sont on date {dateStr}.";
                         }
                     }
                 }
@@ -780,8 +786,16 @@ namespace BrokerIQ.Online.Pages
             NavigationManager.NavigateTo($"videodetail/{videoId}");
         }
 
+        public void OnBrokerChanged(int brokerId)
+        {
+            FilterBrokerId = brokerId;
+            RefreshVideos();
+        }
+
         private async Task RefreshVideos()
         {
+            var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
+
             if (Videos != null)
             {
                 Videos.Clear();
@@ -793,7 +807,7 @@ namespace BrokerIQ.Online.Pages
 
             DisplayEmbeddedVideo = new Dictionary<int, bool>();
 
-            Videos = (await VideoService.GetVideos(BrokerId)).ToList();
+            Videos = (await VideoService.GetVideos(brokerId)).ToList();
             foreach (Video video in Videos)
             {
                 video.Identifier = "Files";

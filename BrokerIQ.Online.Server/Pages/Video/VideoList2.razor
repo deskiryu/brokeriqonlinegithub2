@@ -5,12 +5,27 @@
 @using BrokerIQ.Online.Pages
 @using Dto.Enum
 
-<h3 class="page-title">Videos</h3>
 
 @if (!Saved)
 {
     @if (Videos == null)
-    {
+    {        
+        @if (IsAdmin)
+        {
+            <div class="row mt-1">
+
+                <div class="col-lg-8 control_wrapper mb-5">
+                    <MudSelect T="int" Label="Filter By Broker" Placeholder="Select" Clearable="true" 
+                               AdornmentColor="Color.Primary" ValueChanged="@((int value) => OnBrokerChanged(value))">
+                        <MudSelectItem Value="0">Select</MudSelectItem>
+                        @foreach (var item in @Brokers)
+                        {
+                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+            </div>
+        }
         <div>
     <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
 </div>
@@ -25,6 +40,8 @@
     </MudButton>
     <p class="col-5">@status</p>
 </div>
+
+
 
 
 
@@ -69,22 +86,6 @@
 
         </MudDialog>
 
-        @if (IsAdmin)
-        {
-            <div class="row mt-1">
-
-    <div class="col-lg-8 control_wrapper mb-5">
-        <MudSelect T="int" Label="Filter By Broker" Placeholder="Select" Clearable="true" @bind-Value="FilterBrokerId"
-            AdornmentColor="Color.Primary">
-            <MudSelectItem Value="0">Select</MudSelectItem>
-            @foreach (var item in @Brokers)
-                        {
-                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                </div>
-            </div>
-        }
         <MudDropContainer T="BrokerIQ.Online.Server.Models.Video" Items="Videos" Item ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
     <ChildContent>
         <MudListSubheader Class="mt-4 pb-2">Automated Videos</MudListSubheader>
