@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Models;
-using BrokerIQ.Online.Server.Shared;
-using Microsoft.AspNetCore.Components;
-using BrokerIQ.Online.Models;
-using MudBlazor;
-using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Server.Pages.Customer.Components;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+
+using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {

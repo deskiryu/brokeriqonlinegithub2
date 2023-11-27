@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.IO;
-using BrokerIQ.Dto.CreateDto;
-using BrokerIQ.Dto.Enum;
-using BrokerIQ.Dto.Models;
-using BrokerIQ.Online.Server.AppSettings;
-using BrokerIQ.Online.Server.Extensions;
-using BrokerIQ.Online.Server.Pages.Customer.Components;
-using BrokerIQ.Online.Server.Models;
-using BrokerIQ.Online.Server.Shared;
-using BrokerIQ.Online.Services.Interface;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+
+using BrokerIQ.Dto.CreateDto;
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Server.Pages.Customer.Components;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+
 using MudBlazor;
-using BrokerIQ.Dto.Dto;
-using BrokerIQ.Online.Server.Services.Interface;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -69,11 +70,10 @@ namespace BrokerIQ.Online.Pages
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
 
         [Inject]
-        public IOccupationService OccupationService { get; set; }
-
-        [Inject]
         protected IJSRuntime js { get; set; }
 
+        [Parameter]
+        public string CustomerId { get; set; }
 
         protected User User { get; set; }
 
@@ -83,21 +83,15 @@ namespace BrokerIQ.Online.Pages
 
         private FileUploadSettings fileUploadSettings { get; set; }
 
+        public Broker Broker { get; set; }
+
         public Customer Customer { get; set; }
+
+        public Customer Connection { get; set; }
 
         public int CustomerCategory { get; set; }
 
-        public CustomerDocumentDto CustomerProfilePicture { get; set; }
-
         public IEnumerable<Broker> Brokers { get; set; }
-
-        public string BrokerName { get; set; }
-
-        public bool BrokerHasWhiteLabel { get; set; }
-
-        public bool BrokerHasWhiteLabelAndIsInsuranceOnly { get; set; }
-
-        public bool BrokerHasActiveInsuranceQuoteSubscription { get; set; }
 
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
@@ -116,9 +110,6 @@ namespace BrokerIQ.Online.Pages
         public string SpinnerVisible { get; set; }
 
         public string LoadFileStatus { get; set; }
-
-        [Parameter]
-        public string CustomerId { get; set; }
 
         protected string Message = string.Empty;
 
@@ -186,7 +177,7 @@ namespace BrokerIQ.Online.Pages
 
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
-        protected OccupationDto Occupation { get; set; }
+        protected MudTabs Tabs;
 
         protected override async Task OnInitializedAsync()
         {
@@ -200,13 +191,14 @@ namespace BrokerIQ.Online.Pages
             {
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
                 CustomerCategory = (int)Customer.CustomerCategory;
-                CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(int.Parse(CustomerId));
-                Occupation = await OccupationService.GetById(Customer.OccupationId);
 
-                CustomerDocuments = await CustomerDocumentService.Get(int.Parse(CustomerId));
+
+                Connection = await CustomerService.GetConnection(Customer.Id);
+
+                CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
                 ResetUploadsBadge();
 
-                DocumentsRequirement = await DocumentsRequirementService.Get(int.Parse(CustomerId));
+                DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
 
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
 
@@ -220,28 +212,20 @@ namespace BrokerIQ.Online.Pages
                     RequestedDocuments.Add(item, 0);
                 }
 
-                BrokerHasWhiteLabel = false;
-                BrokerHasWhiteLabelAndIsInsuranceOnly = false;
                 if (!User.IsAdmin)
                 {
-                    var broker = await BrokerService.GetBroker(User.MasterBrokerId, true);
-                    var today = DateTime.UtcNow;
-                    BrokerName = broker.Name;
-                    BrokerHasWhiteLabel = broker.BrokerIdentifier != null && broker.BrokerIdentifier.IdentifierFound;
-                    BrokerHasWhiteLabelAndIsInsuranceOnly = BrokerHasWhiteLabel && broker.BrokerIdentifier != null && broker.BrokerIdentifier.InsuranceOnly;
-                    BrokerHasActiveInsuranceQuoteSubscription = broker.Subscriptions.Any(s => s.SubscriptionServiceId == SubscriptionServiceEnum.InsuranceQuote &&
-                            s.StartDate <= today && today <= s.EndDate);
+                    Broker = await BrokerService.GetBroker(User.MasterBrokerId, true);
 
                     await PopulateBrokerDefinedMessages();
 
-                    if (broker.BrokerIdentifier.InsuranceOnly)
+                    if (Broker.IsInsuranceOnly)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
                     }
                 }
                 else
                 {
-                    BrokerHasWhiteLabel = true;
+                    Broker = await BrokerService.GetBroker(Customer.ChosenBrokerId, true);
                 }
             }
             catch
@@ -475,54 +459,6 @@ namespace BrokerIQ.Online.Pages
             Saved = true;
         }
 
-        protected async Task DeleteCustomer()
-        {
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"Are you absolutely sure you want to delete this client {Customer.Name}? This is a PERMANENT DELETE and cannot be undone.");
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
-            {
-                var deleted = await CustomerService.DeleteCustomer(Customer.Id);
-                if (deleted)
-                {
-                    var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "Deleted successfully");
-                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
-                }
-                else
-                {
-                    var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "The client did not delete.");
-                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
-                }
-                NavigationManager.NavigateTo($"/clientlist");
-            }
-        }
-
-        protected async Task ResendEmailCustomer()
-        {
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"A verify email will be sent to {Customer.Name}. Continue? ");
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
-            {
-                var resent = await AccountService.ResendEmail(Customer.EmailAddress);
-                if (resent)
-                {
-                    var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "Resent successfully");
-                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
-                }
-                else
-                {
-                    var responseParams = new DialogParameters();
-                    responseParams.Add("Message", "The resend email failed.");
-                    await DialogService.Show<AlertDialog>("Information", responseParams).Result;
-                }
-                NavigationManager.NavigateTo($"/clientlist");
-            }
-        }
-
         protected async Task NewNote()
         {
             bool succeeded = false;
@@ -607,7 +543,7 @@ namespace BrokerIQ.Online.Pages
         {
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", $"Are you sure you want to delete this note?");
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
                 var deleted = await NoteService.Delete(id);
@@ -847,7 +783,7 @@ namespace BrokerIQ.Online.Pages
             if (SelectedItemsCustomerDocuments.Any())
             {
                 dialogParams.Add("Message", $"Are you sure you want to delete the selected client documents?");
-                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+                var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
                 if (!result.Cancelled)
                 {
                     foreach (var custDoc in SelectedItemsCustomerDocuments)
@@ -870,7 +806,7 @@ namespace BrokerIQ.Online.Pages
             {
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", $"Are you sure you want to delete this client document?");
-                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+                var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
                 proceed = !result.Cancelled;
             }
             if (proceed)
@@ -982,10 +918,10 @@ namespace BrokerIQ.Online.Pages
             {
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", $"Are you sure you want to set the document requirements as the following?\n{requirementsString}");
-                var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+                var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
                 if (!result.Cancelled)
                 {
-                    DocumentsRequirement = await DocumentsRequirementService.Create(int.Parse(CustomerId), documentsRequiredList);
+                    DocumentsRequirement = await DocumentsRequirementService.Create(Customer.Id, documentsRequiredList);
                     await UpdateChat(true);
 
                     StateHasChanged();
@@ -1003,7 +939,7 @@ namespace BrokerIQ.Online.Pages
         {
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", $"Are you sure you want to delete the document requirements currently set?");
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+            var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
                 await DocumentsRequirementService.Delete(DocumentsRequirement.Id);
@@ -1031,7 +967,7 @@ namespace BrokerIQ.Online.Pages
                     template.Message = template.Message
                         .Replace("INSERT_CLIENT_NAME", Customer.FirstName)
                         .Replace("INSERT_PERSONAL_NAME", User.FirstName)
-                        .Replace("INSERT_BROKER_NAME", BrokerName);
+                        .Replace("INSERT_BROKER_NAME", Broker.Name);
                 }
 
                 if (template.WelcomeChat == false)
@@ -1061,7 +997,7 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
+            Customer = await CustomerService.GetCustomer(Customer.Id);
         }
 
         public void Dispose()
@@ -1245,38 +1181,25 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected string GetNeedsContent()
-        {
-            if (!Customer.HasNeeds) return string.Empty;
-
-            var currentDate = DateTime.UtcNow;
-
-            var hasIncomeProtection = Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > currentDate);
-            var hasLifeAndIlness = Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Illness && i.ExpiryDate > currentDate);
-
-            if (Customer.Employment == EmploymentEnum.SelfEmployed)
-            {
-                if (!hasIncomeProtection && !hasLifeAndIlness) return "Customer is self employed, but has neither Income Protection nor Life and Ilness cover.";
-                if (!hasIncomeProtection) return "Customer is self employed, but does not have Income Protection cover.";
-                if (!hasLifeAndIlness) return "Customer is self employed, but does not have Life and Ilness cover.";
-            }
-
-            if (Customer.Employment == EmploymentEnum.Employed)
-            {
-                return "Customer is employed, but does not have Life and Ilness cover.";
-            }
-
-            return string.Empty;
-        }
-
         protected bool ShowGetQuote()
         {
-            if (!BrokerHasActiveInsuranceQuoteSubscription) return false;
+            if (!Broker.HasActiveInsuranceQuoteSubscription) return false;
 
             if (Customer.HasNeeds) return true;
 
             return (Customer.Employment == EmploymentEnum.Employed || Customer.Employment == EmploymentEnum.SelfEmployed) &&
                 !Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > DateTime.UtcNow);
+        }
+
+        public async Task OnConnetionRemoved()
+        {
+            Connection = null;
+
+            Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
+
+            Tabs.ActivatePanel(0);
+
+            StateHasChanged();
         }
     }
 }

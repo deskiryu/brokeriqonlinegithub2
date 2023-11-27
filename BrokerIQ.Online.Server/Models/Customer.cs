@@ -116,5 +116,9 @@ namespace BrokerIQ.Online.Models
         public GenderEnum Gender { get; set; }
 
         public int OccupationId { get; set; }
+
+        public int? ConnectedToCustomerId { get; set; }
+
+        public int TargetCustomerId { get { return ConnectedToCustomerId ?? Id; } }
     }
 }
