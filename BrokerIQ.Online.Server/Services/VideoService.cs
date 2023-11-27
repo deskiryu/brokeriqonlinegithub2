@@ -221,7 +221,7 @@ namespace BrokerIQ.Online.Server.Services
 
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.videoUrl + $"/setmortgagevideo?brokerId={brokerId}&id={id}&isMortgageVideo={isInsuranceVideo}";
+            var url = this.videoUrl + $"/setinsurancevideo?brokerId={brokerId}&id={id}&isMortgageVideo={isInsuranceVideo}";
 
             try
             {

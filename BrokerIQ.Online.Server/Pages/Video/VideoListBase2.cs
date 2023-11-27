@@ -638,7 +638,7 @@ namespace BrokerIQ.Online.Pages
             {
                 if (video != null)
                 {
-                    var dateStr = video.SendDate.HasValue ? video.SendDate.Value.ToString() : "n/a";
+                    var dateStr = video.SendDate.HasValue ? video.SendDate.Value.ToBiqDateString() : "n/a";
                     if (oldIdentifier == "SendDateVideo1")
                     {
                         if (video.Identifier == "SendDateVideo1" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
@@ -703,32 +703,37 @@ namespace BrokerIQ.Online.Pages
             {
                 if (video != null)
                 {
-                    await this.VideoService.SetVetted(video.Id, true);
+
                     if (video.Identifier == "Welcome" && video.VideoSendTypeId != VideoSendEnum.WelcomeVideo)
                     {
                         await this.VideoService.SetWelcomeVideo(video.Id, BrokerId, true);
+                        await this.VideoService.SetVetted(video.Id, true);
                         break;
                     }
                     if (video.Identifier == "Mortgage" && video.VideoSendTypeId != VideoSendEnum.MortgageVideo)
                     {
                         await this.VideoService.SetMortgageVideo(video.Id, BrokerId, true);
+                        await this.VideoService.SetVetted(video.Id, true);
                         break;
                     }
                     if (video.Identifier == "Birthday" && video.VideoSendTypeId != VideoSendEnum.BirthdayVideo)
                     {
                         await this.VideoService.SetBirthdayVideo(video.Id, BrokerId, true);
+                        await this.VideoService.SetVetted(video.Id, true);
                         break;
                     }
 
                     if (video.Identifier == "Insurance" && video.VideoSendTypeId != VideoSendEnum.InsuranceVideo)
                     {
                         await this.VideoService.SetInsuranceVideo(video.Id, BrokerId, true);
+                        await this.VideoService.SetVetted(video.Id, true);
                         break;
                     }
 
                     if (video.Identifier.Contains("SendDateVideo") && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
                     {
                         await this.VideoService.SetVideoSendDateTick(video.Id, BrokerId, true);
+                        await this.VideoService.SetVetted(video.Id, true);
                         break;
                     }
 
@@ -811,7 +816,7 @@ namespace BrokerIQ.Online.Pages
                 }
             }
             await RefreshVideos();
-            _dropContainer.Refresh();
+
         }
 
         protected async Task SendVideo(int videoId)
@@ -916,6 +921,7 @@ namespace BrokerIQ.Online.Pages
             }
 
             StateHasChanged();
+            _dropContainer.Refresh();
         }
 
         /// <summary>
