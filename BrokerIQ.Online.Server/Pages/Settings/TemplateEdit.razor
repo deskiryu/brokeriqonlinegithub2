@@ -77,6 +77,15 @@
                                         </MudCheckBox>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder))"
+                                        @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder)"
+                                                     Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
