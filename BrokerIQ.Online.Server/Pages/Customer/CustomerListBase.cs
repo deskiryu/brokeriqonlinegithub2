@@ -346,14 +346,13 @@ namespace BrokerIQ.Online.Pages
 
         protected string AssignVisibilityClass()
         {
-            if (User.IsBrokerStaff) return "invisible";
+            if (User.IsBrokerStaff || BrokerId == 0) return "invisible";
 
             return SelectedCustomers != null && SelectedCustomers.Count > 0 ? "visible" : "invisible";
         }
 
         protected async Task AssignToStaff()
         {
-
             var dialogParams = new DialogParameters
             {
                 { "BrokerId", BrokerId},
