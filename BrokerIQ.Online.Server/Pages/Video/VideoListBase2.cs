@@ -446,27 +446,34 @@ namespace BrokerIQ.Online.Pages
 
         public async Task RefreshVideoDrag(string newIdentifier)
         {
-            var message = string.Empty;
+            var tupleResult = (string.Empty,true);
 
             if (newIdentifier.Contains("SendDateVideo"))
             {
-                message = await AddDraggedToVideoSendList(newIdentifier);
+                tupleResult = await AddDraggedToVideoSendList(newIdentifier);
             }
             else
             {
-                message = await CompareDraggedToVideoList();
+                tupleResult = await CompareDraggedToVideoList();
             }
 
-            if (!string.IsNullOrEmpty(message))
+            if (tupleResult.Item2 && !string.IsNullOrEmpty(tupleResult.Item1))
             {
                 var responseParams = new DialogParameters();
-                responseParams.Add("Message", message);
+                responseParams.Add("Message", tupleResult.Item1);
 
                 var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
                 if (!result.Cancelled)
                 {
                     await ApplyDraggedChanges();
                 }
+            }
+            else if (tupleResult.Item2 == false)
+            {
+                var responseParams = new DialogParameters();
+                responseParams.Add("Message", tupleResult.Item1);
+
+                var result = await DialogService.Show<AlertDialog>("Information", responseParams).Result;
             }
             await RefreshVideos();
         }
@@ -482,12 +489,13 @@ namespace BrokerIQ.Online.Pages
    
         }
 
-        protected async Task<string> CompareDraggedToVideoList()
+        protected async Task<(string,bool)> CompareDraggedToVideoList()
         {
             await VerifyAccess();
             var message = string.Empty;
+            var vetted = true;
 
-            foreach(var video in Videos)
+            foreach (var video in Videos)
             {
                 if(video != null)
                 {
@@ -503,7 +511,15 @@ namespace BrokerIQ.Online.Pages
                         }
                         else
                         {
-                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a welcome video. ";
+                            if (IsBrokerStaff)
+                            {
+                                message += $"Video {video.Name} is not vetted. Only broker admin can drag this video to this slot. ";
+                                vetted = false;
+                            }
+                            else
+                            {
+                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a welcome video. ";
+                            }
                         }
 
                     }
@@ -519,7 +535,15 @@ namespace BrokerIQ.Online.Pages
                         }
                         else
                         {
-                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a mortgage video. ";
+                            if (IsBrokerStaff)
+                            {
+                                message += $"Video {video.Name} is not vetted. Only broker admin can drag this video to this slot. ";
+                                vetted = false;
+                            }
+                            else
+                            {
+                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a mortgage video. ";
+                            }
                         }
                     }
                     if (video.Identifier != "Birthday" && video.VideoSendTypeId == VideoSendEnum.BirthdayVideo)
@@ -534,7 +558,15 @@ namespace BrokerIQ.Online.Pages
                         }
                         else
                         {
-                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a birthday video. ";
+                            if (IsBrokerStaff)
+                            {
+                                message += $"Video {video.Name} is not vetted. Only broker admin can drag this video to this slot. ";
+                                vetted = false;
+                            }
+                            else
+                            {
+                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a birthday video. ";
+                            }
                         }
                     }
                     if (video.Identifier != "Insurance" && video.VideoSendTypeId == VideoSendEnum.InsuranceVideo)
@@ -545,22 +577,31 @@ namespace BrokerIQ.Online.Pages
                     {
                         if (video.Vetted)
                         {
-                            message += $"Video {video.Name} will be a insurance video. ";
+                            message += $"Video {video.Name} will be an insurance video. ";
                         }
                         else
                         {
-                            message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a insurance video. ";
+                            if (IsBrokerStaff)
+                            {
+                                message += $"Video {video.Name} is not vetted. Only broker admin can drag this video to this slot. ";
+                                vetted = false;
+                            }
+                            else
+                            {
+                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be an insurance video. ";
+                            }
                         }
                     }
                 }
             }
-            return message;
+            return (message,vetted);
         }
 
-        protected async Task<string> AddDraggedToVideoSendList(string newIdentifier)
+        protected async Task<(string, bool)> AddDraggedToVideoSendList(string newIdentifier)
         {
             await VerifyAccess();
             var message = string.Empty;
+            var vetted = true;
 
             foreach (var video in Videos)
             {
@@ -576,7 +617,15 @@ namespace BrokerIQ.Online.Pages
                             }
                             else
                             {
-                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                                if (IsBrokerStaff)
+                                {
+                                    message += $"Video {video.Name} is not vetted. Only broker admin can drag this video to this slot. ";
+                                    vetted = false;
+                                }
+                                else
+                                {
+                                    message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                                }
                             }
 
                         }
@@ -591,7 +640,15 @@ namespace BrokerIQ.Online.Pages
                             }
                             else
                             {
-                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                                if (IsBrokerStaff)
+                                {
+                                    message += $"Video {video.Name} is not vetted. Only broker admin can drag this video to this slot. ";
+                                    vetted = false;
+                                }
+                                else
+                                {
+                                    message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                                }
                             }
                         }
                     }
@@ -605,7 +662,15 @@ namespace BrokerIQ.Online.Pages
                             }
                             else
                             {
-                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                                if (IsBrokerStaff)
+                                {
+                                    message += $"Video {video.Name} is not vetted. Only broker admin can drag this video to this slot. ";
+                                    vetted = false;
+                                }
+                                else
+                                {
+                                    message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                                }
                             }
                         }
                     }
@@ -619,14 +684,22 @@ namespace BrokerIQ.Online.Pages
                             }
                             else
                             {
-                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                                if (IsBrokerStaff)
+                                {
+                                    message += $"Video {video.Name} is not vetted. Only broker admin can drag this video to this slot. ";
+                                    vetted = false;
+                                }
+                                else
+                                {
+                                    message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be a send on date video. ";
+                                }
                             }
                         }
                     }
 
                 }
             }
-            return message;
+            return (message,vetted);
         }
 
         protected async Task<string> RemoveDraggedToVideoSendList(string oldIdentifier)
@@ -758,7 +831,7 @@ namespace BrokerIQ.Online.Pages
             else
             {            
                 video.Identifier = "Files";
-                message = await CompareDraggedToVideoList();
+                message = (await CompareDraggedToVideoList()).Item1;
             }
 
 
