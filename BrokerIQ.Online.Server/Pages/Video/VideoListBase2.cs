@@ -425,6 +425,7 @@ namespace BrokerIQ.Online.Pages
         {
             DisplayEmbeddedVideo[id] = true;
             StateHasChanged();
+            _dropContainer.Refresh();
         }
 
         /// <summary>
@@ -900,6 +901,15 @@ namespace BrokerIQ.Online.Pages
                 var message = string.Empty;
                 if (!video.Vetted)
                 {
+                    if (IsBrokerStaff)
+                    {
+                        message += $"Video {video.Name} needs to be vetted before sending. Only broker admin can vet this video. ";
+                        var responseParamsAlert = new DialogParameters();
+                        responseParamsAlert.Add("Message", message);
+                        await DialogService.Show<AlertDialog>("Information", responseParamsAlert).Result;
+                        return;
+                    }
+
                     message = $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content.";
                     var responseParams = new DialogParameters();
                     responseParams.Add("Message", message);
@@ -1036,6 +1046,75 @@ namespace BrokerIQ.Online.Pages
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
             await RefreshVideoDrag(dropItem.Item.Identifier);
 
+        }
+
+        protected async Task SetVetted(int id)
+        {
+            await VerifyAccess();
+
+            if (!(await CheckIsAdmin()))
+            {
+                if (IsBrokerStaff)
+                {
+                    await RefreshVideosWithDialogMessage(true, "Only the main broker can vet the video");
+                }
+                else
+                {
+                    await RefreshVideosWithDialogMessage(true, "Only admin can vet");
+                }
+
+                return;
+            }
+
+            if (IsMinorAdmin)
+            {
+                await RefreshVideosWithDialogMessage(true, "Only brokeriq admin can vet the video");
+                return;
+            }
+
+
+            var video = Videos.FirstOrDefault(x => x.Id == id);
+            if (video != null)
+            {
+                var dialogParams = new DialogParameters();
+                var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Id == id);
+                bool alreadyChecked = false;
+                if (videoAlreadyChecked != null)
+                {
+                    alreadyChecked = videoAlreadyChecked.Vetted;
+                }
+
+                var message = string.Empty;
+                if (!alreadyChecked)
+                {
+                    message = $"Your confirm that the video {video.Name} is of appropriate content.";
+                }
+                else
+                {
+                    message = $"Your confirm that the video {video.Name} will have vetting removed. ";
+                }
+
+                var responseParams = new DialogParameters();
+                responseParams.Add("Message", message);
+                var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
+                if (!result.Canceled)
+                {
+                    var returned = await VideoService.SetVetted(id, !alreadyChecked);
+
+                    if (returned.Item1)
+                    {
+                        await RefreshVideos();
+                    }
+                    else
+                    {
+                        await RefreshVideosWithDialogMessage(false, "Something went wrong setting vetted. Please try again.");
+                    }
+                }
+            }
+            else
+            {
+                await RefreshVideosWithDialogMessage(false, "Something went wrong setting vetted. Please try again.");
+            }
         }
 
     }

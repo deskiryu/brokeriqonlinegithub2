@@ -411,12 +411,19 @@
                     </div>
 
                     <div DataLabel="Send">
-                        @if (!IsMinorAdmin)
-                        {
                             <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Class = "send_position" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.Send"
                                            @onclick="@( () => SendVideo(@context.Id) )" />
-                        }
                     </div>
+
+                <div DataLabel="Vet">
+                    @if (IsBroker)
+                    {
+                        <MudIconButton hidden="@context.Vetted" Variant="Variant.Filled" Color="Color.Primary" Class="vet_position" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.CheckBoxOutlineBlank"
+                        @onclick="@( () => SetVetted(@context.Id) )" />
+                        <MudIconButton hidden="@context.NotVetted" Variant="Variant.Filled" Color="Color.Primary" Class="vet_position" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.CheckCircle"
+                        @onclick="@( () => SetVetted(@context.Id) )" />
+                    }
+                </div>
 
     </ItemRenderer>
 </MudDropContainer>

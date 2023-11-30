@@ -44,5 +44,7 @@ namespace BrokerIQ.Online.Server.Models
 
         public string Identifier { get; set; }
 
+        public bool NotVetted { get => Vetted==false; }
+
     }
 }

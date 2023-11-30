@@ -188,6 +188,16 @@
                                         </MudCheckBox>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <div class="col-lg-12">
+                                        <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewVideoBrokerVetReminder))"
+                                        @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewVideoBrokerVetReminder)"
+                                                        Style="margin-left: -15px">
+                                            @EmailNotificationPreferencesEnum.NewVideoBrokerVetReminder.GetDisplayPrompt()
+                                        </MudCheckBox>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
