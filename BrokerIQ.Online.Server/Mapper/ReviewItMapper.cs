@@ -73,6 +73,9 @@ namespace BrokerIQ.Online.Mapper
                     }
                     return !videoOptOut;
                 }))
+                .ForMember(d => d.AudioNotificationsAllowed, action => action.MapFrom(s => !s.AudioOptOut))
+                .ForMember(d => d.ProfilingNotificationsAllowed, action => action.MapFrom(s => !s.ProfilingOptOut))
+                .ForMember(d => d.MarketingMessagesAllowed, action => action.MapFrom(s => !s.MarketingOptOut))
                 .ForMember(d => d.IsWhiteLabel, action => action.MapFrom(s => s.IsWhiteLabel))
                 .ForMember(d => d.HasNeeds, action => action.MapFrom(s => s.HasNeeds))
                 .ForMember(d => d.IsSmokerOrVaper, action => action.MapFrom(s => s.IsSmokerOrVaper))
@@ -100,6 +103,9 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.PotentialBroker2, action => action.MapFrom(s => s.PotentialBroker2))
                 .ForMember(d => d.PotentialBroker3, action => action.MapFrom(s => s.PotentialBroker3))
                 .ForMember(d => d.VideoOptOut, action => action.MapFrom(s => !s.VideoNotificationsAllowed))
+                .ForMember(d => d.AudioOptOut, action => action.MapFrom(s => !s.AudioNotificationsAllowed))
+                .ForMember(d => d.ProfilingOptOut, action => action.MapFrom(s => !s.ProfilingNotificationsAllowed))
+                .ForMember(d => d.MarketingOptOut, action => action.MapFrom(s => !s.MarketingMessagesAllowed))
                 .ForMember(d => d.BusinessName, action => action.MapFrom(s => s.BusinessName))
                 .ForMember(d => d.CustomerCategory, action => action.MapFrom(s => s.CustomerCategory))
                 .ForMember(d => d.HasNeeds, action => action.MapFrom(s => s.HasNeeds))

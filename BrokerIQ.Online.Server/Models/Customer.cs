@@ -71,6 +71,12 @@ namespace BrokerIQ.Online.Models
 
         public bool VideoNotificationsAllowed { get; set; }
 
+        public bool AudioNotificationsAllowed { get; set; }
+
+        public bool ProfilingNotificationsAllowed { get; set; }
+
+        public bool MarketingMessagesAllowed { get; set; }
+
         public bool HasNeeds { get; set; }
 
         public string NotificationTag { get; set; }
