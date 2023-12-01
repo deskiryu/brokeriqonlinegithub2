@@ -218,15 +218,19 @@
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/0/{Customer.Id}")" class="ml-1">
                         Add a Menu Plan
                     </MudButton>
-                    @if (User.IsAdmin)
-                    {
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="ResendEmailCustomer">
-                            Resend Verify Email
-                        </MudButton>
+                }
 
-                        <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="DeleteCustomer">
-                            Delete Client
-                        </MudButton>
+                @if (User.IsAdmin)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="ResendEmailCustomer">
+                        Resend Verify Email
+                    </MudButton>
+
+                    @if (!Customer.ConnectedToCustomerId.HasValue)
+                    {
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="DeleteCustomer">
+                        Delete Client
+                    </MudButton>
                     }
                 }
 
