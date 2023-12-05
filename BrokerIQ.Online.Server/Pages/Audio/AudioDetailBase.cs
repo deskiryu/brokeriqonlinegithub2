@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.WebUtilities;
+
+using BrokerIQ.Dto.Enum;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Models;
-using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+
 using MudBlazor;
-using Microsoft.AspNetCore.WebUtilities;
-using System.IO;
-using BrokerIQ.Dto.Enum;
 
 namespace BrokerIQ.Online.Server.Pages.Audio
 {
@@ -39,7 +42,6 @@ namespace BrokerIQ.Online.Server.Pages.Audio
         [Inject]
         public IBrokerService BrokerService { get; set; }
 
-
         protected Models.Audio Audio { get; set; }
 
         protected List<Online.Models.Customer> Customers { get; set; }
@@ -47,8 +49,11 @@ namespace BrokerIQ.Online.Server.Pages.Audio
         protected HashSet<Online.Models.Customer> SelectedCustomers { get; set; }
 
         protected string Url { get; set; }
+
         protected string AudioName { get; set; }
+
         protected string AudioNameNoExtension { get; set; }
+
         protected string selectedNotification;
 
         protected string SearchTerm { get; set; } = "";
@@ -62,6 +67,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
         protected bool IsAdmin { get; set; }
 
         public int CustomerCategory { get; set; }
+
         public int AgeRange { get; set; }
 
         protected int? ProfilingOption { get; set; }
@@ -116,7 +122,8 @@ namespace BrokerIQ.Online.Server.Pages.Audio
             try
             {
                 Vetted = true;//await AudioService.IsVetted(AudioName);
-                Customers = (await CustomerService.GetAllCustomers()).ToList();
+                var allCustomers = await CustomerService.GetAllCustomers();
+                Customers = allCustomers.Where(x => x.AudioNotificationsAllowed || x.MarketingMessagesAllowed).ToList();
             }
             catch
             {

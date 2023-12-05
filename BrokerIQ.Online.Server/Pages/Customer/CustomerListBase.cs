@@ -182,8 +182,6 @@ namespace BrokerIQ.Online.Pages
             Customers = null;
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
 
-
-
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
                 SelectedCustomers.Clear();
@@ -274,14 +272,14 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("Notification", selectedNotification);
 
             var targetsName = new List<string>();
-            if (SelectedCustomers != null && SelectedCustomers.Any())
+            if (SelectedCustomers != null)
             {
-                targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
+                targetsName = SelectedCustomers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed).Select(x => x.Name).ToList();
             }
 
             if (targetsName == null && !targetsName.Any())
             {
-                AlertService.Error("No targets chosen");
+                AlertService.Error("No targets chosen or marketing for those targets not allowed");
             };
 
             //var longlist = string.Join(",", targets);
@@ -293,9 +291,9 @@ namespace BrokerIQ.Online.Pages
             if (!result.Cancelled)
             {
                 var targets = new List<int>();
-                if (SelectedCustomers != null && SelectedCustomers.Any())
+                if (SelectedCustomers != null)
                 {
-                    targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
+                    targets = SelectedCustomers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed).Select(x => x.Id).ToList();
                 }
 
                 if (targets != null && targets.Any())
@@ -327,7 +325,7 @@ namespace BrokerIQ.Online.Pages
                 }
                 else
                 {
-                    AlertService.Error("No targets chosen");
+                    AlertService.Error("No targets chosen or marketing for those targets not allowed");
                 };
             }
         }
