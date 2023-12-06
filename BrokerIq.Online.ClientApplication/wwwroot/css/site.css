@@ -449,6 +449,11 @@ app {
     left: calc(0% + 156px);
 }
 
+.vet_position {
+    top: -225px;
+    left: calc(0% + 10px);
+}
+
 .play-button:after {
     position: absolute;
     top: calc(100% - 30px);
