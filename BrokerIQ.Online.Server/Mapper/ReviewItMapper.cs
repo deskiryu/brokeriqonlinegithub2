@@ -74,9 +74,9 @@ namespace BrokerIQ.Online.Mapper
                     }
                     return !videoOptOut;
                 }))
-                .ForMember(d => d.AudioNotificationsAllowed, action => action.MapFrom((src, dst) => { return !src.AudioOptOut; }))
-                .ForMember(d => d.ProfilingNotificationsAllowed, action => action.MapFrom((src, dst) => { return !src.ProfilingOptOut; }))
-                .ForMember(d => d.MarketingMessagesAllowed, action => action.MapFrom((src, dst) => { return !src.MarketingOptOut; }))
+                .ForMember(d => d.AudioNotificationsAllowed, action => action.MapFrom(s => !s.AudioOptOut))
+                .ForMember(d => d.ProfilingNotificationsAllowed, action => action.MapFrom(s => !s.ProfilingOptOut))
+                .ForMember(d => d.MarketingMessagesAllowed, action => action.MapFrom(s => !s.MarketingOptOut))
                 .ForMember(d => d.IsWhiteLabel, action => action.MapFrom(s => s.IsWhiteLabel))
                 .ForMember(d => d.HasNeeds, action => action.MapFrom(s => s.HasNeeds))
                 .ForMember(d => d.IsSmokerOrVaper, action => action.MapFrom(s => s.IsSmokerOrVaper))

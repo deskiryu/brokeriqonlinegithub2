@@ -123,7 +123,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
             {
                 Vetted = true;//await AudioService.IsVetted(AudioName);
                 var allCustomers = await CustomerService.GetAllCustomers();
-                Customers = allCustomers.Where(x => x.AudioNotificationsAllowed || x.MarketingMessagesAllowed).ToList();
+                Customers = allCustomers.Where(x => x.AudioNotificationsAllowed).ToList();
             }
             catch
             {
@@ -171,11 +171,11 @@ namespace BrokerIQ.Online.Server.Pages.Audio
             var targetsName = new List<string>();
             if (sendAll)
             {
-                targetsName = Customers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
+                targetsName = Customers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed).Select(x => x.Name).ToList();
             }
             else
             {
-                targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
+                targetsName = SelectedCustomers.Where(x => x.AudioNotificationsAllowed && x.EmailConfirmed).Select(x => x.Name).ToList();
             }
 
 
@@ -188,11 +188,11 @@ namespace BrokerIQ.Online.Server.Pages.Audio
                 var targets = new List<int>();
                 if (sendAll)
                 {
-                    targets = Customers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
+                    targets = Customers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed).Select(x => x.Id).ToList();
                 }
                 else
                 {
-                    targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
+                    targets = SelectedCustomers.Where(x => x.AudioNotificationsAllowed && x.EmailConfirmed).Select(x => x.Id).ToList();
                 }
 
                 if (targets != null && targets.Any())

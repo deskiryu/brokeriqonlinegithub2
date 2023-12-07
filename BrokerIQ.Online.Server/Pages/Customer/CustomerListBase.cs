@@ -223,7 +223,7 @@ namespace BrokerIQ.Online.Pages
             var targets = new List<(string, int)>();
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
-                targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => (x.Name, x.Id)).ToList();
+                targets = SelectedCustomers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed == true).Select(x => (x.Name, x.Id)).ToList();
             }
 
             if (targets == null || !targets.Any())
