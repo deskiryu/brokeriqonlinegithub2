@@ -366,6 +366,18 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Invitation Message </label>
                                     <div class="col-sm-10 ">
+                                        <p>
+                                            <MudTooltip Text="Copy to clipboard">
+                                                <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_BROKER_NAME');"/>
+                                            </MudTooltip>
+                                            <b>INSERT_BROKER_NAME</b> is replaced in message by your brokerage name.
+                                        </p>
+                                        <p>
+                                            <MudTooltip Text="Copy to clipboard">
+                                                <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_PERSONAL_NAME ');"/>
+                                            </MudTooltip>
+                                            <b>INSERT_PERSONAL_NAME</b> is replaced by your first name.
+                                        </p>
                                         <MudTextField Lines="5" style="white-space: pre-line; background-color: white;" @bind-Value="@BrokerIdentifier.InvitationMessage" />
                                     </div>
                                 </div>
