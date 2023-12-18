@@ -432,7 +432,7 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Page 3 Third Text </label>
+                                    <label class="col-sm-2 col-form-label">Page 3 Third Text</label>
                                     <div class="col-sm-10 ">
                                         <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingPage3ThirdText" placeholder="Page 3 Third Text"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingPage3ThirdText)" />
@@ -440,10 +440,18 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Page 3 Fourth Text </label>
+                                    <label class="col-sm-2 col-form-label">Page 3 Fourth Text</label>
                                     <div class="col-sm-10 ">
                                         <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingPage3FourthText" placeholder="Page 3 Fourth Text"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingPage3FourthText)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Thank You Text</label>
+                                    <div class="col-sm-10 ">
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingThankYouText" placeholder="Thank You Text"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingThankYouText)" />
                                     </div>
                                 </div>
                             </div>
