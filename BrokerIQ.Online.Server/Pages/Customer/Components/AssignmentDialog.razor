@@ -1,12 +1,13 @@
 <MudDialog>
     <DialogContent>
-        <MudSelect T="Online.Models.BrokerStaff" Label="Employee" @bind-Value="@SelectedStaff" @ref="StaffSelectCtl"> @foreach
-            (Online.Models.BrokerStaff staff in AssignableStaff)
+        <MudSelect T="Online.Models.BrokerStaff" Label="Employee" @bind-Value="@SelectedStaff"> 
+            @foreach (Online.Models.BrokerStaff staff in
+            AssignableStaff)
             {
                 var current = staff;
-                <MudSelectItem Value="@current">@current.FullName
-                </MudSelectItem>
-            } </MudSelect>
+                <MudSelectItem Value="@current">@current.FullName </MudSelectItem>
+            } 
+        </MudSelect>
         </DialogContent>
         <DialogActions>
             <MudButton OnClick="Cancel">Cancel</MudButton>

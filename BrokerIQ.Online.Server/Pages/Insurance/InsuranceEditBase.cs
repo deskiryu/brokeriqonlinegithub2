@@ -194,6 +194,9 @@ namespace BrokerIQ.Online.Pages
                 try
                 {
                     Brokers = await BrokerService.GetBrokers();
+
+                    var customer = await CustomerService.GetCustomer(customerId);
+                    BrokerListId = customer.ChosenBrokerId;
                 }
                 catch
                 {
@@ -595,7 +598,7 @@ namespace BrokerIQ.Online.Pages
                 try
                 {
                     var ext = Path.GetExtension(file.Name);
-                    if (ext != ".pdf")
+                    if (!ext.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
                     {
                         throw new Exception("Pdf files only");
                     }

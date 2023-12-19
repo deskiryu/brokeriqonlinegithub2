@@ -71,6 +71,12 @@ namespace BrokerIQ.Online.Models
 
         public bool VideoNotificationsAllowed { get; set; }
 
+        public bool AudioNotificationsAllowed { get; set; }
+
+        public bool ProfilingNotificationsAllowed { get; set; }
+
+        public bool MarketingMessagesAllowed { get; set; }
+
         public bool HasNeeds { get; set; }
 
         public string NotificationTag { get; set; }
@@ -116,5 +122,9 @@ namespace BrokerIQ.Online.Models
         public GenderEnum Gender { get; set; }
 
         public int OccupationId { get; set; }
+
+        public int? ConnectedToCustomerId { get; set; }
+
+        public int TargetCustomerId { get { return ConnectedToCustomerId ?? Id; } }
     }
 }

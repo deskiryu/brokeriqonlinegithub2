@@ -134,15 +134,14 @@ namespace BrokerIQ.Online.Pages
         protected override async Task OnParametersSetAsync()
         {
             var user = await AccountService.GetUser();
+
             IsAdmin = user.IsAdmin;
             if (user.IsBroker || user.IsBrokerStaff)
             {
-                var broker = user.MasterBrokerId;
-
-                BrokerListId = broker;
+                BrokerListId = user.MasterBrokerId;
                 try
                 {
-                    Broker = await BrokerService.GetBroker(broker);
+                    Broker = await BrokerService.GetBroker(user.MasterBrokerId);
                 }
                 catch
                 {
@@ -156,6 +155,9 @@ namespace BrokerIQ.Online.Pages
                 try
                 {
                     Brokers = await BrokerService.GetBrokers();
+
+                    var customer = await CustomerService.GetCustomer(customerId);
+                    BrokerListId = customer.ChosenBrokerId;
                 }
                 catch
                 {
@@ -543,7 +545,7 @@ namespace BrokerIQ.Online.Pages
                 try
                 {
                     var ext = Path.GetExtension(file.Name);
-                    if (ext != ".pdf")
+                    if (!ext.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
                     {
                         throw new Exception("Pdf files only");
                     }

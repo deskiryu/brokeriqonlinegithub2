@@ -29,8 +29,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         [Inject]
         private IAssignmentService _assignmentService { get; set; }
 
-        protected MudSelect<Online.Models.BrokerStaff> StaffSelectCtl;
-
         public IEnumerable<Online.Models.BrokerStaff> AssignableStaff { get; set; }
 
         public Online.Models.BrokerStaff SelectedStaff { get; set; }
@@ -53,7 +51,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         {
             get
             {
-                return StaffSelectCtl != null && !StaffSelectCtl.SelectedValues.Any();
+                return SelectedStaff == null;
             }
         }
 

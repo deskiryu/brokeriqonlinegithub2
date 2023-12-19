@@ -29,7 +29,7 @@
                         <label class="col-sm-4 col-form-label">Brokerage Name</label>
 
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Broker.Name" placeholder="Enter first name for this customer"></InputText>
+                            <InputText class="form-control col-sm-8" @bind-Value="Broker.Name" placeholder="Enter first name for this customer"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.Name)" />
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                         <label class="col-sm-4 col-form-label">Broker First Name</label>
 
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Broker.BrokerFirstName" placeholder="Enter first name for this customer"></InputText>
+                            <InputText class="form-control col-sm-8" @bind-Value="Broker.BrokerFirstName" placeholder="Enter first name for this customer"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.BrokerFirstName)" />
                         </div>
                     </div>
@@ -45,7 +45,7 @@
                         <label class="col-sm-4 col-form-label">Broker Last Name</label>
 
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="Broker.BrokerLastName" placeholder="Enter last name for this customer"></InputText>
+                            <InputText class="form-control col-sm-8" @bind-Value="Broker.BrokerLastName" placeholder="Enter last name for this customer"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.BrokerLastName)" />
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Telephone Number</label>
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Broker.TelephoneNumber" placeholder="Enter telephone for this Broker"></InputText>
+                            <InputText class="form-control col-sm-8" @bind-Value="@Broker.TelephoneNumber" placeholder="Enter telephone for this Broker"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.TelephoneNumber)" />
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Address Line 1</label>
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Broker.AddressLine1" placeholder="Enter address for this Broker"></InputText>
+                            <InputText class="form-control col-sm-8" @bind-Value="@Broker.AddressLine1" placeholder="Enter address for this Broker"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.AddressLine1)" />
                         </div>
                     </div>
@@ -76,7 +76,7 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Address Line 2 </label>
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Broker.AddressLine2" placeholder="Enter address for this Broker"></InputText>
+                            <InputText class="form-control col-sm-8" @bind-Value="@Broker.AddressLine2" placeholder="Enter address for this Broker"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.AddressLine2)" />
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">City </label>
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Broker.AddressLine3" placeholder="Enter address for this Broker"></InputText>
+                            <InputText class="form-control col-sm-8" @bind-Value="@Broker.AddressLine3" placeholder="Enter address for this Broker"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.AddressLine3)" />
                         </div>
                     </div>
@@ -92,7 +92,7 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Postcode</label>
                         <div class="col-sm-8">
-                            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Broker.Postcode" placeholder="Enter postcode for this Broker"></InputText>
+                            <InputText class="form-control col-sm-8" @bind-Value="@Broker.Postcode" placeholder="Enter postcode for this Broker"></InputText>
                             <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.Postcode)" />
                         </div>
                     </div>
@@ -203,7 +203,7 @@
                                 <div class="form-group row">
                                         <label class="col-sm-2 col-form-label">Bundle Identifier </label>
                                     <div class="col-sm-10 ">
-                                        <InputText  id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.BundleIdentifier" placeholder="Enter address for this Broker"></InputText>
+                                        <InputText  class="form-control" @bind-Value="@BrokerIdentifier.BundleIdentifier" placeholder="Enter address for this Broker"></InputText>
                                             <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.BundleIdentifier)" />
                                     </div>
                                 </div>
@@ -211,7 +211,12 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Background Colour </label>
                                     <div class="col-sm-10 ">
-                                            <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.BackgroundColour" placeholder="Enter address for this Broker"></InputText>
+                                            <MudColorPicker @bind-Text="BrokerIdentifier.BackgroundColour" 
+                                                Style="@($"color: {@BrokerIdentifier.BackgroundColour};")" 
+                                                Placeholder="Select Color"
+                                                DisableAlpha="true"
+                                                PickerVariant="PickerVariant.Dialog"
+                                                ColorPickerMode="ColorPickerMode.HEX" />
                                             <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.BackgroundColour)" />
                                     </div>
                                 </div>
@@ -219,7 +224,12 @@
                                 <div class="form-group row">
                                         <label class="col-sm-2 col-form-label">Text Colour </label>
                                     <div class="col-sm-10 ">
-                                            <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.TextColour" placeholder="Enter address for this Broker"></InputText>
+                                            <MudColorPicker @bind-Text="BrokerIdentifier.TextColour" 
+                                                Style="@($"color: {@BrokerIdentifier.TextColour};")" 
+                                                Placeholder="Select Color"
+                                                DisableAlpha="true"
+                                                PickerVariant="PickerVariant.Dialog"
+                                                ColorPickerMode="ColorPickerMode.HEX" />
                                             <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.TextColour)" />
                                     </div>
                                 </div>
@@ -227,7 +237,7 @@
                                 <div class="form-group row">
                                         <label class="col-sm-2 col-form-label">Http Link {Not shown}</label>
                                     <div class="col-sm-10 ">
-                                            <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.HttpLink" placeholder="Enter address for this Broker"></InputText>
+                                            <InputText class="form-control" @bind-Value="@BrokerIdentifier.HttpLink" placeholder="Enter address for this Broker"></InputText>
                                             <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.HttpLink)" />
                                     </div>
                                 </div>
@@ -235,7 +245,7 @@
                                 <div class="form-group row">
                                         <label class="col-sm-2 col-form-label">Http Address (Shown to client)</label>
                                     <div class="col-sm-10 ">
-                                            <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.HttpAddress" placeholder="Enter address for this Broker"></InputText>
+                                            <InputText class="form-control" @bind-Value="@BrokerIdentifier.HttpAddress" placeholder="Enter address for this Broker"></InputText>
                                             <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.HttpAddress)" />
                                     </div>
                                 </div>
@@ -243,7 +253,7 @@
                                 <div class="form-group row">
                                         <label class="col-sm-2 col-form-label">App Name </label>
                                     <div class="col-sm-10 ">
-                                            <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.AppName" placeholder="Enter address for this Broker"></InputText>
+                                            <InputText class="form-control" @bind-Value="@BrokerIdentifier.AppName" placeholder="Enter address for this Broker"></InputText>
                                             <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.AppName)" />
                                     </div>
                                 </div>
@@ -265,22 +275,27 @@
                                 <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Link Colour </label>
                                     <div class="col-sm-10 ">
-                                                <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.LinkColour" placeholder="Enter address for this Broker"></InputText>
-                                                <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.LinkColour)" />
+                                            <MudColorPicker @bind-Text="BrokerIdentifier.LinkColour" 
+                                                Style="@($"color: {@BrokerIdentifier.LinkColour};")" 
+                                                Placeholder="Select Color"
+                                                DisableAlpha="true"
+                                                PickerVariant="PickerVariant.Dialog"
+                                                ColorPickerMode="ColorPickerMode.HEX" />
+                                            <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.LinkColour)" />
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Play Store Link </label>
                                     <div class="col-sm-10 ">
-                                                <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.PlayStoreLink" placeholder="Enter address for this Broker"></InputText>
+                                                <InputText class="form-control" @bind-Value="@BrokerIdentifier.PlayStoreLink" placeholder="Enter address for this Broker"></InputText>
                                                 <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.PlayStoreLink)" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">App Store Link </label>
                                     <div class="col-sm-10 ">
-                                        <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.AppStoreLink" placeholder="Enter address for this Broker"></InputText>
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.AppStoreLink" placeholder="Enter address for this Broker"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.AppStoreLink)" />
                                     </div>
                                 </div>
@@ -288,7 +303,7 @@
                                 <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">From Email Name </label>
                                     <div class="col-sm-10 ">
-                                                <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.FromEmailName" placeholder="Enter address for this Broker"></InputText>
+                                                <InputText class="form-control" @bind-Value="@BrokerIdentifier.FromEmailName" placeholder="Enter address for this Broker"></InputText>
                                                 <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.FromEmailName)" />
                                     </div>
                                 </div>
@@ -296,29 +311,22 @@
                                 <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">From Email Address </label>
                                     <div class="col-sm-10 ">
-                                                <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.FromEmailAddress" placeholder="Enter address for this Broker"></InputText>
+                                                <InputText class="form-control" @bind-Value="@BrokerIdentifier.FromEmailAddress" placeholder="Enter address for this Broker"></InputText>
                                                 <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.FromEmailAddress)" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                         <label class="col-sm-2 col-form-label">Welcome Video Url </label>
                                     <div class="col-sm-10 ">
-                                        <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.WelcomeVideoUrl" placeholder="Enter address for this Broker"></InputText>
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.WelcomeVideoUrl" placeholder="Enter address for this Broker"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.WelcomeVideoUrl)" />
-                                    </div> 
-                                </div>
-
-                                <div class="form-group row">
-                                        <label class="col-sm-2 col-form-label">Welcome Message </label>
-                                    <div class="col-sm-10 ">
-                                        <MudTextField Lines="5" style="white-space: pre-line; background-color: white;" @bind-Value="@BrokerIdentifier.WelcomeMessage" />
                                     </div> 
                                 </div>
 
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Email Tag Line </label>
                                     <div class="col-sm-10 ">
-                                        <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.EmailTagLine" placeholder="Enter address for this Broker"></InputText>
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.EmailTagLine" placeholder="Enter address for this Broker"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.EmailTagLine)" />
                                     </div>
                                 </div>
@@ -326,7 +334,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Hub Client ConnectString </label>
                                     <div class="col-sm-10 ">
-                                        <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.HubClientConnectString" placeholder="Enter address for this Broker"></InputText>
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.HubClientConnectString" placeholder="Enter address for this Broker"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.HubClientConnectString)" />
                                     </div>
                                 </div>
@@ -334,7 +342,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Hub Client Name </label>
                                     <div class="col-sm-10 ">
-                                        <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.HubClientName" placeholder="Enter address for this Broker"></InputText>
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.HubClientName" placeholder="Enter address for this Broker"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.HubClientName)" />
                                     </div>
                                 </div>
@@ -342,7 +350,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Firebase Key </label>
                                     <div class="col-sm-10 ">
-                                        <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.FirebaseKey" placeholder="Enter address for this Broker"></InputText>
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.FirebaseKey" placeholder="Enter address for this Broker"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.FirebaseKey)" />
                                     </div>
                                 </div>
@@ -350,8 +358,100 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Firebase Client </label>
                                     <div class="col-sm-10 ">
-                                        <InputText id="lastName" class="form-control" @bind-Value="@BrokerIdentifier.FirebaseClient" placeholder="Enter address for this Broker"></InputText>
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.FirebaseClient" placeholder="Enter address for this Broker"></InputText>
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.FirebaseClient)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Invitation Message </label>
+                                    <div class="col-sm-10 ">
+                                        <MudTextField Lines="5" style="white-space: pre-line; background-color: white;" @bind-Value="@BrokerIdentifier.InvitationMessage" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Header Colour </label>
+                                    <div class="col-sm-10 ">
+                                        <MudColorPicker @bind-Text="BrokerIdentifier.HeaderColumnBGColour" 
+                                        Style="@($"color: {@BrokerIdentifier.HeaderColumnBGColour};")" 
+                                        Placeholder="Select Color"
+                                        DisableAlpha="true"
+                                        PickerVariant="PickerVariant.Dialog"
+                                        ColorPickerMode="ColorPickerMode.HEX" />
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.HeaderColumnBGColour)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Page 1 Title </label>
+                                    <div class="col-sm-10 ">
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingPage1Title" placeholder="Page 1 Title"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingPage1Title)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Page 1 Subtitle </label>
+                                    <div class="col-sm-10 ">
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingPage1SubTitle" placeholder="Page 1 Title"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingPage1SubTitle)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Page 2 First Text </label>
+                                    <div class="col-sm-10 ">
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingPage2FirstText" placeholder="Page 2 First Text"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingPage2FirstText)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Page 2 Second Text </label>
+                                    <div class="col-sm-10 ">
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingPage2SecondText" placeholder="Page 2 Second Text"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingPage2SecondText)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Page 3 First Text </label>
+                                    <div class="col-sm-10 ">
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingPage3FirstText" placeholder="Page 3 First Text"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingPage3FirstText)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Page 3 Second Text </label>
+                                    <div class="col-sm-10 ">
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingPage3SecondText" placeholder="Page 3 Second Text"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingPage3SecondText)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Page 3 Third Text</label>
+                                    <div class="col-sm-10 ">
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingPage3ThirdText" placeholder="Page 3 Third Text"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingPage3ThirdText)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Page 3 Fourth Text</label>
+                                    <div class="col-sm-10 ">
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingPage3FourthText" placeholder="Page 3 Fourth Text"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingPage3FourthText)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Thank You Text</label>
+                                    <div class="col-sm-10 ">
+                                        <InputText class="form-control" @bind-Value="@BrokerIdentifier.OnboardingThankYouText" placeholder="Thank You Text"></InputText>
+                                        <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingThankYouText)" />
                                     </div>
                                 </div>
                             </div>
@@ -365,6 +465,7 @@
                         </div>
                     </EditForm>
                 </MudTabPanel>                   
+                
                 }
 
             </MudTabs>
