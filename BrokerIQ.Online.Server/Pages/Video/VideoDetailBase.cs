@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.WebUtilities;
 
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Online.Models;
-using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Models;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
@@ -62,6 +59,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
         protected VideoThumbnail VideoThumbnail { get; set; }
 
         protected string VideoNameNoExtension { get; set; }
+
         protected string selectedNotification;
 
         protected string SearchTerm { get; set; } = "";
@@ -73,6 +71,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
         protected bool IsAdmin { get; set; }
 
         public int CustomerCategory { get; set; }
+
         public int AgeRange { get; set; }
 
         protected int? ProfilingOption { get; set; }
@@ -118,8 +117,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 ThisVideo = await VideoService.GetVideo(int.Parse(VideoId), BrokerId);
                 Url = ThisVideo.Url;
                 Vetted = ThisVideo.Vetted;
-                var queryCust = await CustomerService.GetAllCustomers();
-                Customers = queryCust.Where(x => x.VideoNotificationsAllowed == true).ToList();
+                var allCustomers = await CustomerService.GetAllCustomers();
+                Customers = allCustomers.Where(x => x.VideoNotificationsAllowed || x.MarketingMessagesAllowed).ToList();
 
                 Url = ThisVideo.Url;
 
