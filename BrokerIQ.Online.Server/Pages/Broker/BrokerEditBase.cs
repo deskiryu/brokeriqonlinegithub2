@@ -1,25 +1,25 @@
-﻿namespace BrokerIQ.Online.Pages
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Server.Services;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+
+using MudBlazor;
+
+namespace BrokerIQ.Online.Pages
 {
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using BrokerIQ.Online.Server.Extensions;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Online.Server.Services;
-    using BrokerIQ.Online.Server.Shared;
-    using Microsoft.AspNetCore.Components;
-    using Microsoft.AspNetCore.Components.Forms;
-    using Models;
-    using MudBlazor;
-
-    using Services.Interface;
-
     public class BrokerEditBase : ComponentBase
     {
         private int id;
-        private int customerId;
-        private string strBrokerId;
 
         [Inject]
         public IBrokerService BrokerService { get; set; }
@@ -65,7 +65,7 @@
                 IdentifierFound = false
             };
             IsAdmin = false;
-            IsMinorAdmin = false;   
+            IsMinorAdmin = false;
         }
 
         protected override async Task OnInitializedAsync()
@@ -128,7 +128,6 @@
             }
         }
 
-
         protected void HandleInvalidSubmitIdentifier()
         {
             StatusClass = "alert-danger";
@@ -188,6 +187,7 @@
             }
 
         }
+
         protected async Task DeleteIdentifier()
         {
             StatusClass = "alert-success";
@@ -214,6 +214,7 @@
             }
 
         }
+
         protected async void NavigateToOverview()
         {
             if (IsAdmin || IsMinorAdmin)

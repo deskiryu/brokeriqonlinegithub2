@@ -7,6 +7,7 @@ using BrokerIQ.Online.Models.Account;
 using BrokerIQ.Online.Server.Models;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
+using System.Reflection.Metadata.Ecma335;
 
 namespace BrokerIQ.Online.Mapper
 {
@@ -73,13 +74,17 @@ namespace BrokerIQ.Online.Mapper
                     }
                     return !videoOptOut;
                 }))
+                .ForMember(d => d.AudioNotificationsAllowed, action => action.MapFrom(s => !s.AudioOptOut))
+                .ForMember(d => d.ProfilingNotificationsAllowed, action => action.MapFrom(s => !s.ProfilingOptOut))
+                .ForMember(d => d.MarketingMessagesAllowed, action => action.MapFrom(s => !s.MarketingOptOut))
                 .ForMember(d => d.IsWhiteLabel, action => action.MapFrom(s => s.IsWhiteLabel))
                 .ForMember(d => d.HasNeeds, action => action.MapFrom(s => s.HasNeeds))
                 .ForMember(d => d.IsSmokerOrVaper, action => action.MapFrom(s => s.IsSmokerOrVaper))
                 .ForMember(d => d.AnnualIncome, action => action.MapFrom(s => s.AnnualIncome))
                 .ForMember(d => d.Gender, action => action.MapFrom(s => s.Gender))
                 .ForMember(d => d.OccupationId, action => action.MapFrom(s => s.OccupationId))
-                .ForMember(d => d.NotificationTag, action => action.MapFrom(s => s.NotificationTag));
+                .ForMember(d => d.NotificationTag, action => action.MapFrom(s => s.NotificationTag))
+                .ForMember(d => d.ConnectedToCustomerId, action => action.MapFrom(s => s.ConnectedToCustomerId));
 
             CreateMap<Customer, UpdateCustomerDto>()
                 .ForMember(d => d.Id, action => action.MapFrom(s => s.Id))
@@ -99,6 +104,9 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.PotentialBroker2, action => action.MapFrom(s => s.PotentialBroker2))
                 .ForMember(d => d.PotentialBroker3, action => action.MapFrom(s => s.PotentialBroker3))
                 .ForMember(d => d.VideoOptOut, action => action.MapFrom(s => !s.VideoNotificationsAllowed))
+                .ForMember(d => d.AudioOptOut, action => action.MapFrom(s => !s.AudioNotificationsAllowed))
+                .ForMember(d => d.ProfilingOptOut, action => action.MapFrom(s => !s.ProfilingNotificationsAllowed))
+                .ForMember(d => d.MarketingOptOut, action => action.MapFrom(s => !s.MarketingMessagesAllowed))
                 .ForMember(d => d.BusinessName, action => action.MapFrom(s => s.BusinessName))
                 .ForMember(d => d.CustomerCategory, action => action.MapFrom(s => s.CustomerCategory))
                 .ForMember(d => d.HasNeeds, action => action.MapFrom(s => s.HasNeeds))
@@ -869,8 +877,34 @@ namespace BrokerIQ.Online.Mapper
 
         private void AzureStorageMapper()
         {
-            CreateMap<Video, AzureVideoDto>();
-            CreateMap<AzureVideoDto, Video>();
+            CreateMap<Video, VideoDto>()
+                .ForMember(p => p.Id, opt => opt.MapFrom(r => r.Id))
+                .ForMember(p => p.Name, opt => opt.MapFrom(r => r.Name))
+                .ForMember(p => p.Url, opt => opt.MapFrom(r => r.Url))
+                .ForMember(p => p.AvailableToAll, opt => opt.MapFrom(r => r.AvailableToAll))
+                .ForMember(p => p.BrokerId, opt => opt.MapFrom(r => r.BrokerId))
+                .ForMember(p => p.UploadDate, opt => opt.MapFrom(r => r.UploadDate))
+                .ForMember(p => p.Vetted, opt => opt.MapFrom(r => r.Vetted))
+                .ForMember(p => p.VideoThumbnailData, opt => opt.MapFrom(r => r.VideoThumbnailData))
+                .ForMember(d => d.VideoSendTypeId, opt => opt.MapFrom(r => r.VideoSendTypeId))
+                .ForMember(p => p.SendDate, opt => opt.MapFrom(r => r.SendDate))
+                .ForMember(p => p.MessageContent, opt => opt.MapFrom(r => r.MessageContent))
+                .ForMember(p => p.GuidId, opt => opt.MapFrom(r => r.GuidId));
+
+            CreateMap<VideoDto, Video>()
+                .ForMember(p => p.Id, opt => opt.MapFrom(r => r.Id))
+                .ForMember(p => p.Name, opt => opt.MapFrom(r => r.Name))
+                .ForMember(p => p.Url, opt => opt.MapFrom(r => r.Url))
+                .ForMember(p => p.AvailableToAll, opt => opt.MapFrom(r => r.AvailableToAll))
+                .ForMember(p => p.BrokerId, opt => opt.MapFrom(r => r.BrokerId))
+                .ForMember(p => p.UploadDate, opt => opt.MapFrom(r => r.UploadDate))
+                .ForMember(p => p.Vetted, opt => opt.MapFrom(r => r.Vetted))
+                .ForMember(p => p.VideoThumbnailData, opt => opt.MapFrom(r => r.VideoThumbnailData))
+                .ForMember(d => d.VideoSendTypeId, opt => opt.MapFrom(r => r.VideoSendTypeId))
+                .ForMember(p => p.SendDate, opt => opt.MapFrom(r => r.SendDate))
+                .ForMember(p => p.MessageContent, opt => opt.MapFrom(r => r.MessageContent))
+                .ForMember(p => p.GuidId, opt => opt.MapFrom(r => r.GuidId));
+
             CreateMap<Audio, AudioDto>();
             CreateMap<AudioDto, Audio>();
             CreateMap<AzureTrainingVideoDto, TrainingVideo>();

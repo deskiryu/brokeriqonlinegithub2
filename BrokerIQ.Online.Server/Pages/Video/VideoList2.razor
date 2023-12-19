@@ -1,0 +1,439 @@
+﻿@page "/videolist2"
+@inherits VideoListBase2
+@using System.Globalization
+@using System.IO
+@using BrokerIQ.Online.Pages
+@using Dto.Enum
+
+
+@if (!Saved)
+{
+    @if (Videos == null)
+    {        
+        @if (IsAdmin)
+        {
+            <div class="row mt-1">
+
+                <div class="col-lg-8 control_wrapper mb-5">
+                    <MudSelect T="int" Label="Filter By Broker" Placeholder="Select" Clearable="true" 
+                               AdornmentColor="Color.Primary" ValueChanged="@((int value) => OnBrokerChanged(value))">
+                        <MudSelectItem Value="0">Select</MudSelectItem>
+                        @foreach (var item in @Brokers)
+                        {
+                            <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+            </div>
+        }
+        <div>
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+</div>
+    }
+    else
+    {
+        <div class="row">
+    <InputFile id="videofileinput" OnChange="LoadFiles" accept="video/mov,video/mp4,video/*" hidden multiple />
+    <MudButton HtmlTag="label" Class="col-2 ml-4" Variant="Variant.Filled" Color="Color.Primary"
+        Style="@($"color:{Colors.Shades.Black};")" StartIcon="@Icons.Filled.CloudUpload" for="videofileinput">
+        Upload Video
+    </MudButton>
+    <p class="col-5">@status</p>
+</div>
+
+
+
+
+
+        <div class="">
+            @if (VideoUploading)
+            {
+                <div class="mt-5">
+                        Uploading video to BrokerIQ...
+                </div>
+
+                <div class="spin-row spin-row-bg mt-5">
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
+                </div>                
+            }
+
+        </div>
+
+        <MudDialog @bind-IsVisible="RenameUploadVisibility">
+            <TitleContent>
+                Upload Video
+            </TitleContent>
+            <DialogContent>
+                <MudTextField Label="Video Name" ID="inVal" @bind-Value="@VideoName" Type="InputType.Text" Placeholder=""
+                    HelperText="Enter video name" />
+                @if (IsAdmin)
+                {
+                    <MudSelect id="brokerVideo" class="form-control" @bind-Value="@BrokerListId">
+                        <MudSelectItem Value=0>No Broker</MudSelectItem>
+                        @foreach (var broker in @Brokers)
+                        {
+                            <MudSelectItem Value=@broker.Id>@broker.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            </DialogContent>
+            <DialogActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+                    OnClick="OnCancelPushed">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+                    OnClick="UploadButtonPushed">Ok</MudButton>
+            </DialogActions>
+
+        </MudDialog>
+
+        <MudDropContainer T="BrokerIQ.Online.Server.Models.Video" @ref="_dropContainer" Items="Videos" Item ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
+    <ChildContent>
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                    <div class="card-header"><h6>Automated Videos</h6></div>
+                            <div class="card-body">
+                <div class="d-flex gap-1 mx-1  flex-wrap " >
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Welcome">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Welcome Video</div>
+                            <div class="card-title my_card_title">@(WelcomeVideo !=null ? WelcomeVideo.Name : "")</div>
+                            <div class="card-body my_card_body">
+                                @if (WelcomeVideo != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(WelcomeVideo.Id, VideoSendEnum.WelcomeVideo) )"></div>
+                                    if (DisplayEmbeddedVideo[WelcomeVideo.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@WelcomeVideo.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@WelcomeVideo.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@WelcomeVideo.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                 <div class="none_block"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+            </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Birthday">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Birthday Video</div>
+                            <div class="card-title my_card_title">@(BirthdayVideo !=null ? BirthdayVideo.Name : "")</div>
+                            <div class="card-body my_card_body">
+                                @if (BirthdayVideo != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(BirthdayVideo.Id, VideoSendEnum.BirthdayVideo) )"></div>
+                                    if (DisplayEmbeddedVideo[BirthdayVideo.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@BirthdayVideo.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@BirthdayVideo.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@BirthdayVideo.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="none_block"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+            </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Mortgage">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Mortgage Video</div>
+                            <div class="card-title my_card_title">@(MortgageVideo !=null ? MortgageVideo.Name : "")</div>
+                            <div class="card-body my_card_body">
+                                @if (MortgageVideo != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(MortgageVideo.Id, VideoSendEnum.MortgageVideo) )"></div>
+                                    if (DisplayEmbeddedVideo[MortgageVideo.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@MortgageVideo.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@MortgageVideo.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(MortgageVideo.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="none_block"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Insurance">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Insurance Video</div>
+                            <div class="card-title my_card_title">@(InsuranceVideo !=null ? InsuranceVideo.Name : "")</div>
+                            <div class="card-body my_card_body">
+                                @if (InsuranceVideo != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(InsuranceVideo.Id, VideoSendEnum.InsuranceVideo) )"></div>
+                                    if (DisplayEmbeddedVideo[InsuranceVideo.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@InsuranceVideo.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@InsuranceVideo.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@InsuranceVideo.Id) )"></div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="none_block"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo1">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Send Date Video 1</div>
+                            <div class="card-title my_card_title">@(SendDateVideo1 !=null ? SendDateVideo1.Name : "")</div>
+                            <div class="card-body my_card_body_date">
+                                @if (SendDateVideo1 != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(SendDateVideo1.Id, VideoSendEnum.SendOnDate) )"></div>
+                                    if (DisplayEmbeddedVideo[SendDateVideo1.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@SendDateVideo1.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@SendDateVideo1.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo1.Id) )"></div>
+                                        </div>
+                                    }
+                                    <MudDatePicker Class="my_send_date_chooser" Culture=@(new CultureInfo("en-GB"))
+                                                   PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo1.SendDate"
+                                                   DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo1.Id)"
+                                                   >
+                                    </MudDatePicker>
+                                }
+                                else
+                                {
+                                    <div class="none_block none_block_date"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo2">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Send Date Video 2</div>
+                            <div class="card-title my_card_title">@(SendDateVideo2 !=null ? SendDateVideo2.Name : "")</div>
+                            <div class="card-body my_card_body_date">
+                                @if (SendDateVideo2 != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(SendDateVideo2.Id, VideoSendEnum.SendOnDate) )"></div>
+                                    if (DisplayEmbeddedVideo[SendDateVideo2.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@SendDateVideo2.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@SendDateVideo2.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo2.Id) )"></div>
+                                        </div>
+                                    }
+                                    <MudDatePicker Class="my_send_date_chooser" Culture=@(new CultureInfo("en-GB"))
+                                                   PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo2.SendDate"
+                                                   DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo2.Id)"
+                                                   >
+                                    </MudDatePicker>
+                                }
+                                else
+                                {
+                                    <div class="none_block none_block_date"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo3">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Send Date Video 3</div>
+                            <div class="card-title my_card_title">@(SendDateVideo3 !=null ? SendDateVideo3.Name : "")</div>
+                            <div class="card-body my_card_body_date">
+                                @if (SendDateVideo3 != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(SendDateVideo3.Id, VideoSendEnum.SendOnDate) )"></div>
+                                    if (DisplayEmbeddedVideo[SendDateVideo3.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@SendDateVideo3.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@SendDateVideo3.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo3.Id) )"></div>
+                                        </div>
+                                    }
+                                    <MudDatePicker Class="my_send_date_chooser" Culture=@(new CultureInfo("en-GB"))
+                                                   PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo3.SendDate"
+                                                   DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo3.Id)"
+                                                   >
+                                    </MudDatePicker>
+                                }
+                                else
+                                {
+                                    <div class="none_block none_block_date"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                    <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo4">
+                        <div class="card " style="padding-left: 0px; padding-right: 0px">
+                            <div class="card-header">Send Date Video 4</div>
+                            <div class="card-title my_card_title">@(SendDateVideo4 !=null ? SendDateVideo4.Name : "")</div>
+                            <div class="card-body my_card_body_date">
+                                @if (SendDateVideo4 != null)
+                                {
+                                    <div class="close" @onclick="@( async () => await RemoveDrag(SendDateVideo4.Id, VideoSendEnum.SendOnDate) )"></div>
+                                    if (DisplayEmbeddedVideo[SendDateVideo4.Id])
+                                    {
+                                        <div class="video_play">
+                                            <video id="movie" class="video_play_size" controls preload>
+                                                <source src='@SendDateVideo4.Url#t=0.1'>
+                                            </video>
+                                        </div>
+
+                                    }
+                                    else
+                                    {
+                                        <div class="video_thumb">
+                                            <img class="img-thumbnail" src="@SendDateVideo4.VideoThumbnailData" style="width:150px;" />
+                                            <div class="play-button" @onclick="@( () => ShowVideoPlayer(@SendDateVideo4.Id) )"></div>
+                                        </div>
+                                    }
+                                    <MudDatePicker Class="my_send_date_chooser" Culture=@(new CultureInfo("en-GB"))
+                                                   PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Date="@SendDateVideo4.SendDate"
+                                                   DateChanged="async (x) => await UpdateVideoSendDate(x, SendDateVideo4.Id)"
+                                                   >
+                                    </MudDatePicker>
+                                }
+                                else
+                                {
+                                    <div class="none_block none_block_date"><p>NONE</p></div>
+                                }
+                            </div>
+                        </div>
+                    </MudDropZone>
+                </div></div></div>
+
+                <div class="card " style="padding-left: 0px; padding-right: 0px">
+                    <div class="card-header"><h6>Available Videos - Drag and Drop to the automated videos</h6></div>
+                    <div class="card-body">
+                <MudDropZone T="BrokerIQ.Online.Server.Models.Video" Identifier="Files"  Class="d-flex gap-1 mx-1 flex-wrap flex-grow-1 pa-2 rounded">
+
+
+
+
+
+
+
+                </MudDropZone></div></div>
+                
+    </ChildContent>
+
+    <ItemRenderer>
+
+                <div class="card " style="padding-left: 0px; padding-right: 0px">
+                    <div class="card-title my_card_title">@context.Name</div>
+                    <div class="card-body my_card_body">
+                        <div class="close close_no_header" @onclick="@( async () => await DeleteVideoBottom(context.Id) )"></div>
+                            @if (DisplayEmbeddedVideo[context.Id])
+                            {
+                                <div class="video_play" style="border-color : @(context.Vetted ? "green":"red")">
+                                    <video id="movie" class="video_play_size" controls preload>
+                                        <source src='@context.Url#t=0.1'>
+                                    </video>
+                                </div>
+
+                            }
+                            else
+                            {
+                                <div class="video_thumb" style="border-color : @(context.Vetted ? "green":"red")">
+                                    <img class="img-thumbnail" src="@context.VideoThumbnailData" style="width:150px;" />
+                                <div class="play-button play-button-no-header" @onclick="@( () => ShowVideoPlayer(@context.Id) )"></div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div DataLabel="Send">
+                            <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Class = "send_position" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.Send"
+                                           @onclick="@( () => SendVideo(@context.Id) )" />
+                    </div>
+
+                <div DataLabel="Vet">
+                    @if (IsBroker)
+                    {
+                        <MudIconButton hidden="@context.Vetted" Variant="Variant.Filled" Color="Color.Primary" Class="vet_position" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.CheckBoxOutlineBlank"
+                        @onclick="@( () => SetVetted(@context.Id) )" />
+                        <MudIconButton hidden="@context.NotVetted" Variant="Variant.Filled" Color="Color.Primary" Class="vet_position" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.CheckCircle"
+                        @onclick="@( () => SetVetted(@context.Id) )" />
+                    }
+                </div>
+
+    </ItemRenderer>
+</MudDropContainer>
+
+       
+    }
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+        OnClick="@NavigateToOverview" class="btn btn-link">Back to video list</MudButton>
+}
