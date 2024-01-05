@@ -207,8 +207,8 @@ else if (!Saved)
                             <MudTd DataLabel="Required">@context.RequiredCount</MudTd>
                         </RowTemplate>
                     </MudTable>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center mt-1 mr-1">Clear</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(() => EditDocumentRequirements())" class="btn btn-secondary text-center mt-1">Edit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center mt-1">Clear</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(() => EditDocumentRequirements())" class="btn btn-secondary text-center mr-1 mt-1">Edit</MudButton>
                     }
                 </div>
 
