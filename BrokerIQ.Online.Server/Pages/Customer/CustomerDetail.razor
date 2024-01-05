@@ -434,7 +434,7 @@ else if (!Saved)
                                     Date="@noteFilterStartDate" DateChanged="FilterStartDateChanged" />
                                 </div>
                                 <div class="col-4">
-                        <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="To" DisableToolbar="true" @ref="NoteFilterTo"
+                                    <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="To" DisableToolbar="true" @ref="NoteFilterTo"
                                         Date="@noteFilterEndDate" DateChanged="FilterEndDateChanged" />
                                 </div>
                                 <div class="col-4 text-right">
@@ -455,17 +455,11 @@ else if (!Saved)
                         <MudCardHeader>
                             <CardHeaderContent>
                                 <MudText Typo="Typo.h6">@note.DateTaken.ToBiqDateString()</MudText>
-                        @if (User.IsAdmin)
-                        {
-                            @if (note.BrokerId > 0)
-                            {
-                                <td>@Brokers.First(x => x.Id == note.BrokerId)?.Name</td>
-                            }
-                            else
-                            {
-                                <td>Admin</td>                    
-                            }
-                        }
+                                @if (User.IsAdmin && note.BrokerId > 0)
+                                {
+                                    <MudText Typo="Typo.subtitle2">@(Brokers.First(x => x.Id == note.BrokerId)?.Name)</MudText>
+                                }
+                                <MudText Typo="Typo.subtitle2">@note.CreatedByName</MudText>
                             </CardHeaderContent>
                             <CardHeaderActions>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default"  @onclick="f => DeleteNote(note.Id)" />
