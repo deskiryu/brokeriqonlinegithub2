@@ -25,6 +25,9 @@ namespace BrokerIQ.Online.Pages
         public IBrokerService BrokerService { get; set; }
 
         [Inject]
+        public IBrokerStaffService BrokerStaffService { get; set; }
+
+        [Inject]
         INotificationService NotificationService { get; set; }
 
         [Inject]
@@ -45,9 +48,13 @@ namespace BrokerIQ.Online.Pages
 
         public List<Broker> Brokers { get; set; }
 
+        public List<BrokerStaff> Employees { get; set; }
+
         public HashSet<Customer> SelectedCustomers { get; set; }
 
         public int BrokerId { get; set; }
+
+        public int AssignedToId { get; set; }
 
         public bool SelectFilled { get; set; }
 
@@ -85,17 +92,21 @@ namespace BrokerIQ.Online.Pages
                 if (User.IsAdmin)
                 {
                     Brokers = (await BrokerService.GetBrokers()).ToList();
+                    Employees = new List<BrokerStaff>();
                 }
                 else
                 {
                     Brokers = new List<Broker>();
                     BrokerId = User.MasterBrokerId;
+
                     var broker = await BrokerService.GetBroker(User.MasterBrokerId);
 
                     if (broker.BrokerIdentifier.InsuranceOnly)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
                     }
+
+                    Employees = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId)).Where(e => e.StaffTypeId != StaffTypeEnum.Unassigned).ToList();
                 }
             }
             catch
@@ -198,6 +209,7 @@ namespace BrokerIQ.Online.Pages
             var filterValues = new CustomerFilter()
             {
                 BrokerId = BrokerId,
+                AssignedToId = AssignedToId,
                 Recent = FilterRecent,
                 Period = FilterPeriod,
                 Category = CustomerCategory,
