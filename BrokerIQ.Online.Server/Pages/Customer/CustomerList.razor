@@ -212,6 +212,7 @@ else
                   Dense="true" 
                   @bind-SelectedItems="SelectedCustomers">
             <HeaderContent>
+                <MudTh></MudTh>
                 <MudTh Style="text-align:center">
                     <MudIconButton Class="@(AssignVisibilityClass())" 
                                       Icon="@Icons.Material.Filled.GroupAdd" 
@@ -227,11 +228,11 @@ else
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.DateOfBirth)">Date Of Birth</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.CustomerCategory.GetDisplayName())">Category</MudTableSortLabel></MudTh>
-            @if (User.IsAdmin)
-            {
+                @if (User.IsAdmin)
+                {
                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.AppVersion)">App</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>                           
-            }
+                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>
+                }
                 <MudTh>Verified</MudTh>
                 <MudTh></MudTh>
             </HeaderContent>
@@ -259,6 +260,14 @@ else
                         }
                     }
                 </MudTd>
+                <MudTh>
+                    <MudAvatarGroup Max="4" Spacing="2" MaxSize="Size.Small" MaxColor="Color.Secondary" >
+                       @foreach(var staff in context.CustomerAssignments)
+                       {
+                            <MudAvatar Size="Size.Small" Style="@($"background:{@EmployeeColour[staff.Id]};")">@staff.FirstName.ToUpper().First()@staff.LastName.ToUpper().First()</MudAvatar>
+                       } 
+                    </MudAvatarGroup>
+                </MudTh>
                 <MudTd DataLabel="First name">@context.FirstName</MudTd>
                 <MudTd DataLabel="Last name">@context.LastName</MudTd>
                 <MudTd DataLabel="Telephone">@context.TelephoneNumber</MudTd>
