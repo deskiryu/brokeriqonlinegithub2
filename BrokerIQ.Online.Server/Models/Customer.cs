@@ -87,6 +87,8 @@ namespace BrokerIQ.Online.Models
 
         public virtual ICollection<MenuPlan> MenuPlans { get; set; }
 
+        public virtual ICollection<BrokerStaff> CustomerAssignments { get; set; }
+
         public virtual ICollection<int> ConnectedBrokers { get; set; }
 
         public virtual ICollection<CustomerDocument> CustomerDocuments { get; set; }

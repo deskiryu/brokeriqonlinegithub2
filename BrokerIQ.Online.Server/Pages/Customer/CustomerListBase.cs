@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -69,6 +70,8 @@ namespace BrokerIQ.Online.Pages
 
         protected int? ProfilingOption { get; set; }
 
+        protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
+
         //filter
         protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
@@ -107,11 +110,38 @@ namespace BrokerIQ.Online.Pages
                     }
 
                     Employees = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId)).Where(e => e.StaffTypeId != StaffTypeEnum.Unassigned).ToList();
+
+                    GenerateEmployeeColours();
                 }
             }
             catch
             {
                 NavigationManager.NavigateTo($"account/logout");
+            }
+        }
+
+        private void GenerateEmployeeColours()
+        {
+            string[] colourValues = new string[] {
+                Colors.Red.Lighten3, Colors.DeepPurple.Lighten3, Colors.LightBlue.Lighten3, Colors.Green.Lighten3, Colors.Yellow.Lighten3, Colors.DeepOrange.Lighten3, Colors.Grey.Lighten3,
+                Colors.Pink.Lighten3, Colors.Indigo.Lighten3, Colors.Cyan.Lighten3, Colors.LightGreen.Lighten3, Colors.Amber.Lighten3, Colors.Brown.Lighten3, Colors.Purple.Lighten3,
+                Colors.Blue.Lighten3, Colors.Teal.Lighten3, Colors.Lime.Lighten3, Colors.Orange.Lighten3, Colors.BlueGrey.Lighten3,
+                Colors.Red.Lighten1, Colors.DeepPurple.Lighten1, Colors.LightBlue.Lighten1, Colors.Green.Lighten1, Colors.Yellow.Lighten1, Colors.DeepOrange.Lighten1, Colors.Grey.Lighten1,
+                Colors.Pink.Lighten1, Colors.Indigo.Lighten1, Colors.Cyan.Lighten1, Colors.LightGreen.Lighten1, Colors.Amber.Lighten1, Colors.Brown.Lighten1, Colors.Purple.Lighten1,
+                Colors.Blue.Lighten1, Colors.Teal.Lighten1, Colors.Lime.Lighten1, Colors.Orange.Lighten1, Colors.BlueGrey.Lighten1,
+                Colors.Red.Accent3, Colors.DeepPurple.Accent3, Colors.LightBlue.Accent3, Colors.Green.Accent3, Colors.Yellow.Accent3, Colors.DeepOrange.Accent3,
+                Colors.Pink.Accent3, Colors.Indigo.Accent3, Colors.Cyan.Accent3, Colors.LightGreen.Accent3, Colors.Amber.Accent3, Colors.Purple.Accent3,
+                Colors.Blue.Accent3, Colors.Teal.Accent3, Colors.Lime.Accent3, Colors.Orange.Accent3
+            };
+
+            var colourIndex = 0;
+            EmployeeColour.Clear();
+
+            foreach (var member in Employees)
+            {
+                EmployeeColour.Add(member.Id, colourValues[colourIndex++]);
+
+                if (colourIndex > colourValues.Length) colourIndex = 0;
             }
         }
 
