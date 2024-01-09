@@ -15,5 +15,7 @@
         public bool ShowProtection { get; set; }
 
         public bool ShowStaffType { get; set; }
+
+        public bool HideErrorReloadFooter { get; set; }
     }
 }
