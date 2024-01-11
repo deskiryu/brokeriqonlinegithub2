@@ -296,7 +296,7 @@ namespace BrokerIQ.Online.Pages
                 var memoryStream = new MemoryStream();
                 await fileListEntry.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
 
-                var uploadedVideoId = 0;
+                var uploadedVideoId = (0,"");
                 var localBrokerId = BrokerId;
                 if (IsAdmin || IsMinorAdmin)
                 {
@@ -309,7 +309,7 @@ namespace BrokerIQ.Online.Pages
 
                 StateHasChanged();
 
-                if (uploadedVideoId>0)
+                if (uploadedVideoId.Item1>0)
                 {
                     StateHasChanged();
 
@@ -320,7 +320,7 @@ namespace BrokerIQ.Online.Pages
                     while (attempts > 0)
                     {
                         
-                        var thumbnail = await VideoService.GetVideoThumbnail(uploadedVideoId, BrokerId);
+                        var thumbnail = await VideoService.GetVideoThumbnail(uploadedVideoId.Item1, BrokerId);
                         if (thumbnail != null && thumbnail.Data != null)
                         {
                             break;
@@ -329,13 +329,13 @@ namespace BrokerIQ.Online.Pages
                         attempts--;
                     }
 
-                    DisplayEmbeddedVideo[uploadedVideoId] = false;
+                    DisplayEmbeddedVideo[uploadedVideoId.Item1] = false;
                     await RefreshVideosWithDialogMessage(true, $"Uploaded successfully");
 
                 }
                 else
                 {
-                    await RefreshVideosWithDialogMessage(false, "Something went wrong adding the video. Please try again.");
+                    await RefreshVideosWithDialogMessage(false, "Something went wrong adding the video. " + uploadedVideoId.Item2);
                 }
             }
 
