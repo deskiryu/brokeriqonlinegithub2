@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+
 using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {
     public class ClientReferralBase : ComponentBase
     {
-
         [Inject]
         public ITelephoneInviteService TelephoneInviteService { get; set; }
 
@@ -155,7 +157,9 @@ namespace BrokerIQ.Online.Pages
                     BrokerStaffFirstName = brokerStaff.FirstName;
                 }
 
-                ClientReferralsSentBase = (await ClientReferralService.GetReferralsByBrokerId(user.MasterBrokerId)).ToList();
+                ClientReferralsSentBase = (await ClientReferralService.GetReferralsByBrokerId(user.MasterBrokerId))
+                    .OrderByDescending(r => r.Id)
+                    .ToList();
                 FillBrokerStaff();
                 FillCustomer();
                 ClientReferralsSent = ClientReferralsSentBase;
@@ -234,7 +238,6 @@ namespace BrokerIQ.Online.Pages
             }
 
         }
-
 
         protected async Task DeleteLink(int id)
         {
@@ -367,7 +370,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task OnConvertedToProductClick(ClientReferral clientReferral, int ConvertedToProduct)
         {
-            clientReferral.ConvertedToProduct = (ConvertedToProductEnum) ConvertedToProduct;
+            clientReferral.ConvertedToProduct = (ConvertedToProductEnum)ConvertedToProduct;
             await UpdateCR(clientReferral);
         }
 

@@ -17,5 +17,9 @@
         public bool ShowStaffType { get; set; }
 
         public bool HideErrorReloadFooter { get; set; }
+
+        public bool ShowClientPictureColumn { get; set; }
+
+        public bool ShowClientPhoneColumn { get; set; }
     }
 }
