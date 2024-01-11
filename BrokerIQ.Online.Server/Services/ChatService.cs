@@ -111,6 +111,7 @@ namespace BrokerIQ.Online.Services
                 Message = message,
                 BrokerSource = true,
                 NoNotification = false,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--")
             };
 
             var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
