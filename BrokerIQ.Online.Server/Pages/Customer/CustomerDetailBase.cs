@@ -22,6 +22,7 @@ using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
+using BrokerIQ.Dto;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -173,6 +174,12 @@ namespace BrokerIQ.Online.Pages
 
         protected string HoverClass;
 
+        private int CurrentRequirementsId = 0;
+
+        protected string EditRequirementsHidden { get; set; } = string.Empty;
+
+        protected string CurrentRequirementsHidden { get; set; } = string.Empty;
+
         protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
 
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
@@ -199,6 +206,10 @@ namespace BrokerIQ.Online.Pages
                 ResetUploadsBadge();
 
                 DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
+                if (DocumentsRequirement != null)
+                {
+                    CurrentRequirementsId = DocumentsRequirement.Id;
+                }
 
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
 
@@ -211,6 +222,8 @@ namespace BrokerIQ.Online.Pages
                     DocumentTypeEnumValues.Add((int)item, item.GetDisplayName());
                     RequestedDocuments.Add(item, 0);
                 }
+
+                SetRequirementVisibility();
 
                 if (!User.IsAdmin)
                 {
@@ -273,6 +286,12 @@ namespace BrokerIQ.Online.Pages
             }
             fileUploadSettings = this.FileUploadSettingsOption.Value;
 
+        }
+
+        private void SetRequirementVisibility()
+        {
+            EditRequirementsHidden = DocumentsRequirement == null ? string.Empty : "display:none;";
+            CurrentRequirementsHidden = DocumentsRequirement != null ? string.Empty : "display:none;";
         }
 
         protected async Task UpdateChat(bool firstTime = false)
@@ -916,13 +935,36 @@ namespace BrokerIQ.Online.Pages
 
             if (requirementSet)
             {
-                var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", $"Are you sure you want to set the document requirements as the following?\n{requirementsString}");
+                var dialogParams = new DialogParameters
+                {
+                    { "Message", $"Are you sure you want to set the document requirements as the following?\n{requirementsString}" }
+                };
                 var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
                 if (!result.Cancelled)
                 {
-                    DocumentsRequirement = await DocumentsRequirementService.Create(Customer.Id, documentsRequiredList);
+                    if (CurrentRequirementsId > 0)
+                    {
+                        var updatedChecks = new List<DocumentsCheckDto>();
+                        foreach (var check in documentsRequiredList)
+                        {
+                            updatedChecks.Add(new DocumentsCheckDto()
+                            {
+                                DocumentsRequirementId = CurrentRequirementsId,
+                                DocuVaultType = check.DocuVaultType,
+                                RequiredCount = check.RequiredCount,
+                            });
+                        }
+
+                        DocumentsRequirement = await DocumentsRequirementService.Update(CurrentRequirementsId, updatedChecks);
+                    }
+                    else
+                    {
+                        DocumentsRequirement = await DocumentsRequirementService.Create(Customer.Id, documentsRequiredList);
+                    }
+
                     await UpdateChat(true);
+
+                    SetRequirementVisibility();
 
                     StateHasChanged();
                 }
@@ -935,6 +977,21 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected void EditDocumentRequirements()
+        {
+            foreach (var document in DocumentsRequirement.DocumentChecks)
+            {
+                RequestedDocuments[document.DocuVaultType] = document.RequiredCount;
+            }
+
+            CurrentRequirementsId = DocumentsRequirement.Id;
+            DocumentsRequirement = null;
+
+            SetRequirementVisibility();
+
+            StateHasChanged();
+        }
+
         protected async Task DeleteDocumentRequirements()
         {
             var dialogParams = new DialogParameters();
@@ -944,12 +1001,15 @@ namespace BrokerIQ.Online.Pages
             {
                 await DocumentsRequirementService.Delete(DocumentsRequirement.Id);
                 DocumentsRequirement = null;
+                CurrentRequirementsId = 0;
 
                 // reset display
                 foreach (var key in RequestedDocuments.Keys.ToList())
                 {
                     RequestedDocuments[key] = 0;
                 }
+
+                SetRequirementVisibility();
                 StateHasChanged();
             }
         }

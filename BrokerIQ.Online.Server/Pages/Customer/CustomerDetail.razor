@@ -190,186 +190,188 @@ else if (!Saved)
 
         <MudTabPanel Text="Uploads" BadgeData="@NewClientUploadsCount" BadgeColor="@UploadsBadgeColor" BadgeDot="@ShouldShowAsDot"
                         OnClick="@(f => ResetUploadsBadge())" >
-            <div class = "row" @onclick="this.ResetUploadsBadge">
-            <div class = "col-sm-4">
+            <div class="row" @onclick="this.ResetUploadsBadge">
+                <div class="col-sm-4" style="@CurrentRequirementsHidden">
 
-            @if (DocumentsRequirement != null) {
-                <h6 style="padding-bottom: 5px;">Client Documents Required</h6>
-                <MudTable Style="padding-bottom: 5px;" Items="@DocumentsRequirement.DocumentChecks">
-                    <HeaderContent>
-                        <MudTh>Document Type</MudTh>
-                        <MudTh>Uploaded</MudTh>
-                        <MudTh>Required</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Type">@context.DocuVaultType.GetDisplayName()</MudTd>
-                        <MudTd DataLabel="Received">@context.TotalCount</MudTd>
-                        <MudTd DataLabel="Required">@context.RequiredCount</MudTd>
-                    </RowTemplate>
-                </MudTable>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center mt-1">Remove Requirements</MudButton>
-            }
-            else
-            {
-                <h6 style="padding-bottom: 5px;">Select Client Document Requirements</h6>
-                <MudSelect T="int" Label="@DocuVaultTypeEnum.BankStatement.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.BankStatement]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                        <MudSelect T="int" Label="@DocuVaultTypeEnum.BenefitsInformation.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.BenefitsInformation]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                <MudSelect T="int" Label="@DocuVaultTypeEnum.Creditreport.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Creditreport]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                <MudSelect T="int" Label="@DocuVaultTypeEnum.DrivingLicense.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.DrivingLicense]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                        <MudSelect T="int" Label="@DocuVaultTypeEnum.FactFind.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.FactFind]">
-                            <MudSelectItem Value=0 />
-                            <MudSelectItem Value=1 />
-                            <MudSelectItem Value=2 />
-                            <MudSelectItem Value=3 />
-                            <MudSelectItem Value=4 />
-                            <MudSelectItem Value=5 />
-                        </MudSelect>
-                        <MudSelect T="int" Label="@DocuVaultTypeEnum.MortgageStatement.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.MortgageStatement]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                <MudSelect T="int" Label="@DocuVaultTypeEnum.P60.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.P60]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                <MudSelect T="int" Label="@DocuVaultTypeEnum.Passport.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Passport]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                <MudSelect T="int" Label="@DocuVaultTypeEnum.Payslip.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Payslip]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect> 
-                <MudSelect T="int" Label="@DocuVaultTypeEnum.SA302.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.SA302]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                <MudSelect T="int" Label="@DocuVaultTypeEnum.Savings.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Savings]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                <MudSelect T="int" Label="@DocuVaultTypeEnum.TaxOverview.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.TaxOverview]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                <MudSelect Style="padding-bottom: 5px;" T="int" Label="@DocuVaultTypeEnum.UtilityBill.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.UtilityBill]">
-                    <MudSelectItem Value=0 />
-                    <MudSelectItem Value=1 />
-                    <MudSelectItem Value=2 />
-                    <MudSelectItem Value=3 />
-                    <MudSelectItem Value=4 />
-                    <MudSelectItem Value=5 />
-                </MudSelect>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await SubmitDocumentRequirements())" class="btn btn-secondary text-center">Submit Requirements</MudButton>
-            }
-            </div>
-            <div class = "col-sm-8 border-left">
-                <div class="row">
-                    <div class="col-sm-4">
-                        <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6> 
-                    </div>
-                    <div class = "col-sm-8" style="margin-top: -14px">
+                    @if(DocumentsRequirement != null){
+                    <h6 style="padding-bottom: 5px;">Client Documents Required</h6>
+                    <MudTable Style="padding-bottom: 5px;" Items="@DocumentsRequirement.DocumentChecks">
+                        <HeaderContent>
+                            <MudTh>Document Type</MudTh>
+                            <MudTh>Uploaded</MudTh>
+                            <MudTh>Required</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Type">@context.DocuVaultType.GetDisplayName()</MudTd>
+                            <MudTd DataLabel="Received">@context.TotalCount</MudTd>
+                            <MudTd DataLabel="Required">@context.RequiredCount</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center mt-1">Clear</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(() => EditDocumentRequirements())" class="btn btn-secondary text-center mr-1 mt-1">Edit</MudButton>
+                    }
+                </div>
 
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()">
-                                Download Selected
-                            </MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()">
-                                Delete Selected
-                            </MudButton>
+                <div class="col-sm-4" style="@EditRequirementsHidden"> 
+                    <h6 style="padding-bottom: 5px;">Select Client Document Requirements</h6>
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.BankStatement.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.BankStatement]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                            <MudSelect T="int" Label="@DocuVaultTypeEnum.BenefitsInformation.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.BenefitsInformation]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.Creditreport.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Creditreport]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.DrivingLicense.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.DrivingLicense]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.FactFind.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.FactFind]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.MortgageStatement.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.MortgageStatement]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.P60.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.P60]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.Passport.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Passport]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.Payslip.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Payslip]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect> 
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.SA302.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.SA302]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.Savings.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.Savings]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect T="int" Label="@DocuVaultTypeEnum.TaxOverview.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.TaxOverview]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudSelect Style="padding-bottom: 5px;" T="int" Label="@DocuVaultTypeEnum.UtilityBill.GetDisplayName()" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[DocuVaultTypeEnum.UtilityBill]">
+                        <MudSelectItem Value=0 />
+                        <MudSelectItem Value=1 />
+                        <MudSelectItem Value=2 />
+                        <MudSelectItem Value=3 />
+                        <MudSelectItem Value=4 />
+                        <MudSelectItem Value=5 />
+                    </MudSelect>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await SubmitDocumentRequirements())" class="btn btn-secondary text-center">Submit Requirements</MudButton>
+                </div>
+
+                <div class = "col-sm-8 border-left">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6> 
+                        </div>
+                        <div class = "col-sm-8" style="margin-top: -14px">
+
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()">
+                                    Download Selected
+                                </MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()">
+                                    Delete Selected
+                                </MudButton>
                         </div>
                     </div>
-                <MudTable Items="@CustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
-                    <HeaderContent>
-                        <MudTh>Document</MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.CreatedDate)">Date</MudTableSortLabel></MudTh>
-                        <MudTh>Type</MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.FileName)">Name</MudTableSortLabel></MudTh>
-                        <MudTh></MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Document">@{
-                                    var strDocType = string.Empty;
-                                    DocumentTypeEnumValues.TryGetValue((int)context.DocuVaultType, out strDocType);
-                                    @strDocType
-                                }</MudTd>
-                                        <MudTd DataLabel="Email">@context.CreatedDate.ToBiqDateTimeString()</MudTd>
-                            <MudTd DataLabel="Type">@context.TypeDesc</MudTd>
-                            <MudTd DataLabel="Description">@context.Description</MudTd>
-                            <MudTd>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(context)">
-                                    <i class="fas fa-eye"></i>
-                                </MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveDocumentUpload(context)">
-                                    <i class="fas fa-download"></i>
-                                </MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteDocumentUpload(context)">
-                                    <i class="fas fa-trash"></i>
-                                </MudButton>
-                            </MudTd>
+                    <MudTable Items="@CustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
+                        <HeaderContent>
+                            <MudTh>Document</MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.CreatedDate)">Date</MudTableSortLabel></MudTh>
+                            <MudTh>Type</MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.FileName)">Name</MudTableSortLabel></MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Document">@{
+                                        var strDocType = string.Empty;
+                                        DocumentTypeEnumValues.TryGetValue((int)context.DocuVaultType, out strDocType);
+                                        @strDocType
+                                    }</MudTd>
+                                            <MudTd DataLabel="Email">@context.CreatedDate.ToBiqDateTimeString()</MudTd>
+                                <MudTd DataLabel="Type">@context.TypeDesc</MudTd>
+                                <MudTd DataLabel="Description">@context.Description</MudTd>
+                                <MudTd>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(context)">
+                                        <i class="fas fa-eye"></i>
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveDocumentUpload(context)">
+                                        <i class="fas fa-download"></i>
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteDocumentUpload(context)">
+                                        <i class="fas fa-trash"></i>
+                                    </MudButton>
+                                </MudTd>
 
-                        </RowTemplate>
-                        <PagerContent>
-                            <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
-                        </PagerContent>
+                            </RowTemplate>
+                            <PagerContent>
+                                <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
+                            </PagerContent>
                     </MudTable>         
-                    </div>
-                    </div>
+                </div>
+            </div>
 
         </MudTabPanel>
         @if (Customer.MenuPlans != null && Customer.MenuPlans.Any())
@@ -432,7 +434,7 @@ else if (!Saved)
                                     Date="@noteFilterStartDate" DateChanged="FilterStartDateChanged" />
                                 </div>
                                 <div class="col-4">
-                        <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="To" DisableToolbar="true" @ref="NoteFilterTo"
+                                    <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="To" DisableToolbar="true" @ref="NoteFilterTo"
                                         Date="@noteFilterEndDate" DateChanged="FilterEndDateChanged" />
                                 </div>
                                 <div class="col-4 text-right">
@@ -453,17 +455,11 @@ else if (!Saved)
                         <MudCardHeader>
                             <CardHeaderContent>
                                 <MudText Typo="Typo.h6">@note.DateTaken.ToBiqDateString()</MudText>
-                        @if (User.IsAdmin)
-                        {
-                            @if (note.BrokerId > 0)
-                            {
-                                <td>@Brokers.First(x => x.Id == note.BrokerId)?.Name</td>
-                            }
-                            else
-                            {
-                                <td>Admin</td>                    
-                            }
-                        }
+                                @if (User.IsAdmin && note.BrokerId > 0)
+                                {
+                                    <MudText Typo="Typo.subtitle2">@(Brokers.First(x => x.Id == note.BrokerId)?.Name)</MudText>
+                                }
+                                <MudText Typo="Typo.subtitle2">@note.CreatedByName</MudText>
                             </CardHeaderContent>
                             <CardHeaderActions>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default"  @onclick="f => DeleteNote(note.Id)" />

@@ -34,11 +34,12 @@ namespace BrokerIQ.Online.Services
         {
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures = false)
+        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures = false)
         {
             return await GetFilteredCustomers(new CustomerFilter()
             {
                 BrokerId = brokerId,
+                AssignedToId = assignedToId,
                 Recent = filterRecent,
                 Period = filterPeriod,
                 Category = filterCategory,
@@ -132,7 +133,8 @@ namespace BrokerIQ.Online.Services
                 MortgagePromotionRecentPeriod = ts,
                 CustomerCategory = (CustomerCategoryEnum)filter.Category,
                 AgeRange = (AgeRangeEnum)filter.AgeRange,
-                ProfilingOption = filter.ProfilingOption
+                ProfilingOption = filter.ProfilingOption,
+                AssignedToId = filter.AssignedToId
             };
 
             var url = this.customerUrl;
