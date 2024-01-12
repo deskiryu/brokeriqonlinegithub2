@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using BrokerIQ.Dto.Enum;
+
 using Microsoft.JSInterop;
+
+using BrokerIQ.Dto.Enum;
 
 namespace BrokerIQ.Online.Server.Extensions
 {
@@ -64,6 +66,7 @@ namespace BrokerIQ.Online.Server.Extensions
                             .GetMember(enumValue.ToString())
                             .FirstOrDefault()?.GetCustomAttribute<DisplayAttribute>().GetName() ?? "";
         }
+
         public static string GetDisplayPrompt(this Enum enumValue)
         {
             return enumValue.GetType()
@@ -77,6 +80,7 @@ namespace BrokerIQ.Online.Server.Extensions
             RecentPeriodEnum.FourWeeks => new TimeSpan(28, 0, 0, 0),
             RecentPeriodEnum.ThreeMonths => new TimeSpan(90, 0, 0, 0),
             RecentPeriodEnum.SixMonths => new TimeSpan(180, 0, 0, 0),
+            RecentPeriodEnum.NineMonths => new TimeSpan(270, 0, 0, 0),
             _ => new TimeSpan(14, 0, 0, 0)
 
         };
@@ -108,6 +112,5 @@ namespace BrokerIQ.Online.Server.Extensions
                             .GetMember(enumValue.ToString())
                             .FirstOrDefault()?.GetCustomAttribute<DisplayAttribute>().GetOrder() ?? 0;
         }
-
     }
 }

@@ -13,6 +13,7 @@
     using System.IO;
     using Microsoft.AspNetCore.Components;
 
+
     public class RequestProviderService : IRequestProviderService
     {
         protected ReviewItAPIDetails api { get; set; }
@@ -198,6 +199,11 @@
             {
                 var returned = hrm.Content.ReadAsStringAsync().Result;
                 return JsonConvert.DeserializeObject<T>(returned);
+            }
+            else
+            {
+                var result = hrm.Content.ReadAsStringAsync().Result;
+                throw new Exception(result);
             }
 
             throw new Exception("Oops, it didn't work. Please email admin@brokeriq.co.uk");
