@@ -94,8 +94,13 @@ namespace BrokerIQ.Online.Server.Services
 
         public async Task<(int,string)> UploadAnalyseAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId)
         {
+
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
+
+            //Don't like ambersands in name
+            fileName = fileName.Replace("&", "%26");
+
             var url = this.videoUrl + $"/UploadAnalyseAndConvertVideo?brokerId={brokerId}&fileName={fileName}";
             var videoId = (0,"");
             try
