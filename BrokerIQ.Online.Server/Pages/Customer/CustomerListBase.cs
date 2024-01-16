@@ -109,15 +109,19 @@ namespace BrokerIQ.Online.Pages
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
                     }
 
-                    Employees = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId)).Where(e => e.StaffTypeId != StaffTypeEnum.Unassigned).ToList();
-
-                    GenerateEmployeeColours();
+                    await RefreshEmployees();
                 }
             }
             catch
             {
                 NavigationManager.NavigateTo($"account/logout");
             }
+        }
+
+        private async Task RefreshEmployees()
+        {
+            Employees = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId)).Where(e => e.StaffTypeId != StaffTypeEnum.Unassigned).ToList();
+            GenerateEmployeeColours();
         }
 
         private void GenerateEmployeeColours()
@@ -404,7 +408,8 @@ namespace BrokerIQ.Online.Pages
             if (!result.Cancelled)
             {
                 SelectedCustomers = null;
-
+                await GetCustomers();
+                await RefreshEmployees();
                 StateHasChanged();
             }
         }
