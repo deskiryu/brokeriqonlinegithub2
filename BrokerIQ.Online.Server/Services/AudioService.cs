@@ -44,21 +44,26 @@ namespace BrokerIQ.Online.Server.Services
             return this.mapper.Map<List<Audio>>(answer);
         }
 
-        public async Task<bool> UploadAndAnalyseAudio(string fileName, MemoryStream audioStream, int brokerId)
+        public async Task<(bool,string)> UploadAndAnalyseAudio(string fileName, MemoryStream audioStream, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
+
+
+            //Don't like ambersands in name
+            fileName = fileName.Replace("&", "%26");
+
             var url = this.audioUrl + $"/UploadAndAnalyseAudio?brokerId={brokerId}&fileName={fileName}";
-            var answer = false;
+            var audioResponse = (false, "");
             try
             {
-                answer = await this.requestProviderService.Post<MemoryStream, bool>(url, audioStream, "application/octet-stream");
+                audioResponse.Item1 = await this.requestProviderService.Post<MemoryStream, bool>(url, audioStream, "application/octet-stream");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"UploadAudio: exception {ex.Message}");
+                audioResponse.Item2 = ex.Message;
             }
-            return answer;
+            return audioResponse;
         }
 
         public async Task<bool> DeleteAudio(string fileName, int brokerId)
