@@ -71,10 +71,26 @@ namespace BrokerIQ.Online.Server.Models
         [Required]
         public bool InsuranceOnly { get; set; }
 
-        public string WelcomeMessage { get; set; }
-
         public string HeaderColumnBGColour { get; set; }
 
         public string InvitationMessage { get; set; }
+
+        public string OnboardingPage1Title { get; set; }
+
+        public string OnboardingPage1SubTitle { get; set; }
+
+        public string OnboardingPage2FirstText { get; set; }
+
+        public string OnboardingPage2SecondText { get; set; }
+
+        public string OnboardingPage3FirstText { get; set; }
+
+        public string OnboardingPage3SecondText { get; set; }
+
+        public string OnboardingPage3ThirdText { get; set; }
+
+        public string OnboardingPage3FourthText { get; set; }
+
+        public string OnboardingThankYouText { get; set; }
     }
 }

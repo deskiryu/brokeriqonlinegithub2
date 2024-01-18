@@ -71,6 +71,12 @@ namespace BrokerIQ.Online.Models
 
         public bool VideoNotificationsAllowed { get; set; }
 
+        public bool AudioNotificationsAllowed { get; set; }
+
+        public bool ProfilingNotificationsAllowed { get; set; }
+
+        public bool MarketingMessagesAllowed { get; set; }
+
         public bool HasNeeds { get; set; }
 
         public string NotificationTag { get; set; }
@@ -80,6 +86,8 @@ namespace BrokerIQ.Online.Models
         public virtual ICollection<Mortgage> Mortgages { get; set; }
 
         public virtual ICollection<MenuPlan> MenuPlans { get; set; }
+
+        public virtual ICollection<BrokerStaff> CustomerAssignments { get; set; }
 
         public virtual ICollection<int> ConnectedBrokers { get; set; }
 
@@ -116,5 +124,9 @@ namespace BrokerIQ.Online.Models
         public GenderEnum Gender { get; set; }
 
         public int OccupationId { get; set; }
+
+        public int? ConnectedToCustomerId { get; set; }
+
+        public int TargetCustomerId { get { return ConnectedToCustomerId ?? Id; } }
     }
 }

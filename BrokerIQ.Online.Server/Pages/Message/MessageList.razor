@@ -60,10 +60,12 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Message">
-                    @if (context.RelevantCustomerId > 0 && context.FormattedLinkMessage!=null && context.FormattedLinkMessage.Count==3)
+                    @if (context.HasLink)
                     {
+                        var url = context.IsReferral ? "referrals" : $"clientdetail/{context.RelevantCustomerId}";
+
                         @context.FormattedLinkMessage[0]
-                        <MudLink href="@($"clientdetail/{@context.RelevantCustomerId}")" Color="Color.Tertiary">
+                        <MudLink href="@url" Color="Color.Tertiary">
                             @context.FormattedLinkMessage[1]
                         </MudLink>
                         @context.FormattedLinkMessage[2]

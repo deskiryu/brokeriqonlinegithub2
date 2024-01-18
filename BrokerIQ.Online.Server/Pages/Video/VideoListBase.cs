@@ -21,6 +21,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Server.Helper;
     using Microsoft.JSInterop;
     using static System.Runtime.InteropServices.JavaScript.JSType;
+    using Dto.Enum;
 
     public class VideoListBase : ComponentBase
     {
@@ -66,9 +67,7 @@ namespace BrokerIQ.Online.Pages
 
         public List<Broker> Brokers { get; set; }
 
-        public Dictionary<string, VideoThumbnail> VideoThumbnails { get; set; }
-
-        public Dictionary<string, bool> DisplayEmbeddedVideo { get; set; }
+        public Dictionary<int, bool> DisplayEmbeddedVideo { get; set; }
 
         public int BrokerId { get; set; }
 
@@ -127,14 +126,13 @@ namespace BrokerIQ.Online.Pages
                 }
 
                 Videos = (await VideoService.GetVideos(BrokerId)).ToList();
-                VideoThumbnails = (await VideoService.GetVideoThumbnails(BrokerId));
-                DisplayEmbeddedVideo = new Dictionary<string, bool>();
+                DisplayEmbeddedVideo = new Dictionary<int, bool>();
                 foreach (Video video in Videos)
                 {
-                    DisplayEmbeddedVideo[video.Name] = false;
+                    DisplayEmbeddedVideo[video.Id] = false;
                     if (IsAdmin)
                     {
-                        video.Broker = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
+                        video.BrokerName = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
                     }
                 }
                 StateHasChanged();
@@ -163,7 +161,7 @@ namespace BrokerIQ.Online.Pages
         }
 
 
-        protected async Task DeleteVideo(string name)
+        protected async Task DeleteVideo(int id)
         {
             await VerifyAccess();
             var dialogParams = new DialogParameters();
@@ -171,31 +169,20 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
-                bool succeeded = await VideoService.DeleteVideo(name, BrokerId);
+                bool succeeded = await VideoService.DeleteVideo(id, BrokerId);
 
                 if (succeeded)
                 {
                     // cleanup video from in video list to be displayed
                     foreach (Video video in Videos)
                     {
-                        if (video.Name == name)
+                        if (video.Id == id)
                         {
                             Videos.Remove(video);
                             break;
                         }
                     }
 
-                    string thumbnailName = $"{name}.jpeg";
-                    bool thumbnail_deleted = await VideoService.DeleteVideoThumbnail(thumbnailName, BrokerId);
-                    if (!thumbnail_deleted)
-                    {
-                        // just log to console for now, user doesn't need to know about thumbnail deletion
-                        Console.WriteLine("Something went wrong deleting the thumbnail");
-                    }
-
-                    // clean up dictionaries for displaying and storing thumbnails in memory
-                    VideoThumbnails.Remove(thumbnailName);
-                    DisplayEmbeddedVideo.Remove(name);
                     await RefreshVideosWithDialogMessage(succeeded, "Deleted successfully");
                 }
                 else
@@ -205,7 +192,7 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task SetWelcomeVideo(string name)
+        protected async Task SetWelcomeVideo(int id)
         {
             await VerifyAccess();
 
@@ -216,11 +203,11 @@ namespace BrokerIQ.Online.Pages
             }
 
             var dialogParams = new DialogParameters();
-            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Name == name);
+            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.WelcomeVideo && x.Id==id);
             bool alreadyChecked = false;
             if (videoAlreadyChecked != null)
             {
-                alreadyChecked = videoAlreadyChecked.WelcomeVideo;
+                alreadyChecked = true;
             }
             if (alreadyChecked)
             {
@@ -235,7 +222,7 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
-                var returned = await VideoService.SetWelcomeVideo(name, brokerId, !alreadyChecked);
+                var returned = await VideoService.SetWelcomeVideo(id, brokerId, !alreadyChecked);
                 if (returned.Item1)
                 {
                     await RefreshVideosWithDialogMessage(true, "Welcome video set successfully");
@@ -247,7 +234,7 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task SetBirthdayVideo(string name)
+        protected async Task SetBirthdayVideo(int id)
         {
             await VerifyAccess();
 
@@ -258,11 +245,11 @@ namespace BrokerIQ.Online.Pages
             }
 
             var dialogParams = new DialogParameters();
-            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Name == name);
+            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.BirthdayVideo && x.Id == id && x.Id == id);
             bool alreadyChecked = false;
             if (videoAlreadyChecked != null)
             {
-                alreadyChecked = videoAlreadyChecked.BirthdayVideo;
+                alreadyChecked = true;
             }
             if (alreadyChecked)
             {
@@ -277,7 +264,7 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
-                var returned = await VideoService.SetBirthdayVideo(name, brokerId, !alreadyChecked);
+                var returned = await VideoService.SetBirthdayVideo(id, brokerId, !alreadyChecked);
 
                 if (returned.Item1)
                 {
@@ -290,7 +277,7 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task SetMortgageVideo(string name)
+        protected async Task SetMortgageVideo(int id)
         {
             await VerifyAccess();
 
@@ -300,8 +287,8 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            var selectedVideo = Videos.FirstOrDefault(x => x.Name == name);
-            var isMortgageVideo = selectedVideo?.MortgageVideo ?? false;
+            var selectedVideo = Videos.FirstOrDefault(x => x.VideoSendTypeId == VideoSendEnum.MortgageVideo && x.Id == id);
+            var isMortgageVideo = selectedVideo != null;
 
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", isMortgageVideo ?
@@ -312,7 +299,7 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
-                var returned = await VideoService.SetMortgageVideo(name, brokerId, !isMortgageVideo);
+                var returned = await VideoService.SetMortgageVideo(id, brokerId, !isMortgageVideo);
 
                 if (returned.Item1)
                 {
@@ -325,7 +312,7 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task<bool> SetVideoSendDate(string name, DateTime? date)
+        protected async Task<bool> SetVideoSendDate(int id, DateTime? date)
         {
             await VerifyAccess();
 
@@ -335,7 +322,7 @@ namespace BrokerIQ.Online.Pages
                 return false;
             }
             var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
-            var returned = await VideoService.SetVideoSendDate(name, brokerId, date);
+            var returned = await VideoService.SetVideoSendDate(id, brokerId, date);
 
             if (returned.Item1)
             {
@@ -349,7 +336,7 @@ namespace BrokerIQ.Online.Pages
             return returned.Item1;
         }
 
-        protected async Task SetSendDateTick(string name)
+        protected async Task SetSendDateTick(int id)
         {
             await VerifyAccess();
 
@@ -360,11 +347,11 @@ namespace BrokerIQ.Online.Pages
             }
 
             var dialogParams = new DialogParameters();
-            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Name == name);
+            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Id == id && x.VideoSendTypeId == VideoSendEnum.SendOnDate);
             bool alreadyChecked = false;
             if (videoAlreadyChecked != null)
             {
-                alreadyChecked = videoAlreadyChecked.SendDateTick;
+                alreadyChecked = true;
             }
             if (alreadyChecked)
             {
@@ -379,7 +366,7 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
-                var returned = await VideoService.SetVideoSendDateTick(name, brokerId, !alreadyChecked);
+                var returned = await VideoService.SetVideoSendDateTick(id, brokerId, !alreadyChecked);
 
                 if (returned.Item1)
                 {
@@ -392,7 +379,7 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task SetVetted(string name)
+        protected async Task SetVetted(int id)
         {
             await VerifyAccess();
 
@@ -418,14 +405,14 @@ namespace BrokerIQ.Online.Pages
 
 
             var dialogParams = new DialogParameters();
-            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Name == name);
+            var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Id == id);
             bool alreadyChecked = false;
             if (videoAlreadyChecked != null)
             {
                 alreadyChecked = videoAlreadyChecked.Vetted;
             }
 
-            var returned = await VideoService.SetVetted(name, !alreadyChecked);
+            var returned = await VideoService.SetVetted(id, !alreadyChecked);
 
             if (returned.Item1)
             {
@@ -444,77 +431,61 @@ namespace BrokerIQ.Online.Pages
 
             await VerifyAccess();
 
-            bool available = await VideoService.NameAvailable(VideoName, BrokerId);
-            if (!available)
+            if (fileListEntry != null)
             {
-                StatusClass = "alert-danger";
-                Message = "Video with that name already exists. Please try again with a different name.";
-                Saved = true;
-            }
-            else
-            {
-                if (fileListEntry != null)
+                SpinnerVisible = "display:block";
+                VideoUploading = true;
+                StateHasChanged();
+
+                var memoryStream = new MemoryStream();
+                await fileListEntry.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
+
+                var uploadedVideoId = (0,"");
+                var localBrokerId = BrokerId;
+                if (IsAdmin || IsMinorAdmin)
                 {
-                    SpinnerVisible = "display:block";
-                    VideoUploading = true;
-                    StateHasChanged();
-
-                    var memoryStream = new MemoryStream();
-                    await fileListEntry.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
-
-                    var succeeded = true;
-                    var localBrokerId = BrokerId;
-                    if (IsAdmin || IsMinorAdmin)
-                    {
-                        localBrokerId = BrokerListId;
-                    }
-
-                    if (succeeded)
-                    {
-                        succeeded = await VideoService.UploadAnalyseAndConvertVideo(VideoName + ExtensionName, memoryStream, localBrokerId);
-
-                        status = $"Finished loading {fileListEntry.Size} bytes from {fileListEntry.Name}";
-                    }
-
-                    StateHasChanged();
-
-                    if (succeeded)
-                    {
-                        StateHasChanged();
-
-                        if (succeeded)
-                        {
-                            // fetch thumbnail for uploaded video (might not be instantly available as generated by FunctionVideoThumbnail Azure function)
-                            // if issue fetching the image after 10 seconds, just proceed without thumbnail
-                            int attempts = 20;
-
-                            while (attempts > 0)
-                            {
-                                string thumbnailName = $"{VideoName}{ExtensionName}.jpeg";
-                                var thumbnail = await VideoService.GetVideoThumbnail(thumbnailName, BrokerId);
-                                if (thumbnail != null && thumbnail.Data != null)
-                                {
-                                    VideoThumbnails[thumbnailName] = thumbnail;
-                                    break;
-                                }
-                                await Task.Delay(1000);
-                                attempts--;
-                            }
-
-                            DisplayEmbeddedVideo[$"{VideoName}{ExtensionName}"] = false;
-                            await RefreshVideosWithDialogMessage(succeeded, $"Uploaded successfully");
-                        }
-                        else
-                        {
-                            await RefreshVideosWithDialogMessage(succeeded, "Something went wrong adding the video. Please try again.");
-                        }
-                    }
+                    localBrokerId = BrokerListId;
                 }
 
-                VideoUploading = false;
-                SpinnerVisible = "display:none";
+                uploadedVideoId = await VideoService.UploadAnalyseAndConvertVideo(VideoName + ExtensionName, memoryStream, localBrokerId);
+
+                status = $"Finished loading {fileListEntry.Size} bytes from {fileListEntry.Name}";
+
                 StateHasChanged();
+
+                if (uploadedVideoId.Item1>0)
+                {
+                    StateHasChanged();
+
+                    // fetch thumbnail for uploaded video (might not be instantly available as generated by FunctionVideoThumbnail Azure function)
+                    // if issue fetching the image after 10 seconds, just proceed without thumbnail
+                    int attempts = 20;
+
+                    while (attempts > 0)
+                    {
+                        
+                        var thumbnail = await VideoService.GetVideoThumbnail(uploadedVideoId.Item1, BrokerId);
+                        if (thumbnail != null && thumbnail.Data != null)
+                        {
+                            break;
+                        }
+                        await Task.Delay(1000);
+                        attempts--;
+                    }
+
+                    DisplayEmbeddedVideo[uploadedVideoId.Item1] = false;
+                    await RefreshVideosWithDialogMessage(true, $"Uploaded successfully");
+
+                }
+                else
+                {
+                    await RefreshVideosWithDialogMessage(false, "Something went wrong adding the video. " + uploadedVideoId.Item2);
+                }
             }
+
+            VideoUploading = false;
+            SpinnerVisible = "display:none";
+            StateHasChanged();
         }
 
         protected async Task VerifyAccess()
@@ -594,9 +565,9 @@ namespace BrokerIQ.Online.Pages
             NavigationManager.NavigateTo("/videolist/");
         }
 
-        protected void ShowVideoPlayer(string videoName)
+        protected void ShowVideoPlayer(int id)
         {
-            DisplayEmbeddedVideo[videoName] = true;
+            DisplayEmbeddedVideo[id] = true;
             StateHasChanged();
         }
 
@@ -625,7 +596,7 @@ namespace BrokerIQ.Online.Pages
             {
                 foreach (Video video in Videos)
                 {
-                    video.Broker = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
+                    video.BrokerName = Brokers.FirstOrDefault(x => x.Id == video.BrokerId)?.Name;
                 }
             }
             StateHasChanged();
@@ -642,14 +613,14 @@ namespace BrokerIQ.Online.Pages
             await DialogService.Show<AlertDialog>("Error", responseParams).Result;
         }
 
-        protected async Task UpdateVideoSendDate(DateTime? sendDate, string name)
+        protected async Task UpdateVideoSendDate(DateTime? sendDate, int id)
         {
             // Set the new value first, to avoid double firing from the DateChanged event.
-            var existingVideo = this.Videos.First(item => item.Name == name);
+            var existingVideo = this.Videos.First(item => item.Id == id);
             DateTime? oldDate = existingVideo.SendDate;
             existingVideo.SendDate = sendDate;
 
-            await SetVideoSendDate(name, sendDate);
+            await SetVideoSendDate(id, sendDate);
         }
     }
 }
