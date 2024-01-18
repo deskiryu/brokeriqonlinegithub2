@@ -1,15 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Models;
-using BrokerIQ.Online.Server.Shared;
-using Microsoft.AspNetCore.Components;
-using BrokerIQ.Online.Models;
-using MudBlazor;
-using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Server.Pages.Customer.Components;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+
+using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -20,6 +24,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IBrokerService BrokerService { get; set; }
+
+        [Inject]
+        public IBrokerStaffService BrokerStaffService { get; set; }
 
         [Inject]
         INotificationService NotificationService { get; set; }
@@ -42,9 +49,13 @@ namespace BrokerIQ.Online.Pages
 
         public List<Broker> Brokers { get; set; }
 
+        public List<BrokerStaff> Employees { get; set; }
+
         public HashSet<Customer> SelectedCustomers { get; set; }
 
         public int BrokerId { get; set; }
+
+        public int AssignedToId { get; set; }
 
         public bool SelectFilled { get; set; }
 
@@ -58,6 +69,8 @@ namespace BrokerIQ.Online.Pages
         public int AgeRange { get; set; }
 
         protected int? ProfilingOption { get; set; }
+
+        protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
 
         //filter
         protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
@@ -82,22 +95,57 @@ namespace BrokerIQ.Online.Pages
                 if (User.IsAdmin)
                 {
                     Brokers = (await BrokerService.GetBrokers()).ToList();
+                    Employees = new List<BrokerStaff>();
                 }
                 else
                 {
                     Brokers = new List<Broker>();
                     BrokerId = User.MasterBrokerId;
+
                     var broker = await BrokerService.GetBroker(User.MasterBrokerId);
 
                     if (broker.BrokerIdentifier.InsuranceOnly)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
                     }
+
+                    await RefreshEmployees();
                 }
             }
             catch
             {
                 NavigationManager.NavigateTo($"account/logout");
+            }
+        }
+
+        private async Task RefreshEmployees()
+        {
+            Employees = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId)).Where(e => e.StaffTypeId != StaffTypeEnum.Unassigned).ToList();
+            GenerateEmployeeColours();
+        }
+
+        private void GenerateEmployeeColours()
+        {
+            string[] colourValues = new string[] {
+                Colors.Red.Lighten3, Colors.DeepPurple.Lighten3, Colors.LightBlue.Lighten3, Colors.Green.Lighten3, Colors.Yellow.Lighten3, Colors.DeepOrange.Lighten3, Colors.Grey.Lighten3,
+                Colors.Pink.Lighten3, Colors.Indigo.Lighten3, Colors.Cyan.Lighten3, Colors.LightGreen.Lighten3, Colors.Amber.Lighten3, Colors.Brown.Lighten3, Colors.Purple.Lighten3,
+                Colors.Blue.Lighten3, Colors.Teal.Lighten3, Colors.Lime.Lighten3, Colors.Orange.Lighten3, Colors.BlueGrey.Lighten3,
+                Colors.Red.Lighten1, Colors.DeepPurple.Lighten1, Colors.LightBlue.Lighten1, Colors.Green.Lighten1, Colors.Yellow.Lighten1, Colors.DeepOrange.Lighten1, Colors.Grey.Lighten1,
+                Colors.Pink.Lighten1, Colors.Indigo.Lighten1, Colors.Cyan.Lighten1, Colors.LightGreen.Lighten1, Colors.Amber.Lighten1, Colors.Brown.Lighten1, Colors.Purple.Lighten1,
+                Colors.Blue.Lighten1, Colors.Teal.Lighten1, Colors.Lime.Lighten1, Colors.Orange.Lighten1, Colors.BlueGrey.Lighten1,
+                Colors.Red.Accent3, Colors.DeepPurple.Accent3, Colors.LightBlue.Accent3, Colors.Green.Accent3, Colors.Yellow.Accent3, Colors.DeepOrange.Accent3,
+                Colors.Pink.Accent3, Colors.Indigo.Accent3, Colors.Cyan.Accent3, Colors.LightGreen.Accent3, Colors.Amber.Accent3, Colors.Purple.Accent3,
+                Colors.Blue.Accent3, Colors.Teal.Accent3, Colors.Lime.Accent3, Colors.Orange.Accent3
+            };
+
+            var colourIndex = 0;
+            EmployeeColour.Clear();
+
+            foreach (var member in Employees)
+            {
+                EmployeeColour.Add(member.Id, colourValues[colourIndex++]);
+
+                if (colourIndex > colourValues.Length) colourIndex = 0;
             }
         }
 
@@ -179,8 +227,6 @@ namespace BrokerIQ.Online.Pages
             Customers = null;
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
 
-
-
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
                 SelectedCustomers.Clear();
@@ -197,6 +243,7 @@ namespace BrokerIQ.Online.Pages
             var filterValues = new CustomerFilter()
             {
                 BrokerId = BrokerId,
+                AssignedToId = AssignedToId,
                 Recent = FilterRecent,
                 Period = FilterPeriod,
                 Category = CustomerCategory,
@@ -222,7 +269,7 @@ namespace BrokerIQ.Online.Pages
             var targets = new List<(string, int)>();
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
-                targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => (x.Name, x.Id)).ToList();
+                targets = SelectedCustomers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed == true).Select(x => (x.Name, x.Id)).ToList();
             }
 
             if (targets == null || !targets.Any())
@@ -271,14 +318,14 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("Notification", selectedNotification);
 
             var targetsName = new List<string>();
-            if (SelectedCustomers != null && SelectedCustomers.Any())
+            if (SelectedCustomers != null)
             {
-                targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
+                targetsName = SelectedCustomers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed).Select(x => x.Name).ToList();
             }
 
             if (targetsName == null && !targetsName.Any())
             {
-                AlertService.Error("No targets chosen");
+                AlertService.Error("No targets chosen or marketing for those targets not allowed");
             };
 
             //var longlist = string.Join(",", targets);
@@ -290,9 +337,9 @@ namespace BrokerIQ.Online.Pages
             if (!result.Cancelled)
             {
                 var targets = new List<int>();
-                if (SelectedCustomers != null && SelectedCustomers.Any())
+                if (SelectedCustomers != null)
                 {
-                    targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
+                    targets = SelectedCustomers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed).Select(x => x.Id).ToList();
                 }
 
                 if (targets != null && targets.Any())
@@ -324,7 +371,7 @@ namespace BrokerIQ.Online.Pages
                 }
                 else
                 {
-                    AlertService.Error("No targets chosen");
+                    AlertService.Error("No targets chosen or marketing for those targets not allowed");
                 };
             }
         }
@@ -343,14 +390,13 @@ namespace BrokerIQ.Online.Pages
 
         protected string AssignVisibilityClass()
         {
-            if (User.IsBrokerStaff) return "invisible";
+            if (User.IsBrokerStaff || BrokerId == 0) return "invisible";
 
             return SelectedCustomers != null && SelectedCustomers.Count > 0 ? "visible" : "invisible";
         }
 
         protected async Task AssignToStaff()
         {
-
             var dialogParams = new DialogParameters
             {
                 { "BrokerId", BrokerId},
@@ -362,7 +408,8 @@ namespace BrokerIQ.Online.Pages
             if (!result.Cancelled)
             {
                 SelectedCustomers = null;
-
+                await GetCustomers();
+                await RefreshEmployees();
                 StateHasChanged();
             }
         }

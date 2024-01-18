@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Text;
 
 namespace BrokerIQ.Online.Models
 {
@@ -10,10 +7,15 @@ namespace BrokerIQ.Online.Models
     {
         [Key]
         public int Id { get; set; }
+
         public string Message { get; set; }
+
         public int BrokerId { get; set; }
+
         public int CustomerId { get; set; }
+
         public DateTime DateTaken { get; set; }
 
+        public string CreatedByName { get; set; }
     }
 }

@@ -175,10 +175,10 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<AudioRecordDialog>("Record voice message", dialogParams, dialogOptions).Result;
             if (!result.Cancelled && result.Data.ToString() == "true")
             {
-                RefreshAudioListWithDialogMessage(true,"Voice recording uploaded");
+                await RefreshAudioListWithDialogMessage(true,"Voice recording uploaded");
             }
             else{
-                RefreshAudioListWithDialogMessage(false,"Voice recording did not upload");
+                await RefreshAudioListWithDialogMessage(false, "Voice recording did not upload - " + result.Data.ToString());
             }
         }
 
