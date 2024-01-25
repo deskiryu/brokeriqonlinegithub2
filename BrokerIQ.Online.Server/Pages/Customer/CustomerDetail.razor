@@ -112,7 +112,7 @@ else if (!Saved)
                 </tbody>
             </table>
         </MudTabPanel>
-        @if (!Broker.HasWhiteLabelAndIsInsuranceOnly)
+        @if (Broker != null && !Broker.HasWhiteLabelAndIsInsuranceOnly)
         {
             <MudTabPanel Text="Mortgages">
                 <div class="form-group row">
