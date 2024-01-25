@@ -1,13 +1,14 @@
 ﻿using System;
+
 using AutoMapper;
+
 using BrokerIQ.Dto;
 using BrokerIQ.Dto.Dto;
+using BrokerIQ.Dto.Models;
 using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Models.Account;
 using BrokerIQ.Online.Server.Models;
-using BrokerIQ.Dto.Models;
-using BrokerIQ.Online.Models;
-using System.Reflection.Metadata.Ecma335;
 
 namespace BrokerIQ.Online.Mapper
 {
@@ -691,6 +692,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
                 .ForMember(d => d.LogoImage, action => action.MapFrom(s => s.LogoImage));
+
             CreateMap<BrokerIdentifierDto, BrokerIdentifier>();
 
             CreateMap<BrokerIdentifier, UpdateBrokerIdentifierDto>();

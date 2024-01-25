@@ -259,18 +259,20 @@
                                 </div>
 
                                 <div class="form-group row">
-                                        <label class="col-sm-2 col-form-label">Invert</label>
-                                <div class="col-sm-3 ">
+                                    <label class="col-sm-2 col-form-label">Invert</label>
+                                    <div class="col-sm-2 ">
+                                        <MudCheckBox @bind-Checked="@BrokerIdentifier.Invert"  Style="margin-left: -15px" />
+                                    </div>
 
-                                    <MudCheckBox @bind-Checked="@BrokerIdentifier.Invert"  Style="margin-left: -15px" />
+                                    <label class="col-sm-2 col-form-label">Insurance Only</label>
+                                    <div class="col-sm-2 ">
+                                        <MudCheckBox @bind-Checked="@BrokerIdentifier.InsuranceOnly" Style="margin-left: -15px" />
+                                    </div>
 
-                                </div>
-                                        <label class="col-sm-2 col-form-label">Insurance Only</label>
-                                        <div class="col-sm-3 ">
-
-                                            <MudCheckBox @bind-Checked="@BrokerIdentifier.InsuranceOnly" Style="margin-left: -15px" />
-
-                                        </div>
+                                    <label class="col-sm-2 col-form-label">Use AI Chat</label>
+                                    <div class="col-sm-2 ">
+                                        <MudCheckBox @bind-Checked="@BrokerIdentifier.UseAIChat" Style="margin-left: -15px" />
+                                    </div>
                                 </div>
                                 <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Link Colour </label>
