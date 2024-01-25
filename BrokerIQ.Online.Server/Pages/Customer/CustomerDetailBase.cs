@@ -1027,7 +1027,7 @@ namespace BrokerIQ.Online.Pages
                     template.Message = template.Message
                         .Replace("INSERT_CLIENT_NAME", Customer.FirstName)
                         .Replace("INSERT_PERSONAL_NAME", User.FirstName)
-                        .Replace("INSERT_BROKER_NAME", Broker.Name);
+                        .Replace("INSERT_BROKER_NAME", Broker?.Name);
                 }
 
                 if (template.WelcomeChat == false)
@@ -1243,7 +1243,7 @@ namespace BrokerIQ.Online.Pages
 
         protected bool ShowGetQuote()
         {
-            if (!Broker.HasActiveInsuranceQuoteSubscription) return false;
+            if (Broker == null || !Broker.HasActiveInsuranceQuoteSubscription) return false;
 
             if (Customer.HasNeeds) return true;
 
