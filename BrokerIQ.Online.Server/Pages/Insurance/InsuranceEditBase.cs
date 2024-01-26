@@ -195,6 +195,7 @@ namespace BrokerIQ.Online.Pages
             else
             {
                 BrokerHasWhiteLabelAndIsInsuranceOnly = true;
+                MyMaxAllowedFiles = MyMaxAllowedFiles * 2;
                 try
                 {
                     Brokers = await BrokerService.GetBrokers();
