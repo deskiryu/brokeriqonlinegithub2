@@ -28,7 +28,7 @@
         <MudTr ondragover="event.preventDefault();"
             @ondragenter="() => DragEnter(context.SortOrder, false)"
             @ondrop="async () => await DropAsync(context.SortOrder)"
-            Class="@($"{(IsEntering(context.SortOrder) && draggedItem?.SortOrder != context.SortOrder - 1 ? "drag-enter" : "drag-hide ")} {(enterAfterDropZone == false ? "drag-drop-zone" : "")}")">
+            Class="@($"{(IsEntering(context.SortOrder) && draggedItem?.SortOrder != context.SortOrder - 1 ? "drag-file-hover" : "")} {(enterAfterDropZone == false ? "drag-drop-zone" : "")}")">
                 <MudTd colspan="6">
                 </MudTd>
         </MudTr>
@@ -63,7 +63,7 @@
         <MudTr ondragover="event.preventDefault();"
             @ondragenter="() => DragEnter(context.SortOrder, true)"
                 @ondrop="() => DropAsync(draggedItem?.SortOrder < context.SortOrder ? context.SortOrder : context.SortOrder + 1)"
-                Class="@($"{(IsEntering(context.SortOrder) && draggedItem?.SortOrder != context.SortOrder + 1 ? "drag-enter" : "drag-hide ")} {(enterAfterDropZone == true ? "drag-drop-zone" : "")}")">
+                Class="@($"{(IsEntering(context.SortOrder) && draggedItem?.SortOrder != context.SortOrder + 1 ? "drag-file-hover" : "")} {(enterAfterDropZone == true ? "drag-drop-zone" : "")}")">
                 <MudTd colspan="6">
                 </MudTd>
         </MudTr>
