@@ -498,10 +498,12 @@ else if (!Saved)
                                 }
                         </MudSelect>
                     </div>
-                    <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                    <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
+                    <div class="col-sm-12 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                        <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
                         <MudSpacer />
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
+                        <MudTimePicker Label="Replace INSERT_TIME in template"AmPm="false" @bind-Time="SelectedTemplateTimeReplacement" />
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary">Send To Chat</MudButton>
                     </div>
 
                     <div class="@UploadSectionClass">
