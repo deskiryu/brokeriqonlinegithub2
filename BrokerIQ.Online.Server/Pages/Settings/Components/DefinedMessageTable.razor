@@ -9,7 +9,7 @@
         Add defined message 
     </MudButton>
 </div>
-<MudTable Items="@DefinedMessages" Dense="true">
+<MudTable Items="@DefinedMessages" Dense="true" Hover>
     <NoRecordsContent>
         <MudText>No defined messages have been defined.</MudText>
     </NoRecordsContent>
@@ -22,14 +22,31 @@
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Prompt</MudTd>
+
+    </RowTemplate>
+    <ChildRowContent>
+        <MudTr ondragover="event.preventDefault();"
+            @ondragenter="() => DragEnter(context.SortOrder, false)"
+            @ondrop="async () => await DropAsync(context.SortOrder)"
+            Class="@($"{(IsEntering(context.SortOrder) && draggedItem?.SortOrder != context.SortOrder - 1 ? "drag-file-hover" : "")} {(enterAfterDropZone == false ? "drag-drop-zone" : "")}")">
+                <MudTd colspan="6">
+                </MudTd>
+        </MudTr>
+
+        <MudTr draggable="@IsDraggable()"
+            @ondragstart="() => DragStart(context)"
+            @ondragenter="() => DragEnter(context.SortOrder, false)"
+            @ondrop="() => DropAsync(context.SortOrder)"
+            @ondragend="() => DragEnd()"
+            Class="grabable">
+            <MudTd>@context.Prompt</MudTd>
             <MudTd> @context.Message</MudTd>
-        <MudTd>
-            @if (context.WelcomeChat)
-            {
-                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Dark" />
-            }
-        </MudTd>
+            <MudTd>
+                @if (context.WelcomeChat)
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Dark" />
+                }
+            </MudTd>
             <MudTd>
                 @if (!string.IsNullOrWhiteSpace(context.FileName)){
                     <MudIconButton Icon="@Icons.Material.Filled.FilePresent" Color="Color.Secondary" OnClick=@(r => PreviewAttachment(context.File))></MudIconButton>
@@ -41,12 +58,22 @@
             <MudTd>
                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r => RemoveDefinedMessage(context)) />
             </MudTd>
-        </RowTemplate>
-    </MudTable>
+        </MudTr>
 
-    @code {
-        protected async Task PreviewAttachment(byte[] attachment)
-        {
-            await Extensions.PreviewFile(js, new System.IO.MemoryStream(attachment));
-        }
+        <MudTr ondragover="event.preventDefault();"
+            @ondragenter="() => DragEnter(context.SortOrder, true)"
+                @ondrop="() => DropAsync(draggedItem?.SortOrder < context.SortOrder ? context.SortOrder : context.SortOrder + 1)"
+                Class="@($"{(IsEntering(context.SortOrder) && draggedItem?.SortOrder != context.SortOrder + 1 ? "drag-file-hover" : "")} {(enterAfterDropZone == true ? "drag-drop-zone" : "")}")">
+                <MudTd colspan="6">
+                </MudTd>
+        </MudTr>
+    </ChildRowContent>
+
+</MudTable>
+
+@code {
+    protected async Task PreviewAttachment(byte[] attachment)
+    {
+        await Extensions.PreviewFile(js, new System.IO.MemoryStream(attachment));
     }
+}
