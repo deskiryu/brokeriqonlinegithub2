@@ -11,6 +11,7 @@ using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
 using System;
+using AutoMapper.Configuration.Conventions;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -137,6 +138,17 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             }
 
             await ReloadDefinedMessages();
+        }
+
+        private string FormatTemplateForDisplay(string template)
+        {
+            if (!template.Contains("<--") || !template.Contains("-->")) return template;
+
+            var linkStart = template.IndexOf("<--");
+            var linkEnd = template.IndexOf("-->");
+            var url = template.Substring(linkStart + 3, linkEnd - linkStart - 3);
+
+            return template.Replace("<--", "<a target=\"_blank\" href=\"").Replace("-->", $"\">{url}</a>");
         }
 
         #region Row drag and drop

@@ -40,7 +40,7 @@
             @ondragend="() => DragEnd()"
             Class="grabable">
             <MudTd>@context.Prompt</MudTd>
-            <MudTd> @context.Message</MudTd>
+            <MudTd> @((MarkupString)FormatTemplateForDisplay(context.Message))</MudTd>
             <MudTd>
                 @if (context.WelcomeChat)
                 {
