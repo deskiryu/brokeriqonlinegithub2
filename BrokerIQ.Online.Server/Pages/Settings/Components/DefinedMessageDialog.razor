@@ -34,13 +34,19 @@
                     <MudTooltip Text="Copy to clipboard">
                         <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_DATE');"/>
                     </MudTooltip>
-                    <b>INSERT_DATE</b> is replaced by the final date.
+                    <b>INSERT_DATE</b> is replaced by the date input.
                 </p>
                 <p>
                     <MudTooltip Text="Copy to clipboard">
-                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_PERSONAL_NAME ');"/>
+                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_TIME');"/>
                     </MudTooltip>
-                    <b>INSERT_PERSONAL_NAME</b> is replaced by your first name.
+                    <b>INSERT_TIME</b> is replaced by the time input.
+                </p>
+                <p>
+                    <MudTooltip Text="Copy to clipboard">
+                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_ADVISOR ');"/>
+                    </MudTooltip>
+                    <b>INSERT_ADVISOR</b> is replaced by your first name.
                 </p>
             </div>
             <MudTextField Class="mb-2" Lines="5" @bind-Value=Template.Message Label="Message Content" Required="true" RequiredError="Message content cannot be empty" /> @if (!IsCurrentFileToBeRemoved)
