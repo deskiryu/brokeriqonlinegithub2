@@ -93,11 +93,11 @@ namespace BrokerIQ.Online.Models
         {
             var linkStart = Message.IndexOf(LINK_START_INDICATOR);
             var linkEnd = Message.IndexOf(LINK_END_INDICATOR);
-            var ulrAddress = Message[linkStart..linkEnd];
+            var ulrAddress = Message[(linkStart + LINK_START_INDICATOR.Length)..linkEnd];
 
             return new List<string>() {
                 Message[..linkStart],
-                Message[(linkStart + LINK_START_INDICATOR.Length) .. linkEnd],
+                ulrAddress,
                 Message[(linkEnd + LINK_END_INDICATOR.Length)..]
             };
         }
