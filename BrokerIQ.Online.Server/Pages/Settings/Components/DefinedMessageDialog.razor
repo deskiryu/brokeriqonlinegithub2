@@ -71,13 +71,12 @@
                         </MudButton>
                 }
             }
-            <div>
-                <MudTextField T="string" Class="mb-3" Placeholder="Link address" @bind-Value=TemplateLink Disabled="@HideLink"/>
-                <MudButton Icon="@Icons.Material.Filled.InsertLink" Variant="Variant.Filled" Size="Size.Small"
-                    Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="InsertLink" Disabled="@HideLink">
-                    Add link to template
-                </MudButton>
-            </div>
+            <MudTextField T="string" Class="mb-3" Placeholder="Link address" @bind-Value=TemplateLink Disabled="@HideLink"/>
+            <MudButton Icon="@Icons.Material.Filled.InsertLink" Variant="Variant.Filled" Size="Size.Small"
+                Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="InsertLink" Disabled="@HideLink">
+                Add link to template
+            </MudButton>
+            
             <p>
                 <MudCheckBox Label="Send as welcome chat message" @bind-Checked="Template.WelcomeChat" Style="margin-left: -15px" TriState="true"></MudCheckBox>
             </p>

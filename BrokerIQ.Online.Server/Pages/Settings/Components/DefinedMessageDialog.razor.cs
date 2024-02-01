@@ -87,6 +87,13 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             fileUploadSettings = this.FileUploadSettingsOption.Value;
 
             HideLink = Template.Message.Contains("<--") && Template.Message.Contains("-->");
+
+            if (HideLink)
+            {
+                var linkStart = Template.Message.IndexOf("<--") + 3;
+                var linkEnd = Template.Message.IndexOf("-->");
+                TemplateLink = Template.Message[linkStart..linkEnd];
+            }
         }
 
         async Task Submit()

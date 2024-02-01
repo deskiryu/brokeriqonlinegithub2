@@ -1034,7 +1034,6 @@ namespace BrokerIQ.Online.Pages
                 {
                     MergedMessages.Add(template);
                 }
-
             }
         }
 

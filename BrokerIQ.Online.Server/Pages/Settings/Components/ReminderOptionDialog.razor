@@ -74,10 +74,18 @@
                     <MudSelectItem Value="@currentPrompt" />
                 }
             </MudSelect>
+
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" class="mb-3"
                        OnClick="FillTemplate">Fill with starter template</MudButton>
 
             <MudTextField Lines="5" @bind-Value=Option.MessageContent Label="Message Content" Required="true" RequiredError="Message content cannot be empty" />
+
+            <MudTextField T="string" Class="mb-3" Placeholder="Link address" @bind-Value=OptionLink Disabled="@HideLink"/>
+            <MudButton Icon="@Icons.Material.Filled.InsertLink" Variant="Variant.Filled" Size="Size.Small"
+                Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="InsertLink" Disabled="@HideLink">
+                Add link to template
+            </MudButton>
+
         </MudForm>
     </DialogContent>
     <DialogActions>
