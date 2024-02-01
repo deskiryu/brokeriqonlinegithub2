@@ -6,6 +6,8 @@ namespace BrokerIQ.Online.Models
     public class BrokerNotification
     {
         private const string CLIENT_MARKER = "your client ";
+        private const string LINK_START_INDICATOR = "<--";
+        private const string LINK_END_INDICATOR = "-->";
 
         public int Id { get; set; }
 
@@ -37,7 +39,10 @@ namespace BrokerIQ.Online.Models
             }
         }
 
-        public bool HasLink => IsChat || IsReferral || Message.Contains(CLIENT_MARKER, StringComparison.OrdinalIgnoreCase);
+        public bool HasLink => IsChat || IsReferral || Message.Contains(CLIENT_MARKER, StringComparison.OrdinalIgnoreCase) || HasEmbeddedLink;
+
+        public bool HasEmbeddedLink => Message.Contains(LINK_START_INDICATOR) && Message.Contains(LINK_END_INDICATOR);
+
 
         public List<string> FormattedLinkMessage
         {
@@ -46,6 +51,8 @@ namespace BrokerIQ.Online.Models
                 if (IsChat || Message.Contains(CLIENT_MARKER, StringComparison.OrdinalIgnoreCase)) return FormatCustomerMessage();
 
                 if (IsReferral) return FormatReferralMessage();
+
+                if (HasEmbeddedLink) return FormatEmbeddedLink();
 
                 return new List<string>() { Message };
             }
@@ -79,6 +86,19 @@ namespace BrokerIQ.Online.Models
                 Message[..linkTextIndex],
                 Message[linkTextIndex .. (linkTextIndex + linkText.Length)],
                 Message[(linkTextIndex + linkText.Length)..]
+            };
+        }
+
+        private List<string> FormatEmbeddedLink()
+        {
+            var linkStart = Message.IndexOf(LINK_START_INDICATOR);
+            var linkEnd = Message.IndexOf(LINK_END_INDICATOR);
+            var ulrAddress = Message[linkStart..linkEnd];
+
+            return new List<string>() {
+                Message[..linkStart],
+                Message[(linkStart + LINK_START_INDICATOR.Length) .. linkEnd],
+                Message[(linkEnd + LINK_END_INDICATOR.Length)..]
             };
         }
     }

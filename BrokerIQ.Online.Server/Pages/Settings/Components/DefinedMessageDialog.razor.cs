@@ -32,6 +32,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
 
+        private const string LINK_START_INDICATOR = "<--";
+        private const string LINK_END_INDICATOR = "-->";
+
         static string[] MESSAGE_PROMPTS = new string[] {
             "Empty",
             "Thank you for registering",
@@ -86,12 +89,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             fileUploadSettings = this.FileUploadSettingsOption.Value;
 
-            HideLink = Template.Message.Contains("<--") && Template.Message.Contains("-->");
+            HideLink = Template.Message.Contains(LINK_START_INDICATOR) && Template.Message.Contains(LINK_END_INDICATOR);
 
             if (HideLink)
             {
-                var linkStart = Template.Message.IndexOf("<--") + 3;
-                var linkEnd = Template.Message.IndexOf("-->");
+                var linkStart = Template.Message.IndexOf(LINK_START_INDICATOR) + 3;
+                var linkEnd = Template.Message.IndexOf(LINK_END_INDICATOR);
                 TemplateLink = Template.Message[linkStart..linkEnd];
             }
         }
@@ -124,8 +127,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
                 if (LinkStart > 0)
                 {
-                    Template.Message = Template.Message.Insert(LinkEnd, "-->");
-                    Template.Message = Template.Message.Insert(LinkStart, "<--");
+                    Template.Message = Template.Message.Insert(LinkEnd, LINK_END_INDICATOR);
+                    Template.Message = Template.Message.Insert(LinkStart, LINK_START_INDICATOR);
                 }
 
                 MudDialog.Close(DialogResult.Ok(Template));
