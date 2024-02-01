@@ -1,13 +1,22 @@
 using System;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Shared;
+
 using MudBlazor;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
     public partial class ReminderOptionDialog
     {
+        [Inject]
+        public IDialogService DialogService { get; set; }
+
         [Microsoft.AspNetCore.Components.CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
@@ -19,6 +28,14 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         MudSelect<int> ReminderTypeId;
         MudSelect<TimeSpan> Notification;
         MudSelect<int> ReminderTargetId;
+
+        private string OptionLink { get; set; }
+
+        public int LinkStart;
+
+        public int LinkEnd;
+
+        private bool HideLink { get; set; }
 
         private TimeSpan FromDays270 = TimeSpan.FromDays(270);
         private TimeSpan FromDays240 = TimeSpan.FromDays(240);
@@ -55,10 +72,28 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             form.Validate();
 
+            if (LinkStart > 0)
+            {
+                Option.MessageContent = Option.MessageContent.Insert(LinkEnd, "-->");
+                Option.MessageContent = Option.MessageContent.Insert(LinkStart, "<--");
+            }
+
             if (form.IsValid) MudDialog.Close(DialogResult.Ok(Option));
         }
 
         void Cancel() => MudDialog.Cancel();
+
+        protected override async Task OnInitializedAsync()
+        {
+            HideLink = Option.MessageContent.Contains("<--") && Option.MessageContent.Contains("-->");
+
+            if (HideLink)
+            {
+                var linkStart = Option.MessageContent.IndexOf("<--") + 3;
+                var linkEnd = Option.MessageContent.IndexOf("-->");
+                OptionLink = Option.MessageContent[linkStart..linkEnd];
+            }
+        }
 
         protected static string IsValidReminderType(int i)
         {
@@ -78,6 +113,29 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         async Task FillTemplate()
         {
             Option.MessageContent = REMINDER_MESSAGES[SelectedStarterTemplate];
+        }
+
+        async void InsertLink()
+        {
+            if (!OptionLink.IsValidUrl())
+            {
+                var dialogParams = new DialogParameters
+                {
+                    { "Message", $"The URL supplied is not valid." }
+                };
+
+                await DialogService.Show<AlertDialog>("Validation failure", dialogParams).Result;
+                return;
+            }
+
+            Option.MessageContent += ' ';
+            LinkStart = Option.MessageContent.Length;
+            Option.MessageContent += OptionLink;
+            LinkEnd = Option.MessageContent.Length;
+            Option.MessageContent += ' ';
+
+            HideLink = true;
+            StateHasChanged();
         }
     }
 }
