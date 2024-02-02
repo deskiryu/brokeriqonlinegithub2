@@ -57,9 +57,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         static string[] REMINDER_MESSAGES = new string[] {
             "",
-            "The INSERT_INSURANCE_NAME insurance policy of your client INSERT_CLIENT_NAME ends on INSERT_DATE.",
-            "Hi INSERT_CLIENT_NAME, your INSERT_INSURANCE_NAME insurance policy is due for renewal on INSERT_DATE.Contact your Broker for a new quote and prevent your policy being automatically renewed.",
-            "Hi INSERT_CLIENT_NAME, your INSERT_INSURANCE_NAME insurance policy is due for renewal on INSERT_DATE.Contact your Broker for a new quote.",
+            "The INSERT_INSURANCE_NAME insurance policy of your client INSERT_CLIENT_NAME should be reviewed on INSERT_DATE.",
+            "Hi INSERT_CLIENT_NAME, your INSERT_INSURANCE_NAME insurance policy is due for renewal, and should have a review on INSERT_DATE.Contact your Broker for a new quote and prevent your policy being automatically renewed.",
+            "Hi INSERT_CLIENT_NAME, your INSERT_INSURANCE_NAME insurance policy is due for renewal, and should have a review on INSERT_DATE.Contact your Broker for a new quote.",
             "The mortgage promotional period of your client INSERT_CLIENT_NAME ends on INSERT_DATE.",
             "Hi INSERT_CLIENT_NAME, your mortgage promotional period ends on INSERT_DATE. Contact your Broker to discuss your mortgage options.",
         };
