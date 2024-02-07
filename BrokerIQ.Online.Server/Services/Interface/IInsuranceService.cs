@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Models;
 
 namespace BrokerIQ.Online.Services.Interface
 {
-    using Dto.Models;
-    using Models;
-
     public interface IInsuranceService
     {
         Task<Insurance> GetInsurance(int id, bool eager = true);
@@ -19,5 +17,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> DeleteInsurance(int id);
 
         Task<Insurance> AddInsurance(Insurance ins, List<(string, byte[])> documents);
+
+        Task<Insurance> GetFromFile(CreateChatDocumentDto dto);
     }
 }
