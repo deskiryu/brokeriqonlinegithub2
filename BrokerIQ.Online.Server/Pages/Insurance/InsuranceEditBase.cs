@@ -1,29 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Components;
+
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Extensions;
+
+using MudBlazor;
+
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
+
+using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Dto.Models;
+
+
 namespace BrokerIQ.Online.Pages
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using AutoMapper;
-    using Microsoft.AspNetCore.Components;
-    using Models;
-    using MudBlazor;
-    using BrokerIQ.Dto.Enum;
-    using Services.Interface;
-
-    using BrokerIQ.Online.Server.Extensions;
-    using Microsoft.AspNetCore.WebUtilities;
-    using Microsoft.AspNetCore.Components.Forms;
-    using Microsoft.AspNetCore.Components.Web;
-    using BrokerIQ.Online.Server.AppSettings;
-    using Microsoft.Extensions.Options;
-    using BrokerIQ.Online.Server.Shared;
-    using Newtonsoft.Json.Linq;
-
     public class InsuranceEditBase : ComponentBase
     {
         private int id;
@@ -125,7 +127,7 @@ namespace BrokerIQ.Online.Pages
 
         protected string HoverClass;
 
-        protected int MyMaxAllowedFiles{ get; set; }
+        protected int MyMaxAllowedFiles { get; set; }
 
         public bool AvailableToClient
         {
@@ -361,7 +363,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         await InsuranceService.AddInsurance(Insurance, fileNamesAndBytes);
                     }
-                    catch 
+                    catch
                     {
                         StatusClass = "alert-danger";
                         Message = "Something went wrong adding the new Insurance. Please try again.";
@@ -788,6 +790,17 @@ namespace BrokerIQ.Online.Pages
             fileStream.Close();
             File.Delete(path);
             return bytes;
+        }
+
+        protected async void FillInsuranceFromFile(InputFileChangeEventArgs e)
+        {
+            var fileBytes = await GetFileBytes(e.File);
+
+            Insurance = await InsuranceService.GetFromFile(new CreateChatDocumentDto() { File = fileBytes });
+
+            InsuranceType = (int)Insurance.InsType;
+
+            StateHasChanged();
         }
     }
 }
