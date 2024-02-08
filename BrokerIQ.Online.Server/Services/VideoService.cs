@@ -114,6 +114,28 @@ namespace BrokerIQ.Online.Server.Services
             return videoId;
         }
 
+        public async Task<(bool, string)> UploadThumbnail(int id, MemoryStream imageStream, int brokerId)
+        {
+
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+
+
+            var url = this.videoUrl + $"/savethumbnail?id={id}&brokerId={brokerId}";
+            var videoId = (false, "");
+            try
+            {
+                videoId.Item2 = await this.requestProviderService.Post<MemoryStream, string>(url, imageStream, "application/octet-stream");
+                videoId.Item1 = true;
+            }
+            catch (Exception ex)
+            {
+                videoId.Item2 = ex.Message;
+            }
+            return videoId;
+        }
+
         public async Task<bool> DeleteVideo(int id, int brokerId)
         {
             var user = await this.accountService.GetUser();

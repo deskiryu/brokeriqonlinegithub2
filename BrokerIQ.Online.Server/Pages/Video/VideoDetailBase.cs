@@ -12,6 +12,9 @@ using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
+using BrokerIQ.Online.Server.Services;
+using Microsoft.AspNetCore.Components.Forms;
+using System.IO;
 
 namespace BrokerIQ.Online.Server.Pages.Video
 {
@@ -70,6 +73,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
         protected bool IsAdmin { get; set; }
 
+        protected string ThumbnailImage { get; set; }
+
         public int CustomerCategory { get; set; }
 
         public int AgeRange { get; set; }
@@ -117,6 +122,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 ThisVideo = await VideoService.GetVideo(int.Parse(VideoId), BrokerId);
                 Url = ThisVideo.Url;
                 Vetted = ThisVideo.Vetted;
+                ThumbnailImage = ThisVideo.VideoThumbnailData;
                 var allCustomers = await CustomerService.GetAllCustomers();
                 Customers = allCustomers.Where(x => x.VideoNotificationsAllowed || x.MarketingMessagesAllowed).ToList();
 
@@ -306,6 +312,40 @@ namespace BrokerIQ.Online.Server.Pages.Video
             };
 
             await DialogService.Show<VideoChatDialog>("Send Video To Multiple Chats", dialogParams, dialogOptions).Result;
+        }
+
+        public async Task LoadFiles(InputFileChangeEventArgs e)
+        {
+
+            try
+            {
+                var file = e.GetMultipleFiles(1).FirstOrDefault();
+                var ext = Path.GetExtension(file.Name);
+                if (ext != ".jpeg" && ext != ".jpg")
+                {
+                    throw new Exception("Jpeg files only");
+                }
+                if (file != null)
+                {
+                    var memoryStream = new MemoryStream();
+                    await file.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
+                    var data = memoryStream.ToArray();
+                    memoryStream.Position = 0;
+                    var result = await VideoService.UploadThumbnail(ThisVideo.Id, memoryStream, BrokerId);
+                    if (result.Item1) {
+                        ThumbnailImage = result.Item2;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+
+                StateHasChanged();
+            }
         }
     }
 }
