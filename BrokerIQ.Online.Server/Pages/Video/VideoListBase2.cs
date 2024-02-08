@@ -190,7 +190,8 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Cancelled)
             {
-                bool succeeded = await VideoService.DeleteVideo(id, BrokerId);
+                var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
+                bool succeeded = await VideoService.DeleteVideo(id, brokerId);
 
                 if (succeeded)
                 {
@@ -319,8 +320,8 @@ namespace BrokerIQ.Online.Pages
 
                     while (attempts > 0)
                     {
-                        
-                        var thumbnail = await VideoService.GetVideoThumbnail(uploadedVideoId.Item1, BrokerId);
+                        var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
+                        var thumbnail = await VideoService.GetVideoThumbnail(uploadedVideoId.Item1, brokerId);
                         if (thumbnail != null && thumbnail.Data != null)
                         {
                             break;
@@ -777,36 +778,36 @@ namespace BrokerIQ.Online.Pages
             {
                 if (video != null)
                 {
-
+                    var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
                     if (video.Identifier == "Welcome" && video.VideoSendTypeId != VideoSendEnum.WelcomeVideo)
                     {
-                        await this.VideoService.SetWelcomeVideo(video.Id, BrokerId, true);
+                        await this.VideoService.SetWelcomeVideo(video.Id, brokerId, true);
                         await this.VideoService.SetVetted(video.Id, true);
                         break;
                     }
                     if (video.Identifier == "Mortgage" && video.VideoSendTypeId != VideoSendEnum.MortgageVideo)
                     {
-                        await this.VideoService.SetMortgageVideo(video.Id, BrokerId, true);
+                        await this.VideoService.SetMortgageVideo(video.Id, brokerId, true);
                         await this.VideoService.SetVetted(video.Id, true);
                         break;
                     }
                     if (video.Identifier == "Birthday" && video.VideoSendTypeId != VideoSendEnum.BirthdayVideo)
                     {
-                        await this.VideoService.SetBirthdayVideo(video.Id, BrokerId, true);
+                        await this.VideoService.SetBirthdayVideo(video.Id, brokerId, true);
                         await this.VideoService.SetVetted(video.Id, true);
                         break;
                     }
 
                     if (video.Identifier == "Insurance" && video.VideoSendTypeId != VideoSendEnum.InsuranceVideo)
                     {
-                        await this.VideoService.SetInsuranceVideo(video.Id, BrokerId, true);
+                        await this.VideoService.SetInsuranceVideo(video.Id, brokerId, true);
                         await this.VideoService.SetVetted(video.Id, true);
                         break;
                     }
 
                     if (video.Identifier.Contains("SendDateVideo") && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
                     {
-                        await this.VideoService.SetVideoSendDateTick(video.Id, BrokerId, true);
+                        await this.VideoService.SetVideoSendDateTick(video.Id, brokerId, true);
                         await this.VideoService.SetVetted(video.Id, true);
                         break;
                     }
@@ -863,7 +864,8 @@ namespace BrokerIQ.Online.Pages
                                 break;
                             }
                     }
-                    await this.VideoService.SetNoVideo(video.Id, BrokerId);
+                    var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
+                    await this.VideoService.SetNoVideo(video.Id, brokerId);
                 }
             }
             await RefreshVideos();
@@ -886,7 +888,8 @@ namespace BrokerIQ.Online.Pages
                 var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
                 if (!result.Cancelled)
                 {
-                    await this.VideoService.DeleteVideo(video.Id, BrokerId);
+                    var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
+                    await this.VideoService.DeleteVideo(video.Id, brokerId);
                 }
             }
             await RefreshVideos();
