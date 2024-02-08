@@ -1,8 +1,10 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using System.IO
+
 @using BrokerIQ.Online.Server.Extensions
 
 @inject IJSRuntime js
+
 @functions {
     async void PreviewFile(MemoryStream ms)
     {
@@ -21,7 +23,7 @@
                                        Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" OnClick="InsertLink" Disabled="@model.HideLink"></MudIconButton>
                         </div>
                         <div class="col-sm-10">
-                        <MudTextField T="string" Placeholder="Link address" @bind-Value="model.Link" />
+                        <MudTextField T="string" Placeholder="Link address" @bind-Value="model.Link" Disabled="@model.HideLink" />
                         </div>
 
                     </div>
@@ -60,6 +62,9 @@
 
 
 @code {
+    [Inject]
+    public IDialogService DialogService { get; set; }
+
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter] public List<string> FileNames { get; set; }
@@ -125,6 +130,8 @@
         if (!string.IsNullOrEmpty(PrePopulatedMessage))
         {
             model.MessageToSend = PrePopulatedMessage;
+
+            model.HideLink = PrePopulatedMessage.Contains("<--") && PrePopulatedMessage.Contains("-->");
         }
     }
 
@@ -149,8 +156,18 @@
 
     void Cancel() => MudDialog.Cancel();
 
-    public void InsertLink()
+    public async void InsertLink()
     {
+        if (!model.Link.IsValidUrl())
+        {
+            var dialogParams = new DialogParameters
+            {
+                { "Message", $"The URL supplied is not valid." }
+            };
+
+            await DialogService.Show<AlertDialog>("Validation failure", dialogParams).Result;
+            return;
+        }
 
         model.MessageToSend += ' ';
         model.LinkStart = model.MessageToSend.Length;

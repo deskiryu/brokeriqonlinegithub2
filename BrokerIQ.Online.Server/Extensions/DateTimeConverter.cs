@@ -1,22 +1,22 @@
-﻿using BrokerIQ.Online.Server.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace BrokerIQ.Online.Server.Extensions
 {
     public static class DateTimeConverter
     {
-        public static string ToBiqDateTimeString( this DateTime dateIn)
+        public static string ToBiqDateTimeString(this DateTime dateIn)
         {
-            return Get(dateIn).ToString("dd/MM/yyyy h:mm:ss tt");
+            return Get(dateIn).ToString("dd/MM/yyyy HH:mm");
         }
 
         public static string ToBiqDateString(this DateTime dateIn)
         {
             return Get(dateIn).ToString("dd/MM/yyyy");
+        }
+
+        public static string ToBiqTimeString(this TimeSpan timeIn)
+        {
+            return timeIn.ToString(@"hh\:mm");
         }
 
         private static DateTime Get(DateTime dateIn)

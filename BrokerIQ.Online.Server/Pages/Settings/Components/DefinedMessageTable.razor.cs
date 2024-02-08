@@ -1,13 +1,17 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Components;
 using BrokerIQ.Online.Services.Interface;
-using Microsoft.AspNetCore.Components;
+
 using MudBlazor;
+using System;
+using AutoMapper.Configuration.Conventions;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -28,9 +32,14 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         [Parameter]
         public Online.Models.Broker Broker { get; set; }
 
-        private ICollection<BrokerDefinedMessageDto> DefinedMessages { get; set; }
+        private IEnumerable<BrokerDefinedMessageDto> DefinedMessages { get; set; }
 
         protected override async Task OnInitializedAsync()
+        {
+            await RefreshMessages();
+        }
+
+        private async Task RefreshMessages()
         {
             DefinedMessages = new List<BrokerDefinedMessageDto>(await BrokerDefinedMessageService.GetAllForCurrentBroker());
         }
@@ -130,5 +139,76 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             await ReloadDefinedMessages();
         }
+
+        private string FormatTemplateForDisplay(string template)
+        {
+            if (!template.Contains("<--") || !template.Contains("-->")) return template;
+
+            var linkStart = template.IndexOf("<--");
+            var linkEnd = template.IndexOf("-->");
+            var url = template.Substring(linkStart + 3, linkEnd - linkStart - 3);
+
+            return template.Replace("<--", "<a target=\"_blank\" href=\"").Replace("-->", $"\">{url}</a>");
+        }
+
+        #region Row drag and drop
+        private BrokerDefinedMessageDto? draggedItem;
+
+        private int? enterIndex;
+        private bool? enterAfterDropZone;
+
+        private void DragStart(BrokerDefinedMessageDto model)
+        {
+            draggedItem = model;
+        }
+
+        private void DragEnter(int index, bool isAfterDropZone)
+        {
+            if (draggedItem?.SortOrder == index)
+            {
+                enterIndex = null;
+                enterAfterDropZone = null;
+            }
+            else
+            {
+                enterIndex = index;
+                enterAfterDropZone = isAfterDropZone;
+            }
+        }
+
+        private async Task DropAsync(int index)
+        {
+            await DragEnd();
+        }
+
+        private async Task DragEnd()
+        {
+            if (enterIndex.HasValue && draggedItem.SortOrder != enterIndex.Value)
+            {
+                draggedItem.SortOrder = enterIndex.Value;
+
+                await BrokerDefinedMessageService.Update(draggedItem);
+
+                await RefreshMessages();
+
+                StateHasChanged();
+            }
+
+            draggedItem = null;
+            enterIndex = null;
+            enterAfterDropZone = null;
+        }
+
+        private bool IsEntering(int index)
+        {
+            return enterIndex == index;
+        }
+
+        private string IsDraggable()
+        {
+            return "true";
+        }
+        #endregion
+
     }
 }

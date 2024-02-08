@@ -1,15 +1,23 @@
 ﻿@page "/insuranceedit/{InsuranceId}/{CustomerId}"
+
+@using System.IO
+
+@using Microsoft.Extensions.Options
+
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
 @using BlazorDateRangePicker
 @using BrokerIQ.Online.Services.Interface
-@using System.IO
+
+@using BrokerIQ.Online.AppSettings
 
 @inherits InsuranceEditBase
 
+@inject IOptions<ReviewItAPIDetails> Options
 @inject IJSRuntime js
+
 @functions {
     async void DownloadFile(InsuranceDocument sdoc)
     {
@@ -27,6 +35,23 @@
     <section class="insurance-detail">
 
         <h4 class="page-title">Add or edit insurance</h4>
+
+        @if(Options.Value.CanLoadInsuranceFromFile && Insurance.Id == 0)
+        {
+            <div class="col-sm-6 mt-1">
+                <div class="card">
+                    <div class="card-body">
+                        <label class="card-title">Fill details from file</label>
+                            <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
+                                    <MudPaper class="drag-drop-zone">
+                                        <InputFile OnChange="FillInsuranceFromFile" Class="drag-drop-input" accept="application/pdf" />
+                                        <MudText Typo="Typo.subtitle1">Drag and drop pdf file or click to browse</MudText>
+                                    </MudPaper>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        }
 
         <EditForm Model="@Insurance" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit" id="@FormId">
 
@@ -396,6 +421,7 @@
             </div>
         </div>
     }
+
     <div class="col-sm-6 mt-1">
         <div class="card">
             <div class="card-body">
