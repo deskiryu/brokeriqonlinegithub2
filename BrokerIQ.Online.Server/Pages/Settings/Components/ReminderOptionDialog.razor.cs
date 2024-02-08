@@ -85,7 +85,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         protected override async Task OnInitializedAsync()
         {
-            HideLink = Option.MessageContent.Contains("<--") && Option.MessageContent.Contains("-->");
+            HideLink = Option.Id > 0 && Option.MessageContent.Contains("<--") && Option.MessageContent.Contains("-->");
 
             if (HideLink)
             {
