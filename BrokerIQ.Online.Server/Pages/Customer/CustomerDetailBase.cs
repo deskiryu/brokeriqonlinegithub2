@@ -313,11 +313,15 @@ namespace BrokerIQ.Online.Pages
             CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
             DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
 
-            NewClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
-            ShouldShowAsDot = NewClientUploadsCount == 0;
-            UploadsBadgeColor = ShouldShowAsDot ? Color.Transparent : Color.Error;
+            var incomingClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
+            if(incomingClientUploadsCount != NewClientUploadsCount)
+            {
+                NewClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
+                ShouldShowAsDot = NewClientUploadsCount == 0;
+                UploadsBadgeColor = ShouldShowAsDot ? Color.Transparent : Color.Error;
 
-            await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
         protected void ResetUploadsBadge()
@@ -1119,11 +1123,11 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task SaveSelectedDocumentUpload()
+        protected void SaveSelectedDocumentUpload()
         {
             foreach (var custDoc in SelectedItemsCustomerDocuments)
             {
-                await SaveDocumentUpload(custDoc);
+                SaveDocumentUpload(custDoc);
             }
             SelectedItemsCustomerDocuments.Clear();
         }
@@ -1157,18 +1161,25 @@ namespace BrokerIQ.Online.Pages
             await Extensions.OpenLinkInNewTab(js, url);
         }
 
-        protected async Task SaveDocumentUpload(CustomerDocument doc)
+        protected void SaveDocumentUpload(CustomerDocument doc)
         {
-            if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
+            try
             {
-                imageFileName = doc.Description + ".jpeg";
-                imageData = doc.File;
-                await SaveImage();
+                if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
+                {
+                    imageFileName = doc.Description + ".jpeg";
+                    imageData = doc.File;
+                    SaveImage();
+                }
+                else
+                {
+                    DownloadPdf(doc);
+                }
             }
-            else
-            {
-                await DownloadPdf(doc);
+            catch(Exception ex){
+
             }
+
         }
 
         async Task PreviewImage()
