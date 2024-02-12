@@ -328,10 +328,10 @@ else if (!Saved)
                         </div>
                         <div class = "col-sm-8" style="margin-top: -14px">
 
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="f => SaveSelectedDocumentUpload()">
                                     Download Selected
                                 </MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="( async() => await DeleteSelectedDocumentUpload())">
                                     Delete Selected
                                 </MudButton>
                         </div>
