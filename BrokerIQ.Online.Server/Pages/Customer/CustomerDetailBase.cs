@@ -811,7 +811,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     foreach (var custDoc in SelectedItemsCustomerDocuments)
                     {
-                        await DeleteDocumentUpload(custDoc, showDialog: false);
+                        await CustomerDocumentService.DeleteCustomerDocument(custDoc.Id);
                     }
 
                     CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
@@ -1163,23 +1163,16 @@ namespace BrokerIQ.Online.Pages
 
         protected void SaveDocumentUpload(CustomerDocument doc)
         {
-            try
+            if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
             {
-                if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
-                {
-                    imageFileName = doc.Description + ".jpeg";
-                    imageData = doc.File;
-                    SaveImage();
-                }
-                else
-                {
-                    DownloadPdf(doc);
-                }
+                imageFileName = doc.Description + ".jpeg";
+                imageData = doc.File;
+                SaveImage();
             }
-            catch(Exception ex){
-
+            else
+            {
+                DownloadPdf(doc);
             }
-
         }
 
         async Task PreviewImage()
