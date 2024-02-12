@@ -125,6 +125,8 @@ namespace BrokerIQ.Online.Pages
 
         protected string HoverClass;
 
+        protected int MyMaxAllowedFiles{ get; set; }
+
         public bool AvailableToClient
         {
             get
@@ -161,6 +163,7 @@ namespace BrokerIQ.Online.Pages
             SpinnerVisible = "display:none";
             fileUploadSettings = this.FileUploadSettingsOption.Value;
             SendNotification = true;
+            MyMaxAllowedFiles = fileUploadSettings.MaxAllowedFiles;
         }
 
         protected override async Task OnParametersSetAsync()
@@ -179,6 +182,7 @@ namespace BrokerIQ.Online.Pages
                     if (!IsAdmin)
                     {
                         BrokerHasWhiteLabelAndIsInsuranceOnly = Broker.BrokerIdentifier != null && Broker.BrokerIdentifier.IdentifierFound && Broker.BrokerIdentifier.InsuranceOnly;
+                        MyMaxAllowedFiles = BrokerHasWhiteLabelAndIsInsuranceOnly ? MyMaxAllowedFiles * 2 : MyMaxAllowedFiles;
                     }
                 }
                 catch
@@ -191,6 +195,7 @@ namespace BrokerIQ.Online.Pages
             else
             {
                 BrokerHasWhiteLabelAndIsInsuranceOnly = true;
+                MyMaxAllowedFiles = MyMaxAllowedFiles * 2;
                 try
                 {
                     Brokers = await BrokerService.GetBrokers();
@@ -356,7 +361,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         await InsuranceService.AddInsurance(Insurance, fileNamesAndBytes);
                     }
-                    catch
+                    catch 
                     {
                         StatusClass = "alert-danger";
                         Message = "Something went wrong adding the new Insurance. Please try again.";
@@ -584,11 +589,11 @@ namespace BrokerIQ.Online.Pages
         {
             bool success = true;
             var alreadyUploaded = Insurance.SupportingDocuments.Count();
-            var remainingFiles = fileUploadSettings.MaxAllowedFiles - alreadyUploaded;
+            var remainingFiles = MyMaxAllowedFiles - alreadyUploaded;
             if (e.FileCount > remainingFiles)
             {
                 var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", $"A maximum of five documents can be shown in the app");
+                dialogParams.Add("Message", $"A maximum of {MyMaxAllowedFiles} documents can be shown in the app");
                 success = false;
                 await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
 
