@@ -328,7 +328,7 @@ else if (!Saved)
                         </div>
                         <div class = "col-sm-8" style="margin-top: -14px">
 
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="f => SaveSelectedDocumentUpload()">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="async() => await SaveSelectedDocumentUpload()">
                                     Download Selected
                                 </MudButton>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="( async() => await DeleteSelectedDocumentUpload())">
@@ -336,7 +336,7 @@ else if (!Saved)
                                 </MudButton>
                         </div>
                     </div>
-                    <MudTable Items="@CustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
+                    <MudTable Items="@SelectedCustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
                         <HeaderContent>
                             <MudTh>Document</MudTh>
                             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.CreatedDate)">Date</MudTableSortLabel></MudTh>
