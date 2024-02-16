@@ -98,6 +98,8 @@ namespace BrokerIQ.Online.Pages
 
         public IEnumerable<CustomerDocument> CustomerDocuments { get; set; }
 
+        public IEnumerable<CustomerDocument> SelectedCustomerDocuments { get; set; }
+
         protected HashSet<CustomerDocument> SelectedItemsCustomerDocuments = new HashSet<CustomerDocument>();
 
         public DocumentsRequirement DocumentsRequirement { get; set; }
@@ -151,6 +153,7 @@ namespace BrokerIQ.Online.Pages
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
         private System.Threading.Timer timer;
+        private System.Threading.Timer timerUploads;
 
         public MudSelect<string> TemplateSelect { get; set; }
 
@@ -202,7 +205,7 @@ namespace BrokerIQ.Online.Pages
 
                 Connection = await CustomerService.GetConnection(Customer.Id);
 
-                CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                SelectedCustomerDocuments = CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
                 ResetUploadsBadge();
 
                 DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
@@ -270,9 +273,13 @@ namespace BrokerIQ.Online.Pages
                 {
                     await UpdateChat();
 
+                }, null, 5000, 5000);
+
+                timerUploads = new System.Threading.Timer(async _ =>  // async void
+                {
                     await UpdateCustomerUploads();
 
-                }, null, 0, 5000);
+                }, null, 60000, 60000);
             }
             else
             {
@@ -316,6 +323,7 @@ namespace BrokerIQ.Online.Pages
             var incomingClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
             if(incomingClientUploadsCount != NewClientUploadsCount)
             {
+                SelectedCustomerDocuments = CustomerDocuments;
                 NewClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
                 ShouldShowAsDot = NewClientUploadsCount == 0;
                 UploadsBadgeColor = ShouldShowAsDot ? Color.Transparent : Color.Error;
@@ -814,7 +822,7 @@ namespace BrokerIQ.Online.Pages
                         await CustomerDocumentService.DeleteCustomerDocument(custDoc.Id);
                     }
 
-                    CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                    SelectedCustomerDocuments = CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
                     SelectedItemsCustomerDocuments.Clear();
                     StateHasChanged();
                 }
@@ -843,7 +851,7 @@ namespace BrokerIQ.Online.Pages
                         responseParams.Add("Message", "Deleted successfully");
                         await DialogService.Show<AlertDialog>("Information", responseParams).Result;
 
-                        CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                        SelectedCustomerDocuments = CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
                         StateHasChanged();
                     }
 
@@ -1115,19 +1123,11 @@ namespace BrokerIQ.Online.Pages
                          .OrderByDescending(n => n.DateTaken);
         }
 
-        protected async Task ViewSelectedDocumentUpload()
+        protected async Task SaveSelectedDocumentUpload()
         {
             foreach (var custDoc in SelectedItemsCustomerDocuments)
             {
-                await ViewDocumentUpload(custDoc);
-            }
-        }
-
-        protected void SaveSelectedDocumentUpload()
-        {
-            foreach (var custDoc in SelectedItemsCustomerDocuments)
-            {
-                SaveDocumentUpload(custDoc);
+                await SaveDocumentUpload(custDoc);
             }
             SelectedItemsCustomerDocuments.Clear();
         }
@@ -1161,17 +1161,17 @@ namespace BrokerIQ.Online.Pages
             await Extensions.OpenLinkInNewTab(js, url);
         }
 
-        protected void SaveDocumentUpload(CustomerDocument doc)
+        protected async Task SaveDocumentUpload(CustomerDocument doc)
         {
             if (doc.SupportingDocumentType == DocumentTypeEnum.JPEG || doc.SupportingDocumentType == DocumentTypeEnum.PNG)
             {
                 imageFileName = doc.Description + ".jpeg";
                 imageData = doc.File;
-                SaveImage();
+                await SaveImage();
             }
             else
             {
-                DownloadPdf(doc);
+                await DownloadPdf(doc);
             }
         }
 
