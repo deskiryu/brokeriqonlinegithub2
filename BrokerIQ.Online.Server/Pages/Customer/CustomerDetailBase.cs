@@ -189,9 +189,13 @@ namespace BrokerIQ.Online.Pages
 
         protected MudTabs Tabs;
 
+        protected int MyMaxAllowedFiles { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             User = await AccountService.GetUser();
+            fileUploadSettings = this.FileUploadSettingsOption.Value;
+            MyMaxAllowedFiles = fileUploadSettings.MaxAllowedFiles;
 
             ClearUnReadChat();
 
@@ -237,6 +241,7 @@ namespace BrokerIQ.Online.Pages
                     if (Broker.IsInsuranceOnly)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                        MyMaxAllowedFiles = MyMaxAllowedFiles * 2;
                     }
                 }
                 else
@@ -291,7 +296,7 @@ namespace BrokerIQ.Online.Pages
                     }
                 }
             }
-            fileUploadSettings = this.FileUploadSettingsOption.Value;
+
 
         }
 
@@ -871,11 +876,11 @@ namespace BrokerIQ.Online.Pages
         protected async Task LoadFiles(InputFileChangeEventArgs e)
         {
             var alreadyUploaded = LoadedChatFiles.Count();
-            var remainingFiles = fileUploadSettings.MaxAllowedFiles - alreadyUploaded;
+            var remainingFiles = MyMaxAllowedFiles - alreadyUploaded;
             if (e.FileCount > remainingFiles)
             {
                 var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", $"A maximum of five documents can be shown in the app");
+                dialogParams.Add("Message", $"A maximum of {MyMaxAllowedFiles} documents can be shown in the app");
                 await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
 
             }
