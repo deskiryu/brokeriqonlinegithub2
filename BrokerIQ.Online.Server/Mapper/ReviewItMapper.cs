@@ -165,6 +165,11 @@ namespace BrokerIQ.Online.Mapper
                     rd = src.ReviewDate;
                 }
                 return rd;
+            }))
+            .ForMember(d => d.Cost, opt => opt.MapFrom((src, dest) =>
+            {
+                decimal? result = src.Cost > 0 ? src.Cost : null;
+                return result;
             }));
 
             CreateMap<Insurance, UpdateInsuranceDto>()
@@ -215,18 +220,6 @@ namespace BrokerIQ.Online.Mapper
                     }
                 }
                 return dpw;
-            }))
-            .ForMember(d => d.ReviewDate, opt => opt.MapFrom((src, dest) =>
-            {
-                var rd = DateTime.MinValue;
-                if (src.ReviewDate.HasValue)
-                {
-                    if (src.ReviewDate?.Year > 2000)
-                    {
-                        rd = src.ReviewDate.Value;
-                    }
-                }
-                return rd;
             }));
 
 
@@ -279,17 +272,9 @@ namespace BrokerIQ.Online.Mapper
                 }
                 return dpw;
             }))
-            .ForMember(d => d.ReviewDate, opt => opt.MapFrom((src, dest) =>
+            .ForMember(d => d.ExpiryDate, opt => opt.MapFrom((src, dest) =>
             {
-                var rd = DateTime.MinValue;
-                if (src.ReviewDate.HasValue)
-                {
-                    if (src.ReviewDate?.Year > 2000)
-                    {
-                        rd = src.ReviewDate.Value;
-                    }
-                }
-                return rd;
+                return src.ExpiryDate ?? DateTime.MaxValue;
             }))
             .ForMember(d => d.IsInTrust, action => action.MapFrom(s => s.IsInTrust))
             .ForMember(d => d.HasWill, action => action.MapFrom(s => s.HasWill))
@@ -771,6 +756,7 @@ namespace BrokerIQ.Online.Mapper
                 }
                 return rd;
             }));
+
             CreateMap<MenuPlan, UpdateMenuPlanDto>()
             .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
             .ForMember(d => d.CustomerId, opt => opt.MapFrom(s => s.CustomerId))

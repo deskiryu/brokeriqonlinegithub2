@@ -274,10 +274,6 @@ namespace BrokerIQ.Online.Pages
                 {
                     Insurance.StartDate = DateTime.Now;
                 }
-                if (Insurance.ExpiryDate == DateTime.MinValue)
-                {
-                    Insurance.ExpiryDate = DateTime.Now;
-                }
                 if (Insurance.ReviewDate == null || Insurance.ReviewDate == DateTime.MinValue)
                 {
                     Insurance.ReviewDate = DateTime.Now;
@@ -287,9 +283,6 @@ namespace BrokerIQ.Online.Pages
                     Insurance.RetroactiveDate = DateTime.Now;
                 }
                 //Midnight
-                Insurance.StartDate = new DateTime(Insurance.StartDate.Year, Insurance.StartDate.Month, Insurance.StartDate.Day, 0, 0, 0);
-                Insurance.ExpiryDate = new DateTime(Insurance.ExpiryDate.Year, Insurance.ExpiryDate.Month, Insurance.ExpiryDate.Day, 0, 0, 0);
-                Insurance.ReviewDate = new DateTime(Insurance.ReviewDate.Value.Year, Insurance.ReviewDate.Value.Month, Insurance.ReviewDate.Value.Day, 0, 0, 0);
                 Insurance.RetroactiveDate = new DateTime(Insurance.RetroactiveDate.Value.Year, Insurance.RetroactiveDate.Value.Month, Insurance.RetroactiveDate.Value.Day, 0, 0, 0);
 
                 Insurance.MenuPlanId = menuPlanId;
@@ -392,9 +385,6 @@ namespace BrokerIQ.Online.Pages
             else
             {
                 //Midnight
-                Insurance.StartDate = new DateTime(Insurance.StartDate.Year, Insurance.StartDate.Month, Insurance.StartDate.Day, 0, 0, 0);
-                Insurance.ExpiryDate = new DateTime(Insurance.ExpiryDate.Year, Insurance.ExpiryDate.Month, Insurance.ExpiryDate.Day, 0, 0, 0);
-                Insurance.ReviewDate = new DateTime(Insurance.ReviewDate.Value.Year, Insurance.ReviewDate.Value.Month, Insurance.ReviewDate.Value.Day, 0, 0, 0);
                 Insurance.RetroactiveDate = new DateTime(Insurance.RetroactiveDate.Value.Year, Insurance.RetroactiveDate.Value.Month, Insurance.RetroactiveDate.Value.Day, 0, 0, 0);
 
                 try
@@ -544,7 +534,7 @@ namespace BrokerIQ.Online.Pages
 
         public DateTimeOffset? ExpiryDate
         {
-            get { return GetDTtoDTO(Insurance.ExpiryDate); }
+            get { return Insurance.ExpiryDate.HasValue && Insurance.ExpiryDate.Value != DateTime.MaxValue ? GetDTtoDTO(Insurance.ExpiryDate.Value) : null; }
             set => Insurance.ExpiryDate = SetDTtoDTO(value);
         }
 
@@ -552,8 +542,7 @@ namespace BrokerIQ.Online.Pages
         {
             get
             {
-                var date = Insurance.ReviewDate.HasValue ? Insurance.ReviewDate.Value : DateTime.Today;
-                return GetDTtoDTO(date);
+                return GetDTtoDTO(Insurance.ReviewDate);
             }
             set => Insurance.ReviewDate = SetDTtoDTO(value);
         }

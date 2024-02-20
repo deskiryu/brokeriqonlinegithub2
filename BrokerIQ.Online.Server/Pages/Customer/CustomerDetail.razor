@@ -67,6 +67,7 @@ else if (!Saved)
                     <tr>
                         <th>Type</th>
                         <th>Insurer</th>
+                        <th>Review</th>
                         <th>Expiry</th>
                         <th Style="text-align:center">Available to Client</th>
                     @if (User.IsAdmin)
@@ -90,7 +91,8 @@ else if (!Saved)
                             <tr class="@rowClass">
                                 <td>@insurance.InsType.GetDisplayName()</td>
                                 <td>@insurance.Name</td>
-                                <td>@insurance.ExpiryDate.ToBiqDateString()</td>
+                                <td>@insurance.ReviewDate.ToBiqDateString()</td>
+                                <td>@(insurance.ExpiryDate != DateTime.MaxValue ? insurance.ExpiryDate.Value.ToBiqDateString() : string.Empty)</td>
                                 <td Style="text-align:center">@if (insurance.AvailableToClient){
                                     <span>Yes</span>
                                     }
@@ -390,6 +392,7 @@ else if (!Saved)
                             <tr>
                                 <th>Type</th>
                                 <th>Insurer</th>
+                                <th>Review</th>
                                 <th>Expiry</th>
                             @if (User.IsAdmin)
                             {
@@ -406,7 +409,8 @@ else if (!Saved)
                                 <tr>
                                     <td>@insurance.InsType.GetDisplayName()</td>
                                     <td>@insurance.Name</td>
-                                    <td>@insurance.ExpiryDate.ToBiqDateString()</td>
+                                    <td>@insurance.ReviewDate.ToBiqDateString()</td>
+                                    <td>@(insurance.ExpiryDate.HasValue && insurance.ExpiryDate.Value != DateTime.MinValue ? insurance.ExpiryDate.Value.ToBiqDateString() : string.Empty)</td>
                                 @if (User.IsAdmin)
                                 {
                                     <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>

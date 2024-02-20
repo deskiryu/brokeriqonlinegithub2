@@ -130,7 +130,7 @@
                             <label class="col-sm-3 col-form-label">Cost PM and PY</label>
                             <div class="row col-sm-5">
                                 <MudItem class="col" >
-                                    <MudTextField @bind-Value="@Insurance.Cost" HelperText="Enter a cost" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                                    <MudTextField @bind-Value="@Insurance.Cost" Clearable="true" HelperText="Enter a cost" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
                                     <ValidationMessage class="offset-sm-3" For="@(() => Insurance.Cost)" />
                                 </MudItem>
                                 <MudRadioGroup class="col-sm-4" @bind-SelectedOption="@Insurance.Annual">
@@ -146,13 +146,8 @@
                                 <DateRangePicker @bind-StartDate="StartDate" SingleDatePicker="true" class="form-control" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
                                 <ValidationMessage class="offset-sm-3" For="@(() => Insurance.StartDate)" />
                             </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Expiry Date</label>
-                            <div class="col-sm-5">
-                                <DateRangePicker @bind-StartDate="ExpiryDate" SingleDatePicker="true" class="form-control" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
-                                <ValidationMessage class="offset-sm-3" For="@(() => Insurance.ExpiryDate)" />
+                            <div class="col-sm-2">
+                                <MudCheckBox @bind-Checked="@Insurance.ShowStartDate" Label="Show"/>
                             </div>
                         </div>
 
@@ -164,6 +159,17 @@
                             </div>
                             <div class="col-sm-2">
                                 <MudCheckBox @bind-Checked="@Insurance.ShowReviewDate" Label="Show"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Expiry Date</label>
+                            <div class="col-sm-5">
+                                <DateRangePicker @bind-StartDate="ExpiryDate" SingleDatePicker="true" class="form-control" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
+                                <ValidationMessage class="offset-sm-3" For="@(() => Insurance.ExpiryDate)" />
+                            </div>
+                            <div class="col-sm-2">
+                                <MudCheckBox @bind-Checked="@Insurance.ShowExpiryDate" Label="Show"/>
                             </div>
                         </div>
 
