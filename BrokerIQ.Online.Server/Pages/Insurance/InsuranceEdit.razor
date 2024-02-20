@@ -130,7 +130,7 @@
                             <label class="col-sm-3 col-form-label">Cost PM and PY</label>
                             <div class="row col-sm-5">
                                 <MudItem class="col" >
-                                    <MudTextField @bind-Value="@Insurance.Cost" HelperText="Enter a cost" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                                    <MudTextField @bind-Value="@Insurance.Cost" Clearable="true" HelperText="Enter a cost" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
                                     <ValidationMessage class="offset-sm-3" For="@(() => Insurance.Cost)" />
                                 </MudItem>
                                 <MudRadioGroup class="col-sm-4" @bind-SelectedOption="@Insurance.Annual">

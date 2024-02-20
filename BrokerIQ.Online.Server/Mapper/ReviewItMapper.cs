@@ -165,6 +165,11 @@ namespace BrokerIQ.Online.Mapper
                     rd = src.ReviewDate;
                 }
                 return rd;
+            }))
+            .ForMember(d => d.Cost, opt => opt.MapFrom((src, dest) =>
+            {
+                decimal? result = src.Cost > 0 ? src.Cost : null;
+                return result;
             }));
 
             CreateMap<Insurance, UpdateInsuranceDto>()
@@ -751,7 +756,7 @@ namespace BrokerIQ.Online.Mapper
                 }
                 return rd;
             }));
-            
+
             CreateMap<MenuPlan, UpdateMenuPlanDto>()
             .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
             .ForMember(d => d.CustomerId, opt => opt.MapFrom(s => s.CustomerId))

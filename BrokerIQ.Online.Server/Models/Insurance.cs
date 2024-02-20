@@ -53,9 +53,7 @@ namespace BrokerIQ.Online.Models
 
         public bool NotificationMinus1Sent { get; set; }
 
-        [Required]
-        [Range(0.01, float.MaxValue, ErrorMessage = "Please enter a cost")]
-        public decimal Cost { get; set; }
+        public decimal? Cost { get; set; }
 
         public bool Annual { get; set; }
 
