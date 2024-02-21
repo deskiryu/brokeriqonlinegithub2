@@ -6,23 +6,20 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Components;
-
-using BrokerIQ.Dto.Enum;
-using BrokerIQ.Online.Models;
-using BrokerIQ.Online.Server.Extensions;
-
-using MudBlazor;
-
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Pages.Insurance.Components;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
-using BrokerIQ.Dto.Models;
 
+using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -428,7 +425,6 @@ namespace BrokerIQ.Online.Pages
                 Message = "Deleted successfully";
                 Saved = true;
             }
-
         }
 
         protected void NavigateToOverview()
@@ -781,13 +777,18 @@ namespace BrokerIQ.Online.Pages
             return bytes;
         }
 
-        protected async void FillInsuranceFromFile(InputFileChangeEventArgs e)
+        protected async Task OpenAnalyzerDialog()
         {
-            var fileBytes = await GetFileBytes(e.File);
+            var result = await DialogService.Show<DocumentAnalyzerDialog>("Document Analyzer").Result;
 
-            Insurance = await InsuranceService.GetFromFile(new CreateChatDocumentDto() { File = fileBytes });
+            if (!result.Canceled)
+            {
+                var data = ((IBrowserFile, Insurance))result.Data;
 
-            InsuranceType = (int)Insurance.InsType;
+                LoadedFiles.Add((data.Item1, await GetFileBytes(data.Item1)));
+                Insurance = data.Item2;
+                InsuranceType = (int)Insurance.InsType;
+            }
 
             StateHasChanged();
         }

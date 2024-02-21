@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
+
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 
@@ -18,6 +18,6 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<Insurance> AddInsurance(Insurance ins, List<(string, byte[])> documents);
 
-        Task<Insurance> GetFromFile(CreateChatDocumentDto dto);
+        Task<InsuranceFromDocumentDto> GetFromFile(DocumentDto dto);
     }
 }
