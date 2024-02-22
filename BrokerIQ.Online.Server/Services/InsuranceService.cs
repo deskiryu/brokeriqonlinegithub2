@@ -87,13 +87,12 @@ namespace BrokerIQ.Online.Services
             return await this.requestProviderService.Delete(this.InsuranceUrl, id);
         }
 
-        public async Task<Insurance> GetFromFile(CreateChatDocumentDto dto)
+        public async Task<InsuranceFromDocumentDto> GetFromFile(DocumentDto dto)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
 
-            var answer = await this.requestProviderService.Post<CreateChatDocumentDto, InsuranceDto>($"{this.InsuranceUrl}/getfromdocument", dto);
-            return this.mapper.Map<Insurance>(answer);
+            return await this.requestProviderService.Post<DocumentDto, InsuranceFromDocumentDto>($"{this.InsuranceUrl}/getfromdocument", dto);
         }
     }
 }

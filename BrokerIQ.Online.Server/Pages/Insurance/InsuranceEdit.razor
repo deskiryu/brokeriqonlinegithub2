@@ -38,19 +38,9 @@
 
         @if(Options.Value.CanLoadInsuranceFromFile && Insurance.Id == 0)
         {
-            <div class="col-sm-6 mt-1">
-                <div class="card">
-                    <div class="card-body">
-                        <label class="card-title">Fill details from file</label>
-                            <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
-                                    <MudPaper class="drag-drop-zone">
-                                        <InputFile OnChange="FillInsuranceFromFile" Class="drag-drop-input" accept="application/pdf" />
-                                        <MudText Typo="Typo.subtitle1">Drag and drop pdf file or click to browse</MudText>
-                                    </MudPaper>
-                            </div>
-                    </div>
-                </div>
-            </div>
+            <MudPaper Class="pa-3 ma-2" Outlined="true">
+                <MudButton Variant="Variant.Filled" FullWidth="true" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@OpenAnalyzerDialog">Fill Details From File ...</MudButton>
+            </MudPaper>
         }
 
         <EditForm Model="@Insurance" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit" id="@FormId">
@@ -408,7 +398,7 @@
         <div class="col-sm-6 mt-1">
             <div class="card">
                 <div class="card-body">
-                    <MudTable Items="@Insurance.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="">
+                    <MudTable Items="@Insurance.SupportingDocuments" Hover="true" SortLabel="Sort By">
                         <RowTemplate>
                             <MudTd>@context.FileName</MudTd>
                             @if (Insurance.Id > 0)
