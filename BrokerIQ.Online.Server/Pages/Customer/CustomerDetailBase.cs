@@ -201,7 +201,6 @@ namespace BrokerIQ.Online.Pages
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
                 CustomerCategory = (int)Customer.CustomerCategory;
 
-
                 Connection = await CustomerService.GetConnection(Customer.Id);
 
                 CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
@@ -287,7 +286,6 @@ namespace BrokerIQ.Online.Pages
                 }
             }
             fileUploadSettings = this.FileUploadSettingsOption.Value;
-
         }
 
         private void SetRequirementVisibility()
@@ -1282,6 +1280,11 @@ namespace BrokerIQ.Online.Pages
             Tabs.ActivatePanel(0);
 
             StateHasChanged();
+        }
+
+        protected async Task ShowCalendlyPopup()
+        {
+            await js.InvokeVoidAsync("showCalendlyPopup", "mnls7307", Customer.Name, Customer.EmailAddress);
         }
     }
 }
