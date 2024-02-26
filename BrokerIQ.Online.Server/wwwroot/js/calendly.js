@@ -16,17 +16,22 @@ function showCalendlyPopup(calendlyUserLink, fullName, email) {
     });
 }
 
+function PassPageComponent(dotnetObjectReference) {
+    window.pageComponent = dotnetObjectReference;
+}
+
 function isCalendlyEvent(e) {
     return e.origin === "https://calendly.com" && e.data.event && e.data.event.indexOf("calendly.") === 0;
 };
 
 window.addEventListener("message", function (e) {
     if (isCalendlyEvent(e)) {
-        //TODO : save this in BrokerIQ somehow
-        /* Example to get the name of the event */
-        console.log("Event name:", e.data.event);
+        var url = e.data.payload.event.uri;
 
-        /* Example to get the payload of the event */
-        console.log("Event details:", e.data.payload);
+        console.log(e.data.payload);
+
+        if (url) {
+            window.pageComponent.invokeMethodAsync('CreateNewAppointment', url);
+        }
     }
 });

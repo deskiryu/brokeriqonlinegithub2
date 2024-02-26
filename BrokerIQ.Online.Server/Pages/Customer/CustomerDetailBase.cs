@@ -23,6 +23,7 @@ using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
 using BrokerIQ.Dto;
+using BrokerIQ.Online.Services;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -66,6 +67,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IBrokerDefinedMessageService BrokerDefinedMessageService { get; set; }
+
+        [Inject]
+        public ICustomerAppointmentService CustomerAppointmentService { get; set; }
 
         [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
@@ -1284,7 +1288,20 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task ShowCalendlyPopup()
         {
+            var thisPage = DotNetObjectReference.Create(this);
+            await js.InvokeVoidAsync("PassPageComponent", thisPage);
+
             await js.InvokeVoidAsync("showCalendlyPopup", "mnls7307", Customer.Name, Customer.EmailAddress);
+        }
+
+        [JSInvokable]
+        public async void CreateNewAppointment(string url)
+        {
+            await CustomerAppointmentService.Create(new CustomerAppointment()
+            {
+                CustomerId = Customer.Id,
+                ExternalEventId = url
+            });
         }
     }
 }

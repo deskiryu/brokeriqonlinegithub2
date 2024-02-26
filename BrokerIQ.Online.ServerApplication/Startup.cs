@@ -95,6 +95,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<IInsuranceQuoteService, InsuranceQuoteService>();
             services.AddScoped<IOccupationService, OccupationService>();
             services.AddScoped<IAssignmentService, AssignmentService>();
+            services.AddScoped<ICustomerAppointmentService, CustomerAppointmentService>();
 
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();

@@ -75,6 +75,7 @@ namespace BrokerIQ.Online.Server
             builder.Services.AddScoped<IOccupationService, OccupationService>();
             builder.Services.AddScoped<IBrokerIdentifierService, BrokerIdentifierService>();
             builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+            builder.Services.AddScoped<ICustomerAppointmentService, CustomerAppointmentService>();
 
             builder.Services.AddAutoMapper(typeof(ReviewItMapper));
             builder.Services.AddScoped<LoggedInAppState>();
