@@ -23,7 +23,8 @@ using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
 using BrokerIQ.Dto;
-using BrokerIQ.Online.Services;
+using BrokerIQ.Online.Server;
+using BrokerIQ.Online.Server.Services.Interface;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -67,6 +68,15 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IBrokerDefinedMessageService BrokerDefinedMessageService { get; set; }
+
+        [Inject]
+        public IBrokerIntegrationService BrokerIntegrationService { get; set; }
+
+        [Inject]
+        public ICalendlyService CalendlyService { get; set; }
+
+        [Inject]
+        public IOptions<CalendlySettings> CalendlySettings { get; set; }
 
         [Inject]
         public ICustomerAppointmentService CustomerAppointmentService { get; set; }
@@ -192,6 +202,14 @@ namespace BrokerIQ.Online.Pages
 
         protected MudTabs Tabs;
 
+        protected string CalendlyLoginUri { get; private set; }
+
+        protected bool CalendlyAccessIsAllowed { get; set; } = false;
+
+        protected bool UserIsConnectedToCalendly { get; set; } = false;
+
+        protected CalendlyUserDto CalendlyUser { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             User = await AccountService.GetUser();
@@ -278,6 +296,19 @@ namespace BrokerIQ.Online.Pages
                     await UpdateCustomerUploads();
 
                 }, null, 0, 5000);
+
+                var integrations = await BrokerIntegrationService.GetBrokerIntegrations();
+
+                CalendlyAccessIsAllowed = integrations.Any(i => i.Integration == IntegrationEnum.Calendly);
+                if (CalendlyAccessIsAllowed)
+                {
+                    CalendlyUser = await CalendlyService.GetUser();
+
+                    UserIsConnectedToCalendly = CalendlyUser != null;
+                    CalendlyAccessIsAllowed = CalendlyUser == null;
+                }
+
+                CalendlyLoginUri = $"{CalendlySettings.Value.BaseAuthUri}/oauth/authorize?client_id={CalendlySettings.Value.ClientId}&response_type=code&redirect_uri={CalendlySettings.Value.BiqReturnUri}";
             }
             else
             {
@@ -290,6 +321,8 @@ namespace BrokerIQ.Online.Pages
                 }
             }
             fileUploadSettings = this.FileUploadSettingsOption.Value;
+
+
         }
 
         private void SetRequirementVisibility()
@@ -1291,7 +1324,7 @@ namespace BrokerIQ.Online.Pages
             var thisPage = DotNetObjectReference.Create(this);
             await js.InvokeVoidAsync("PassPageComponent", thisPage);
 
-            await js.InvokeVoidAsync("showCalendlyPopup", "mnls7307", Customer.Name, Customer.EmailAddress);
+            await js.InvokeVoidAsync("showCalendlyPopup", CalendlyUser.SchedulingReference, Customer.Name, Customer.EmailAddress);
         }
 
         [JSInvokable]

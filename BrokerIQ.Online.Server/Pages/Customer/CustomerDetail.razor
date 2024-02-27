@@ -22,7 +22,12 @@ else if (!Saved)
 {
     <div style="display: flex; align-content: flex-start; justify-content: space-between; margin-bottom: 4px;">
         <h3 class="page-title">@Customer.FirstName @Customer.LastName</h3>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup">Book appointment</MudButton>
+        @if(CalendlyAccessIsAllowed){
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Href="@CalendlyLoginUri"> Connect to Calendly </MudButton>
+        }
+        @if(UserIsConnectedToCalendly){
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup"> Book appointment </MudButton>
+        }
     </div>
 
     

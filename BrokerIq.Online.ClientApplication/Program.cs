@@ -34,6 +34,7 @@ namespace BrokerIQ.Online.Server
             builder.Services.Configure<ReviewItAPIDetails>(builder.Configuration.GetSection(typeof(ReviewItAPIDetails).Name));
             builder.Services.Configure<FileUploadSettings>(builder.Configuration.GetSection(typeof(FileUploadSettings).Name));
             builder.Services.Configure<MetaDefenderCoreDetails>(builder.Configuration.GetSection(typeof(MetaDefenderCoreDetails).Name));
+            builder.Services.Configure<CalendlySettings>(builder.Configuration.GetSection(typeof(CalendlySettings).Name));
 
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
@@ -75,6 +76,8 @@ namespace BrokerIQ.Online.Server
             builder.Services.AddScoped<IOccupationService, OccupationService>();
             builder.Services.AddScoped<IBrokerIdentifierService, BrokerIdentifierService>();
             builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+            builder.Services.AddScoped<IBrokerIntegrationService, BrokerIntegrationService>();
+            builder.Services.AddScoped<ICalendlyService, CalendlyService>();
             builder.Services.AddScoped<ICustomerAppointmentService, CustomerAppointmentService>();
 
             builder.Services.AddAutoMapper(typeof(ReviewItMapper));
