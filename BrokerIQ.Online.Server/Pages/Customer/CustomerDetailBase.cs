@@ -98,6 +98,8 @@ namespace BrokerIQ.Online.Pages
 
         public IEnumerable<CustomerDocument> CustomerDocuments { get; set; }
 
+        public IEnumerable<CustomerDocument> SelectedCustomerDocuments { get; set; }
+
         protected HashSet<CustomerDocument> SelectedItemsCustomerDocuments = new HashSet<CustomerDocument>();
 
         public DocumentsRequirement DocumentsRequirement { get; set; }
@@ -148,9 +150,12 @@ namespace BrokerIQ.Online.Pages
 
         public DateTime? SelectedTemplateDateReplacement { get; set; }
 
+        public TimeSpan? SelectedTemplateTimeReplacement { get; set; }
+
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
         private System.Threading.Timer timer;
+        private System.Threading.Timer timerUploads;
 
         public MudSelect<string> TemplateSelect { get; set; }
 
@@ -186,9 +191,13 @@ namespace BrokerIQ.Online.Pages
 
         protected MudTabs Tabs;
 
+        protected int MyMaxAllowedFiles { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             User = await AccountService.GetUser();
+            fileUploadSettings = this.FileUploadSettingsOption.Value;
+            MyMaxAllowedFiles = fileUploadSettings.MaxAllowedFiles;
 
             ClearUnReadChat();
 
@@ -202,7 +211,7 @@ namespace BrokerIQ.Online.Pages
 
                 Connection = await CustomerService.GetConnection(Customer.Id);
 
-                CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                SelectedCustomerDocuments = CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
                 ResetUploadsBadge();
 
                 DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
@@ -234,6 +243,7 @@ namespace BrokerIQ.Online.Pages
                     if (Broker.IsInsuranceOnly)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                        MyMaxAllowedFiles = MyMaxAllowedFiles * 2;
                     }
                 }
                 else
@@ -270,9 +280,13 @@ namespace BrokerIQ.Online.Pages
                 {
                     await UpdateChat();
 
+                }, null, 5000, 5000);
+
+                timerUploads = new System.Threading.Timer(async _ =>  // async void
+                {
                     await UpdateCustomerUploads();
 
-                }, null, 0, 5000);
+                }, null, 60000, 60000);
             }
             else
             {
@@ -284,7 +298,7 @@ namespace BrokerIQ.Online.Pages
                     }
                 }
             }
-            fileUploadSettings = this.FileUploadSettingsOption.Value;
+
 
         }
 
@@ -313,11 +327,16 @@ namespace BrokerIQ.Online.Pages
             CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
             DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
 
-            NewClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
-            ShouldShowAsDot = NewClientUploadsCount == 0;
-            UploadsBadgeColor = ShouldShowAsDot ? Color.Transparent : Color.Error;
+            var incomingClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
+            if(incomingClientUploadsCount != NewClientUploadsCount)
+            {
+                SelectedCustomerDocuments = CustomerDocuments;
+                NewClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
+                ShouldShowAsDot = NewClientUploadsCount == 0;
+                UploadsBadgeColor = ShouldShowAsDot ? Color.Transparent : Color.Error;
 
-            await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
         protected void ResetUploadsBadge()
@@ -594,12 +613,31 @@ namespace BrokerIQ.Online.Pages
                     if (SelectedTemplateDateReplacement.HasValue)
                     {
                         DateTime value = SelectedTemplateDateReplacement.Value;
-                        message.Message = message.Message.Replace("INSERT_DATE", value.ToBiqDateTimeString());
+                        message.Message = message.Message.Replace("INSERT_DATE", value.ToBiqDateString());
                     }
                     else
                     {
-                        var dialogParams = new DialogParameters();
-                        dialogParams.Add("Message", "Template requires a DATE to be inserted into message. Please select one from the date picker.");
+                        var dialogParams = new DialogParameters
+                        {
+                            { "Message", "Template requires a DATE to be inserted into message. Please select one from the date picker." }
+                        };
+                        var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+                        return;
+                    }
+                }
+
+                if (message.Message.Contains("INSERT_TIME"))
+                {
+                    if (SelectedTemplateTimeReplacement.HasValue)
+                    {
+                        message.Message = message.Message.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
+                    }
+                    else
+                    {
+                        var dialogParams = new DialogParameters
+                        {
+                            { "Message", "Template requires a TIME to be inserted into message. Please select one from the date picker." }
+                        };
                         var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
                         return;
                     }
@@ -627,8 +665,10 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
-                var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", "Please select a template from the dropdown menu.");
+                var dialogParams = new DialogParameters
+                {
+                    { "Message", "Please select a template from the dropdown menu." }
+                };
                 var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
                 return;
             }
@@ -807,10 +847,10 @@ namespace BrokerIQ.Online.Pages
                 {
                     foreach (var custDoc in SelectedItemsCustomerDocuments)
                     {
-                        await DeleteDocumentUpload(custDoc, showDialog: false);
+                        await CustomerDocumentService.DeleteCustomerDocument(custDoc.Id);
                     }
 
-                    CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                    SelectedCustomerDocuments = CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
                     SelectedItemsCustomerDocuments.Clear();
                     StateHasChanged();
                 }
@@ -839,7 +879,7 @@ namespace BrokerIQ.Online.Pages
                         responseParams.Add("Message", "Deleted successfully");
                         await DialogService.Show<AlertDialog>("Information", responseParams).Result;
 
-                        CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                        SelectedCustomerDocuments = CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
                         StateHasChanged();
                     }
 
@@ -859,11 +899,11 @@ namespace BrokerIQ.Online.Pages
         protected async Task LoadFiles(InputFileChangeEventArgs e)
         {
             var alreadyUploaded = LoadedChatFiles.Count();
-            var remainingFiles = fileUploadSettings.MaxAllowedFiles - alreadyUploaded;
+            var remainingFiles = MyMaxAllowedFiles - alreadyUploaded;
             if (e.FileCount > remainingFiles)
             {
                 var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", $"A maximum of five documents can be shown in the app");
+                dialogParams.Add("Message", $"A maximum of {MyMaxAllowedFiles} documents can be shown in the app");
                 await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
 
             }
@@ -1026,15 +1066,14 @@ namespace BrokerIQ.Online.Pages
                     // display broker defined message
                     template.Message = template.Message
                         .Replace("INSERT_CLIENT_NAME", Customer.FirstName)
-                        .Replace("INSERT_PERSONAL_NAME", User.FirstName)
-                        .Replace("INSERT_BROKER_NAME", Broker.Name);
+                        .Replace("INSERT_ADVISOR", User.FirstName)
+                        .Replace("INSERT_BROKER_NAME", Broker?.Name);
                 }
 
                 if (template.WelcomeChat == false)
                 {
                     MergedMessages.Add(template);
                 }
-
             }
         }
 
@@ -1109,14 +1148,6 @@ namespace BrokerIQ.Online.Pages
 
             Notes = Notes.Where(n => n.DateTaken >= startDate.Date && n.DateTaken <= endDate.Add(new TimeSpan(23, 59, 59)))
                          .OrderByDescending(n => n.DateTaken);
-        }
-
-        protected async Task ViewSelectedDocumentUpload()
-        {
-            foreach (var custDoc in SelectedItemsCustomerDocuments)
-            {
-                await ViewDocumentUpload(custDoc);
-            }
         }
 
         protected async Task SaveSelectedDocumentUpload()
@@ -1243,7 +1274,7 @@ namespace BrokerIQ.Online.Pages
 
         protected bool ShowGetQuote()
         {
-            if (!Broker.HasActiveInsuranceQuoteSubscription) return false;
+            if (Broker == null || !Broker.HasActiveInsuranceQuoteSubscription) return false;
 
             if (Customer.HasNeeds) return true;
 

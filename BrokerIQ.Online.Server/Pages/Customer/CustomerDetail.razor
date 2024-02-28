@@ -67,6 +67,7 @@ else if (!Saved)
                     <tr>
                         <th>Type</th>
                         <th>Insurer</th>
+                        <th>Review</th>
                         <th>Expiry</th>
                         <th Style="text-align:center">Available to Client</th>
                     @if (User.IsAdmin)
@@ -90,7 +91,8 @@ else if (!Saved)
                             <tr class="@rowClass">
                                 <td>@insurance.InsType.GetDisplayName()</td>
                                 <td>@insurance.Name</td>
-                                <td>@insurance.ExpiryDate.ToBiqDateString()</td>
+                                <td>@insurance.ReviewDate.ToBiqDateString()</td>
+                                <td>@(insurance.ExpiryDate != DateTime.MaxValue ? insurance.ExpiryDate.Value.ToBiqDateString() : string.Empty)</td>
                                 <td Style="text-align:center">@if (insurance.AvailableToClient){
                                     <span>Yes</span>
                                     }
@@ -112,7 +114,7 @@ else if (!Saved)
                 </tbody>
             </table>
         </MudTabPanel>
-        @if (!Broker.HasWhiteLabelAndIsInsuranceOnly)
+        @if (Broker != null && !Broker.HasWhiteLabelAndIsInsuranceOnly)
         {
             <MudTabPanel Text="Mortgages">
                 <div class="form-group row">
@@ -328,15 +330,15 @@ else if (!Saved)
                         </div>
                         <div class = "col-sm-8" style="margin-top: -14px">
 
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="async() => await SaveSelectedDocumentUpload()">
                                     Download Selected
                                 </MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="( async() => await DeleteSelectedDocumentUpload())">
                                     Delete Selected
                                 </MudButton>
                         </div>
                     </div>
-                    <MudTable Items="@CustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
+                    <MudTable Items="@SelectedCustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
                         <HeaderContent>
                             <MudTh>Document</MudTh>
                             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.CreatedDate)">Date</MudTableSortLabel></MudTh>
@@ -390,6 +392,7 @@ else if (!Saved)
                             <tr>
                                 <th>Type</th>
                                 <th>Insurer</th>
+                                <th>Review</th>
                                 <th>Expiry</th>
                             @if (User.IsAdmin)
                             {
@@ -406,7 +409,8 @@ else if (!Saved)
                                 <tr>
                                     <td>@insurance.InsType.GetDisplayName()</td>
                                     <td>@insurance.Name</td>
-                                    <td>@insurance.ExpiryDate.ToBiqDateString()</td>
+                                    <td>@insurance.ReviewDate.ToBiqDateString()</td>
+                                    <td>@(insurance.ExpiryDate.HasValue && insurance.ExpiryDate.Value != DateTime.MinValue ? insurance.ExpiryDate.Value.ToBiqDateString() : string.Empty)</td>
                                 @if (User.IsAdmin)
                                 {
                                     <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
@@ -498,10 +502,12 @@ else if (!Saved)
                                 }
                         </MudSelect>
                     </div>
-                    <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                    <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
+                    <div class="col-sm-12 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                        <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
                         <MudSpacer />
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
+                        <MudTimePicker Label="Replace INSERT_TIME in template"AmPm="false" @bind-Time="SelectedTemplateTimeReplacement" />
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary">Send To Chat</MudButton>
                     </div>
 
                     <div class="@UploadSectionClass">

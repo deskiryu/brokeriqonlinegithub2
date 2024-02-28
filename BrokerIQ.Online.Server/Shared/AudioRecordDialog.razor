@@ -111,7 +111,7 @@
     private async Task UploadButtonPushed()
     {
 
-
+        var result = (false,"");
         try{
             if(string.IsNullOrEmpty(AudioName)){
                 AlertService.Error("Please provide a name for the recording");
@@ -150,16 +150,22 @@
 
             var bytes = Convert.FromBase64String(completeString);
             var stream = new MemoryStream(bytes);
-            await AudioService.UploadAndAnalyseAudio(AudioName + ".wav", stream, BrokerId);
+            result = await AudioService.UploadAndAnalyseAudio(AudioName + ".wav", stream, BrokerId);
 
         }
         catch(Exception ex)
         {
-            MudDialog.Close(DialogResult.Ok("false"));
+            result.Item2 = ex.Message;
         }
 
         SpinnerVisible = "display:none";
-        MudDialog.Close(DialogResult.Ok("true"));
-
+        if (result.Item1 == true)
+        {
+            MudDialog.Close(DialogResult.Ok("true"));            
+        }
+        else
+        {
+            MudDialog.Close(DialogResult.Ok(result.Item2));
+        }
     }
 }

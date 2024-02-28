@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using AutoMapper;
+
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
+
 namespace BrokerIQ.Online.Services
 {
-    using System.Net.Http;
-    using System.Text.Json;
-    using Abstract;
-    using AppSettings;
-    using AutoMapper;
-    using Dto.Models;
-    using Interface;
-    using Mapper;
-    using Microsoft.Extensions.Options;
-    using Models;
-    using BrokerIQ.Online.Services.Interface;
-    using BrokerIQ.Dto.Enum;
-
     public class InsuranceService : IInsuranceService
     {
         private readonly string InsuranceUrl = "Insurance";
@@ -32,7 +27,7 @@ namespace BrokerIQ.Online.Services
             this.accountService = accountService;
         }
 
-        public async Task<Insurance> GetInsurance(int id, bool eager=true)
+        public async Task<Insurance> GetInsurance(int id, bool eager = true)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -64,10 +59,10 @@ namespace BrokerIQ.Online.Services
             this.requestProviderService.Token = user?.Token;
             var mapped = mapper.Map<CreateInsuranceDto>(ins);
 
-            if(documents!=null && documents.Any())
+            if (documents != null && documents.Any())
             {
                 mapped.Documents = new List<CreateInsuranceDocumentDto>();
-                foreach(var document in documents)
+                foreach (var document in documents)
                 {
                     var insuranceDoc = new InsuranceDocument
                     {
@@ -79,8 +74,8 @@ namespace BrokerIQ.Online.Services
                     mapped.Documents.Add(mappedDoc);
                 }
 
-            }            
-            
+            }
+
             var answer = await this.requestProviderService.Post<CreateInsuranceDto, InsuranceDto>(this.InsuranceUrl, mapped);
             return this.mapper.Map<Insurance>(answer);
         }
@@ -90,6 +85,14 @@ namespace BrokerIQ.Online.Services
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             return await this.requestProviderService.Delete(this.InsuranceUrl, id);
+        }
+
+        public async Task<InsuranceFromDocumentDto> GetFromFile(DocumentDto dto)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<DocumentDto, InsuranceFromDocumentDto>($"{this.InsuranceUrl}/getfromdocument", dto);
         }
     }
 }

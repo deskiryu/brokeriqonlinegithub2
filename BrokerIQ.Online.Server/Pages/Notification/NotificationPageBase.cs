@@ -10,6 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using BrokerIQ.Online.Server.Extensions;
 using Microsoft.JSInterop;
+using BrokerIQ.Online.Server.Services;
+using BrokerIQ.Online.Server.Shared;
+using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -32,6 +35,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IAccountService AccountService { get; set; }
+
+        [Inject]
+        public IVideoService VideoService { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -80,6 +86,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         BrokerStaff = (await BrokerStaffService.GetBrokerStaffbyBrokerId(user.MasterBrokerId)).ToList();
                         ShowEmployee = true;
+                        BrokerId = user.MasterBrokerId;
                     }
 
                     NotificationsSentBase = (await NotificationService.GetNotificationByBrokerId(user.MasterBrokerId)).ToList();
@@ -220,7 +227,12 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task ViewLink(string url)
         {
-            await Extensions.OpenLinkInNewTab(js, url);
+            var Videos = (await VideoService.GetVideos(BrokerId)).ToList();
+            var video = Videos.FirstOrDefault(x => x.Url == url);
+            if (video != null)
+            {
+                NavigationManager.NavigateTo($"videodetail/{video.Id}");
+            }     
         }
     }
 }

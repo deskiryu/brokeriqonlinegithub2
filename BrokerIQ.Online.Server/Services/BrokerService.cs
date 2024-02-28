@@ -25,6 +25,8 @@ namespace BrokerIQ.Online.Services
 
         public async Task<Broker> GetBroker(int id, bool eagerload = false)
         {
+            if (id == 0) return null;
+
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             var answer = await this.requestProviderService.Get<BrokerDto>(this.BrokerUrl, id, eagerload);
