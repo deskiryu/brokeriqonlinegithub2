@@ -784,10 +784,14 @@ namespace BrokerIQ.Online.Pages
             if (!result.Canceled)
             {
                 var data = ((IBrowserFile, Insurance))result.Data;
-
+                LoadedFiles.Clear();
                 LoadedFiles.Add((data.Item1, await GetFileBytes(data.Item1)));
                 Insurance = data.Item2;
                 InsuranceType = (int)Insurance.InsType;
+                if (Broker!=null)
+                {
+                    Insurance.ContactNumber = Broker?.TelephoneNumber ?? "";
+                }
             }
 
             StateHasChanged();
