@@ -38,7 +38,7 @@
 
         @if(Options.Value.CanLoadInsuranceFromFile && Insurance.Id == 0)
         {
-            <MudPaper Class="pa-3 ma-2" Outlined="true">
+            <MudPaper Class="pa-3 ma-2 col-sm-6" Outlined="true">
                 <MudButton Variant="Variant.Filled" FullWidth="true" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@OpenAnalyzerDialog">Fill Details From File ...</MudButton>
             </MudPaper>
         }
