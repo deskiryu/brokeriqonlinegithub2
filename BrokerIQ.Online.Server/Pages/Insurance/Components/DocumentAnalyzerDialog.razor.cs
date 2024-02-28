@@ -93,6 +93,8 @@ public partial class DocumentAnalyzerDialog : ComponentBase
 
             Insurance.AvailableToClient = true;
 
+            Insurance.SupportingDocuments.Clear();
+
             Insurance.SupportingDocuments.Add(new InsuranceDocument
             {
                 FileName = UploadedFile.Name,
