@@ -117,6 +117,15 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             await ReloadReminderOptions();
         }
 
+        private string FormatOptionForDisplay(string template)
+        {
+            if (!template.Contains("<--") || !template.Contains("-->")) return template;
 
+            var linkStart = template.IndexOf("<--");
+            var linkEnd = template.IndexOf("-->");
+            var url = template.Substring(linkStart + 3, linkEnd - linkStart - 3);
+
+            return template.Replace("<--", "<a target=\"_blank\" href=\"").Replace("-->", $"\">{url}</a>");
+        }
     }
 }

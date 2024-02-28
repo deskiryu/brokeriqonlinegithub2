@@ -21,5 +21,7 @@
         public bool ShowClientPictureColumn { get; set; }
 
         public bool ShowClientPhoneColumn { get; set; }
+
+        public bool CanLoadInsuranceFromFile { get; set; }
     }
 }

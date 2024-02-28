@@ -150,6 +150,8 @@ namespace BrokerIQ.Online.Pages
 
         public DateTime? SelectedTemplateDateReplacement { get; set; }
 
+        public TimeSpan? SelectedTemplateTimeReplacement { get; set; }
+
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
         private System.Threading.Timer timer;
@@ -611,12 +613,31 @@ namespace BrokerIQ.Online.Pages
                     if (SelectedTemplateDateReplacement.HasValue)
                     {
                         DateTime value = SelectedTemplateDateReplacement.Value;
-                        message.Message = message.Message.Replace("INSERT_DATE", value.ToBiqDateTimeString());
+                        message.Message = message.Message.Replace("INSERT_DATE", value.ToBiqDateString());
                     }
                     else
                     {
-                        var dialogParams = new DialogParameters();
-                        dialogParams.Add("Message", "Template requires a DATE to be inserted into message. Please select one from the date picker.");
+                        var dialogParams = new DialogParameters
+                        {
+                            { "Message", "Template requires a DATE to be inserted into message. Please select one from the date picker." }
+                        };
+                        var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+                        return;
+                    }
+                }
+
+                if (message.Message.Contains("INSERT_TIME"))
+                {
+                    if (SelectedTemplateTimeReplacement.HasValue)
+                    {
+                        message.Message = message.Message.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
+                    }
+                    else
+                    {
+                        var dialogParams = new DialogParameters
+                        {
+                            { "Message", "Template requires a TIME to be inserted into message. Please select one from the date picker." }
+                        };
                         var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
                         return;
                     }
@@ -644,8 +665,10 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
-                var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", "Please select a template from the dropdown menu.");
+                var dialogParams = new DialogParameters
+                {
+                    { "Message", "Please select a template from the dropdown menu." }
+                };
                 var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
                 return;
             }
@@ -1043,15 +1066,14 @@ namespace BrokerIQ.Online.Pages
                     // display broker defined message
                     template.Message = template.Message
                         .Replace("INSERT_CLIENT_NAME", Customer.FirstName)
-                        .Replace("INSERT_PERSONAL_NAME", User.FirstName)
-                        .Replace("INSERT_BROKER_NAME", Broker.Name);
+                        .Replace("INSERT_ADVISOR", User.FirstName)
+                        .Replace("INSERT_BROKER_NAME", Broker?.Name);
                 }
 
                 if (template.WelcomeChat == false)
                 {
                     MergedMessages.Add(template);
                 }
-
             }
         }
 
@@ -1252,7 +1274,7 @@ namespace BrokerIQ.Online.Pages
 
         protected bool ShowGetQuote()
         {
-            if (!Broker.HasActiveInsuranceQuoteSubscription) return false;
+            if (Broker == null || !Broker.HasActiveInsuranceQuoteSubscription) return false;
 
             if (Customer.HasNeeds) return true;
 

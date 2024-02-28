@@ -3,18 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using BrokerIQ.Dto.Models;
-using BrokerIQ.Online.Server.AppSettings;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
+
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Server.AppSettings;
+
 using MudBlazor;
+using BrokerIQ.Online.Server.Extensions;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
     public partial class DefinedMessageDialog
     {
+        [Inject]
+        public IDialogService DialogService { get; set; }
+
         [Microsoft.AspNetCore.Components.CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
@@ -23,6 +31,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
+
+        private const string LINK_START_INDICATOR = "<--";
+        private const string LINK_END_INDICATOR = "-->";
 
         static string[] MESSAGE_PROMPTS = new string[] {
             "Empty",
@@ -66,9 +77,26 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         protected bool IsCurrentFileToBeRemoved = false;
 
+        private string TemplateLink { get; set; }
+
+        public int LinkStart;
+
+        public int LinkEnd;
+
+        private bool HideLink { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             fileUploadSettings = this.FileUploadSettingsOption.Value;
+
+            HideLink = Template.Message.Contains(LINK_START_INDICATOR) && Template.Message.Contains(LINK_END_INDICATOR);
+
+            if (HideLink)
+            {
+                var linkStart = Template.Message.IndexOf(LINK_START_INDICATOR) + 3;
+                var linkEnd = Template.Message.IndexOf(LINK_END_INDICATOR);
+                TemplateLink = Template.Message[linkStart..linkEnd];
+            }
         }
 
         async Task Submit()
@@ -95,6 +123,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                         Template.FileName = uploadedFile.Name;
                         Template.File = contents.ToArray();
                     }
+                }
+
+                if (LinkStart > 0)
+                {
+                    Template.Message = Template.Message.Insert(LinkEnd, LINK_END_INDICATOR);
+                    Template.Message = Template.Message.Insert(LinkStart, LINK_START_INDICATOR);
                 }
 
                 MudDialog.Close(DialogResult.Ok(Template));
@@ -136,6 +170,29 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             Template.Prompt = MESSAGE_PROMPTS[SelectedStarterTemplate];
             Template.Message = MESSAGE_TEMPLATES[SelectedStarterTemplate];
+        }
+
+        async void InsertLink()
+        {
+            if (!TemplateLink.IsValidUrl())
+            {
+                var dialogParams = new DialogParameters
+                {
+                    { "Message", $"The URL supplied is not valid." }
+                };
+
+                await DialogService.Show<AlertDialog>("Validation failure", dialogParams).Result;
+                return;
+            }
+
+            Template.Message += ' ';
+            LinkStart = Template.Message.Length;
+            Template.Message += TemplateLink;
+            LinkEnd = Template.Message.Length;
+            Template.Message += ' ';
+
+            HideLink = true;
+            StateHasChanged();
         }
     }
 }
