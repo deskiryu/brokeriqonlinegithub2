@@ -21,8 +21,23 @@ public class CustomerAppointmentService : ICustomerAppointmentService
         this.requestProviderService = requestProviderService;
         this.mapper = mapper;
         this.accountService = accountService;
-        this.accountService = accountService;
         this.requestProviderService = requestProviderService;
+    }
+
+    public async Task<CalendlyUserDto> GetUser()
+    {
+        var user = await this.accountService.GetUser();
+        this.requestProviderService.Token = user?.Token;
+
+        return await this.requestProviderService.Get<CalendlyUserDto>($"{Url}/user");
+    }
+
+    public async Task<bool> IsUserConnected()
+    {
+        var user = await this.accountService.GetUser();
+        this.requestProviderService.Token = user?.Token;
+
+        return await this.requestProviderService.Get<bool>($"{Url}/isconnected");
     }
 
     public async Task<CustomerAppointment> Create(CustomerAppointment appointment)
