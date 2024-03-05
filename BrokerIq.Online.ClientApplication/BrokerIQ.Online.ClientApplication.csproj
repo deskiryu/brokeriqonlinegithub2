@@ -70,10 +70,9 @@
     <Content Update="wwwroot\favicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>	
-
-	<ItemGroup>
-	  <Folder Include="wwwroot\" />
-	</ItemGroup>
+    <Content Update="wwwroot\js\calendly.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 </Project>

@@ -1,0 +1,179 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using BrokerIQ.Online.Services.Interface;
+@using BrokerIQ.Online.Server.Extensions
+
+@inject IJSRuntime js
+@inject IChatService ChatService;
+@inject IAlertService AlertService;
+
+@functions {
+    async void PreviewFile(MemoryStream ms)
+    {
+        await Extensions.PreviewFile(js, ms);
+    }
+}
+
+<MudDialog Style="@($"background:{Colors.Grey.Lighten4};")">
+    <DialogContent>
+        <MudContainer Style="max-height: 800px; overflow-y: scroll">
+            <div class="card">
+                <div class="card-body">
+                    @if(IsAudio){
+                    <p>Audio @MediaName will be sent to the chat stream of : </p>
+                    }
+                    else{
+                    <p>Video @MediaName will be sent to the chat stream of : </p>
+                    }
+
+                    @foreach (var user in CustomerNames)
+                    {
+                        <MudText Style="white-space: pre-line;">@user</MudText>
+                    }
+                </div>
+            </div>
+            <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+                <MudTextField T="string" Label="Message to send" Required="true" RequiredError="Please fill in the message" @bind-Value="model.MessageToSend" Lines="5" />
+                <div class="row">
+                    <div class="col-sm-2 mt-auto">
+                        <MudIconButton Icon="@Icons.Material.Filled.InsertLink" Variant="Variant.Filled" Size="Size.Small"
+                                       Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" OnClick="InsertLink" Disabled="@model.HideLink"></MudIconButton>
+                    </div>
+                    <div class="col-sm-10">
+                        <MudTextField T="string" Placeholder="Link address" @bind-Value="model.Link" Disabled="@model.HideLink" />
+                    </div>
+
+                </div>
+
+                <div class="row mt-1">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:10px")" OnClick="Cancel">Cancel</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:10px; margin-left:2px")" ButtonType="ButtonType.Submit">Ok</MudButton>
+                </div>
+
+            </EditForm>
+            <br />
+        </MudContainer>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+    [Inject]
+    public IDialogService DialogService { get; set; }
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public List<(string, int)> Customers { get; set; }
+
+    [Parameter] public int BrokerID { get; set; }
+
+    [Parameter] public string MediaUrl { get; set; }
+
+    [Parameter] public string MediaName { get; set; }
+
+    [Parameter] public string VideoThumbnailData { get; set; }
+
+    [Parameter] public bool IsAudio { get; set; }
+
+    public List<string> CustomerNames { get; set; }
+
+    public List<int> CustomerIds { get; set; }
+
+    public class MyModel
+    {
+        [Required]
+        public string MessageToSend { get; set; }
+
+        public string Link { get; set; }
+
+        public int LinkStart;
+
+        public int LinkEnd;
+
+        public bool HasEmbeddedUrl { get; set; }
+
+        public bool HideLink { get; set; }
+    }
+
+
+    bool success;
+    string[] errors = { };
+    MudForm form;
+    MyModel model;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        model = new MyModel();
+        model.HasEmbeddedUrl = false;
+        model.HideLink = false;
+        CustomerNames = Customers.Select(x => x.Item1).ToList();
+        CustomerIds = Customers.Select(x => x.Item2).ToList();
+    }
+
+
+    public async Task OnValidSubmit(EditContext context)
+    {
+        var actualMessage = model.MessageToSend;
+        if (model.HasEmbeddedUrl)
+        {
+            if (actualMessage.Length >= model.LinkStart)
+            {
+                actualMessage = actualMessage.Insert(model.LinkStart, "<--");
+                if (actualMessage.Length >= model.LinkEnd + 3)
+                {
+                    actualMessage = actualMessage.Insert(model.LinkEnd + 3, "-->");
+                }
+            }
+        }
+        model.MessageToSend = actualMessage;
+
+        bool succeeded = false;
+        if (IsAudio)
+        {
+            succeeded = (await ChatService.SendMultipleAudioLink(model.MessageToSend, CustomerIds, BrokerID, MediaUrl));
+        }
+        else
+        {
+            succeeded = (await ChatService.SendMultipleVideoLink(model.MessageToSend, CustomerIds, BrokerID, MediaUrl, VideoThumbnailData));            
+        }
+
+        if (!succeeded)
+        {
+            AlertService.Error("Chat sending failed for some or all clients, check the chat to see.");
+        }
+        else
+        {
+            AlertService.Success("Chat successfully sent.");
+        }
+
+        MudDialog.Close(DialogResult.Ok("true"));
+
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    public async void InsertLink()
+    {
+        if (!model.Link.IsValidUrl())
+        {
+            var dialogParams = new DialogParameters
+            {
+                { "Message", $"The URL supplied is not valid." }
+            };
+
+            await DialogService.Show<AlertDialog>("Validation failure", dialogParams).Result;
+            return;
+        }
+
+        model.MessageToSend += ' ';
+        model.LinkStart = model.MessageToSend.Length;
+        model.MessageToSend += model.Link;
+        model.LinkEnd = model.MessageToSend.Length;
+        model.MessageToSend += ' ';
+
+        model.HasEmbeddedUrl = true;
+        model.HideLink = true;
+        StateHasChanged();
+    }
+}

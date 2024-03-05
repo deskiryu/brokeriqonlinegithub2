@@ -270,9 +270,9 @@ namespace BrokerIQ.Online.Server.Pages.Audio
 
             dialogParams.Add("BrokerId", BrokerId);
             dialogParams.Add("Customers", targets);
-            dialogParams.Add("AudioUrl", Url);
-            dialogParams.Add("AudioName", AudioNameNoExtension);
-
+            dialogParams.Add("MediaUrl", Url);
+            dialogParams.Add("MediaName", AudioNameNoExtension);
+            dialogParams.Add("IsAudio", true);
 
             var dialogOptions = new DialogOptions()
             {
@@ -280,7 +280,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
                 FullWidth = true
             };
 
-            await DialogService.Show<AudioChatDialog>("Send Audio To Multiple Chats", dialogParams, dialogOptions).Result;
+            await DialogService.Show<VideoAudioChatDialog>("Send Audio To Multiple Chats", dialogParams, dialogOptions).Result;
         }
     }
 }

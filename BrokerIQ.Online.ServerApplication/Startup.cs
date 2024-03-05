@@ -18,6 +18,7 @@ using BrokerIQ.Online.Services;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Concrete;
 using BrokerIQ.Online.Server.Services.Interface;
+using BrokerIQ.Online.Server;
 
 namespace BrokerIQ.Online.ServerApplication
 {
@@ -55,6 +56,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.Configure<AzureStorageDetails>(Configuration.GetSection(typeof(AzureStorageDetails).Name));
             services.Configure<FileUploadSettings>(Configuration.GetSection(typeof(FileUploadSettings).Name));
             services.Configure<MetaDefenderCoreDetails>(Configuration.GetSection(typeof(MetaDefenderCoreDetails).Name));
+            services.Configure<CalendlySettings>(Configuration.GetSection(typeof(CalendlySettings).Name));
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IRequestProviderService, RequestProviderService>();
@@ -95,6 +97,9 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<IInsuranceQuoteService, InsuranceQuoteService>();
             services.AddScoped<IOccupationService, OccupationService>();
             services.AddScoped<IAssignmentService, AssignmentService>();
+            services.AddScoped<IBrokerIntegrationService, BrokerIntegrationService>();
+            services.AddScoped<ICalendlyService, CalendlyService>();
+            services.AddScoped<ICustomerAppointmentService, CustomerAppointmentService>();
 
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
