@@ -1,9 +1,10 @@
-@using BrokerIQ.Online.Server.Extensions <MudDialog>
+@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Server.Extensions 
+
+<MudDialog>
     <DialogContent>
         <MudForm @ref="form">
-
-
-            <MudSelect Validation="@(new Func<int, string>(IsValidReminderType))" Class="mb-2" T="int" Label="Reminder Type" @bind-Value=Option.ReminderTypeId @ref="ReminderTypeId">
+            <MudSelect Validation="@(new Func<int, string>(IsValidReminderType))" Class="mb-2" T="int" Label="Reminder Type" ValueChanged="ReminderTypeChanged">
                 <MudSelectItem Value="0">Not set</MudSelectItem> @{
                     var names = Enum.GetNames(typeof(Dto.Enum.ReminderTypeEnum)); for (int i = 1; i <= names.Length; i++)
                     {
@@ -12,27 +13,18 @@
                     }
                 }
             </MudSelect>
-            <MudSelect Validation="@(new Func<TimeSpan, string>(IsValidNotificationInterval))" Class="mb-2" T="TimeSpan" Label="Notification Interval" @bind-Value=Option.NotificationPeriod @ref="Notification">
-                <MudSelectItem Value="@FromDays270">270 days (9 months) before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays240">240 days (8 months) before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays210">210 days (7 months) before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays180">180 days (6 months) before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays150">150 days (5 months) before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays120">120 days (4 months) before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays90">90 days (3 months) before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays60">60 days (2 months) before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays30">30 days before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays15">15 days before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays7">7 days before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays6">6 days before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays5">5 days before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays4">4 days before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays3">3 days before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays2">2 days before final date</MudSelectItem>
-                <MudSelectItem Value="@FromDays1">1 day before final date</MudSelectItem>
+            <MudSelect Validation="@(new Func<TimeSpan, string>(IsValidNotificationInterval))" Class="mb-2" T="TimeSpan" Label="Notification Interval" 
+                @bind-Value=Option.NotificationPeriod>
                 <MudSelectItem Value="@TimeSpan.Zero">Not set</MudSelectItem>
+                @{
+                    var intervals = Option.ReminderTypeId == (int)ReminderTypeEnum.Appointment ? appointmentTimeSpan : ExpiryTimeSpan;
+
+                    foreach (var item in intervals){
+                        <MudSelectItem Value="item">@item.ToDisplayValue()</MudSelectItem>
+                    }
+                } 
             </MudSelect>
-            <MudSelect Validation="@(new Func<int, string>(IsValidTarget))" Class="mb-2" T="int" Label="Reminder Target" @bind-Value=Option.ReminderTargetId @ref="ReminderTargetId">
+            <MudSelect Validation="@(new Func<int, string>(IsValidTarget))" Class="mb-2" T="int" Label="Reminder Target" @bind-Value=Option.ReminderTargetId>
                 <MudSelectItem Value="0">Not set</MudSelectItem> @{
                     var names = Enum.GetNames(typeof(Dto.Enum.ReminderTargetEnum)); for (int i = 1; i <= names.Length; i++)
                     {
@@ -58,7 +50,13 @@
                     <MudTooltip Text="Copy to clipboard">
                         <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_DATE');" />
                     </MudTooltip>
-                    <b>INSERT_DATE</b> is replaced by the insurance review or mortgage promotional end date.
+                    <b>INSERT_DATE</b> is replaced by the insurance review, mortgage promotional end, or appointment date.
+                </p>
+                <p>
+                    <MudTooltip Text="Copy to clipboard">
+                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_TIME');" />
+                    </MudTooltip>
+                    <b>INSERT_TIME</b> is replaced by the insurance review, mortgage promotional end, or appointment time.
                 </p>
                 <p>
                     <MudTooltip Text="Copy to clipboard">
@@ -85,7 +83,6 @@
                 Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="InsertLink" Disabled="@HideLink">
                 Add link to template
             </MudButton>
-
         </MudForm>
     </DialogContent>
     <DialogActions>
