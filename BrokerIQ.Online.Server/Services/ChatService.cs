@@ -111,7 +111,7 @@ namespace BrokerIQ.Online.Services
                 Message = message,
                 BrokerSource = true,
                 NoNotification = false,
-                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--")
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->")
             };
 
             var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
@@ -129,6 +129,7 @@ namespace BrokerIQ.Online.Services
                 Message = message,
                 BrokerSource = true,
                 NoNotification = false,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
                 ChatDocument = new CreateChatDocumentDto
                 {
                     File = chatDocument.File,
@@ -175,6 +176,7 @@ namespace BrokerIQ.Online.Services
                 Image = bytes,
                 IsVideo = true,
                 NoNotification = false,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
             };
 
             var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
@@ -196,6 +198,7 @@ namespace BrokerIQ.Online.Services
                 IsVideo = false,
                 IsAudio = true,
                 NoNotification = false,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
             };
 
             var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
