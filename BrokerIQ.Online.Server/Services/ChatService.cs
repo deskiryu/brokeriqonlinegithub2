@@ -58,7 +58,7 @@ namespace BrokerIQ.Online.Services
                 Message = message,
                 BrokerSource = true,
                 NoNotification = false,
-                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--")
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->")
             };
 
             var answer = await requestProviderService.Post<CreateChatMessageDto, ChatMessageDto>(this.ChatUrl, createChatMessage);
@@ -77,11 +77,12 @@ namespace BrokerIQ.Online.Services
                 Message = message,
                 BrokerSource = true,
                 NoNotification = NoNotification,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
                 ChatDocument = new CreateChatDocumentDto
                 {
                     File = chatDocument.File,
                     FileName = chatDocument.FileName,
-                    SupportingDocumentType = chatDocument.SupportingDocumentType
+                    SupportingDocumentType = chatDocument.SupportingDocumentType,
                 }
             };
 

@@ -300,10 +300,10 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
             dialogParams.Add("BrokerId", BrokerId);
             dialogParams.Add("Customers", targets);
-            dialogParams.Add("VideoUrl", ThisVideo.Url);
-            dialogParams.Add("VideoName", ThisVideo.Name);
+            dialogParams.Add("MediaUrl", ThisVideo.Url);
+            dialogParams.Add("MediaName", ThisVideo.Name);
             dialogParams.Add("VideoThumbnailData", ThisVideo.VideoThumbnailData);
-
+            dialogParams.Add("IsAudio", false);
 
             var dialogOptions = new DialogOptions()
             {
@@ -311,7 +311,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 FullWidth = true
             };
 
-            await DialogService.Show<VideoChatDialog>("Send Video To Multiple Chats", dialogParams, dialogOptions).Result;
+            await DialogService.Show<VideoAudioChatDialog>("Send Video To Multiple Chats", dialogParams, dialogOptions).Result;
         }
 
         public async Task LoadFiles(InputFileChangeEventArgs e)
