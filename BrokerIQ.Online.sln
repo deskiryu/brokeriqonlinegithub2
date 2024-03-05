@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrokerIQ.Online.Server", "BrokerIQ.Online.Server\BrokerIQ.Online.Server.csproj", "{51FEAED9-52DB-4168-8083-D4DF5608C0BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrokerIQ.Online.ServerApplication", "BrokerIQ.Online.ServerApplication\BrokerIQ.Online.ServerApplication.csproj", "{96F6903E-CA4E-4A8F-89AC-614A362FA529}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E4FE3BB6-9F63-4BA3-84D2-31F4111980E4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrokerIQ.Online.ClientApplication", "BrokerIq.Online.ClientApplication\BrokerIQ.Online.ClientApplication.csproj", "{0B03FBAE-E5D6-4F8F-AF06-30A8144D56F1}"

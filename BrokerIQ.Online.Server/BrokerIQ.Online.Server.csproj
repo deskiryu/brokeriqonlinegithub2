@@ -20,6 +20,10 @@
         <PackageReference Include="Azure.Core" Version="1.21.0" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
         <PackageReference Include="Azure.Storage.Queues" Version="12.8.0" />
+        <PackageReference Include="Babel.Obfuscator" Version="10.2.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="BlazorDateRangePicker" Version="4.0.0" />
         <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.5" />
@@ -37,10 +41,31 @@
         <PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Content Update="wwwroot\js\AudioRecord.js">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-
+	<ItemGroup>
+	  <Content Update="Shared\AudioChatDialog.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
+	  <Content Update="wwwroot\js\AudioRecord.js">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+	<PropertyGroup>
+		<NameLength>3</NameLength>
+		<ObfuscateEvents>true</ObfuscateEvents>
+		<ObfuscateFields>true</ObfuscateFields>
+		<ObfuscateMethods>true</ObfuscateMethods>
+		<ObfuscateParameters>true</ObfuscateParameters>
+		<ObfuscateProperties>true</ObfuscateProperties>
+		<ObfuscateTypes>true</ObfuscateTypes>
+		<StringEncryption>hash</StringEncryption>
+		<ControlFlowObfuscation>goto=on;if=on;switch=on;call=on</ControlFlowObfuscation>
+		<ShowStatistics>true</ShowStatistics>
+		<SuppressIldasm>false</SuppressIldasm>
+		<UnicodeNormalization>false</UnicodeNormalization>
+		<OverloadedRenaming>true</OverloadedRenaming>
+		<FlattenNamespaces>true</FlattenNamespaces>
+		<VerboseLevel>10</VerboseLevel>
+		<VirtualFunctions>true</VirtualFunctions>
+		<GenerateDebug>false</GenerateDebug>
+	</PropertyGroup>
 </Project>
