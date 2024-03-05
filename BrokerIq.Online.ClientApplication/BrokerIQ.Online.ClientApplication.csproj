@@ -105,4 +105,9 @@
 		<GenerateDebug>false</GenerateDebug>
 	</PropertyGroup>
 	
+    <Content Update="wwwroot\js\calendly.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
