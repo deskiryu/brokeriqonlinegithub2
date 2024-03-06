@@ -81,6 +81,7 @@ namespace BrokerIQ.Online.Server.Extensions
             RecentPeriodEnum.ThreeMonths => new TimeSpan(90, 0, 0, 0),
             RecentPeriodEnum.SixMonths => new TimeSpan(180, 0, 0, 0),
             RecentPeriodEnum.NineMonths => new TimeSpan(270, 0, 0, 0),
+            RecentPeriodEnum.TwelveMonths => new TimeSpan(365, 0, 0, 0),
             _ => new TimeSpan(14, 0, 0, 0)
 
         };
