@@ -55,7 +55,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         public decimal SelectedBenefitAmount { get; set; } = 1000;
 
-        public string SelectedDeferredPeriod { get; set; } = "One";
+        public string SelectedDeferredPeriod { get; set; } = "One Month";
 
         public string SelectedIndexation { get; set; } = "Level";
 
