@@ -36,6 +36,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         private bool HideLink { get; set; }
 
         private readonly TimeSpan[] ExpiryTimeSpan = new TimeSpan[]{
+            TimeSpan.FromDays(365),
             TimeSpan.FromDays(270),
             TimeSpan.FromDays(240),
             TimeSpan.FromDays(210),
