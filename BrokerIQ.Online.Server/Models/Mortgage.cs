@@ -20,6 +20,7 @@ namespace BrokerIQ.Online.Models
 
         [Required]
         [StringLength(50, ErrorMessage = "Provider Name is too long.")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string ProviderName { get; set; }
 
         [Required]
@@ -74,6 +75,7 @@ namespace BrokerIQ.Online.Models
         public bool ShowPromotionalEndDate { get; set; }
 
         [RequiredIf(nameof(ShowMortgageNumber), true, ErrorMessage = "Please enter a mortgage number")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string MortgageNumber { get; set; }
 
         public bool ShowMortgageNumber { get; set; }
