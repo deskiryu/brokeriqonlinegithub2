@@ -41,7 +41,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         protected string[] BenefitBasis { get; private set; } = new string[] { "Maximum", "Monthly" };
 
-        protected string[] DeferredPeriods { get; private set; } = new string[] { "One", "Two", "Three", "Six", "Twelve", "TwentyFour" };
+        protected string[] DeferredPeriods { get; private set; } = new string[] { "One Month", "Two Months", "Three Months", "Six Months", "Twelve Months", "TwentyFour Months" };
 
         protected string[] Indexations { get; private set; } = new string[] { "Level", "RPI", "Three", "Five" };
 
@@ -71,12 +71,19 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         {
             isProcessing = true;
 
+            var truncatedDeferred = SelectedDeferredPeriod;
+            var postion = truncatedDeferred.IndexOf("Month", StringComparison.CurrentCultureIgnoreCase);
+            if (postion>0)
+            {
+                truncatedDeferred = truncatedDeferred.Substring(0, postion);
+            }
+
             LastQuoteData = new IncomeProtectionQuoteDataDto()
             {
                 CustomerId = Customer.Id,
                 LivesAssured = "First",
                 ToAge = SelectedToAge,
-                DeferredPeriod = SelectedDeferredPeriod,
+                DeferredPeriod = truncatedDeferred,
                 Indexation = SelectedIndexation,
                 PremiumType = SelectedPremiumType,
                 IncludeLimitedPaymentPlans = true

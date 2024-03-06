@@ -18,6 +18,7 @@ namespace BrokerIQ.Online.Models
 
         [Required]
         [StringLength(50, ErrorMessage = "Name is too long.")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string Name { get; set; }
 
         [Required]
@@ -28,6 +29,7 @@ namespace BrokerIQ.Online.Models
         public string ContactNumber { get; set; }
 
         [StringLength(15, ErrorMessage = "Number is too long.")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string PolNumber { get; set; }
 
         [Required]

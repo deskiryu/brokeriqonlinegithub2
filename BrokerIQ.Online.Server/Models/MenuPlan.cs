@@ -19,6 +19,7 @@ namespace BrokerIQ.Online.Models
 
         [Required]
         [StringLength(50, ErrorMessage = "Name is too long.")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string Name { get; set; }
 
         public decimal Cost { get; set; }
