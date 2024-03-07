@@ -16,7 +16,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd>@(((ReminderTypeEnum)context.ReminderTypeId).ToString())</MudTd>
-        <MudTd> @context.NotificationPeriod.ToDisplayValue() </MudTd>
+        <MudTd> @context.NotificationPeriod.ToShortDisplayValue() </MudTd>
         <MudTd>@(((ReminderTargetEnum)context.ReminderTargetId).ToString())</MudTd>
         <MudTd>@((MarkupString)FormatOptionForDisplay(context.MessageContent))</MudTd>
         <MudTd>

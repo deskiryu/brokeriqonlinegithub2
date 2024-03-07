@@ -41,7 +41,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         protected string[] BenefitBasis { get; private set; } = new string[] { "Maximum", "Monthly" };
 
-        protected string[] DeferredPeriods { get; private set; } = new string[] { "One Month", "Two Months", "Three Months", "Six Months", "Twelve Months", "TwentyFour Months" };
+        protected string[] DeferredPeriods { get; private set; } = new string[] { "One Month", "Two Months", "Three Months", "Six Months", "Twelve Months", "Twenty Four Months" };
 
         protected string[] Indexations { get; private set; } = new string[] { "Level", "RPI", "Three", "Five" };
 
@@ -73,7 +73,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             var truncatedDeferred = SelectedDeferredPeriod;
             var postion = truncatedDeferred.IndexOf("Month", StringComparison.CurrentCultureIgnoreCase);
-            if (postion>0)
+            if (postion > 0)
             {
                 truncatedDeferred = truncatedDeferred.Substring(0, postion);
             }

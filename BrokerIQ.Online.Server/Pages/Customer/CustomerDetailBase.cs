@@ -10,21 +10,21 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 
+using BrokerIQ.Dto;
 using BrokerIQ.Dto.CreateDto;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server;
 using BrokerIQ.Online.Server.AppSettings;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Models;
 using BrokerIQ.Online.Server.Pages.Customer.Components;
+using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
-using BrokerIQ.Dto;
-using BrokerIQ.Online.Server;
-using BrokerIQ.Online.Server.Services.Interface;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -206,7 +206,7 @@ namespace BrokerIQ.Online.Pages
 
         protected bool CalendlyAccessIsAllowed { get; set; } = false;
 
-        protected bool UserIsConnectedToCalendly { get; set; } = false;
+        protected bool IsConnectedToCalendly { get; set; } = false;
 
         protected CalendlyUserDto CalendlyUser { get; set; }
 
@@ -300,13 +300,10 @@ namespace BrokerIQ.Online.Pages
                 var integrations = await BrokerIntegrationService.GetBrokerIntegrations();
 
                 CalendlyAccessIsAllowed = integrations.Any(i => i.Integration == IntegrationEnum.Calendly);
-                if (CalendlyAccessIsAllowed)
-                {
-                    CalendlyUser = await CalendlyService.GetUser();
 
-                    UserIsConnectedToCalendly = CalendlyUser != null;
-                    CalendlyAccessIsAllowed = CalendlyUser == null;
-                }
+                IsConnectedToCalendly = CalendlyAccessIsAllowed && await CustomerAppointmentService.IsUserConnected();
+
+                if (IsConnectedToCalendly) CalendlyUser = await CustomerAppointmentService.GetUser();
 
                 CalendlyLoginUri = $"{CalendlySettings.Value.BaseAuthUri}/oauth/authorize?client_id={CalendlySettings.Value.ClientId}&response_type=code&redirect_uri={CalendlySettings.Value.BiqReturnUri}";
             }
@@ -321,8 +318,6 @@ namespace BrokerIQ.Online.Pages
                 }
             }
             fileUploadSettings = this.FileUploadSettingsOption.Value;
-
-
         }
 
         private void SetRequirementVisibility()
