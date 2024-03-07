@@ -1,29 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
+
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Pages.Insurance.Components;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+
+using MudBlazor;
+
 namespace BrokerIQ.Online.Pages
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using AutoMapper;
-    using Microsoft.AspNetCore.Components;
-    using Models;
-    using MudBlazor;
-    using BrokerIQ.Dto.Enum;
-    using Services.Interface;
-
-    using BrokerIQ.Online.Server.Extensions;
-    using Microsoft.AspNetCore.WebUtilities;
-    using Microsoft.AspNetCore.Components.Forms;
-    using Microsoft.AspNetCore.Components.Web;
-    using BrokerIQ.Online.Server.AppSettings;
-    using Microsoft.Extensions.Options;
-    using BrokerIQ.Online.Server.Shared;
-    using Newtonsoft.Json.Linq;
-
     public class InsuranceEditBase : ComponentBase
     {
         private int id;
@@ -125,7 +124,7 @@ namespace BrokerIQ.Online.Pages
 
         protected string HoverClass;
 
-        protected int MyMaxAllowedFiles{ get; set; }
+        protected int MyMaxAllowedFiles { get; set; }
 
         public bool AvailableToClient
         {
@@ -272,10 +271,6 @@ namespace BrokerIQ.Online.Pages
                 {
                     Insurance.StartDate = DateTime.Now;
                 }
-                if (Insurance.ExpiryDate == DateTime.MinValue)
-                {
-                    Insurance.ExpiryDate = DateTime.Now;
-                }
                 if (Insurance.ReviewDate == null || Insurance.ReviewDate == DateTime.MinValue)
                 {
                     Insurance.ReviewDate = DateTime.Now;
@@ -285,9 +280,6 @@ namespace BrokerIQ.Online.Pages
                     Insurance.RetroactiveDate = DateTime.Now;
                 }
                 //Midnight
-                Insurance.StartDate = new DateTime(Insurance.StartDate.Year, Insurance.StartDate.Month, Insurance.StartDate.Day, 0, 0, 0);
-                Insurance.ExpiryDate = new DateTime(Insurance.ExpiryDate.Year, Insurance.ExpiryDate.Month, Insurance.ExpiryDate.Day, 0, 0, 0);
-                Insurance.ReviewDate = new DateTime(Insurance.ReviewDate.Value.Year, Insurance.ReviewDate.Value.Month, Insurance.ReviewDate.Value.Day, 0, 0, 0);
                 Insurance.RetroactiveDate = new DateTime(Insurance.RetroactiveDate.Value.Year, Insurance.RetroactiveDate.Value.Month, Insurance.RetroactiveDate.Value.Day, 0, 0, 0);
 
                 Insurance.MenuPlanId = menuPlanId;
@@ -390,9 +382,6 @@ namespace BrokerIQ.Online.Pages
             else
             {
                 //Midnight
-                Insurance.StartDate = new DateTime(Insurance.StartDate.Year, Insurance.StartDate.Month, Insurance.StartDate.Day, 0, 0, 0);
-                Insurance.ExpiryDate = new DateTime(Insurance.ExpiryDate.Year, Insurance.ExpiryDate.Month, Insurance.ExpiryDate.Day, 0, 0, 0);
-                Insurance.ReviewDate = new DateTime(Insurance.ReviewDate.Value.Year, Insurance.ReviewDate.Value.Month, Insurance.ReviewDate.Value.Day, 0, 0, 0);
                 Insurance.RetroactiveDate = new DateTime(Insurance.RetroactiveDate.Value.Year, Insurance.RetroactiveDate.Value.Month, Insurance.RetroactiveDate.Value.Day, 0, 0, 0);
 
                 try
@@ -436,7 +425,6 @@ namespace BrokerIQ.Online.Pages
                 Message = "Deleted successfully";
                 Saved = true;
             }
-
         }
 
         protected void NavigateToOverview()
@@ -542,7 +530,7 @@ namespace BrokerIQ.Online.Pages
 
         public DateTimeOffset? ExpiryDate
         {
-            get { return GetDTtoDTO(Insurance.ExpiryDate); }
+            get { return Insurance.ExpiryDate.HasValue && Insurance.ExpiryDate.Value != DateTime.MaxValue ? GetDTtoDTO(Insurance.ExpiryDate.Value) : null; }
             set => Insurance.ExpiryDate = SetDTtoDTO(value);
         }
 
@@ -550,8 +538,7 @@ namespace BrokerIQ.Online.Pages
         {
             get
             {
-                var date = Insurance.ReviewDate.HasValue ? Insurance.ReviewDate.Value : DateTime.Today;
-                return GetDTtoDTO(date);
+                return GetDTtoDTO(Insurance.ReviewDate);
             }
             set => Insurance.ReviewDate = SetDTtoDTO(value);
         }
@@ -788,6 +775,26 @@ namespace BrokerIQ.Online.Pages
             fileStream.Close();
             File.Delete(path);
             return bytes;
+        }
+
+        protected async Task OpenAnalyzerDialog()
+        {
+            var result = await DialogService.Show<DocumentAnalyzerDialog>("Document Analyzer").Result;
+
+            if (!result.Canceled)
+            {
+                var data = ((IBrowserFile, Insurance))result.Data;
+                LoadedFiles.Clear();
+                LoadedFiles.Add((data.Item1, await GetFileBytes(data.Item1)));
+                Insurance = data.Item2;
+                InsuranceType = (int)Insurance.InsType;
+                if (Broker!=null)
+                {
+                    Insurance.ContactNumber = Broker?.TelephoneNumber ?? "";
+                }
+            }
+
+            StateHasChanged();
         }
     }
 }

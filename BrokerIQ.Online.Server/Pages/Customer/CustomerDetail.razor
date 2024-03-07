@@ -20,7 +20,17 @@
 }
 else if (!Saved)
 {
-    <h3 class="page-title">@Customer.FirstName @Customer.LastName</h3>
+    <div style="display: flex; align-content: flex-start; justify-content: space-between; margin-bottom: 4px;">
+        <h3 class="page-title">@Customer.FirstName @Customer.LastName</h3>
+        @if(CalendlyAccessIsAllowed){
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Href="@CalendlyLoginUri"> Connect to Calendly </MudButton>
+        }
+        @if(UserIsConnectedToCalendly){
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup"> Book appointment </MudButton>
+        }
+    </div>
+
+    
     <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" @ref="Tabs">
         <MudTabPanel Text="Customer">
             <div class="card ">
@@ -67,6 +77,7 @@ else if (!Saved)
                     <tr>
                         <th>Type</th>
                         <th>Insurer</th>
+                        <th>Review</th>
                         <th>Expiry</th>
                         <th Style="text-align:center">Available to Client</th>
                     @if (User.IsAdmin)
@@ -90,7 +101,8 @@ else if (!Saved)
                             <tr class="@rowClass">
                                 <td>@insurance.InsType.GetDisplayName()</td>
                                 <td>@insurance.Name</td>
-                                <td>@insurance.ExpiryDate.ToBiqDateString()</td>
+                                <td>@insurance.ReviewDate.ToBiqDateString()</td>
+                                <td>@(insurance.ExpiryDate != DateTime.MaxValue ? insurance.ExpiryDate.Value.ToBiqDateString() : string.Empty)</td>
                                 <td Style="text-align:center">@if (insurance.AvailableToClient){
                                     <span>Yes</span>
                                     }
@@ -112,7 +124,7 @@ else if (!Saved)
                 </tbody>
             </table>
         </MudTabPanel>
-        @if (!Broker.HasWhiteLabelAndIsInsuranceOnly)
+        @if (Broker != null && !Broker.HasWhiteLabelAndIsInsuranceOnly)
         {
             <MudTabPanel Text="Mortgages">
                 <div class="form-group row">
@@ -390,6 +402,7 @@ else if (!Saved)
                             <tr>
                                 <th>Type</th>
                                 <th>Insurer</th>
+                                <th>Review</th>
                                 <th>Expiry</th>
                             @if (User.IsAdmin)
                             {
@@ -406,7 +419,8 @@ else if (!Saved)
                                 <tr>
                                     <td>@insurance.InsType.GetDisplayName()</td>
                                     <td>@insurance.Name</td>
-                                    <td>@insurance.ExpiryDate.ToBiqDateString()</td>
+                                    <td>@insurance.ReviewDate.ToBiqDateString()</td>
+                                    <td>@(insurance.ExpiryDate.HasValue && insurance.ExpiryDate.Value != DateTime.MinValue ? insurance.ExpiryDate.Value.ToBiqDateString() : string.Empty)</td>
                                 @if (User.IsAdmin)
                                 {
                                     <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
@@ -498,10 +512,12 @@ else if (!Saved)
                                 }
                         </MudSelect>
                     </div>
-                    <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                    <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
+                    <div class="col-sm-12 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                        <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
                         <MudSpacer />
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary mb-2">Send To Chat</MudButton>
+                        <MudTimePicker Label="Replace INSERT_TIME in template"AmPm="false" @bind-Time="SelectedTemplateTimeReplacement" />
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary">Send To Chat</MudButton>
                     </div>
 
                     <div class="@UploadSectionClass">
@@ -677,9 +693,11 @@ else if (!Saved)
             </div>
         </MudTabPanel>
     </MudTabs>
+    
+    
 }
 else
 {
     <div class="alert @StatusClass">@Message</div>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-1">Back to client overview</MudButton>
 }

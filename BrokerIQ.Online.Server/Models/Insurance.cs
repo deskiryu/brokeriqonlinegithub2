@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Attributes;
 
 namespace BrokerIQ.Online.Models
 {
-    using BrokerIQ.Dto.Enum;
-    using BrokerIQ.Online.Attributes;
-    using System.ComponentModel.DataAnnotations;
-
     public class Insurance
     {
         [Key]
@@ -20,6 +18,7 @@ namespace BrokerIQ.Online.Models
 
         [Required]
         [StringLength(50, ErrorMessage = "Name is too long.")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string Name { get; set; }
 
         [Required]
@@ -30,13 +29,23 @@ namespace BrokerIQ.Online.Models
         public string ContactNumber { get; set; }
 
         [StringLength(15, ErrorMessage = "Number is too long.")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string PolNumber { get; set; }
 
         [Required]
-        public DateTime StartDate { get; set; }
+        public DateTime StartDate { get; set; } = DateTime.UtcNow.Date;
+
+        public bool ShowStartDate { get; set; }
 
         [Required]
-        public DateTime ExpiryDate { get; set; }
+        public DateTime ReviewDate { get; set; } = DateTime.UtcNow.AddMonths(6).Date;
+
+        public bool ShowReviewDate { get; set; }
+
+        [RequiredIf(nameof(ShowExpiryDate), true, ErrorMessage = "Please enter a expiry date")]
+        public DateTime? ExpiryDate { get; set; }
+
+        public bool ShowExpiryDate { get; set; }
 
         public DateTime LastNotificationCheck { get; set; }
 
@@ -46,16 +55,9 @@ namespace BrokerIQ.Online.Models
 
         public bool NotificationMinus1Sent { get; set; }
 
-        [Required]
-        [Range(0.01, float.MaxValue, ErrorMessage = "Please enter a cost")]
-        public decimal Cost { get; set; }
+        public decimal? Cost { get; set; }
 
         public bool Annual { get; set; }
-
-        [RequiredIf(nameof(ShowReviewDate), true, ErrorMessage = "Please enter a review date")]
-        public DateTime? ReviewDate { get; set; }
-
-        public bool ShowReviewDate { get; set; }
 
         public int? MenuPlanId { get; set; }
 

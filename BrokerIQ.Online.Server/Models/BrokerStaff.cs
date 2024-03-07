@@ -14,10 +14,12 @@ namespace BrokerIQ.Online.Models
 
         [Required]
         [MaxLength(20, ErrorMessage = "The broker staff name must be 20 letters or less")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string FirstName { get; set; }
 
         [Required]
         [MaxLength(30, ErrorMessage = "The broker staff name must be 30 letters or less")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string LastName { get; set; }
 
         [MaxLength(15, ErrorMessage = "The phone number must be 15 letters or less")]

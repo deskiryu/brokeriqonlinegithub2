@@ -388,6 +388,10 @@ app {
     border-width: 3px;
 }
 
+.drag-hide {
+    display: "none";
+}
+
 .chat_broker {
     background-color: #fffe65 !important;
     margin-left: 1em !important;
@@ -444,10 +448,12 @@ app {
     top: calc(0% + 201px);
     left: calc(0% + 5px);
 }
+
 .send_position {
     top: -43px;
     left: calc(0% + 156px);
 }
+
 .vet_position {
     top: -225px;
     left: calc(0% + 10px);
@@ -503,26 +509,27 @@ app {
     opacity: 0.3;
 }
 
-    .close:hover {
-        opacity: 1;
-    }
+.close:hover {
+    opacity: 1;
+}
 
-    .close:before, .close:after {
-        position: absolute;
-        left: 15px;
-        content: ' ';
-        height: 33px;
-        width: 5px;
-        background-color: red;
-    }
+.close:before,
+.close:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 33px;
+    width: 5px;
+    background-color: red;
+}
 
-    .close:before {
-        transform: rotate(45deg);
-    }
+.close:before {
+    transform: rotate(45deg);
+}
 
-    .close:after {
-        transform: rotate(-45deg);
-    }
+.close:after {
+    transform: rotate(-45deg);
+}
 
 .close_no_header {
 
@@ -544,8 +551,8 @@ app {
     margin-bottom: 14px;
 }
 
- none_block_date {
-    margin-bottom: 28px!important;
+none_block_date {
+    margin-bottom: 28px !important;
 }
 
 .video_card-body {

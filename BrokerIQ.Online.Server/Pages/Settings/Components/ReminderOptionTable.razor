@@ -1,5 +1,6 @@
 @using BrokerIQ.Dto.Enum @using BrokerIQ.Online.Server.Extensions <div class="mb-2">
-    <MudButton StartIcon="@Icons.Material.Filled.AddAlert" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium" OnClick=@(r=> EditReminderOption(new Dto.Dto.ReminderOptionDto()))>Add reminder </MudButton>
+    <MudButton StartIcon="@Icons.Material.Filled.AddAlert" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
+        OnClick=@(r=> EditReminderOption(new Dto.Dto.ReminderOptionDto()))>Add reminder </MudButton>
 </div>
 <MudTable Items="@ReminderOptions" Dense="true">
     <NoRecordsContent>
@@ -15,18 +16,21 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd>@(((ReminderTypeEnum)context.ReminderTypeId).ToString())</MudTd>
-            <MudTd> @context.NotificationPeriod.ToDisplayValue() </MudTd>
-            <MudTd>@(((ReminderTargetEnum)context.ReminderTargetId).ToString())</MudTd>
-            <MudTd>@context.MessageContent</MudTd>
-            <MudTd>
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" OnClick=@(r=> EditReminderOption(context))></MudIconButton>
-            </MudTd>
-            <MudTd> @{
+        <MudTd> @context.NotificationPeriod.ToDisplayValue() </MudTd>
+        <MudTd>@(((ReminderTargetEnum)context.ReminderTargetId).ToString())</MudTd>
+        <MudTd>@((MarkupString)FormatOptionForDisplay(context.MessageContent))</MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small"
+                OnClick=@(r=> EditReminderOption(context))>
+            </MudIconButton>
+        </MudTd>
+        <MudTd> @{
                 if (context.NotificationPeriod != TimeSpan.Zero)
                 {
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r=> RemoveReminderOption(context)) />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r=>
+                RemoveReminderOption(context)) />
                 }
             }
         </MudTd>
     </RowTemplate>
-</MudTable> 
+</MudTable>

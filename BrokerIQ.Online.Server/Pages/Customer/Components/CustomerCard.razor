@@ -159,7 +159,7 @@
                     <div class="col-lg-4">
                         <label type="text" readonly class="form-control-plaintext">@Customer.AppVersion</label>
                     </div>
-                @if (Broker.HasWhiteLabel)
+                @if (Broker != null && Broker.HasWhiteLabel)
                 {
                     <label class="col-lg-2 ">Using Branded App</label>
                     @if (Customer.IsWhiteLabel)
