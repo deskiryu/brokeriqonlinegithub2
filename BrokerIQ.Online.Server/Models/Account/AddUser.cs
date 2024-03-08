@@ -7,6 +7,7 @@ namespace BrokerIQ.Online.Models.Account
     {
         [Required]
         [MaxLength(50, ErrorMessage = "The broker name must be 50 letters or less")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string Name { get; set; }
 
         [Required]
@@ -16,10 +17,12 @@ namespace BrokerIQ.Online.Models.Account
 
         [Required]
         [MaxLength(20, ErrorMessage = "The broker name must be 20 letters or less")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string BrokerFirstName { get; set; }
 
         [Required]
         [MaxLength(30, ErrorMessage = "The broker name must be 30 letters or less")]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string BrokerLastName { get; set; }
 
         [Required]
