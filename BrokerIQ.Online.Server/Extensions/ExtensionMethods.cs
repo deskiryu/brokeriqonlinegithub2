@@ -81,6 +81,7 @@ namespace BrokerIQ.Online.Server.Extensions
             RecentPeriodEnum.ThreeMonths => new TimeSpan(90, 0, 0, 0),
             RecentPeriodEnum.SixMonths => new TimeSpan(180, 0, 0, 0),
             RecentPeriodEnum.NineMonths => new TimeSpan(270, 0, 0, 0),
+            RecentPeriodEnum.TwelveMonths => new TimeSpan(365, 0, 0, 0),
             _ => new TimeSpan(14, 0, 0, 0)
 
         };
@@ -111,6 +112,17 @@ namespace BrokerIQ.Online.Server.Extensions
             return enumValue.GetType()
                             .GetMember(enumValue.ToString())
                             .FirstOrDefault()?.GetCustomAttribute<DisplayAttribute>().GetOrder() ?? 0;
+        }
+
+        public static bool IsValidUrl(this string url)
+        {
+            if (Uri.TryCreate(url, UriKind.Absolute, out Uri validatedUri)) //.NET URI validation.
+            {
+                //If true: validatedUri contains a valid Uri. Check for the scheme in addition.
+                return validatedUri.Scheme == Uri.UriSchemeHttp || validatedUri.Scheme == Uri.UriSchemeHttps;
+            }
+
+            return false;
         }
     }
 }

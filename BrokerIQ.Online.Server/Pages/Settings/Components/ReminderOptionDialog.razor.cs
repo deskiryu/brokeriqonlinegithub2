@@ -1,13 +1,22 @@
 using System;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Shared;
+
 using MudBlazor;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
     public partial class ReminderOptionDialog
     {
+        [Inject]
+        public IDialogService DialogService { get; set; }
+
         [Microsoft.AspNetCore.Components.CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
@@ -20,6 +29,15 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         MudSelect<TimeSpan> Notification;
         MudSelect<int> ReminderTargetId;
 
+        private string OptionLink { get; set; }
+
+        public int LinkStart;
+
+        public int LinkEnd;
+
+        private bool HideLink { get; set; }
+
+        private TimeSpan FromDays365 = TimeSpan.FromDays(365);
         private TimeSpan FromDays270 = TimeSpan.FromDays(270);
         private TimeSpan FromDays240 = TimeSpan.FromDays(240);
         private TimeSpan FromDays210 = TimeSpan.FromDays(210);
@@ -40,9 +58,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         static string[] REMINDER_MESSAGES = new string[] {
             "",
-            "The INSERT_INSURANCE_NAME insurance policy of your client INSERT_CLIENT_NAME ends on INSERT_DATE.",
-            "Hi INSERT_CLIENT_NAME, your INSERT_INSURANCE_NAME insurance policy is due for renewal on INSERT_DATE.Contact your Broker for a new quote and prevent your policy being automatically renewed.",
-            "Hi INSERT_CLIENT_NAME, your INSERT_INSURANCE_NAME insurance policy is due for renewal on INSERT_DATE.Contact your Broker for a new quote.",
+            "The INSERT_INSURANCE_NAME insurance policy of your client INSERT_CLIENT_NAME should be reviewed on INSERT_DATE.",
+            "Hi INSERT_CLIENT_NAME, your INSERT_INSURANCE_NAME insurance policy is due for renewal, and should have a review on INSERT_DATE.Contact your Broker for a new quote and prevent your policy being automatically renewed.",
+            "Hi INSERT_CLIENT_NAME, your INSERT_INSURANCE_NAME insurance policy is due for renewal, and should have a review on INSERT_DATE.Contact your Broker for a new quote.",
             "The mortgage promotional period of your client INSERT_CLIENT_NAME ends on INSERT_DATE.",
             "Hi INSERT_CLIENT_NAME, your mortgage promotional period ends on INSERT_DATE. Contact your Broker to discuss your mortgage options.",
         };
@@ -55,10 +73,28 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             form.Validate();
 
+            if (LinkStart > 0)
+            {
+                Option.MessageContent = Option.MessageContent.Insert(LinkEnd, "-->");
+                Option.MessageContent = Option.MessageContent.Insert(LinkStart, "<--");
+            }
+
             if (form.IsValid) MudDialog.Close(DialogResult.Ok(Option));
         }
 
         void Cancel() => MudDialog.Cancel();
+
+        protected override async Task OnInitializedAsync()
+        {
+            HideLink = Option.Id > 0 && Option.MessageContent.Contains("<--") && Option.MessageContent.Contains("-->");
+
+            if (HideLink)
+            {
+                var linkStart = Option.MessageContent.IndexOf("<--") + 3;
+                var linkEnd = Option.MessageContent.IndexOf("-->");
+                OptionLink = Option.MessageContent[linkStart..linkEnd];
+            }
+        }
 
         protected static string IsValidReminderType(int i)
         {
@@ -78,6 +114,29 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         async Task FillTemplate()
         {
             Option.MessageContent = REMINDER_MESSAGES[SelectedStarterTemplate];
+        }
+
+        async void InsertLink()
+        {
+            if (!OptionLink.IsValidUrl())
+            {
+                var dialogParams = new DialogParameters
+                {
+                    { "Message", $"The URL supplied is not valid." }
+                };
+
+                await DialogService.Show<AlertDialog>("Validation failure", dialogParams).Result;
+                return;
+            }
+
+            Option.MessageContent += ' ';
+            LinkStart = Option.MessageContent.Length;
+            Option.MessageContent += OptionLink;
+            LinkEnd = Option.MessageContent.Length;
+            Option.MessageContent += ' ';
+
+            HideLink = true;
+            StateHasChanged();
         }
     }
 }

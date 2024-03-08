@@ -19,11 +19,34 @@ else
     <h3>@VideoNameNoExtension</h3>
 
     @if (Vetted)
-    {
-        <video id="movie" width="350" height="262" controls preload>
-            <source src='@Url#t=0.1'>
-            <!-- HERE THE CODE FOR THE ALTERNATIVE PLAYER (FLASH) WILL BE! -->
-        </video>
+    {        
+        <div class="form-group row">
+
+            <video id="movie" class="col-sm-4"  width="350" height="262" controls preload>
+                <source src='@Url#t=0.1'>
+                <!-- HERE THE CODE FOR THE ALTERNATIVE PLAYER (FLASH) WILL BE! -->
+            </video>
+
+            <div class="col-sm-4">
+                @if (ThumbnailImage != null && ThumbnailImage.Length > 0)
+                {
+                    <img width="200" src="@(ThumbnailImage)" />
+                }
+
+                <div class="mt-1">
+                <InputFile id="logofileinputbroker" OnChange="LoadFiles" accept="image/jpeg" hidden multiple/>
+                <MudButton HtmlTag="label"
+                    Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    Style="@($"color:{Colors.Shades.Black};")"
+                    StartIcon="@Icons.Filled.CloudUpload"
+                    for="logofileinputbroker">
+                    Choose File
+                </MudButton>
+                </div>
+            </div>
+        </div>
+
     }
     else
     {

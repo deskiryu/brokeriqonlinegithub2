@@ -92,5 +92,7 @@ namespace BrokerIQ.Online.Server.Models
         public string OnboardingPage3FourthText { get; set; }
 
         public string OnboardingThankYouText { get; set; }
+
+        public bool UseAIChat { get; set; }
     }
 }

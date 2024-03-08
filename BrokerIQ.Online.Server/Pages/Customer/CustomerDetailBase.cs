@@ -23,6 +23,8 @@ using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
 using BrokerIQ.Dto;
+using BrokerIQ.Online.Server;
+using BrokerIQ.Online.Server.Services.Interface;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -66,6 +68,18 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IBrokerDefinedMessageService BrokerDefinedMessageService { get; set; }
+
+        [Inject]
+        public IBrokerIntegrationService BrokerIntegrationService { get; set; }
+
+        [Inject]
+        public ICalendlyService CalendlyService { get; set; }
+
+        [Inject]
+        public IOptions<CalendlySettings> CalendlySettings { get; set; }
+
+        [Inject]
+        public ICustomerAppointmentService CustomerAppointmentService { get; set; }
 
         [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
@@ -150,6 +164,8 @@ namespace BrokerIQ.Online.Pages
 
         public DateTime? SelectedTemplateDateReplacement { get; set; }
 
+        public TimeSpan? SelectedTemplateTimeReplacement { get; set; }
+
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
         private System.Threading.Timer timer;
@@ -191,6 +207,14 @@ namespace BrokerIQ.Online.Pages
 
         protected int MyMaxAllowedFiles { get; set; }
 
+        protected string CalendlyLoginUri { get; private set; }
+
+        protected bool CalendlyAccessIsAllowed { get; set; } = false;
+
+        protected bool UserIsConnectedToCalendly { get; set; } = false;
+
+        protected CalendlyUserDto CalendlyUser { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             User = await AccountService.GetUser();
@@ -205,7 +229,6 @@ namespace BrokerIQ.Online.Pages
             {
                 Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
                 CustomerCategory = (int)Customer.CustomerCategory;
-
 
                 Connection = await CustomerService.GetConnection(Customer.Id);
 
@@ -285,6 +308,19 @@ namespace BrokerIQ.Online.Pages
                     await UpdateCustomerUploads();
 
                 }, null, 60000, 60000);
+
+                var integrations = await BrokerIntegrationService.GetBrokerIntegrations();
+
+                CalendlyAccessIsAllowed = integrations.Any(i => i.Integration == IntegrationEnum.Calendly);
+                if (CalendlyAccessIsAllowed)
+                {
+                    CalendlyUser = await CalendlyService.GetUser();
+
+                    UserIsConnectedToCalendly = CalendlyUser != null;
+                    CalendlyAccessIsAllowed = CalendlyUser == null;
+                }
+
+                CalendlyLoginUri = $"{CalendlySettings.Value.BaseAuthUri}/oauth/authorize?client_id={CalendlySettings.Value.ClientId}&response_type=code&redirect_uri={CalendlySettings.Value.BiqReturnUri}";
             }
             else
             {
@@ -611,12 +647,31 @@ namespace BrokerIQ.Online.Pages
                     if (SelectedTemplateDateReplacement.HasValue)
                     {
                         DateTime value = SelectedTemplateDateReplacement.Value;
-                        message.Message = message.Message.Replace("INSERT_DATE", value.ToBiqDateTimeString());
+                        message.Message = message.Message.Replace("INSERT_DATE", value.ToBiqDateString());
                     }
                     else
                     {
-                        var dialogParams = new DialogParameters();
-                        dialogParams.Add("Message", "Template requires a DATE to be inserted into message. Please select one from the date picker.");
+                        var dialogParams = new DialogParameters
+                        {
+                            { "Message", "Template requires a DATE to be inserted into message. Please select one from the date picker." }
+                        };
+                        var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+                        return;
+                    }
+                }
+
+                if (message.Message.Contains("INSERT_TIME"))
+                {
+                    if (SelectedTemplateTimeReplacement.HasValue)
+                    {
+                        message.Message = message.Message.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
+                    }
+                    else
+                    {
+                        var dialogParams = new DialogParameters
+                        {
+                            { "Message", "Template requires a TIME to be inserted into message. Please select one from the date picker." }
+                        };
                         var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
                         return;
                     }
@@ -644,8 +699,10 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
-                var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", "Please select a template from the dropdown menu.");
+                var dialogParams = new DialogParameters
+                {
+                    { "Message", "Please select a template from the dropdown menu." }
+                };
                 var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
                 return;
             }
@@ -1043,15 +1100,14 @@ namespace BrokerIQ.Online.Pages
                     // display broker defined message
                     template.Message = template.Message
                         .Replace("INSERT_CLIENT_NAME", Customer.FirstName)
-                        .Replace("INSERT_PERSONAL_NAME", User.FirstName)
-                        .Replace("INSERT_BROKER_NAME", Broker.Name);
+                        .Replace("INSERT_ADVISOR", User.FirstName)
+                        .Replace("INSERT_BROKER_NAME", Broker?.Name);
                 }
 
                 if (template.WelcomeChat == false)
                 {
                     MergedMessages.Add(template);
                 }
-
             }
         }
 
@@ -1252,7 +1308,7 @@ namespace BrokerIQ.Online.Pages
 
         protected bool ShowGetQuote()
         {
-            if (!Broker.HasActiveInsuranceQuoteSubscription) return false;
+            if (Broker == null || !Broker.HasActiveInsuranceQuoteSubscription) return false;
 
             if (Customer.HasNeeds) return true;
 
@@ -1269,6 +1325,24 @@ namespace BrokerIQ.Online.Pages
             Tabs.ActivatePanel(0);
 
             StateHasChanged();
+        }
+
+        protected async Task ShowCalendlyPopup()
+        {
+            var thisPage = DotNetObjectReference.Create(this);
+            await js.InvokeVoidAsync("PassPageComponent", thisPage);
+
+            await js.InvokeVoidAsync("showCalendlyPopup", CalendlyUser.SchedulingReference, Customer.Name, Customer.EmailAddress);
+        }
+
+        [JSInvokable]
+        public async void CreateNewAppointment(string url)
+        {
+            await CustomerAppointmentService.Create(new CustomerAppointment()
+            {
+                CustomerId = Customer.Id,
+                ExternalEventId = url
+            });
         }
     }
 }

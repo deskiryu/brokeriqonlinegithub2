@@ -13,6 +13,7 @@
                 }
             </MudSelect>
             <MudSelect Validation="@(new Func<TimeSpan, string>(IsValidNotificationInterval))" Class="mb-2" T="TimeSpan" Label="Notification Interval" @bind-Value=Option.NotificationPeriod @ref="Notification">
+                <MudSelectItem Value="@FromDays365">365 days (1 year) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays270">270 days (9 months) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays240">240 days (8 months) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays210">210 days (7 months) before final date</MudSelectItem>
@@ -58,7 +59,7 @@
                     <MudTooltip Text="Copy to clipboard">
                         <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_DATE');" />
                     </MudTooltip>
-                    <b>INSERT_DATE</b> is replaced by the final date.
+                    <b>INSERT_DATE</b> is replaced by the insurance review or mortgage promotional end date.
                 </p>
                 <p>
                     <MudTooltip Text="Copy to clipboard">
@@ -74,10 +75,18 @@
                     <MudSelectItem Value="@currentPrompt" />
                 }
             </MudSelect>
+
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" class="mb-3"
                        OnClick="FillTemplate">Fill with starter template</MudButton>
 
             <MudTextField Lines="5" @bind-Value=Option.MessageContent Label="Message Content" Required="true" RequiredError="Message content cannot be empty" />
+
+            <MudTextField T="string" Class="mb-3" Placeholder="Link address" @bind-Value=OptionLink Disabled="@HideLink"/>
+            <MudButton Icon="@Icons.Material.Filled.InsertLink" Variant="Variant.Filled" Size="Size.Small"
+                Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="InsertLink" Disabled="@HideLink">
+                Add link to template
+            </MudButton>
+
         </MudForm>
     </DialogContent>
     <DialogActions>

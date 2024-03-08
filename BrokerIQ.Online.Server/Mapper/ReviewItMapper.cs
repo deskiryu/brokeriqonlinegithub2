@@ -1,13 +1,14 @@
 ﻿using System;
+
 using AutoMapper;
+
 using BrokerIQ.Dto;
 using BrokerIQ.Dto.Dto;
+using BrokerIQ.Dto.Models;
 using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Models.Account;
 using BrokerIQ.Online.Server.Models;
-using BrokerIQ.Dto.Models;
-using BrokerIQ.Online.Models;
-using System.Reflection.Metadata.Ecma335;
 
 namespace BrokerIQ.Online.Mapper
 {
@@ -35,6 +36,7 @@ namespace BrokerIQ.Online.Mapper
             ClientReferralMapper();
             BrokerReminderOptionsMapper();
             BrokerSubscriptionMapper();
+            CustomerAppointmentMapper();
         }
 
         private void CustomerMapper()
@@ -164,6 +166,11 @@ namespace BrokerIQ.Online.Mapper
                     rd = src.ReviewDate;
                 }
                 return rd;
+            }))
+            .ForMember(d => d.Cost, opt => opt.MapFrom((src, dest) =>
+            {
+                decimal? result = src.Cost > 0 ? src.Cost : null;
+                return result;
             }));
 
             CreateMap<Insurance, UpdateInsuranceDto>()
@@ -214,18 +221,6 @@ namespace BrokerIQ.Online.Mapper
                     }
                 }
                 return dpw;
-            }))
-            .ForMember(d => d.ReviewDate, opt => opt.MapFrom((src, dest) =>
-            {
-                var rd = DateTime.MinValue;
-                if (src.ReviewDate.HasValue)
-                {
-                    if (src.ReviewDate?.Year > 2000)
-                    {
-                        rd = src.ReviewDate.Value;
-                    }
-                }
-                return rd;
             }));
 
 
@@ -278,17 +273,9 @@ namespace BrokerIQ.Online.Mapper
                 }
                 return dpw;
             }))
-            .ForMember(d => d.ReviewDate, opt => opt.MapFrom((src, dest) =>
+            .ForMember(d => d.ExpiryDate, opt => opt.MapFrom((src, dest) =>
             {
-                var rd = DateTime.MinValue;
-                if (src.ReviewDate.HasValue)
-                {
-                    if (src.ReviewDate?.Year > 2000)
-                    {
-                        rd = src.ReviewDate.Value;
-                    }
-                }
-                return rd;
+                return src.ExpiryDate ?? DateTime.MaxValue;
             }))
             .ForMember(d => d.IsInTrust, action => action.MapFrom(s => s.IsInTrust))
             .ForMember(d => d.HasWill, action => action.MapFrom(s => s.HasWill))
@@ -691,6 +678,7 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
                 .ForMember(d => d.LogoImage, action => action.MapFrom(s => s.LogoImage));
+
             CreateMap<BrokerIdentifierDto, BrokerIdentifier>();
 
             CreateMap<BrokerIdentifier, UpdateBrokerIdentifierDto>();
@@ -769,6 +757,7 @@ namespace BrokerIQ.Online.Mapper
                 }
                 return rd;
             }));
+
             CreateMap<MenuPlan, UpdateMenuPlanDto>()
             .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
             .ForMember(d => d.CustomerId, opt => opt.MapFrom(s => s.CustomerId))
@@ -932,6 +921,12 @@ namespace BrokerIQ.Online.Mapper
         {
             CreateMap<BrokerSubscriptionDto, BrokerSubscription>();
             CreateMap<BrokerSubscription, BrokerSubscriptionDto>();
+        }
+
+        private void CustomerAppointmentMapper()
+        {
+            CreateMap<CustomerAppointment, CreateCustomerAppointmentDto>();
+            CreateMap<CustomerAppointment, CustomerAppointmentDto>().ReverseMap();
         }
     }
 }

@@ -21,6 +21,8 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<(int,string)> UploadAnalyseAndConvertVideo(string fileName, MemoryStream videoStream, int brokerId);
 
+        Task<(bool, string)> UploadThumbnail(int id, MemoryStream imageStream, int brokerId);
+
         Task<bool> DeleteVideo(int id, int brokerId);
 
         Task<bool> IsVetted(int id, int brokerId);

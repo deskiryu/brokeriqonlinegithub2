@@ -1,15 +1,23 @@
 ﻿@page "/insuranceedit/{InsuranceId}/{CustomerId}"
+
+@using System.IO
+
+@using Microsoft.Extensions.Options
+
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
 @using BlazorDateRangePicker
 @using BrokerIQ.Online.Services.Interface
-@using System.IO
+
+@using BrokerIQ.Online.AppSettings
 
 @inherits InsuranceEditBase
 
+@inject IOptions<ReviewItAPIDetails> Options
 @inject IJSRuntime js
+
 @functions {
     async void DownloadFile(InsuranceDocument sdoc)
     {
@@ -27,6 +35,13 @@
     <section class="insurance-detail">
 
         <h4 class="page-title">Add or edit insurance</h4>
+
+        @if(Options.Value.CanLoadInsuranceFromFile && Insurance.Id == 0)
+        {
+            <MudPaper Class="pa-3 ma-2 col-sm-6" Outlined="true">
+                <MudButton Variant="Variant.Filled" FullWidth="true" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@OpenAnalyzerDialog">Fill Details From File ...</MudButton>
+            </MudPaper>
+        }
 
         <EditForm Model="@Insurance" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit" id="@FormId">
 
@@ -105,7 +120,7 @@
                             <label class="col-sm-3 col-form-label">Cost PM and PY</label>
                             <div class="row col-sm-5">
                                 <MudItem class="col" >
-                                    <MudTextField @bind-Value="@Insurance.Cost" HelperText="Enter a cost" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                                    <MudTextField @bind-Value="@Insurance.Cost" Clearable="true" HelperText="Enter a cost" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
                                     <ValidationMessage class="offset-sm-3" For="@(() => Insurance.Cost)" />
                                 </MudItem>
                                 <MudRadioGroup class="col-sm-4" @bind-SelectedOption="@Insurance.Annual">
@@ -121,13 +136,8 @@
                                 <DateRangePicker @bind-StartDate="StartDate" SingleDatePicker="true" class="form-control" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
                                 <ValidationMessage class="offset-sm-3" For="@(() => Insurance.StartDate)" />
                             </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Expiry Date</label>
-                            <div class="col-sm-5">
-                                <DateRangePicker @bind-StartDate="ExpiryDate" SingleDatePicker="true" class="form-control" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
-                                <ValidationMessage class="offset-sm-3" For="@(() => Insurance.ExpiryDate)" />
+                            <div class="col-sm-2">
+                                <MudCheckBox @bind-Checked="@Insurance.ShowStartDate" Label="Show"/>
                             </div>
                         </div>
 
@@ -139,6 +149,17 @@
                             </div>
                             <div class="col-sm-2">
                                 <MudCheckBox @bind-Checked="@Insurance.ShowReviewDate" Label="Show"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Expiry Date</label>
+                            <div class="col-sm-5">
+                                <DateRangePicker @bind-StartDate="ExpiryDate" SingleDatePicker="true" class="form-control" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
+                                <ValidationMessage class="offset-sm-3" For="@(() => Insurance.ExpiryDate)" />
+                            </div>
+                            <div class="col-sm-2">
+                                <MudCheckBox @bind-Checked="@Insurance.ShowExpiryDate" Label="Show"/>
                             </div>
                         </div>
 
@@ -377,7 +398,7 @@
         <div class="col-sm-6 mt-1">
             <div class="card">
                 <div class="card-body">
-                    <MudTable Items="@Insurance.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="">
+                    <MudTable Items="@Insurance.SupportingDocuments" Hover="true" SortLabel="Sort By">
                         <RowTemplate>
                             <MudTd>@context.FileName</MudTd>
                             @if (Insurance.Id > 0)
@@ -396,6 +417,7 @@
             </div>
         </div>
     }
+
     <div class="col-sm-6 mt-1">
         <div class="card">
             <div class="card-body">
