@@ -16,10 +16,12 @@ namespace BrokerIQ.Online.Models
 
         [Required]
         [MaxLength(35)]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string FirstName { get; set; }
 
         [Required]
         [MaxLength(35)]
+        [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
         public string LastName { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:dd/MMM/yyyy}")]

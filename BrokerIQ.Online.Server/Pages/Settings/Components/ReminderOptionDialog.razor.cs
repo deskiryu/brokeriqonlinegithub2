@@ -37,6 +37,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private bool HideLink { get; set; }
 
+        private TimeSpan FromDays365 = TimeSpan.FromDays(365);
         private TimeSpan FromDays270 = TimeSpan.FromDays(270);
         private TimeSpan FromDays240 = TimeSpan.FromDays(240);
         private TimeSpan FromDays210 = TimeSpan.FromDays(210);

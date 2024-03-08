@@ -13,6 +13,7 @@
                 }
             </MudSelect>
             <MudSelect Validation="@(new Func<TimeSpan, string>(IsValidNotificationInterval))" Class="mb-2" T="TimeSpan" Label="Notification Interval" @bind-Value=Option.NotificationPeriod @ref="Notification">
+                <MudSelectItem Value="@FromDays365">365 days (1 year) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays270">270 days (9 months) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays240">240 days (8 months) before final date</MudSelectItem>
                 <MudSelectItem Value="@FromDays210">210 days (7 months) before final date</MudSelectItem>
