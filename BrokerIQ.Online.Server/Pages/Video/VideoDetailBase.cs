@@ -333,7 +333,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
                     memoryStream.Position = 0;
                     var result = await VideoService.UploadThumbnail(ThisVideo.Id, memoryStream, BrokerId);
                     if (result.Item1) {
-                        ThumbnailImage = result.Item2;
+                        ThisVideo.VideoThumbnailData = ThumbnailImage = result.Item2;
                     }
                 }
             }
