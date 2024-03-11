@@ -131,6 +131,10 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             {
                 { "Template", template }
             };
+            if (template.Message == null)
+            {
+                template.Message = string.Empty;
+            }
 
             var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
 
@@ -155,58 +159,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             return template.Replace("<--", "<a target=\"_blank\" href=\"").Replace("-->", $"\">{url}</a>");
         }
 
-        #region Row drag and drop
-        private BrokerDefinedMessageDto? draggedItem;
-
-        private int? enterIndex;
-        private bool? enterAfterDropZone;
-
-        private void DragStart(BrokerDefinedMessageDto model)
-        {
-            draggedItem = model;
-        }
-
-        private void DragEnter(int index, bool isAfterDropZone)
-        {
-            if (draggedItem?.SortOrder == index)
-            {
-                enterIndex = null;
-                enterAfterDropZone = null;
-            }
-            else
-            {
-                enterIndex = index;
-                enterAfterDropZone = isAfterDropZone;
-            }
-        }
-
-        private async Task DropAsync(int index)
-        {
-            await DragEnd();
-        }
-
-        private async Task DragEnd()
-        {
-            if (enterIndex.HasValue && draggedItem.SortOrder != enterIndex.Value)
-            {
-                draggedItem.SortOrder = enterIndex.Value;
-                await RefreshMessages();
-                await BrokerDefinedMessageService.Update(draggedItem);
-
-                StateHasChanged();
-            }
-
-            draggedItem = null;
-            enterIndex = null;
-            enterAfterDropZone = null;
-        }
-
         private async Task MoveUp(BrokerDefinedMessageDto context)
         {
             SpinnerVisible = "display:block";
             StateHasChanged();
 
-            if (context.SortOrder>=1)
+            if (context.SortOrder >= 1)
             {
                 context.SortOrder--;
             }
@@ -229,19 +187,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             SpinnerVisible = "display:none";
             StateHasChanged();
         }
-
-
-
-        private bool IsEntering(int index)
-        {
-            return enterIndex == index;
-        }
-
-        private string IsDraggable()
-        {
-            return "true";
-        }
-        #endregion
 
     }
 }

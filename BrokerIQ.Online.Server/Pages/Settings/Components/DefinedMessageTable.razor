@@ -8,7 +8,7 @@
                 OnClick=@(r=> EditDefinedMessage(new Dto.Models.BrokerDefinedMessageDto()))>
         Add defined message 
     </MudButton>
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" style="@SpinnerVisible" />
+    <MudProgressLinear Color="Color.Error" Indeterminate="true" style="@SpinnerVisible"  />
 </div>
 <MudTable Items="@DefinedMessages" Dense="true" Hover>
     <NoRecordsContent>
