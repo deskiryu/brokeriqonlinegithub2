@@ -215,8 +215,6 @@ namespace BrokerIQ.Online.Pages
 
         protected CalendlyUserDto CalendlyUser { get; set; }
 
-        protected int MyMaxAllowedFiles { get; set; }
-
         protected override async Task OnInitializedAsync()
         {
             User = await AccountService.GetUser();
