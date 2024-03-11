@@ -12,6 +12,7 @@ using BrokerIQ.Online.Services.Interface;
 using MudBlazor;
 using System;
 using AutoMapper.Configuration.Conventions;
+using System.Linq;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -34,8 +35,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private IEnumerable<BrokerDefinedMessageDto> DefinedMessages { get; set; }
 
+        public string SpinnerVisible { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
+            SpinnerVisible = "display:none";
             await RefreshMessages();
         }
 
@@ -186,10 +190,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             if (enterIndex.HasValue && draggedItem.SortOrder != enterIndex.Value)
             {
                 draggedItem.SortOrder = enterIndex.Value;
-
-                await BrokerDefinedMessageService.Update(draggedItem);
-
                 await RefreshMessages();
+                await BrokerDefinedMessageService.Update(draggedItem);
 
                 StateHasChanged();
             }
@@ -198,6 +200,37 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             enterIndex = null;
             enterAfterDropZone = null;
         }
+
+        private async Task MoveUp(BrokerDefinedMessageDto context)
+        {
+            SpinnerVisible = "display:block";
+            StateHasChanged();
+
+            if (context.SortOrder>=1)
+            {
+                context.SortOrder--;
+            }
+            await BrokerDefinedMessageService.Update(context);
+            await RefreshMessages();
+            SpinnerVisible = "display:none";
+            StateHasChanged();
+        }
+
+        private async Task MoveDown(BrokerDefinedMessageDto context)
+        {
+            SpinnerVisible = "display:block";
+            StateHasChanged();
+            if (context.SortOrder <= DefinedMessages.Count())
+            {
+                context.SortOrder++;
+            }
+            await BrokerDefinedMessageService.Update(context);
+            await RefreshMessages();
+            SpinnerVisible = "display:none";
+            StateHasChanged();
+        }
+
+
 
         private bool IsEntering(int index)
         {
