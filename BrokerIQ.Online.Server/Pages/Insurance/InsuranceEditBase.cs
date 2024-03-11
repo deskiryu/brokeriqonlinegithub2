@@ -124,7 +124,7 @@ namespace BrokerIQ.Online.Pages
 
         protected string HoverClass;
 
-        protected int MyMaxAllowedFiles{ get; set; }
+        protected int MyMaxAllowedFiles { get; set; }
 
         public bool AvailableToClient
         {

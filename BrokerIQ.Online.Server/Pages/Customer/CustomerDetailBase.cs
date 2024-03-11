@@ -205,6 +205,8 @@ namespace BrokerIQ.Online.Pages
 
         protected MudTabs Tabs;
 
+        protected int MyMaxAllowedFiles { get; set; }
+
         protected string CalendlyLoginUri { get; private set; }
 
         protected bool CalendlyAccessIsAllowed { get; set; } = false;
