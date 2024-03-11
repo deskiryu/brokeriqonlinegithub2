@@ -36,7 +36,7 @@
                 }
             </MudTd>
             <MudTd Style="padding:0px!important">
-                @if (context.SortOrder <= DefinedMessages.Count())
+                @if (context.SortOrder < LastSortOrder)
                 {
                     <MudIconButton Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary" OnClick=@(r => MoveDown(context))></MudIconButton>
                 }
