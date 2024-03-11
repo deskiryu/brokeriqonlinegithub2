@@ -12,6 +12,7 @@ using BrokerIQ.Online.Services.Interface;
 using MudBlazor;
 using System;
 using AutoMapper.Configuration.Conventions;
+using System.Linq;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -33,15 +34,32 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         public Online.Models.Broker Broker { get; set; }
 
         private IEnumerable<BrokerDefinedMessageDto> DefinedMessages { get; set; }
+        private int LastSortOrder { get; set; }
+
+        public string SpinnerVisible { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            SpinnerVisible = "display:none";
             await RefreshMessages();
         }
 
         private async Task RefreshMessages()
         {
             DefinedMessages = new List<BrokerDefinedMessageDto>(await BrokerDefinedMessageService.GetAllForCurrentBroker());
+            LastSortOrder = 0;
+            if(DefinedMessages!=null && DefinedMessages.Any())
+            {
+                var maxSort = DefinedMessages.OrderByDescending(item => item.SortOrder).FirstOrDefault();
+                if (maxSort != null)
+                {
+                    LastSortOrder = maxSort.SortOrder;
+                }
+                else
+                {
+                    LastSortOrder = DefinedMessages.Count();
+                }
+            }
         }
 
         protected static string GetReminderTargetName(int targetId)
@@ -114,7 +132,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private async Task ReloadDefinedMessages()
         {
-            DefinedMessages = new List<BrokerDefinedMessageDto>(await BrokerDefinedMessageService.GetAllForCurrentBroker());
+            await RefreshMessages();
 
             StateHasChanged();
         }
@@ -127,6 +145,10 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             {
                 { "Template", template }
             };
+            if (template.Message == null)
+            {
+                template.Message = string.Empty;
+            }
 
             var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
 
@@ -151,64 +173,34 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             return template.Replace("<--", "<a target=\"_blank\" href=\"").Replace("-->", $"\">{url}</a>");
         }
 
-        #region Row drag and drop
-        private BrokerDefinedMessageDto? draggedItem;
-
-        private int? enterIndex;
-        private bool? enterAfterDropZone;
-
-        private void DragStart(BrokerDefinedMessageDto model)
+        private async Task MoveUp(BrokerDefinedMessageDto context)
         {
-            draggedItem = model;
-        }
+            SpinnerVisible = "display:block";
+            StateHasChanged();
 
-        private void DragEnter(int index, bool isAfterDropZone)
-        {
-            if (draggedItem?.SortOrder == index)
+            if (context.SortOrder >= 1)
             {
-                enterIndex = null;
-                enterAfterDropZone = null;
+                context.SortOrder--;
             }
-            else
+            await BrokerDefinedMessageService.Update(context);
+            await RefreshMessages();
+            SpinnerVisible = "display:none";
+            StateHasChanged();
+        }
+
+        private async Task MoveDown(BrokerDefinedMessageDto context)
+        {
+            SpinnerVisible = "display:block";
+            StateHasChanged();
+            if (context.SortOrder <= DefinedMessages.Count())
             {
-                enterIndex = index;
-                enterAfterDropZone = isAfterDropZone;
+                context.SortOrder++;
             }
+            await BrokerDefinedMessageService.Update(context);
+            await RefreshMessages();
+            SpinnerVisible = "display:none";
+            StateHasChanged();
         }
-
-        private async Task DropAsync(int index)
-        {
-            await DragEnd();
-        }
-
-        private async Task DragEnd()
-        {
-            if (enterIndex.HasValue && draggedItem.SortOrder != enterIndex.Value)
-            {
-                draggedItem.SortOrder = enterIndex.Value;
-
-                await BrokerDefinedMessageService.Update(draggedItem);
-
-                await RefreshMessages();
-
-                StateHasChanged();
-            }
-
-            draggedItem = null;
-            enterIndex = null;
-            enterAfterDropZone = null;
-        }
-
-        private bool IsEntering(int index)
-        {
-            return enterIndex == index;
-        }
-
-        private string IsDraggable()
-        {
-            return "true";
-        }
-        #endregion
 
     }
 }
