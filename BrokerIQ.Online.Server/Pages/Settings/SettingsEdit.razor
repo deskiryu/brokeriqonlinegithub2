@@ -1,6 +1,6 @@
-@page "/templateedit/{BrokerId}"
+@page "/settingsedit/{BrokerId}"
 
-@inherits TemplateEditBase
+@inherits SettingsEditBase
 
 @using System.IO
 @using BrokerIQ.Online.Server.Pages.Settings.Components
@@ -18,6 +18,18 @@
     <MudTabPanel Text="Templates">
         <DefinedMessageTable Broker="@Broker" User="@User"/>
     </MudTabPanel>
+
+    @if (this.api.Value.ShowProtection)
+    {
+        <MudTabPanel Text="Reminder Options">
+            <ReminderOptionTable Broker="@Broker" User="@User"/>
+        </MudTabPanel>
+    }
+
+    <MudTabPanel Text="Document Vault Types">
+        <DocumentVaultTypeTable Broker="@Broker" User="@User"/>
+    </MudTabPanel>
+
     <MudTabPanel Text="Notifications">
         @if (IsBrokerStaff)
         {
@@ -33,7 +45,7 @@
                                             Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientRegistered))"
                                         @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientRegistered)"
                                             Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -43,7 +55,7 @@
                                             Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientLoggedIn))"
                                         @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.NewClientLoggedIn)"
                                             Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.NewClientLoggedIn.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.NewClientLoggedIn.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -53,7 +65,7 @@
                                             Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientDocumentUpload))"
                                         @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientDocumentUpload)"
                                             Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -63,7 +75,7 @@
                                             Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientNewChat))"
                                         @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientNewChat)"
                                             Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -73,7 +85,7 @@
                                             Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder))"
                                         @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder)"
                                             Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -81,8 +93,8 @@
                                     <div class="col-lg-12">
                                         <MudCheckBox Checked="@(GetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder))"
                                         @onclick="async f => await SetEmailPreferenceStaff(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder)"
-                                                     Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
+                                                        Style="margin-left: -15px">
+                                        @EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -99,7 +111,7 @@
                                             Checked="@(GetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientDocumentUpload))"
                                         @onclick="async f => await SetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientDocumentUpload)"
                                             Style="margin-left: -15px">
-                                            @MobileNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
+                                        @MobileNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -109,7 +121,7 @@
                                             Checked="@(GetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientNewChat))"
                                         @onclick="async f => await SetMobilePreferenceStaff(MobileNotificationPreferencesEnum.ClientNewChat)"
                                             Style="margin-left: -15px">
-                                            @MobileNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
+                                        @MobileNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -135,7 +147,7 @@
                                             Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewClientRegistered))"
                                         @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewClientRegistered)"
                                             Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.NewClientRegistered.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -145,7 +157,7 @@
                                             Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewClientLoggedIn))"
                                         @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewClientLoggedIn)"
                                             Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.NewClientLoggedIn.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.NewClientLoggedIn.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -155,7 +167,7 @@
                                             Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientDocumentUpload))"
                                         @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientDocumentUpload)"
                                             Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -165,7 +177,7 @@
                                             Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientNewChat))"
                                         @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientNewChat)"
                                             Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -175,7 +187,7 @@
                                             Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder))"
                                         @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder)"
                                             Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.ClientBirthdayVideoBrokerReminder.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -183,8 +195,8 @@
                                     <div class="col-lg-12">
                                         <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder))"
                                         @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder)"
-                                                     Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
+                                                        Style="margin-left: -15px">
+                                        @EmailNotificationPreferencesEnum.ClientDateVideoBrokerReminder.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -193,7 +205,7 @@
                                         <MudCheckBox Checked="@(GetEmailPreference(EmailNotificationPreferencesEnum.NewVideoBrokerVetReminder))"
                                         @onclick="async f => await SetEmailPreference(EmailNotificationPreferencesEnum.NewVideoBrokerVetReminder)"
                                                         Style="margin-left: -15px">
-                                            @EmailNotificationPreferencesEnum.NewVideoBrokerVetReminder.GetDisplayPrompt()
+                                        @EmailNotificationPreferencesEnum.NewVideoBrokerVetReminder.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -211,7 +223,7 @@
                                             Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.ClientDocumentUpload))"
                                         @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.ClientDocumentUpload)"
                                             Style="margin-left: -15px">
-                                            @MobileNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
+                                        @MobileNotificationPreferencesEnum.ClientDocumentUpload.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -221,7 +233,7 @@
                                             Checked="@(GetMobilePreference(MobileNotificationPreferencesEnum.ClientNewChat))"
                                         @onclick="async f => await SetMobilePreference(MobileNotificationPreferencesEnum.ClientNewChat)"
                                             Style="margin-left: -15px">
-                                            @MobileNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
+                                        @MobileNotificationPreferencesEnum.ClientNewChat.GetDisplayPrompt()
                                         </MudCheckBox>
                                     </div>
                                 </div>
@@ -258,21 +270,15 @@
         }
     </MudTabPanel>
 
-    @if(this.api.Value.ShowProtection){
-    <MudTabPanel Text="Reminder Options">
-        <ReminderOptionTable Broker="@Broker" User="@User"/>
-    </MudTabPanel>
-   }
-
-    @if(User != null && User.IsBroker){
-    <MudTabPanel Text="Integrations">
-        <IntegrationStack/>
-    </MudTabPanel> 
+    @if (User != null && User.IsBroker)
+    {
+        <MudTabPanel Text="Integrations">
+            <IntegrationStack/>
+        </MudTabPanel> 
     }
+    </MudTabs>
 
-</MudTabs>
-
-@code {
+    @code {
     private List<string> editEvents = new();
     private bool dense = false;
     private bool hover = true;
@@ -304,7 +310,7 @@
     {
         await Extensions.PreviewFile(js, new MemoryStream(attachment));
     }
-    
+
     protected async Task PreviewAttachment(IBrowserFile uploadedFile)
     {
         if (uploadedFile == null) return;
