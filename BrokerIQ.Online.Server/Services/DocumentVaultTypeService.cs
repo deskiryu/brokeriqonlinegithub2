@@ -27,9 +27,8 @@ namespace BrokerIQ.Online.Services
             this.accountService = accountService;
         }
 
-        public async Task<IEnumerable<DocumentVaultTypeDto>> GetAllForCurrentBroker()
+        public async Task<IEnumerable<DocumentVaultTypeDto>> GetAllForBroker(int brokerId)
         {
-            var brokerId = await GetCurrentBrokerId();
             try
             {
                 return await requestProviderService.Get<IEnumerable<DocumentVaultTypeDto>>($"{API_CONTROLLER}?brokerid={brokerId}");

@@ -79,6 +79,9 @@ namespace BrokerIQ.Online.Pages
         public IOptions<CalendlySettings> CalendlySettings { get; set; }
 
         [Inject]
+        public IDocumentVaultTypeService DocumentVaultTypeService { get; set; }
+
+        [Inject]
         public ICustomerAppointmentService CustomerAppointmentService { get; set; }
 
         [Inject]
@@ -152,9 +155,9 @@ namespace BrokerIQ.Online.Pages
 
         public MudBlazor.Color ChatBadgeColour { get; set; }
 
-        public Dictionary<int, string> DocumentTypeEnumValues = new Dictionary<int, string>();
+        public IEnumerable<DocumentVaultTypeDto> DocumentTypeValues = Array.Empty<DocumentVaultTypeDto>();
 
-        public Dictionary<DocuVaultTypeEnum, int> RequestedDocuments = new Dictionary<DocuVaultTypeEnum, int>();
+        public Dictionary<int, int> RequestedDocuments = new Dictionary<int, int>();
 
         public List<BrokerDefinedMessageDto> MergedMessages = new();
 
@@ -228,25 +231,7 @@ namespace BrokerIQ.Online.Pages
                 CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
                 ResetUploadsBadge();
 
-                DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
-                if (DocumentsRequirement != null)
-                {
-                    CurrentRequirementsId = DocumentsRequirement.Id;
-                }
-
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
-
-                foreach (var item in Enum.GetValues(typeof(DocuVaultTypeEnum)).Cast<DocuVaultTypeEnum>())
-                {
-                    if (item == DocuVaultTypeEnum.ProfilePicture)
-                    {
-                        continue;
-                    }
-                    DocumentTypeEnumValues.Add((int)item, item.GetDisplayName());
-                    RequestedDocuments.Add(item, 0);
-                }
-
-                SetRequirementVisibility();
 
                 if (!User.IsAdmin)
                 {
@@ -263,6 +248,8 @@ namespace BrokerIQ.Online.Pages
                 {
                     Broker = await BrokerService.GetBroker(Customer.ChosenBrokerId, true);
                 }
+
+                await SetupDocumentRequirementSection();
             }
             catch
             {
@@ -287,7 +274,7 @@ namespace BrokerIQ.Online.Pages
 
             if (!User.IsAdmin)
             {
-                UpdateChat(firstTime: true);
+                await UpdateChat(firstTime: true);
 
                 timer = new System.Threading.Timer(async _ =>  // async void
                 {
@@ -318,6 +305,24 @@ namespace BrokerIQ.Online.Pages
                 }
             }
             fileUploadSettings = this.FileUploadSettingsOption.Value;
+        }
+
+        private async Task SetupDocumentRequirementSection()
+        {
+            DocumentTypeValues = await DocumentVaultTypeService.GetAllForBroker(Broker.Id);
+
+            DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
+            if (DocumentsRequirement != null)
+            {
+                CurrentRequirementsId = DocumentsRequirement.Id;
+            }
+
+            foreach (var type in DocumentTypeValues)
+            {
+                RequestedDocuments.Add(type.Id, 0);
+            }
+
+            SetRequirementVisibility();
         }
 
         private void SetRequirementVisibility()
@@ -489,7 +494,7 @@ namespace BrokerIQ.Online.Pages
             bool succeeded = false;
             try
             {
-                succeeded = await CustomerDocumentService.UploadProfilePicture(sdoc);
+                succeeded = await CustomerService.SetProfilePicture(Customer.Id, dataBytes);
             }
             catch
             {
@@ -982,7 +987,7 @@ namespace BrokerIQ.Online.Pages
                     };
                     documentsRequiredList.Add(requirement);
                     requirementSet = true;
-                    requirementsString += $"{req.Key.GetDisplayName()}: {req.Value}\n";
+                    requirementsString += $"{DocumentTypeValues.FirstOrDefault(t => t.Id == req.Key).Name}: {req.Value}\n";
                 }
             }
 

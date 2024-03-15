@@ -95,7 +95,7 @@ namespace BrokerIQ.Online.Models
 
         public virtual ICollection<CustomerDocument> CustomerDocuments { get; set; }
 
-        public virtual CustomerDocument ProfilePicture { get; set; }
+        public virtual byte[] ProfilePicture { get; set; }
 
         public CustomerCategoryEnum CustomerCategory { get; set; }
 
@@ -109,9 +109,9 @@ namespace BrokerIQ.Online.Models
         {
             get
             {
-                if (ProfilePicture != null && ProfilePicture.File.Any())
+                if (ProfilePicture != null)
                 {
-                    var base64 = Convert.ToBase64String(ProfilePicture.File);
+                    var base64 = Convert.ToBase64String(ProfilePicture);
                     var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
                     return imgSrc;
                 }

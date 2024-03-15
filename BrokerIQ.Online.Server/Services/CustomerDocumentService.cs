@@ -43,15 +43,15 @@ namespace BrokerIQ.Online.Services
 
         public async Task<CustomerDocumentDto> GetProfilePicture(int customerId)
         {
-            var answer =  await this.requestProviderService.Get<CustomerDocumentDto>(this.CustomerDocumentUrl+@"/profile_picture/"+$"{customerId}" );
+            var answer = await this.requestProviderService.Get<CustomerDocumentDto>(this.CustomerDocumentUrl + @"/profile_picture/" + $"{customerId}");
             return answer;
         }
 
         public async Task<IEnumerable<CustomerDocument>> Get(int customerId)
         {
             var answer = await this.requestProviderService.Get<IEnumerable<CustomerDocumentDto>>(this.CustomerDocumentUrl + @"/bycustomer/" + $"{customerId}?eagerLoadPdf=true");
-            answer = answer.Where(x => x.DocuVaultType != DocuVaultTypeEnum.ProfilePicture);
-            return this.mapper.Map<IEnumerable<CustomerDocument>>(answer);   
+
+            return this.mapper.Map<IEnumerable<CustomerDocument>>(answer);
         }
 
         public async Task<bool> DeleteCustomerDocument(Guid id)

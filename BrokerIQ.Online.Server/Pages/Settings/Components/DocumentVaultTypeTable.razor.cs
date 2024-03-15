@@ -35,7 +35,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         protected override async Task OnInitializedAsync()
         {
-            DocumentVaultTypes = new List<DocumentVaultTypeDto>(await DocumentVaultTypeService.GetAllForCurrentBroker());
+            DocumentVaultTypes = new List<DocumentVaultTypeDto>(await DocumentVaultTypeService.GetAllForBroker(Broker.Id));
         }
 
         private async Task RemoveDocumentVaultType(DocumentVaultTypeDto vaultType)
@@ -61,7 +61,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private async Task ReloadDocumentVaultTypes()
         {
-            DocumentVaultTypes = new List<DocumentVaultTypeDto>(await DocumentVaultTypeService.GetAllForCurrentBroker());
+            DocumentVaultTypes = new List<DocumentVaultTypeDto>(await DocumentVaultTypeService.GetAllForBroker(Broker.Id));
 
             StateHasChanged();
         }

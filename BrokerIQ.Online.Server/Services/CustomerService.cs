@@ -193,5 +193,17 @@ namespace BrokerIQ.Online.Services
 
             return;
         }
+
+        public async Task<bool> SetProfilePicture(int customerId, byte[] picture)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var postData = new ProfilePictureDto() { CustomerId = customerId, File = picture };
+
+            await this.requestProviderService.Post<ProfilePictureDto, CustomerDto>($"{this.customerUrl}/profile_picture", postData);
+
+            return true;
+        }
     }
 }

@@ -18,11 +18,9 @@
             }
             <div class="col-lg-2">
 
-            @if (CustomerProfilePicture != null)
+            @if (Customer.ProfilePicture != null && Customer.ProfilePicture.Length > 0)
             {
-                var base64 = Convert.ToBase64String(CustomerProfilePicture.File);
-                var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
-                        <img src="@imgSrc" class="img-responsive customer-detail-img" style="width: 100%" />
+                <img src="@Customer.PPAsImage" class="img-responsive customer-detail-img" style="width: 100%" />
             }
             </div>
             <div class="col-lg-10">
