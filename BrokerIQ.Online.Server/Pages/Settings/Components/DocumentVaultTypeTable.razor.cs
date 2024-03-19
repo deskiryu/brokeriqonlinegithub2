@@ -75,7 +75,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 { "VaultType", vaultType }
             };
 
-            var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+            var options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
 
             var result = await DialogService.Show<DocumentVaultTypeDialog>(title, parameters, options).Result;
 
