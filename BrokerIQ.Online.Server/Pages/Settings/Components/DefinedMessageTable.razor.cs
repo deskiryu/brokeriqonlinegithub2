@@ -48,7 +48,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             DefinedMessages = new List<BrokerDefinedMessageDto>(await BrokerDefinedMessageService.GetAllForCurrentBroker());
             LastSortOrder = 0;
-            if (DefinedMessages != null && DefinedMessages.Any())
+            if(DefinedMessages!=null && DefinedMessages.Any())
             {
                 var maxSort = DefinedMessages.OrderByDescending(item => item.SortOrder).FirstOrDefault();
                 if (maxSort != null)
