@@ -4,11 +4,11 @@
 @inject IJSRuntime js
 
 <div class="mb-2 ml-1 row">
-    <MudButton StartIcon="@Icons.Material.Filled.AddBox" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
-               OnClick=@(r=> EditDefinedMessage(new Dto.Models.BrokerDefinedMessageDto()))>
-        Add defined message
+    <MudButton StartIcon="@Icons.Material.Filled.AddBox" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium" 
+                OnClick=@(r=> EditDefinedMessage(new Dto.Models.BrokerDefinedMessageDto()))>
+        Add defined message 
     </MudButton>
-    <MudProgressLinear Color="Color.Error" Indeterminate="true" style="@SpinnerVisible" />
+    <MudProgressLinear Color="Color.Error" Indeterminate="true" style="@SpinnerVisible"  />
 </div>
 <MudTable Items="@DefinedMessages" Dense="true" Hover>
     <NoRecordsContent>
@@ -29,10 +29,9 @@
     </RowTemplate>
     <ChildRowContent>
 
-        <MudTr>
+        <MudTr >
             <MudTd Style="padding:0px!important">
-                @if (context.SortOrder > 1)
-                {
+                @if (context.SortOrder>1){
                     <MudIconButton Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary" OnClick=@(r => MoveUp(context))></MudIconButton>
                 }
             </MudTd>

@@ -259,11 +259,16 @@
     </MudTabPanel>
 
     @if(this.api.Value.ShowProtection){
-         
-        <MudTabPanel Text="Reminder Options">
-            <ReminderOptionTable Broker="@Broker" User="@User"/>
-        </MudTabPanel>
+    <MudTabPanel Text="Reminder Options">
+        <ReminderOptionTable Broker="@Broker" User="@User"/>
+    </MudTabPanel>
    }
+
+    @if(User != null && User.IsBroker){
+    <MudTabPanel Text="Integrations">
+        <IntegrationStack/>
+    </MudTabPanel> 
+    }
 
 </MudTabs>
 

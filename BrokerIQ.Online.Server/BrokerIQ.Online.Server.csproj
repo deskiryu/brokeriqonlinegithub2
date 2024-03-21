@@ -6,7 +6,7 @@
         <OutputType>Library</OutputType>
         <StartupObject />
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <Version>1.2.28</Version>
+        <Version>1.2.40</Version>
         <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
@@ -37,7 +37,7 @@
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.0" />
         <PackageReference Include="MudBlazor" Version="6.11.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="BrokerIQ.Dto" Version="1.2.7" />
+        <PackageReference Include="BrokerIQ.Dto" Version="1.2.8" />
         <PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
     </ItemGroup>
 
