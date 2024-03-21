@@ -4,7 +4,8 @@
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form">
-            <MudSelect Validation="@(new Func<int, string>(IsValidReminderType))" Class="mb-2" T="int" Label="Reminder Type" ValueChanged="ReminderTypeChanged">
+            <MudSelect Validation="@(new Func<int, string>(IsValidReminderType))" Class="mb-2" T="int" Label="Reminder Type" @bind-Value=Option.ReminderTypeId
+                SelectedValuesChanged="ReminderTypeChanged">
                 <MudSelectItem Value="0">Not set</MudSelectItem> @{
                     var names = Enum.GetNames(typeof(Dto.Enum.ReminderTypeEnum)); for (int i = 1; i <= names.Length; i++)
                     {
@@ -17,7 +18,7 @@
                 @bind-Value=Option.NotificationPeriod>
                 <MudSelectItem Value="@TimeSpan.Zero">Not set</MudSelectItem>
                 @{
-                    var intervals = Option.ReminderTypeId == (int)ReminderTypeEnum.Appointment ? appointmentTimeSpan : ExpiryTimeSpan;
+                    var intervals = Option.ReminderTypeId == (int)ReminderTypeEnum.Appointment ? AppointmentTimeSpan : ExpiryTimeSpan;
 
                     foreach (var item in intervals){
                         <MudSelectItem Value="item">@item.ToDisplayValue()</MudSelectItem>
