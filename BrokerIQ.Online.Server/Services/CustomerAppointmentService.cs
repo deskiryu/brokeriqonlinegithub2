@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using AutoMapper;
 
@@ -48,5 +50,27 @@ public class CustomerAppointmentService : ICustomerAppointmentService
 
         var answer = await this.requestProviderService.Post<CreateCustomerAppointmentDto, CustomerAppointmentDto>(this.Url, mapped);
         return this.mapper.Map<CustomerAppointment>(answer);
+    }
+
+    public async Task<IEnumerable<CustomerAppointmentDto>> GetByBrokerID(int brokerID)
+    {
+        var user = await this.accountService.GetUser();
+        this.requestProviderService.Token = user?.Token;
+
+        return await this.requestProviderService.Get<IEnumerable<CustomerAppointmentDto>>($"{Url}/broker/{brokerID}");
+    }
+
+    public async Task<bool> Delete(int id)
+    {
+        try
+        {
+            return await this.requestProviderService.Delete($"{Url}/{id}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Delete: exception {ex.Message}");
+
+            return false;
+        }
     }
 }

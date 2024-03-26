@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 
@@ -11,4 +13,8 @@ public interface ICustomerAppointmentService
     Task<bool> IsUserConnected();
 
     Task<CustomerAppointment> Create(CustomerAppointment appointment);
+
+    Task<IEnumerable<CustomerAppointmentDto>> GetByBrokerID(int brokerID);
+
+    Task<bool> Delete(int id);
 }
