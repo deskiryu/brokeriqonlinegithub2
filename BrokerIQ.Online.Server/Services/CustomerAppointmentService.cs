@@ -52,19 +52,21 @@ public class CustomerAppointmentService : ICustomerAppointmentService
         return this.mapper.Map<CustomerAppointment>(answer);
     }
 
-    public async Task<IEnumerable<CustomerAppointmentDto>> GetByBrokerID(int brokerID)
+    public async Task<IEnumerable<CustomerAppointment>> GetByBrokerID(int brokerID)
     {
         var user = await this.accountService.GetUser();
         this.requestProviderService.Token = user?.Token;
 
-        return await this.requestProviderService.Get<IEnumerable<CustomerAppointmentDto>>($"{Url}/broker/{brokerID}");
+        var response = await this.requestProviderService.Get<IEnumerable<CustomerAppointmentDto>>($"{Url}/broker/{brokerID}");
+        var mapped = mapper.Map <IEnumerable<CustomerAppointment>>(response);
+        return mapped;
     }
 
-    public async Task<bool> Delete(int id)
+    public async Task<bool> Delete(int id, int brokerId)
     {
         try
         {
-            return await this.requestProviderService.Delete($"{Url}/{id}");
+            return await this.requestProviderService.Delete($"{Url}/{id}/{brokerId}");
         }
         catch (Exception ex)
         {

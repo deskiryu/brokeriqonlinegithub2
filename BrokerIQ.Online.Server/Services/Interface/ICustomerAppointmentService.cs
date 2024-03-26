@@ -14,7 +14,7 @@ public interface ICustomerAppointmentService
 
     Task<CustomerAppointment> Create(CustomerAppointment appointment);
 
-    Task<IEnumerable<CustomerAppointmentDto>> GetByBrokerID(int brokerID);
+    Task<IEnumerable<CustomerAppointment>> GetByBrokerID(int brokerID);
 
-    Task<bool> Delete(int id);
+    Task<bool> Delete(int id, int brokerId);
 }

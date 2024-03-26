@@ -18,9 +18,9 @@ using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Components;
 
-namespace BrokerIQ.Online.Pages
+namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
-    public class ClientAppointmentBase: ComponentBase
+    public class ClientAppointmentBase : ComponentBase
     {
         [Inject]
         private IDialogService DialogService { get; set; }
@@ -35,14 +35,12 @@ namespace BrokerIQ.Online.Pages
         public User User { get; set; }
 
         [Parameter]
-        public BrokerIQ.Online.Models.Broker Broker { get; set; }
+        public Online.Models.Broker Broker { get; set; }
 
-        protected IEnumerable<CustomerAppointmentDto> DefinedAppointments { get; set; }
+        protected IEnumerable<CustomerAppointment> DefinedAppointments { get; set; }
         private int LastSortOrder { get; set; }
 
         public string SpinnerVisible { get; set; }
-
-        private int BrokerID { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -52,10 +50,10 @@ namespace BrokerIQ.Online.Pages
 
         private async Task GetAppointments()
         {
-            DefinedAppointments = new List<CustomerAppointmentDto>(await CustomerAppointmentService.GetByBrokerID(BrokerID));
+            DefinedAppointments = new List<CustomerAppointment>(await CustomerAppointmentService.GetByBrokerID(Broker.Id));
         }
 
-        public async Task RemoveCustomerAppointment(CustomerAppointmentDto message)
+        public async Task RemoveCustomerAppointment(CustomerAppointment message)
         {
             var parameters = new DialogParameters
             {
@@ -70,7 +68,7 @@ namespace BrokerIQ.Online.Pages
 
             if (!result.Cancelled)
             {
-                var wasSuccessfull = await CustomerAppointmentService.Delete(message.Id);
+                var wasSuccessfull = await CustomerAppointmentService.Delete(message.Id, Broker.Id);
 
                 if (wasSuccessfull)
                 {

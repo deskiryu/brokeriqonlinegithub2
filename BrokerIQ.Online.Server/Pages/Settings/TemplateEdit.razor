@@ -273,7 +273,7 @@
     @if (User != null && (User.IsBroker || User.IsBrokerStaff))
     {
         <MudTabPanel Text="Appointments">
-            <ClientAppointmentTable Broker="@Broker" User="@User" />
+            <ClientAppointment Broker="@Broker" User="@User" />
         </MudTabPanel>
     }
 

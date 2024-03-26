@@ -15,4 +15,12 @@ public class CustomerAppointment
     public DateTime? AppointmentDate { get; set; }
 
     public string Location { get; set; }
+
+    public string ContactName { get; set; }
+
+    public string CustomerEmail { get; set; }
+
+    public bool Expired { get => AppointmentDate.HasValue && AppointmentDate < DateTime.Now; }
+
+    public string LabelColour { get => Expired ? "red" : "black"; }
 }
