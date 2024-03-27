@@ -31,7 +31,14 @@
 
              <MudTd> <p Style="@($"color:{context.LabelColour};")">@context.AppointmentDate.Value.ToBiqDateTimeString()</p></MudTd>
              <MudTd> @context.ContactName</MudTd>
-             <MudTd> @context.CustomerEmail</MudTd>
+             <MudTd>
+                 @{
+                    var url = $"clientdetail/{context.CustomerId}";
+                    <MudLink href="@url" Color="Color.Tertiary">
+                    @context.CustomerEmail
+                    </MudLink>
+                 }
+             </MudTd>
              <MudTd>
                  <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn" @onclick="f => RemoveCustomerAppointment(context)">
                      <i class="fas fa-trash"></i>
