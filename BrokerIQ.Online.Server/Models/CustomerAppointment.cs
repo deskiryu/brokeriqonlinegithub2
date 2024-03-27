@@ -8,6 +8,8 @@ public class CustomerAppointment
 
     public int CustomerId { get; set; }
 
+    public string CustomerName { get; set; }
+
     public string ExternalEventId { get; set; }
 
     public string Title { get; set; }
