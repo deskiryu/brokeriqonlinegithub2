@@ -24,7 +24,7 @@
     <ChildRowContent>
 
         <MudTr>
-            <MudTd> @context.AppointmentDate.Value.ToBiqDateTimeString()</MudTd>
+            <MudTd> <p Style="@($"color:{context.LabelColour};")">@context.AppointmentDate.Value.ToBiqDateTimeString()</p></MudTd>
             <MudTd> @context.ContactName</MudTd>
             <MudTd> @context.CustomerEmail</MudTd>
             <MudTd> @context.Location</MudTd>
