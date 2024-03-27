@@ -37,8 +37,10 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         [Parameter]
         public Online.Models.Broker Broker { get; set; }
 
-        protected IEnumerable<CustomerAppointment> DefinedAppointments { get; set; }
-        protected HashSet<CustomerAppointment> SelectedItemsCustomerAppointments { get; set; }
+        protected IEnumerable<CustomerAppointment> DefinedAppointments { get; set; } = new List<CustomerAppointment>();
+
+        protected HashSet<CustomerAppointment> SelectedItemsCustomerAppointments { get; set; } = new HashSet<CustomerAppointment>();
+
         private int LastSortOrder { get; set; }
 
         public string SpinnerVisible { get; set; }
@@ -119,12 +121,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             await ReloadDefinedAppointments();
         }
+
         private async Task ReloadDefinedAppointments()
         {
             await GetAppointments();
 
             StateHasChanged();
         }
-
     }
 }
