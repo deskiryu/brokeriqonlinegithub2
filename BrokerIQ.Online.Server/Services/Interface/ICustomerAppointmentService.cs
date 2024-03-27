@@ -17,4 +17,6 @@ public interface ICustomerAppointmentService
     Task<IEnumerable<CustomerAppointment>> GetByBrokerID(int brokerID);
 
     Task<bool> Delete(int id, int brokerId);
+
+    Task<bool> DeleteMultiple(List<int> id, int brokerId);
 }

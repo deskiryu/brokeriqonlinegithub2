@@ -64,9 +64,23 @@ public class CustomerAppointmentService : ICustomerAppointmentService
 
     public async Task<bool> Delete(int id, int brokerId)
     {
+        return await DeleteMultiple(new List<int>{ id }, brokerId);
+    }
+
+    public async Task<bool> DeleteMultiple(List<int> ids, int brokerId)
+    {
+        var user = await this.accountService.GetUser();
+        this.requestProviderService.Token = user?.Token;
+        var url = Url + $"/deleteMultiple/{brokerId}?";
+        foreach (var id in ids)
+        {
+            url += $"ids={id}&";
+        }
+        url = url.TrimEnd('&');
+
         try
         {
-            return await this.requestProviderService.Delete($"{Url}/{id}/{brokerId}");
+            return await this.requestProviderService.Delete(url);
         }
         catch (Exception ex)
         {

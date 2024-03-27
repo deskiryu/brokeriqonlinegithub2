@@ -38,6 +38,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         public Online.Models.Broker Broker { get; set; }
 
         protected IEnumerable<CustomerAppointment> DefinedAppointments { get; set; }
+        protected HashSet<CustomerAppointment> SelectedItemsCustomerAppointments { get; set; }
         private int LastSortOrder { get; set; }
 
         public string SpinnerVisible { get; set; }
@@ -83,6 +84,41 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             await ReloadDefinedAppointments();
         }
 
+        public void SelectExpiredCustomerAppointments()
+        {
+            SelectedItemsCustomerAppointments = DefinedAppointments.Where(x => x.Expired).ToHashSet();
+        }
+
+        public async Task RemoveSelectedCustomerAppointments()
+        {
+            var parameters = new DialogParameters
+            {
+                { "ContentText", $"Do you really want to delete these appointments? No reminders will be sent to client. The corresponding appointments in Calendly should be deleted if not already." },
+                { "ButtonText", "Delete" },
+                { "Color", Color.Error }
+            };
+
+            var dialogOptions = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+            var result = await DialogService.Show<ConfirmationDialog>("Delete", parameters, dialogOptions).Result;
+
+            if (!result.Cancelled)
+            {
+                var idstoDelete = SelectedItemsCustomerAppointments.Select(x => x.Id).ToList();
+                var wasSuccessfull = await CustomerAppointmentService.DeleteMultiple(idstoDelete, Broker.Id);
+
+                if (wasSuccessfull)
+                {
+                    Snackbar.Add("Appointment deleted successfully", Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add("Unable to delete defined message. Please try again.", Severity.Error);
+                }
+            }
+
+            await ReloadDefinedAppointments();
+        }
         private async Task ReloadDefinedAppointments()
         {
             await GetAppointments();
