@@ -9,6 +9,9 @@ using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Shared;
 
 using MudBlazor;
+using System.Runtime.InteropServices;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -25,7 +28,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         MudForm form;
 
-        MudSelect<int> ReminderTypeId;
+        MudSelect<int> ReminderTypeSelect;
 
         private string OptionLink { get; set; }
 
@@ -56,7 +59,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             TimeSpan.FromDays(1),
         };
 
-        private readonly TimeSpan[] appointmentTimeSpan = new TimeSpan[]{
+        private readonly TimeSpan[] AppointmentTimeSpan = new TimeSpan[]{
             TimeSpan.FromDays(3),
             TimeSpan.FromDays(2),
             TimeSpan.FromDays(1),
@@ -120,7 +123,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             return Enum.IsDefined(typeof(ReminderTargetEnum), i) ? null : "Please select a target for the reminder";
         }
 
-        protected static string IsValidNotificationInterval(TimeSpan ts)
+        protected string IsValidNotificationInterval(TimeSpan ts)
         {
             return ts != TimeSpan.Zero ? null : "Please select a notification interval";
         }
@@ -152,13 +155,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             HideLink = true;
             StateHasChanged();
 
-            ReminderTypeId.ForceRender(false);
+            ReminderTypeSelect.ForceRender(false);
         }
 
-        private void ReminderTypeChanged(int selectedValue)
+        private void ReminderTypeChanged(IEnumerable<int> selectedValue)
         {
-            Option.ReminderTypeId = selectedValue;
-
             Option.NotificationPeriod = TimeSpan.Zero;
         }
     }
