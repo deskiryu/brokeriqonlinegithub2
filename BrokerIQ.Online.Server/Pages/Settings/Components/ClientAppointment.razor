@@ -1,0 +1,57 @@
+﻿
+@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+@using BrokerIQ.Online.Pages
+
+@inherits ClientAppointmentBase
+@inject IJSRuntime js
+
+<div class="row mb-4">
+    <div class="col-sm-10">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SelectExpiredCustomerAppointments()">
+            Select Expired
+        </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => RemoveSelectedCustomerAppointments()">
+            Delete Selected
+        </MudButton>
+    </div>
+</div>
+
+<MudTable Items="@DefinedAppointments" SortLabel="Sort By" Hover MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerAppointments">
+    <NoRecordsContent>
+        <MudText>No defined Appointments have been defined.</MudText>
+    </NoRecordsContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerAppointment, object>(x=>x.AppointmentDate)">Appointment Date</MudTableSortLabel></MudTh>
+         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerAppointment, object>(x=>x.ContactName)">Our Calendly User</MudTableSortLabel></MudTh>
+         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerAppointment, object>(x=>x.CustomerEmail)">Client Calendly Email</MudTableSortLabel></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+
+             <MudTd> <p Style="@($"color:{context.LabelColour};")">@context.AppointmentDate.Value.ToBiqDateTimeString()</p></MudTd>
+             <MudTd> @context.ContactName</MudTd>
+             <MudTd>
+                 @{
+                    var url = $"clientdetail/{context.CustomerId}";
+                    <MudLink href="@url" Color="Color.Tertiary">
+                    @context.CustomerEmail
+                    </MudLink>
+                 }
+             </MudTd>
+             <MudTd>
+                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn" @onclick="f => RemoveCustomerAppointment(context)">
+                     <i class="fas fa-trash"></i>
+                 </MudButton>
+             </MudTd>
+
+    </RowTemplate>
+
+</MudTable>
+
+@code {
+    protected async Task PreviewAttachment(byte[] attachment)
+    {
+        await Extensions.PreviewFile(js, new System.IO.MemoryStream(attachment));
+    }
+}
