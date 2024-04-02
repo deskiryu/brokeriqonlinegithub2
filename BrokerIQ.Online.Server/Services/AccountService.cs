@@ -1,23 +1,18 @@
-using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Models.Account;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services
 {
-    using System;
-    using AutoMapper;
-    using BrokerIQ.Dto.Models;
-    using BrokerIQ.Dto.Response;
-    using BrokerIQ.Online.Models;
-    using BrokerIQ.Online.Models.Account;
-    using BrokerIQ.Online.Server.Helper;
-    using BrokerIQ.Online.Services.Interface;
-    using BrokerIQ.Online.Services.Abstract;
-
     public class AccountService : IAccountService
     {
         private IRequestProviderService _requestProviderService;
-        private NavigationManager _navigationManager;
         private ILocalStorageService _localStorageService;
         private readonly IMapper _mapper;
         private string _userKey = "user";
@@ -28,12 +23,11 @@ namespace BrokerIQ.Online.Services
 
         public AccountService(
             IRequestProviderService httpService,
-            NavigationManager navigationManager,
             ILocalStorageService localStorageService,
             IMapper mapper
-        ) {
+        )
+        {
             _requestProviderService = httpService;
-            _navigationManager = navigationManager;
             _localStorageService = localStorageService;
             _mapper = mapper;
         }
@@ -47,7 +41,7 @@ namespace BrokerIQ.Online.Services
         public async Task<string> GetAudioRecordingAsbase64()
         {
             return (await _localStorageService.GetItem<string>(_audioRecordingKey));
-        } 
+        }
 
 
         public async Task Initialize()
@@ -83,7 +77,7 @@ namespace BrokerIQ.Online.Services
         {
             var user = await GetUser();
             var loggedin = false;
-            if(user !=null && !string.IsNullOrEmpty(user.Id) && !string.IsNullOrEmpty(user.Token))
+            if (user != null && !string.IsNullOrEmpty(user.Id) && !string.IsNullOrEmpty(user.Token))
             {
                 loggedin = true;
             }
@@ -102,8 +96,7 @@ namespace BrokerIQ.Online.Services
         public async Task Logout()
         {
             _user = null;
-            await _localStorageService.SetItem(_userKey,new User());
-            _navigationManager.NavigateTo("account/login");
+            await _localStorageService.SetItem(_userKey, new User());
         }
 
         public async Task<BrokerDto> Register(CreateBrokerDto model)
@@ -136,7 +129,7 @@ namespace BrokerIQ.Online.Services
             await _requestProviderService.Put<EditUser, bool>($"/users/{id}", model);
 
             // update stored user if the logged in user updated their own record
-            if (id == _user.Id) 
+            if (id == _user.Id)
             {
                 // update local storage
                 _user.FirstName = model.FirstName;
