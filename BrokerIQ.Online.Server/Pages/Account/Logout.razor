@@ -2,6 +2,7 @@
 @using BrokerIQ.Online.Services.Interface
 @using BrokerIQ.Online.Server.Helper
 
+@inject NavigationManager NavigationManager
 @inject IAccountService AccountService
 @inject LoggedInAppState MyLoggedInAppState
 
@@ -9,8 +10,11 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await AccountService.Logout();
+
         MyLoggedInAppState.LoggedIn = false;
         MyLoggedInAppState.IsAdmin = false;
         MyLoggedInAppState.IsMinorAdmin = false;
+
+        NavigationManager.NavigateTo("account/login", forceLoad: true);
     }
 }
