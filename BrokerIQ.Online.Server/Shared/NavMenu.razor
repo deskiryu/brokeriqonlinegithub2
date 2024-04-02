@@ -1,14 +1,16 @@
-﻿@using BrokerIQ.Online.Services
+﻿@using BrokerIQ.Online.Models
 @using BrokerIQ.Online.Services.Interface
 @using BrokerIQ.Online.Server.Helper
 @using BrokerIQ.Online.Server.Extensions
+
 @inject LoggedInAppState MyLoggedInAppState
 @inject MessageCountState MyMessageCountState
-@inject IAccountService AccountService
 @inject INotificationService NotificationService
+
 @implements IDisposable
 
 @inject IJSRuntime js
+
 @functions {
     async void ChangeIcon(string iconName)
     {
@@ -28,14 +30,15 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
 
-        @if (MyLoggedInAppState.LoggedIn)
+        @if (IsLoggedIn)
         {
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </li>
-            @if (!MyLoggedInAppState.IsMinorAdmin)
+
+            @if (!User.IsMinorAdmin)
             {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="clientlist">
@@ -43,7 +46,8 @@
                     </NavLink>
                 </li>
             }
-            @if (MyLoggedInAppState.IsAdmin || MyLoggedInAppState.IsMinorAdmin)
+
+            @if (User.IsAdmin || User.IsMinorAdmin)
             {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="videolist">
@@ -51,12 +55,14 @@
                 </NavLink>
             </li>
             }
+
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="videolist2">
                     <span class="oi oi-monitor" aria-hidden="true"></span> Videos 
                 </NavLink>
             </li>
-            @if (!MyLoggedInAppState.IsMinorAdmin)
+
+            @if (!User.IsMinorAdmin)
             {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="audiolist">
@@ -104,7 +110,8 @@
                     </NavLink>
                 </li>
             }
-            @if (MyLoggedInAppState.IsAdmin || MyLoggedInAppState.IsMinorAdmin)
+
+            @if (User.IsAdmin || User.IsMinorAdmin)
             {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="brokerlist">
@@ -120,7 +127,8 @@
                     </NavLink>
                 </li>
             }
-            @if (MyLoggedInAppState.IsAdmin || MyLoggedInAppState.IsMinorAdmin || MyLoggedInAppState.IsBroker)
+
+            @if (User.IsAdmin || User.IsMinorAdmin || User.IsBroker)
             {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="brokerstafflist">
@@ -129,7 +137,7 @@
                 </li>
             }
 
-            @if (!MyLoggedInAppState.IsAdmin && !MyLoggedInAppState.IsMinorAdmin)
+            @if (!User.IsAdmin && !User.IsMinorAdmin)
             {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="settingsedit\0">
@@ -152,8 +160,6 @@
 
             <li style="height:40px" />
 
-            
-
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="https://brokeriq.co.uk/report-an-issue/" target="_blank">
                     <span class="oi oi-lightbulb" aria-hidden="true"></span> Report An Issue
@@ -167,6 +173,7 @@
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </li>
+
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="account/login">
                     <span class="oi oi-account-login" aria-hidden="true"></span> Login
@@ -180,13 +187,17 @@
                     <span class="oi oi-lightbulb" aria-hidden="true"></span> Report An Issue
                 </NavLink>
             </li>
-
-
         }
     </ul>
 </div>
 
 @code {
+    [Inject]
+    IAccountService AccountService { get; set; }
+
+    private bool IsLoggedIn = false;
+    private User User { get; set; }
+
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -202,6 +213,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        IsLoggedIn = await AccountService.IsLoggedIn();
+
+        User = await AccountService.GetUser();
+
         MyLoggedInAppState.OnChange += OnMyChangeHandler;
         MyMessageCountState.OnMessageCountChange += OnMyMessageCountChangeHandler;
 #if !DEBUG
