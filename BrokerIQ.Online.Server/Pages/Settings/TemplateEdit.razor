@@ -270,6 +270,13 @@
     </MudTabPanel> 
     }
 
+    @if (User != null && (User.IsBroker || User.IsBrokerStaff))
+    {
+        <MudTabPanel Text="Appointments">
+            <ClientAppointment Broker="@Broker" User="@User" />
+        </MudTabPanel>
+    }
+
 </MudTabs>
 
 @code {
