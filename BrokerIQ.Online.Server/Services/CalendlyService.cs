@@ -26,4 +26,12 @@ public class CalendlyService : ICalendlyService
 
         return await this.requestProviderService.Post($"{Url}/auth", code);
     }
+
+    public async Task<bool> Disconnect()
+    {
+        var user = await this.accountService.GetUser();
+        this.requestProviderService.Token = user?.Token;
+
+        return await this.requestProviderService.Delete($"{Url}");
+    }
 }
