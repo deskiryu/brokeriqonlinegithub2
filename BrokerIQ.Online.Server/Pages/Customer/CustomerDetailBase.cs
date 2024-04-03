@@ -313,9 +313,7 @@ namespace BrokerIQ.Online.Pages
 
                 CalendlyAccessIsAllowed = integrations.Any(i => i.Integration == IntegrationEnum.Calendly);
 
-                IsConnectedToCalendly = CalendlyAccessIsAllowed && await CustomerAppointmentService.IsUserConnected();
-
-                if (IsConnectedToCalendly) CalendlyUser = await CustomerAppointmentService.GetUser();
+                await SetUserCalendlyDetails();
 
                 CalendlyLoginUri = $"{CalendlySettings.Value.BaseAuthUri}/oauth/authorize?client_id={CalendlySettings.Value.ClientId}&response_type=code&redirect_uri={CalendlySettings.Value.BiqReturnUri}";
                 
@@ -331,6 +329,13 @@ namespace BrokerIQ.Online.Pages
                 }
             }
             fileUploadSettings = this.FileUploadSettingsOption.Value;
+        }
+
+        private async Task SetUserCalendlyDetails()
+        {
+            IsConnectedToCalendly = CalendlyAccessIsAllowed && await CustomerAppointmentService.IsUserConnected();
+
+            if (IsConnectedToCalendly) CalendlyUser = await CustomerAppointmentService.GetUser();
         }
 
         private void SetRequirementVisibility()
@@ -1340,6 +1345,15 @@ namespace BrokerIQ.Online.Pages
                 CustomerId = Customer.Id,
                 ExternalEventId = url
             });
+        }
+
+        public async Task DisconnectFromCalendly()
+        {
+            await CalendlyService.Disconnect();
+
+            await SetUserCalendlyDetails();
+
+            StateHasChanged();
         }
     }
 }
