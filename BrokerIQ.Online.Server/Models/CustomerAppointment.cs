@@ -22,7 +22,7 @@ public class CustomerAppointment
 
     public string CustomerEmail { get; set; }
 
-    public bool Expired { get => AppointmentDate.HasValue && AppointmentDate < DateTime.Now; }
+    public bool Expired { get => AppointmentDate.HasValue && AppointmentDate < DateTime.UtcNow; }
 
     public string LabelColour { get => Expired ? "red" : "black"; }
 }
