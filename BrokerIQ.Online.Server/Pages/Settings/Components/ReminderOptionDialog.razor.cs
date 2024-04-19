@@ -9,6 +9,9 @@ using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Shared;
 
 using MudBlazor;
+using System.Runtime.InteropServices;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -25,9 +28,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         MudForm form;
 
-        MudSelect<int> ReminderTypeId;
-        MudSelect<TimeSpan> Notification;
-        MudSelect<int> ReminderTargetId;
+        MudSelect<int> ReminderTypeSelect;
 
         private string OptionLink { get; set; }
 
@@ -37,24 +38,40 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private bool HideLink { get; set; }
 
-        private TimeSpan FromDays365 = TimeSpan.FromDays(365);
-        private TimeSpan FromDays270 = TimeSpan.FromDays(270);
-        private TimeSpan FromDays240 = TimeSpan.FromDays(240);
-        private TimeSpan FromDays210 = TimeSpan.FromDays(210);
-        private TimeSpan FromDays180 = TimeSpan.FromDays(180);
-        private TimeSpan FromDays150 = TimeSpan.FromDays(150);
-        private TimeSpan FromDays120 = TimeSpan.FromDays(120);
-        private TimeSpan FromDays90 = TimeSpan.FromDays(90);
-        private TimeSpan FromDays60 = TimeSpan.FromDays(60);
-        private TimeSpan FromDays30 = TimeSpan.FromDays(30);
-        private TimeSpan FromDays15 = TimeSpan.FromDays(15);
-        private TimeSpan FromDays7 = TimeSpan.FromDays(7);
-        private TimeSpan FromDays6 = TimeSpan.FromDays(6);
-        private TimeSpan FromDays5 = TimeSpan.FromDays(5);
-        private TimeSpan FromDays4 = TimeSpan.FromDays(4);
-        private TimeSpan FromDays3 = TimeSpan.FromDays(3);
-        private TimeSpan FromDays2 = TimeSpan.FromDays(2);
-        private TimeSpan FromDays1 = TimeSpan.FromDays(1);
+        private readonly TimeSpan[] ExpiryTimeSpan = new TimeSpan[]{
+            TimeSpan.FromDays(365),
+            TimeSpan.FromDays(270),
+            TimeSpan.FromDays(240),
+            TimeSpan.FromDays(210),
+            TimeSpan.FromDays(180),
+            TimeSpan.FromDays(150),
+            TimeSpan.FromDays(120),
+            TimeSpan.FromDays(90),
+            TimeSpan.FromDays(60),
+            TimeSpan.FromDays(30),
+            TimeSpan.FromDays(15),
+            TimeSpan.FromDays(7),
+            TimeSpan.FromDays(6),
+            TimeSpan.FromDays(5),
+            TimeSpan.FromDays(4),
+            TimeSpan.FromDays(3),
+            TimeSpan.FromDays(2),
+            TimeSpan.FromDays(1),
+        };
+
+        private readonly TimeSpan[] AppointmentTimeSpan = new TimeSpan[]{
+            TimeSpan.FromDays(3),
+            TimeSpan.FromDays(2),
+            TimeSpan.FromDays(1),
+            TimeSpan.FromMinutes(180),
+            TimeSpan.FromMinutes(120),
+            TimeSpan.FromMinutes(60),
+            TimeSpan.FromMinutes(45),
+            TimeSpan.FromMinutes(30),
+            TimeSpan.FromMinutes(15),
+            TimeSpan.FromMinutes(10),
+            TimeSpan.FromMinutes(5),
+        };
 
         static string[] REMINDER_MESSAGES = new string[] {
             "",
@@ -106,7 +123,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             return Enum.IsDefined(typeof(ReminderTargetEnum), i) ? null : "Please select a target for the reminder";
         }
 
-        protected static string IsValidNotificationInterval(TimeSpan ts)
+        protected string IsValidNotificationInterval(TimeSpan ts)
         {
             return ts != TimeSpan.Zero ? null : "Please select a notification interval";
         }
@@ -137,6 +154,13 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             HideLink = true;
             StateHasChanged();
+
+            ReminderTypeSelect.ForceRender(false);
+        }
+
+        private void ReminderTypeChanged(IEnumerable<int> selectedValue)
+        {
+            Option.NotificationPeriod = TimeSpan.Zero;
         }
     }
 }

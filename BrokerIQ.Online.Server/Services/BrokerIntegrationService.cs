@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Server;
 using BrokerIQ.Online.Server.Services.Base;
@@ -33,5 +34,39 @@ public class BrokerIntegrationService : BrokerIQService, IBrokerIntegrationServi
         }
 
         return Array.Empty<BrokerIntegrationDto>();
+    }
+
+    public async Task<bool> Add(IntegrationEnum integration)
+    {
+        var brokerId = await GetCurrentBrokerId();
+
+        try
+        {
+            var addedIntegration = await requestProviderService.Post<int, BrokerIntegrationDto>($"{API_CONTROLLER}/broker/{brokerId}", (int)integration);
+
+            if (addedIntegration != null) return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Post: exception {ex.Message}");
+        }
+
+        return false;
+    }
+
+    public async Task<bool> Remove(IntegrationEnum integration)
+    {
+        var brokerId = await GetCurrentBrokerId();
+
+        try
+        {
+            return await requestProviderService.Delete($"{API_CONTROLLER}/broker/{brokerId}/integration/{(int)integration}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Delete: exception {ex.Message}");
+        }
+
+        return false;
     }
 }

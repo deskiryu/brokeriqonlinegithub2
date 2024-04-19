@@ -63,8 +63,8 @@
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Date Of Birth</label>
                 <div class="col-sm-8">
-                    <DateRangePicker @bind-StartDate="DateOfBirth" SingleDatePicker="true" placeholder=" Enter DOB for this client" class="form-control col-sm-8" 
-                        Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))">
+                    <DateRangePicker @bind-StartDate="DateOfBirth" SingleDatePicker="true" placeholder=" Enter DOB for this client" class="form-control col-sm-8"
+                                     Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))">
                     </DateRangePicker>
                     <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Customer.DateOfBirth)" />
                 </div>
@@ -75,10 +75,10 @@
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Gender</label>
                     <div class="col-sm-8">
-                        <MudSelect T="int" 
-                        Margin="Margin.Dense"
-                        Dense="true"
-                        @bind-Value="@SelectedGender">
+                        <MudSelect T="int"
+                                   Margin="Margin.Dense"
+                                   Dense="true"
+                                   @bind-Value="@SelectedGender">
                             @{
                                 var names = Enum.GetNames(typeof(GenderEnum));
                                 for (int i = 0; i < names.Length; i++)
@@ -87,9 +87,9 @@
                                     <MudSelectItem Value=@i>@looped.GetDisplayName()</MudSelectItem>
                                 }
                             }
-                        </MudSelect> 
-                        </div>
+                        </MudSelect>
                     </div>
+                </div>
             }
 
             <div class="form-group row">
@@ -103,18 +103,18 @@
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Category</label>
                 <div class="col-sm-8">
-                    <MudSelect T="int" 
-                        Margin="Margin.Dense"
-                        Dense="true"
-                        Placeholder="None chosen"
-                        @bind-Value="@SelectedCustomerCategory">
+                    <MudSelect T="int"
+                               Margin="Margin.Dense"
+                               Dense="true"
+                               Placeholder="None chosen"
+                               @bind-Value="@SelectedCustomerCategory">
                         @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
                         {
                             CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
                             int id = (int)looped;
                             <MudSelectItem Value="@id">@looped.GetDisplayName()</MudSelectItem>
                         }
-                    </MudSelect> 
+                    </MudSelect>
                 </div>
             </div>
 
@@ -122,9 +122,9 @@
                 <label class="col-sm-4 col-form-label">Employment Status</label>
                 <div class="col-sm-8">
                     <MudSelect T="int"
-                        Margin="Margin.Dense"
-                        Dense="true"
-                        @bind-Value="@SelectedEmploymentStatus">
+                               Margin="Margin.Dense"
+                               Dense="true"
+                               @bind-Value="@SelectedEmploymentStatus">
                         @{
                             var names = Enum.GetNames(typeof(EmploymentEnum));
                             for (int i = 0; i < names.Length; i++)
@@ -141,9 +141,9 @@
                 <label class="col-sm-4 col-form-label">Residential Status</label>
                 <div class="col-sm-8">
                     <MudSelect T="int"
-                        Margin="Margin.Dense"
-                        Dense="true"
-                        @bind-Value="@SelectedResidentialStatus">
+                               Margin="Margin.Dense"
+                               Dense="true"
+                               @bind-Value="@SelectedResidentialStatus">
                         @{
                             var names = Enum.GetNames(typeof(ResidentialStatusEnum));
                             for (int i = 0; i < names.Length; i++)
@@ -158,61 +158,68 @@
 
             @if (this.api.Value.ShowProtection)
             {
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Occupation</label>
-                <div class="col-sm-8">
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Occupation</label>
+                    <div class="col-sm-8">
 
-                    <MudAutocomplete T="OccupationDto" @bind-Value="SelectedOccupation" SearchFunc="@SearchOccupations"
-                        AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
-                        MinCharacters="@MIN_OCCUPATION_CHARS" SelectValueOnTab="true" Label="@($"Type in {MIN_OCCUPATION_CHARS} letters")" MaxItems="100"
-                        ToStringFunc="@(o=> o == null ? null : $"{o.Description} ({o.OrigoCode})")" />
+                        <MudAutocomplete T="OccupationDto" @bind-Value="SelectedOccupation" SearchFunc="@SearchOccupations"
+                                         AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
+                                         MinCharacters="@MIN_OCCUPATION_CHARS" SelectValueOnTab="true" Label="@($"Type in {MIN_OCCUPATION_CHARS} letters")" MaxItems="100"
+                                         ToStringFunc="@(o=> o == null ? null : $"{o.Description} ({o.OrigoCode})")" />
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Annual Income</label>
-                <div class="col-sm-8">
-                    <MudTextField Margin="Margin.Dense" T="int?" @bind-Value="@Customer.AnnualIncome" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Annual Income</label>
+                    <div class="col-sm-8">
+                        <MudTextField Margin="Margin.Dense" T="int?" @bind-Value="@Customer.AnnualIncome" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                    </div>
                 </div>
-            </div>
             }
-            
+
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Video Notifications Allowed</label>
                 <div class="col-sm-8">
-                    <MudCheckBox @bind-Checked="@Customer.VideoNotificationsAllowed" Style="margin-left: -15px" TriState="false"/>
+                    <MudCheckBox @bind-Checked="@Customer.VideoNotificationsAllowed" Style="margin-left: -15px" TriState="false" />
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Audio Notifications Allowed</label>
                 <div class="col-sm-8">
-                    <MudCheckBox @bind-Checked="@Customer.AudioNotificationsAllowed" Style="margin-left: -15px" TriState="false"/>
+                    <MudCheckBox @bind-Checked="@Customer.AudioNotificationsAllowed" Style="margin-left: -15px" TriState="false" />
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Profiling Notifications Allowed</label>
                 <div class="col-sm-8">
-                    <MudCheckBox @bind-Checked="@Customer.ProfilingNotificationsAllowed" Style="margin-left: -15px" TriState="false"/>
+                    <MudCheckBox @bind-Checked="@Customer.ProfilingNotificationsAllowed" Style="margin-left: -15px" TriState="false" />
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Marketing Notifications Allowed</label>
                 <div class="col-sm-8">
-                    <MudCheckBox @bind-Checked="@Customer.MarketingMessagesAllowed" Style="margin-left: -15px" TriState="false"/>
+                    <MudCheckBox @bind-Checked="@Customer.MarketingMessagesAllowed" Style="margin-left: -15px" TriState="false" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Appointment Notifications Allowed</label>
+                <div class="col-sm-8">
+                    <MudCheckBox @bind-Checked="@Customer.AppointmentRemindersAllowed" Style="margin-left: -15px" TriState="false" />
                 </div>
             </div>
 
             @if (this.api.Value.ShowProtection)
             {
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Is Smoker or Vaper</label>
-                <div class="col-sm-8">
-                    <MudCheckBox @bind-Checked="@Customer.IsSmokerOrVaper" Style="margin-left: -15px" TriState="false"/>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Is Smoker or Vaper</label>
+                    <div class="col-sm-8">
+                        <MudCheckBox @bind-Checked="@Customer.IsSmokerOrVaper" Style="margin-left: -15px" TriState="false" />
+                    </div>
                 </div>
-            </div>               
             }
 
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Update Client</MudButton>
