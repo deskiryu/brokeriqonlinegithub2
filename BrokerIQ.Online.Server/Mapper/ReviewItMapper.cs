@@ -86,7 +86,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.Gender, action => action.MapFrom(s => s.Gender))
                 .ForMember(d => d.OccupationId, action => action.MapFrom(s => s.OccupationId))
                 .ForMember(d => d.NotificationTag, action => action.MapFrom(s => s.NotificationTag))
-                .ForMember(d => d.ConnectedToCustomerId, action => action.MapFrom(s => s.ConnectedToCustomerId));
+                .ForMember(d => d.ConnectedToCustomerId, action => action.MapFrom(s => s.ConnectedToCustomerId))
+                .ForMember(d => d.AppointmentRemindersAllowed, action => action.MapFrom(s => !s.AppointmentReminderOptOut));
 
             CreateMap<Customer, UpdateCustomerDto>()
                 .ForMember(d => d.Id, action => action.MapFrom(s => s.Id))
@@ -116,7 +117,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.AnnualIncome, action => action.MapFrom(s => s.AnnualIncome))
                 .ForMember(d => d.Gender, action => action.MapFrom(s => s.Gender))
                 .ForMember(d => d.OccupationId, action => action.MapFrom(s => s.OccupationId))
-                .ForMember(d => d.NotificationTag, action => action.MapFrom(s => s.NotificationTag));
+                .ForMember(d => d.NotificationTag, action => action.MapFrom(s => s.NotificationTag))
+                .ForMember(d => d.AppointmentReminderOptOut, action => action.MapFrom(s => !s.AppointmentRemindersAllowed));
         }
 
         private void InsuranceMapper()

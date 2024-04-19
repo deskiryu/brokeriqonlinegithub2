@@ -1,6 +1,6 @@
 function showCalendlyPopup(calendlyUserLink, fullName, email) {
     Calendly.initPopupWidget({
-        url: `https://calendly.com/${calendlyUserLink}?hide_gdpr_banner=1`,
+        url: `https://calendly.com/${calendlyUserLink}?hide_gdpr_banner=1&&primary_color=ffeb3b`,
         prefill: {
             name: fullName,
             email: email
@@ -8,11 +8,7 @@ function showCalendlyPopup(calendlyUserLink, fullName, email) {
         utm: {
             utm_source: "BrokerIQ",
             utm_content: email
-        },
-        text: 'Book client appointment',
-        color: '#ffeb3b',
-        textColor: '#000000',
-        branding: true,
+        }
     });
 }
 

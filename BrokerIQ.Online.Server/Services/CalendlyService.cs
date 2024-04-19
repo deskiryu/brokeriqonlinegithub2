@@ -19,19 +19,19 @@ public class CalendlyService : ICalendlyService
         this.accountService = accountService;
     }
 
-    public async Task<CalendlyUserDto> GetUser()
-    {
-        var user = await this.accountService.GetUser();
-        this.requestProviderService.Token = user?.Token;
-
-        return await this.requestProviderService.Get<CalendlyUserDto>($"{Url}/user");
-    }
-
     public async Task<bool> RegisterCalendlyConnection(string code)
     {
         var user = await this.accountService.GetUser();
         this.requestProviderService.Token = user?.Token;
 
         return await this.requestProviderService.Post($"{Url}/auth", code);
+    }
+
+    public async Task<bool> Disconnect()
+    {
+        var user = await this.accountService.GetUser();
+        this.requestProviderService.Token = user?.Token;
+
+        return await this.requestProviderService.Delete($"{Url}");
     }
 }

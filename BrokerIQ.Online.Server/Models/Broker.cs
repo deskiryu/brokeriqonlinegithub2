@@ -108,5 +108,7 @@ namespace BrokerIQ.Online.Models
                                 s.StartDate <= today && today <= s.EndDate);
             }
         }
+
+        public bool NotifyAppointments { get; set; }
     }
 }

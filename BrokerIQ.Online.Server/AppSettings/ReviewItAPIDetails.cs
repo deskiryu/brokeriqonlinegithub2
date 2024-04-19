@@ -23,5 +23,7 @@
         public bool ShowClientPhoneColumn { get; set; }
 
         public bool CanLoadInsuranceFromFile { get; set; }
+
+        public bool CalendlyAvailable { get; set; }
     }
 }
