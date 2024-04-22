@@ -601,6 +601,7 @@ namespace BrokerIQ.Online.Mapper
             .ForMember(d => d.IsBroker, action => action.MapFrom(s => s.IsBroker))
             .ForMember(d => d.IsCustomer, action => action.MapFrom(s => s.IsCustomer))
             .ForMember(d => d.IsBrokerStaff, action => action.MapFrom(s => s.IsBrokerStaff))
+            .ForMember(d => d.IsAdminStaff, action => action.MapFrom(s => s.IsAdminStaff))
             .ForMember(d => d.IsMinorAdmin, action => action.MapFrom(s => s.IsMinorAdmin))
             .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
             .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName))
@@ -611,7 +612,7 @@ namespace BrokerIQ.Online.Mapper
                 {
                     masterBrokerId = src.UserId;
                 }
-                else if (src.IsBrokerStaff)
+                else if (src.IsBrokerStaff || src.IsAdminStaff)
                 {
                     masterBrokerId = src.MasterBrokerId;
                 }

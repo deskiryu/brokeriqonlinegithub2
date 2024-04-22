@@ -138,10 +138,9 @@ namespace BrokerIQ.Online.Services
             };
 
             var url = this.customerUrl;
-            if (user.IsBroker || user.IsBrokerStaff)
+            if (user.IsBroker || user.IsBrokerStaff || user.IsAdminStaff)
             {
                 url += "/broker/" + $"{user.MasterBrokerId}";
-
             }
             else if (user.IsAdmin)
             {
