@@ -50,7 +50,7 @@ else
             var user = await AccountService.GetUser();
             if (user != null)
             {
-                if (user.IsBroker || user.IsBrokerStaff)
+                if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
                     Broker = await BrokerService.GetBroker(user.MasterBrokerId);
                 }

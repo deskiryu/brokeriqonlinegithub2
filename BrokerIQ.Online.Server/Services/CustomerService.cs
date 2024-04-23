@@ -54,7 +54,7 @@ namespace BrokerIQ.Online.Services
             this.requestProviderService.Token = user?.Token;
             var url = this.customerUrl;
             var brokerId = 0;
-            if (user.IsBroker || user.IsBrokerStaff)
+            if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 brokerId = user.MasterBrokerId;
             }
@@ -138,7 +138,7 @@ namespace BrokerIQ.Online.Services
             };
 
             var url = this.customerUrl;
-            if (user.IsBroker || user.IsBrokerStaff || user.IsAdminStaff)
+            if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 url += "/broker/" + $"{user.MasterBrokerId}";
             }

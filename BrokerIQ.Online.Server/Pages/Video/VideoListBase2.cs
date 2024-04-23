@@ -140,7 +140,7 @@ namespace BrokerIQ.Online.Pages
                     BrokerId = 0;
                     Brokers = (await BrokerService.GetBrokers()).ToList();
                 }
-                else if (user.IsBroker || user.IsBrokerStaff)
+                else if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
                     IsBroker = user.IsBroker;
                     BrokerId = user.MasterBrokerId;
@@ -151,7 +151,7 @@ namespace BrokerIQ.Online.Pages
                     throw new Exception();
                 }
 
-                if (user.IsBroker || user.IsBrokerStaff)
+                if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
                     await RefreshVideos();
                     StateHasChanged();
@@ -352,7 +352,7 @@ namespace BrokerIQ.Online.Pages
             {
                 await VerifyAdmin();
             }
-            else if (user.IsBroker || user.IsBrokerStaff)
+            else if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 await VerifyBroker();
             }

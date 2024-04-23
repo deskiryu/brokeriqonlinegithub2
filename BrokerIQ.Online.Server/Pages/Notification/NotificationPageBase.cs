@@ -80,7 +80,7 @@ namespace BrokerIQ.Online.Pages
                 var user = await this.AccountService.GetUser();
                 ShowEmployee = false;
                 ShowBroker = false;
-                if (user.IsBroker || user.IsBrokerStaff)
+                if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
                     if (user.IsBroker)
                     {

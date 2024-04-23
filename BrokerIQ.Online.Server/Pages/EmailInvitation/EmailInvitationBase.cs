@@ -142,7 +142,7 @@ namespace BrokerIQ.Online.Pages
             ShowBroker = false;
             BrokerStaffId = null;
 
-            if (user.IsBroker || user.IsBrokerStaff)
+            if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 BrokerId = user.MasterBrokerId;
                 if (user.IsBroker)

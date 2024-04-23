@@ -142,7 +142,7 @@ namespace BrokerIQ.Online.Pages
             var queryCust = await CustomerService.GetAllCustomers();
             Customers = queryCust.ToList();
 
-            if (user.IsBroker || user.IsBrokerStaff)
+            if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 BrokerId = user.MasterBrokerId;
                 if (user.IsBroker)

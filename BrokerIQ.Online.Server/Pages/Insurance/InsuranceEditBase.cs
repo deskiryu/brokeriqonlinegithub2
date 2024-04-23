@@ -225,7 +225,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     InsuranceType = ConsumerInsurances.First().Item1;
                     Insurance.InsType = (InsuranceEnum)ConsumerInsurances.First().Item1;
-                    if (user.IsBroker || user.IsBrokerStaff)
+                    if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                     {
                         Insurance.ContactNumber = Broker?.TelephoneNumber ?? "";
                     }

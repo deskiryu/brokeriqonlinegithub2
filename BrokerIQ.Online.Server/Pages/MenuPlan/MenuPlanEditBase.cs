@@ -94,7 +94,7 @@ namespace BrokerIQ.Online.Pages
         {
             var user = await AccountService.GetUser();
             IsAdmin = user.IsAdmin;
-            if (user.IsBroker || user.IsBrokerStaff)
+            if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 var broker = user.MasterBrokerId;
 

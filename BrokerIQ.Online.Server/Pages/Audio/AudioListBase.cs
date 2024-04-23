@@ -63,7 +63,7 @@ namespace BrokerIQ.Online.Pages
                     await VerifyAdmin();
                     BrokerId = 0;
                 }
-                else if (user.IsBroker || user.IsBrokerStaff)
+                else if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
                     BrokerId = user.MasterBrokerId;
                 }
@@ -114,7 +114,7 @@ namespace BrokerIQ.Online.Pages
             {
                 await VerifyAdmin();
             }
-            else if (user.IsBroker || user.IsBrokerStaff)
+            else if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 await VerifyBroker();
             }
