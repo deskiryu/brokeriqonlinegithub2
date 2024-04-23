@@ -127,10 +127,7 @@
                 var brokerId = 0;
                 if (user.IsBroker)
                 {
-                    if (user.IsBroker)
-                    {
-                        brokerId = Int32.Parse(user.Id);
-                    }
+                    brokerId = Int32.Parse(user.Id);
                 }
                 else
                 {

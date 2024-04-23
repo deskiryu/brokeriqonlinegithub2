@@ -270,7 +270,7 @@
     </MudTabPanel>
    }
 
-    @if(User != null && User.IsBroker){
+    @if(User != null && (User.IsBroker || User.IsAdminStaff)){
     <MudTabPanel Text="Integrations">
         <IntegrationStack/>
     </MudTabPanel> 
