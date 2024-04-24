@@ -92,7 +92,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this Audio?");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 bool succeeded = await AudioService.DeleteAudio(name, BrokerId);
 
@@ -173,7 +173,7 @@ namespace BrokerIQ.Online.Pages
             };
 
             var result = await DialogService.Show<AudioRecordDialog>("Record voice message", dialogParams, dialogOptions).Result;
-            if (!result.Cancelled && result.Data.ToString() == "true")
+            if (!result.Canceled && result.Data.ToString() == "true")
             {
                 await RefreshAudioListWithDialogMessage(true,"Voice recording uploaded");
             }

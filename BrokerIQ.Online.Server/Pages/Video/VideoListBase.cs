@@ -167,7 +167,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this video?");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 bool succeeded = await VideoService.DeleteVideo(id, BrokerId);
 
@@ -220,7 +220,7 @@ namespace BrokerIQ.Online.Pages
 
             var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var returned = await VideoService.SetWelcomeVideo(id, brokerId, !alreadyChecked);
                 if (returned.Item1)
@@ -262,7 +262,7 @@ namespace BrokerIQ.Online.Pages
 
             var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var returned = await VideoService.SetBirthdayVideo(id, brokerId, !alreadyChecked);
 
@@ -297,7 +297,7 @@ namespace BrokerIQ.Online.Pages
 
             var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var returned = await VideoService.SetMortgageVideo(id, brokerId, !isMortgageVideo);
 
@@ -364,7 +364,7 @@ namespace BrokerIQ.Online.Pages
 
             var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var returned = await VideoService.SetVideoSendDateTick(id, brokerId, !alreadyChecked);
 
@@ -402,7 +402,6 @@ namespace BrokerIQ.Online.Pages
                 await RefreshVideosWithDialogMessage(true, "Only brokeriq admin can vet the video");
                 return;
             }
-
 
             var dialogParams = new DialogParameters();
             var videoAlreadyChecked = Videos.FirstOrDefault(x => x.Id == id);

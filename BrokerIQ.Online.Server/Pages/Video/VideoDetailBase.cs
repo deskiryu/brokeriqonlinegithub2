@@ -213,7 +213,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
             dialogParams.Add("areBrokers", false);
             var result = await DialogService.Show<ScrollableDialog>("Send Video Notification", dialogParams).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var targets = new List<int>();
                 if (sendAll)

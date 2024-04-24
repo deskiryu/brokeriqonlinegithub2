@@ -407,7 +407,7 @@ namespace BrokerIQ.Online.Pages
                 dialogParams.Add("areBrokers", false);
                 var result = await DialogService.Show<ScrollableDialog>("Send Notification", dialogParams).Result;
 
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     var targetsId = new List<int>();
                     targetsId.Add(Customer.Id);
@@ -519,7 +519,7 @@ namespace BrokerIQ.Online.Pages
         {
             bool succeeded = false;
             var result = await DialogService.Show<NoteEditDialog>("New Note").Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var message = result.Data.ToString();
 
@@ -558,7 +558,7 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("Message", note.Message);
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var message = result.Data.ToString();
                 try
@@ -600,7 +600,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", $"Are you sure you want to delete this note?");
             var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var deleted = await NoteService.Delete(id);
                 if (deleted)
@@ -755,7 +755,7 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("PrePopulatedMessage", messageToshow);
 
             var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var message = result.Data.ToString();
 
@@ -861,7 +861,7 @@ namespace BrokerIQ.Online.Pages
             {
                 dialogParams.Add("Message", $"Are you sure you want to delete the selected client documents?");
                 var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     foreach (var custDoc in SelectedItemsCustomerDocuments)
                     {
@@ -884,7 +884,7 @@ namespace BrokerIQ.Online.Pages
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", $"Are you sure you want to delete this client document?");
                 var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-                proceed = !result.Cancelled;
+                proceed = !result.Canceled;
             }
             if (proceed)
             {
@@ -998,7 +998,7 @@ namespace BrokerIQ.Online.Pages
                     { "Message", $"Are you sure you want to set the document requirements as the following?\n{requirementsString}" }
                 };
                 var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     if (CurrentRequirementsId > 0)
                     {
@@ -1055,7 +1055,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", $"Are you sure you want to delete the document requirements currently set?");
             var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 await DocumentsRequirementService.Delete(DocumentsRequirement.Id);
                 DocumentsRequirement = null;
@@ -1292,7 +1292,7 @@ namespace BrokerIQ.Online.Pages
 
             var result = await DialogService.Show<IncomeProtectionQuoteDialog>("Income Protection Quote", parameters, options).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 await UpdateChat(true);
             }

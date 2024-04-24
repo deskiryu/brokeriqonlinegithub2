@@ -128,7 +128,7 @@
                 </li>
             }
 
-            @if (User.IsAdmin || User.IsMinorAdmin || User.IsBroker)
+            @if (User.IsAdmin || User.IsMinorAdmin || User.IsBroker || User.IsAdminStaff)
             {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="brokerstafflist">

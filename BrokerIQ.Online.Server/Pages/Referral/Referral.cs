@@ -247,7 +247,7 @@ namespace BrokerIQ.Online.Pages
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", "Are you sure you want to delete this referral?");
                 var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     succeeded = await this.ClientReferralService.Delete(id, BrokerId);
                 }
@@ -275,7 +275,7 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("Message", note);
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var message = result.Data.ToString();
                 try

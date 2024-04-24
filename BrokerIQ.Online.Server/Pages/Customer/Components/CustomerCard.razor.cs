@@ -94,7 +94,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             };
 
             var result = await DialogService.Show<Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var deleted = await CustomerService.DeleteCustomer(Customer.Id);
                 if (deleted)
@@ -118,7 +118,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", $"A verify email will be sent to {Customer.Name}. Continue? ");
             var result = await DialogService.Show<Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var resent = await AccountService.ResendEmail(Customer.EmailAddress);
                 if (resent)
@@ -146,7 +146,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             var result = await DialogService.Show<Shared.ConfirmCancelDialog>("Confirmation", dialogParams).Result;
 
-            if (result.Cancelled) return;
+            if (result.Canceled) return;
 
             await CustomerService.Disconnect(Customer.TargetCustomerId);
 

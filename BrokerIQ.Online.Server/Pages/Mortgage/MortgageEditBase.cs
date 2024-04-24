@@ -281,7 +281,7 @@ namespace BrokerIQ.Online.Pages
                     dialogParams.Add("Filenames", fileNamesAndMemoryStreams.Select(x => x.Item1).ToList());
                     dialogParams.Add("MemoryStreams", fileNamesAndMemoryStreams.Select(x => x.Item2).ToList());
                     var result = await DialogService.Show<FilesConfirmDialog>("Mortgage Add", dialogParams).Result;
-                    agreed = !result.Cancelled;
+                    agreed = !result.Canceled;
                     if (agreed)
                     {
                         foreach (var file in fileNamesAndMemoryStreams)
@@ -293,7 +293,7 @@ namespace BrokerIQ.Online.Pages
                 else
                 {
                     var result = await DialogService.Show<ConfirmCancelDialog>("Mortgage Add", dialogParams).Result;
-                    agreed = !result.Cancelled;
+                    agreed = !result.Canceled;
                 }
 
                 if (agreed)
@@ -377,7 +377,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this mortgage?");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 try
                 {
@@ -410,7 +410,7 @@ namespace BrokerIQ.Online.Pages
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", "Are you sure you want to delete this mortgage document?");
                 var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     await SupportingDocumentService.DeleteMortgageFile(id);
                     StatusClass = "alert-success";
@@ -611,7 +611,7 @@ namespace BrokerIQ.Online.Pages
                     dialogParams.Add("MemoryStreams", memoryStreams);
 
                     var result = await DialogService.Show<FilesConfirmDialog>("Send Notification", dialogParams).Result;
-                    if (!result.Cancelled)
+                    if (!result.Canceled)
                     {
                         SpinnerVisible = "display:block";
                         StateHasChanged();

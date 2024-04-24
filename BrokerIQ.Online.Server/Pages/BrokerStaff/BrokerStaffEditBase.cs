@@ -118,7 +118,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this employee?");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 await BrokerStaffService.DeleteBrokerStaff(_brokerStaff.Id);
                 NavigationManager.NavigateTo($"/brokerstafflist");
@@ -131,7 +131,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", $"A verify email will be sent to {_brokerStaff.EmailAddress}. Continue? ");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var resent = await AccountService.ResendEmailBroker(_brokerStaff.EmailAddress);
                 if (resent)

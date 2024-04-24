@@ -622,7 +622,7 @@ namespace BrokerIQ.Online.Mapper
             .ForMember(d => d.StaffBrokerId, opt => opt.MapFrom((src, dest) =>
             {
                 int? brokerStaffId = null;
-                if (src.IsBrokerStaff)
+                if (src.IsAdminStaff || src.IsBrokerStaff)
                 {
                     brokerStaffId = src.UserId;
                 }
