@@ -274,7 +274,6 @@
             var count = await NotificationService.GetNewBrokerNotificationsCountByBrokerId();
             NewMessageCount = count;
             NewMessageHide = NewMessageCount == 0;
-            StateHasChanged();
         }
     }
 }
