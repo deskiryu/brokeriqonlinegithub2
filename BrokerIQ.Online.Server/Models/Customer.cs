@@ -130,5 +130,7 @@ namespace BrokerIQ.Online.Models
         public int? ConnectedToCustomerId { get; set; }
 
         public int TargetCustomerId { get { return ConnectedToCustomerId ?? Id; } }
+
+        public bool AppointmentRemindersAllowed { get; set; }
     }
 }
