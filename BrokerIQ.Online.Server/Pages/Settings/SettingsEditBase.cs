@@ -35,7 +35,7 @@ namespace BrokerIQ.Online.Pages
         }
     }
 
-    public class TemplateEditBase : ComponentBase
+    public class SettingsEditBase : ComponentBase
     {
         [Inject]
         public IBrokerDefinedMessageService BrokerDefinedMessageService { get; set; }
@@ -130,6 +130,8 @@ namespace BrokerIQ.Online.Pages
             }
 
             fileUploadSettings = this.FileUploadSettingsOption.Value;
+
+            StateHasChanged();
         }
 
         protected void LoadFiles(InputFileChangeEventArgs e)

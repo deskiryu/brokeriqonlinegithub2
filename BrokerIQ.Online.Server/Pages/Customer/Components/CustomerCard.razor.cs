@@ -51,14 +51,10 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         [Parameter]
         public Action OnDisconnection { get; set; }
 
-        protected CustomerDocumentDto CustomerProfilePicture { get; set; }
-
         protected OccupationDto Occupation { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            CustomerProfilePicture = await CustomerDocumentService.GetProfilePicture(Customer.Id);
-
             Occupation = await OccupationService.GetById(Customer.OccupationId);
         }
 
