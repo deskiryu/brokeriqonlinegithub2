@@ -205,6 +205,8 @@
     private int NewMessageCount;
     private bool NewMessageHide;
 
+    private System.Threading.Timer _timer;
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
@@ -219,22 +221,29 @@
 
         MyLoggedInAppState.OnChange += OnMyChangeHandler;
         MyMessageCountState.OnMessageCountChange += OnMyMessageCountChangeHandler;
-#if TRUE
-        System.Timers.Timer t = new System.Timers.Timer();
-        t.Elapsed += async (s, e) =>
+
+        NewMessageHide = true;
+        if (IsLoggedIn)
         {
-            await UpdateMessageCount();
-            await InvokeAsync(StateHasChanged);
-        };
-        t.Interval = 10000;
-        t.Start();
-#endif
+            _timer = new System.Threading.Timer(async _ =>
+           {
+
+               await UpdateMessageCount();
+               await InvokeAsync(StateHasChanged);
+
+           }, null, 2000, 5000);           
+        }
+        else
+        {
+            _timer?.Dispose();
+        }
     }
 
     public void Dispose()
     {
         MyLoggedInAppState.OnChange -= OnMyChangeHandler;
         MyMessageCountState.OnMessageCountChange -= OnMyMessageCountChangeHandler;
+        _timer?.Dispose();
     }
 
     private async void OnMyChangeHandler()
@@ -243,7 +252,7 @@
         await InvokeAsync(async () =>
         {
             await UpdateMessageCount();
-            StateHasChanged();
+            
         });
     }
 
@@ -265,6 +274,7 @@
             var count = await NotificationService.GetNewBrokerNotificationsCountByBrokerId();
             NewMessageCount = count;
             NewMessageHide = NewMessageCount == 0;
+            StateHasChanged();
         }
     }
 }
