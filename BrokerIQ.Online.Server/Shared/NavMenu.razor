@@ -219,9 +219,6 @@
 
         User = await AccountService.GetUser();
 
-        MyLoggedInAppState.OnChange += OnMyChangeHandler;
-        MyMessageCountState.OnMessageCountChange += OnMyMessageCountChangeHandler;
-
         NewMessageHide = true;
         if (IsLoggedIn)
         {
@@ -241,29 +238,9 @@
 
     public void Dispose()
     {
-        MyLoggedInAppState.OnChange -= OnMyChangeHandler;
-        MyMessageCountState.OnMessageCountChange -= OnMyMessageCountChangeHandler;
         _timer?.Dispose();
     }
 
-    private async void OnMyChangeHandler()
-    {
-        // InvokeAsync is inherited, it syncs the call back to the render thread
-        await InvokeAsync(async () =>
-        {
-            await UpdateMessageCount();
-            
-        });
-    }
-
-    private async void OnMyMessageCountChangeHandler()
-    {
-        // InvokeAsync is inherited, it syncs the call back to the render thread
-        await InvokeAsync(async () =>
-        {
-            await UpdateMessageCount();
-        });
-    }
 
     private async Task UpdateMessageCount()
     {
