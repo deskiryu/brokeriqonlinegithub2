@@ -416,7 +416,7 @@
                     </div>
 
                 <div DataLabel="Vet">
-                    @if (IsBroker)
+                    @if (IsBroker || IsAdminStaff)
                     {
                         <MudIconButton hidden="@context.Vetted" Variant="Variant.Filled" Color="Color.Primary" Class="vet_position" Style="@($"color:{Colors.Shades.Black};")" Icon="@Icons.Material.Filled.CheckBoxOutlineBlank"
                         @onclick="@( () => SetVetted(@context.Id) )" />

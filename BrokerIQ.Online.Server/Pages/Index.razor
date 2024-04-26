@@ -50,12 +50,12 @@ else
             var user = await AccountService.GetUser();
             if (user != null)
             {
-                if (user.IsBroker || user.IsBrokerStaff)
+                if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
                     Broker = await BrokerService.GetBroker(user.MasterBrokerId);
                 }
 
-                if (user.IsBrokerStaff)
+                if (user.IsAdminStaff || user.IsBrokerStaff)
                 {
                     var brokerStaffId = 0;
                     Int32.TryParse(user.Id, out brokerStaffId);

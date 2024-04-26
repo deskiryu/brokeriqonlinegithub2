@@ -76,7 +76,7 @@
         {
             var user = await AccountService.GetUser();
             IsAdmin = user.IsAdmin;
-            if (user.IsBroker || user.IsBrokerStaff)
+            if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 var brokerId = user.MasterBrokerId;
 
@@ -127,10 +127,7 @@
                 var brokerId = 0;
                 if (user.IsBroker)
                 {
-                    if (user.IsBroker)
-                    {
-                        brokerId = Int32.Parse(user.Id);
-                    }
+                    brokerId = Int32.Parse(user.Id);
                 }
                 else
                 {

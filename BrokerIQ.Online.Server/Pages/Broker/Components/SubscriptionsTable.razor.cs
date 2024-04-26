@@ -93,7 +93,7 @@ namespace BrokerIQ.Online.Server.Pages.Broker.Components
 
             var result = await DialogService.Show<SubscriptionDialog>(title, parameters, options).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 await SaveSubscription(subscription);
             }

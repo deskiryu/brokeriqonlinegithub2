@@ -142,7 +142,7 @@ namespace BrokerIQ.Online.Pages
             ShowBroker = false;
             BrokerStaffId = null;
 
-            if (user.IsBroker || user.IsBrokerStaff)
+            if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 BrokerId = user.MasterBrokerId;
                 if (user.IsBroker)
@@ -277,7 +277,7 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("Heading", "Broker IQ will delete these connections ");
             dialogParams.Add("Delete", true);
             var response = await DialogService.Show<ScrollableEmailDialog>("Delete invitations", dialogParams).Result;
-            if (!response.Cancelled)
+            if (!response.Canceled)
             {
                 bool succeeded = false;
 
@@ -325,7 +325,7 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("Heading", "Broker IQ will send an invite email to these email addresses : ");
             dialogParams.Add("Delete", false);
             var response = await DialogService.Show<ScrollableEmailDialog>("Send Reminder Emails", dialogParams).Result;
-            if (!response.Cancelled)
+            if (!response.Canceled)
             {
                 bool succeeded = false;
                 try
@@ -438,7 +438,7 @@ namespace BrokerIQ.Online.Pages
                 dialogParams.Add("Heading", "The invitation connection with your brokerage will be made to ");
                 var result = await DialogService.Show<ScrollableEmailDialog>("Make Connections", dialogParams).Result;
 
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     bool succeeded = false;
                     try
@@ -479,7 +479,7 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("Heading", "Broker IQ will delete these connections ");
             dialogParams.Add("Delete", true);
             var response = await DialogService.Show<ScrollableEmailDialog>("Delete invitations", dialogParams).Result;
-            if (!response.Cancelled)
+            if (!response.Canceled)
             {
                 bool succeeded = false;
 
@@ -560,7 +560,7 @@ namespace BrokerIQ.Online.Pages
                 dialogParams.Add("UseWhatsApp", true);
                 var result = await DialogService.Show<ScrollableEmailDialog>("Add Contact", dialogParams).Result;
 
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     bool succeeded = false;
                     try
@@ -647,7 +647,7 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("Message", note);
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var message = result.Data.ToString();
                 try
@@ -692,7 +692,7 @@ namespace BrokerIQ.Online.Pages
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", "Are you sure you want to delete this connection?");
                 var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     succeeded = await this.EmailInviteService.DeleteEmailInvite(id);
                 }
