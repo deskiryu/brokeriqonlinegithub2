@@ -40,5 +40,7 @@ namespace BrokerIQ.Online.Models
         public int BrokerId { get; set; }
 
         public string FullName { get => FirstName + ' ' + LastName; }
+
+        public bool IsAdminStaff { get; set; }
     }
 }
