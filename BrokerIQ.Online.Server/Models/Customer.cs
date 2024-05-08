@@ -109,7 +109,7 @@ namespace BrokerIQ.Online.Models
         {
             get
             {
-                if (ProfilePicture != null)
+                if (ProfilePicture != null && ProfilePicture.Length > 0)
                 {
                     var base64 = Convert.ToBase64String(ProfilePicture);
                     var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
