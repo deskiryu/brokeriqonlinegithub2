@@ -8,13 +8,9 @@ namespace BrokerIQ.Online.Services
     using Microsoft.AspNetCore.Components;
     using Blazored.SessionStorage;
     using System;
-    using BrokerIQ.Online.Server.Helper;
-    using Microsoft.JSInterop;
 
     public class LocalStorageService : ILocalStorageService
     {
-        [Inject]
-        protected IJSRuntime js { get; set; }
 
         ISessionStorageService sessionStorage;
         public LocalStorageService(ISessionStorageService sessionStorage)
@@ -24,25 +20,15 @@ namespace BrokerIQ.Online.Services
 
         public async Task<T> GetItem<T>(string key)
         {
-            var isRunningWasm = await RunningWasm.IsWebAssembly(js);
-            if (isRunningWasm)
+            try
             {
                 var returned = await sessionStorage.GetItemAsync<T>(key);
                 return returned;
             }
-            else
+            catch (InvalidOperationException)
             {
-                try
-                {
-                    var returned = await sessionStorage.GetItemAsync<T>(key);
-                    return returned;
-                }
-                catch (InvalidOperationException)
-                {
-                }
-                return default(T);
             }
-   
+            return default(T);     
         }
 
         public async Task SetItem<T>(string key, T value)
