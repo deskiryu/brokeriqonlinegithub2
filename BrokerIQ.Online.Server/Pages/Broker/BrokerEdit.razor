@@ -456,6 +456,13 @@
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingThankYouText)" />
                                     </div>
                                 </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Has limited functionality</label>
+                                    <div class="col-sm-2 ">
+                                        <MudCheckBox @bind-Checked="@BrokerIdentifier.IsLimitedBroker"  Style="margin-left: -15px" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div>

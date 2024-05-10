@@ -94,5 +94,7 @@ namespace BrokerIQ.Online.Server.Models
         public string OnboardingThankYouText { get; set; }
 
         public bool UseAIChat { get; set; }
+
+        public bool IsLimitedBroker { get; set; }
     }
 }
