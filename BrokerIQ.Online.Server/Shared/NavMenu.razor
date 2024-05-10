@@ -1,7 +1,9 @@
 ﻿@using BrokerIQ.Online.Models
+@using BrokerIQ.Online.Services
 @using BrokerIQ.Online.Services.Interface
 @using BrokerIQ.Online.Server.Helper
 @using BrokerIQ.Online.Server.Extensions
+@using BrokerIQ.Online.Server.Models
 
 @inject LoggedInAppState MyLoggedInAppState
 @inject MessageCountState MyMessageCountState
@@ -62,14 +64,13 @@
                 </NavLink>
             </li>
 
-            @if (!User.IsMinorAdmin)
+            @if (!User.IsMinorAdmin && HasAudioFunctionality())
             {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="audiolist">
                         <span class="oi oi-bullhorn" aria-hidden="true"></span> Voice Recordings
                     </NavLink>
                 </li>
-
 
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="notifications">
@@ -90,7 +91,7 @@
                 </li>
 
                 <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="messagelist">
+                <NavLink class="nav-link" href="messagelist">
                         @if (NewMessageHide)
                         {
                             ChangeIcon("_content/BrokerIQ.Online.Server/favicon.ico");
@@ -195,7 +196,11 @@
     [Inject]
     IAccountService AccountService { get; set; }
 
+    [Inject]
+    IBrokerService BrokerService { get; set; }
+
     private bool IsLoggedIn = false;
+
     private User User { get; set; }
 
     private bool collapseNavMenu = true;
@@ -203,7 +208,10 @@
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private int NewMessageCount;
+
     private bool NewMessageHide;
+
+    private BrokerIdentifier Identifier;
 
     private System.Threading.Timer _timer;
 
@@ -212,12 +220,17 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
-
     protected override async Task OnInitializedAsync()
     {
         IsLoggedIn = await AccountService.IsLoggedIn();
 
         User = await AccountService.GetUser();
+
+        if (User is not null && (User.IsBroker || User.IsAdminStaff || User.IsBrokerStaff))
+        {
+            var broker = await BrokerService.GetBroker(User.MasterBrokerId, eagerload: true);
+            Identifier = broker.BrokerIdentifier;
+        }   
 
         NewMessageHide = true;
         if (IsLoggedIn)
@@ -241,7 +254,6 @@
         _timer?.Dispose();
     }
 
-
     private async Task UpdateMessageCount()
     {
         NewMessageHide = true;
@@ -252,5 +264,12 @@
             NewMessageCount = count;
             NewMessageHide = NewMessageCount == 0;
         }
+    }
+
+    private bool HasAudioFunctionality()
+    {
+        if (Identifier is null) return true;
+
+        return !Identifier.IsLimitedBroker || Identifier.HasAudio;
     }
 }
