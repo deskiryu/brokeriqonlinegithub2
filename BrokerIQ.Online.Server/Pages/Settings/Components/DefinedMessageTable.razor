@@ -4,8 +4,9 @@
 @inject IJSRuntime js
 
 <div class="mb-2 ml-1 row">
-    <MudButton StartIcon="@Icons.Material.Filled.AddBox" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium" 
-                OnClick=@(r=> EditDefinedMessage(new Dto.Models.BrokerDefinedMessageDto()))>
+    <MudButton StartIcon="@Icons.Material.Filled.AddBox" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
+            Disabled="@MaxTemplatesReached"
+            OnClick=@(r=> EditDefinedMessage(new Dto.Models.BrokerDefinedMessageDto()))>
         Add defined message 
     </MudButton>
     <MudProgressLinear Color="Color.Error" Indeterminate="true" style="@SpinnerVisible"  />
