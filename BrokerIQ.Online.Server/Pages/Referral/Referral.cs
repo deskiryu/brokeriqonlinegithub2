@@ -46,9 +46,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IJSRuntime js { get; set; }
 
-        public List<ClientReferral> ClientReferralsSent { get; set; }
+        public List<ClientReferral> ClientReferralsSent { get; set; } = new List<ClientReferral>();
 
-        public List<ClientReferral> ClientReferralsSentBase { get; set; }
+        public List<ClientReferral> ClientReferralsSentBase { get; set; } = new List<ClientReferral>();
 
         public HashSet<ClientReferral> ClientReferralsSelected { get; set; }
 
@@ -157,14 +157,16 @@ namespace BrokerIQ.Online.Pages
                     BrokerStaffFirstName = brokerStaff.FirstName;
                 }
 
+                Brokers = new List<Broker>();
+                Broker = (await BrokerService.GetBroker(user.MasterBrokerId, eagerload: true));
+                if (Broker.BrokerIdentifier != null && Broker.BrokerIdentifier.IsLimitedBroker) return;
+
                 ClientReferralsSentBase = (await ClientReferralService.GetReferralsByBrokerId(user.MasterBrokerId))
                     .OrderByDescending(r => r.Id)
                     .ToList();
                 FillBrokerStaff();
                 FillCustomer();
                 ClientReferralsSent = ClientReferralsSentBase;
-                Brokers = new List<Broker>();
-                Broker = (await BrokerService.GetBroker(user.MasterBrokerId, eagerload: true));
             }
             else if (user.IsAdmin)
             {
@@ -338,7 +340,6 @@ namespace BrokerIQ.Online.Pages
                 await RefreshInvitationsWithDialogMessage(succeeded, "Something went wrong updating the referral. Please try again");
             }
         }
-
 
         protected void NavigateToOverview()
         {
