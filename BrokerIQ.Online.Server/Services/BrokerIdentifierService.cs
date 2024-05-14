@@ -32,11 +32,11 @@ namespace BrokerIQ.Online.Services
             return this.mapper.Map<BrokerIdentifier>(answer);
         }
 
-        public async Task<BrokerIdentifier> AddBrokerIdentifier(int brokerID)
+        public async Task<BrokerIdentifier> AddBrokerIdentifier(CreateBrokerIdentifierDto brokerIdentifier)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var answer = await this.requestProviderService.Post<BrokerIdentifierDto>(this.BrokerIdentifierUrl + $"/{brokerID}");
+            var answer = await this.requestProviderService.Post<CreateBrokerIdentifierDto, BrokerIdentifierDto>(this.BrokerIdentifierUrl, brokerIdentifier);
             return this.mapper.Map<BrokerIdentifier>(answer);
         }
 
