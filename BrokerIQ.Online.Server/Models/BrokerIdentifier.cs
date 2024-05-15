@@ -99,6 +99,8 @@ namespace BrokerIQ.Online.Server.Models
 
         public bool HasVideo { get; set; }
 
+        public int MaxVideos { get; set; }
+
         public int MaxTemplates { get; set; }
 
         public bool HasReminders { get; set; }
