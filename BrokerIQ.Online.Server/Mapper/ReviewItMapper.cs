@@ -601,6 +601,7 @@ namespace BrokerIQ.Online.Mapper
             .ForMember(d => d.IsBroker, action => action.MapFrom(s => s.IsBroker))
             .ForMember(d => d.IsCustomer, action => action.MapFrom(s => s.IsCustomer))
             .ForMember(d => d.IsBrokerStaff, action => action.MapFrom(s => s.IsBrokerStaff))
+            .ForMember(d => d.IsAdminStaff, action => action.MapFrom(s => s.IsAdminStaff))
             .ForMember(d => d.IsMinorAdmin, action => action.MapFrom(s => s.IsMinorAdmin))
             .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
             .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName))
@@ -611,7 +612,7 @@ namespace BrokerIQ.Online.Mapper
                 {
                     masterBrokerId = src.UserId;
                 }
-                else if (src.IsBrokerStaff)
+                else if (src.IsBrokerStaff || src.IsAdminStaff)
                 {
                     masterBrokerId = src.MasterBrokerId;
                 }
@@ -621,7 +622,7 @@ namespace BrokerIQ.Online.Mapper
             .ForMember(d => d.StaffBrokerId, opt => opt.MapFrom((src, dest) =>
             {
                 int? brokerStaffId = null;
-                if (src.IsBrokerStaff)
+                if (src.IsAdminStaff || src.IsBrokerStaff)
                 {
                     brokerStaffId = src.UserId;
                 }
@@ -695,15 +696,19 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
                 .ForMember(d => d.Password, action => action.MapFrom(s => s.Password))
-                .ForMember(d => d.StaffTypeId, action => action.MapFrom(s => s.StaffTypeId));
-            CreateMap<BrokerStaffDto, BrokerStaff>();
-            CreateMap<BrokerStaff, BrokerStaffDto>();
-            CreateMap<BrokerStaff, UpdateBrokerStaffDto>()
+                .ForMember(d => d.StaffTypeId, action => action.MapFrom(s => s.StaffTypeId))
+                .ForMember(d => d.IsAdminStaff, action => action.MapFrom(s => s.IsAdminStaff));
+
+                CreateMap<BrokerStaffDto, BrokerStaff>();
+                CreateMap<BrokerStaff, BrokerStaffDto>();
+
+                CreateMap<BrokerStaff, UpdateBrokerStaffDto>()
                 .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
                 .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
                 .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
                 .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName))
-                .ForMember(d => d.StaffTypeId, action => action.MapFrom(s => s.StaffTypeId));
+                .ForMember(d => d.StaffTypeId, action => action.MapFrom(s => s.StaffTypeId))
+                .ForMember(d => d.IsAdminStaff, action => action.MapFrom(s => s.IsAdminStaff));
         }
 
         private void NotificationMapper()

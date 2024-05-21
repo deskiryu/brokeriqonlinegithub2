@@ -334,7 +334,7 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("areBrokers", false);
             var result = await DialogService.Show<ScrollableDialog>("Send Notification", dialogParams).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var targets = new List<int>();
                 if (SelectedCustomers != null)
@@ -405,7 +405,7 @@ namespace BrokerIQ.Online.Pages
 
             var result = await DialogService.Show<AssignmentDialog>("Assign to Employee", dialogParams).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 SelectedCustomers = null;
                 await GetCustomers();

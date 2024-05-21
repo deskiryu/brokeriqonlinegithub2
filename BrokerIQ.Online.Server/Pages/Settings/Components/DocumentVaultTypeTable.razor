@@ -1,0 +1,29 @@
+@using BrokerIQ.Dto.Enum @using BrokerIQ.Online.Server.Extensions <div class="mb-2">
+    <MudButton StartIcon="@Icons.Material.Filled.PostAdd" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
+        OnClick=@(r=> EditDocumentVaultType(new Dto.Models.DocumentVaultTypeDto()))>Add Document Vault Type </MudButton>
+</div>
+<MudTable Items="@DocumentVaultTypes" Dense="true">
+    <NoRecordsContent>
+        <MudText>No document vault types have been defined.</MudText>
+    </NoRecordsContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Additional Detail</MudTh>
+        <MudTh></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Name</MudTd>
+        <MudTd> @context.AdditionalDetail </MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small"
+                OnClick=@(r=> EditDocumentVaultType(context))>
+            </MudIconButton>
+        </MudTd>
+        <MudTd> @{
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r=>
+                RemoveDocumentVaultType(context)) />
+            }
+        </MudTd>
+    </RowTemplate>
+</MudTable>

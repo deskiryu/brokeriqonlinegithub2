@@ -7,6 +7,7 @@ namespace BrokerIQ.Online.Services
     using BrokerIQ.Online.Services.Interface;
     using Microsoft.AspNetCore.Components;
     using Blazored.SessionStorage;
+    using System;
 
     public class LocalStorageService : ILocalStorageService
     {
@@ -19,8 +20,15 @@ namespace BrokerIQ.Online.Services
 
         public async Task<T> GetItem<T>(string key)
         {
-            var returned = await sessionStorage.GetItemAsync<T>(key); 
-            return returned;      
+            try
+            {
+                var returned = await sessionStorage.GetItemAsync<T>(key);
+                return returned;
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            return default(T);     
         }
 
         public async Task SetItem<T>(string key, T value)

@@ -69,7 +69,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             var result = await DialogService.Show<ConfirmationDialog>("Delete", parameters, dialogOptions).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var wasSuccessfull = await CustomerAppointmentService.Delete(message.Id, Broker.Id);
 
@@ -104,7 +104,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             var result = await DialogService.Show<ConfirmationDialog>("Delete", parameters, dialogOptions).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var idstoDelete = SelectedItemsCustomerAppointments.Select(x => x.Id).ToList();
                 var wasSuccessfull = await CustomerAppointmentService.DeleteMultiple(idstoDelete, Broker.Id);

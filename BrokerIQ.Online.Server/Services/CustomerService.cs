@@ -54,7 +54,7 @@ namespace BrokerIQ.Online.Services
             this.requestProviderService.Token = user?.Token;
             var url = this.customerUrl;
             var brokerId = 0;
-            if (user.IsBroker || user.IsBrokerStaff)
+            if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 brokerId = user.MasterBrokerId;
             }
@@ -138,10 +138,9 @@ namespace BrokerIQ.Online.Services
             };
 
             var url = this.customerUrl;
-            if (user.IsBroker || user.IsBrokerStaff)
+            if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 url += "/broker/" + $"{user.MasterBrokerId}";
-
             }
             else if (user.IsAdmin)
             {
@@ -192,6 +191,18 @@ namespace BrokerIQ.Online.Services
             await this.requestProviderService.Post<bool>(url);
 
             return;
+        }
+
+        public async Task<bool> SetProfilePicture(int customerId, byte[] picture)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var postData = new ProfilePictureDto() { CustomerId = customerId, File = picture };
+
+            await this.requestProviderService.Post<ProfilePictureDto, CustomerDto>($"{this.customerUrl}/profile_picture", postData);
+
+            return true;
         }
     }
 }

@@ -80,6 +80,7 @@ namespace BrokerIQ.Online.Server
             builder.Services.AddScoped<IBrokerIntegrationService, BrokerIntegrationService>();
             builder.Services.AddScoped<ICalendlyService, CalendlyService>();
             builder.Services.AddScoped<ICustomerAppointmentService, CustomerAppointmentService>();
+            builder.Services.AddScoped<IDocumentVaultTypeService, DocumentVaultTypeService>();
 
             builder.Services.AddAutoMapper(typeof(ReviewItMapper));
             builder.Services.AddScoped<LoggedInAppState>();

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using BrokerIQ.Online.Models;
-using MudBlazor;
+using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
-using BrokerIQ.Online.Server.Services.Interface;
-using System.Linq;
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -67,7 +67,7 @@ namespace BrokerIQ.Online.Pages
                 IsAdmin = user.IsAdmin;
                 IsMinorAdmin = user.IsMinorAdmin;
 
-                if (user.IsBroker || user.IsAdmin || user.IsMinorAdmin)
+                if (user.IsAdmin || user.IsMinorAdmin || user.IsBroker || user.IsAdminStaff)
                 {
                     if (id > 0)
                     {
@@ -118,7 +118,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this employee?");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 await BrokerStaffService.DeleteBrokerStaff(_brokerStaff.Id);
                 NavigationManager.NavigateTo($"/brokerstafflist");
@@ -131,7 +131,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", $"A verify email will be sent to {_brokerStaff.EmailAddress}. Continue? ");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var resent = await AccountService.ResendEmailBroker(_brokerStaff.EmailAddress);
                 if (resent)
