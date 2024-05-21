@@ -17,5 +17,7 @@ namespace BrokerIQ.Online.Models
         public DateTime DateTaken { get; set; }
 
         public string CreatedByName { get; set; }
+
+        public DateTime? ReminderDate { get; set; }
     }
 }

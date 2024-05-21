@@ -220,28 +220,30 @@ else if (!Saved)
             <div class="row" @onclick="this.ResetUploadsBadge">
                 <div class="col-sm-4" style="@CurrentRequirementsHidden">
 
-                    @if(DocumentsRequirement != null){
-                    <h6 style="padding-bottom: 5px;">Client Documents Required</h6>
-                    <MudTable Style="padding-bottom: 5px;" Items="@DocumentsRequirement.DocumentChecks">
-                        <HeaderContent>
-                            <MudTh>Document Type</MudTh>
-                            <MudTh>Uploaded</MudTh>
-                            <MudTh>Required</MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd DataLabel="Type">@DocumentTypeValues.FirstOrDefault(t => t.Id == context.DocuVaultType).Name</MudTd>
-                            <MudTd DataLabel="Received">@context.TotalCount</MudTd>
-                            <MudTd DataLabel="Required">@context.RequiredCount</MudTd>
-                        </RowTemplate>
-                    </MudTable>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center mt-1">Clear</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(() => EditDocumentRequirements())" class="btn btn-secondary text-center mr-1 mt-1">Edit</MudButton>
+                    @if (DocumentsRequirement != null)
+                    {
+                        <h6 style="padding-bottom: 5px;">Client Documents Required</h6>
+                        <MudTable Style="padding-bottom: 5px;" Items="@DocumentsRequirement.DocumentChecks">
+                            <HeaderContent>
+                                <MudTh>Document Type</MudTh>
+                                <MudTh>Uploaded</MudTh>
+                                <MudTh>Required</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Type">@DocumentTypeValues.FirstOrDefault(t => t.Id == context.DocuVaultType).Name</MudTd>
+                                <MudTd DataLabel="Received">@context.TotalCount</MudTd>
+                                <MudTd DataLabel="Required">@context.RequiredCount</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center mt-1">Clear</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(() => EditDocumentRequirements())" class="btn btn-secondary text-center mr-1 mt-1">Edit</MudButton>
                     }
                 </div>
 
                 <div class="col-sm-4" style="@EditRequirementsHidden">
                     <h6 style="padding-bottom: 5px;">Select Client Document Requirements</h6>
-                    @foreach(var type in DocumentTypeValues){
+                    @foreach (var type in DocumentTypeValues)
+                    {
                         <MudSelect T="int" Label="@type.Name" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[type.Id]">
                             <MudSelectItem Value=0 />
                             <MudSelectItem Value=1 />
@@ -393,6 +395,10 @@ else if (!Saved)
                                     <MudText Typo="Typo.subtitle2">@note.CreatedByName</MudText>
                                 </CardHeaderContent>
                                 <CardHeaderActions>
+                                    @if (note.ReminderDate != null)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.Alarm" Color="Color.Default"/>
+                                    }
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" @onclick="f => DeleteNote(note.Id)" />
                                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" @onclick="f => EditNote(note.Id)" />
                                 </CardHeaderActions>
