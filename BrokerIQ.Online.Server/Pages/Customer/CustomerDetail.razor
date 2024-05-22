@@ -399,8 +399,11 @@ else if (!Saved)
                                     {
                                         <MudIcon Icon="@Icons.Material.Filled.Alarm" Color="Color.Default"/>
                                     }
+                                    @if(note.CreatedByName == $"{User.FirstName} {User.LastName}")
+                                        {
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" @onclick="f => DeleteNote(note.Id)" />
                                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" @onclick="f => EditNote(note.Id)" />
+                                        }
                                 </CardHeaderActions>
                             </MudCardHeader>
                             <MudCardContent>
