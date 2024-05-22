@@ -1,6 +1,6 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudTextField T="string" Label="Note" Required="true" RequiredError="Please fill in the note content" @bind-Value="Text" Lines="5" />A
+        <MudTextField T="string" Label="Note" Required="true" RequiredError="Please fill in the note content" @bind-Value="Text" Lines="5" />
         @if (ShowReminderControls)
         {
             <MudCheckBox T="bool" Label="Set note reminder" @bind-Checked="HasNoteReminder" />
