@@ -120,7 +120,7 @@ namespace BrokerIQ.Online.Pages
 
         private async Task RefreshEmployees()
         {
-            Employees = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId)).Where(e => e.StaffTypeId != StaffTypeEnum.Unassigned).ToList();
+            Employees = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId)).ToList();
             GenerateEmployeeColours();
         }
 
