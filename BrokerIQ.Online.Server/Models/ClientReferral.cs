@@ -1,9 +1,5 @@
-﻿using BrokerIQ.Dto.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using BrokerIQ.Dto.Enum;
 
 namespace BrokerIQ.Online.Models
 {
@@ -23,5 +19,6 @@ namespace BrokerIQ.Online.Models
         public string BrokerStaffName { get; set; }
         public string BrokerName { get; set; }
         public string CustomerName { get; set; }
+        public DateTime? NoteReminderDate { get; set; }
     }
 }
