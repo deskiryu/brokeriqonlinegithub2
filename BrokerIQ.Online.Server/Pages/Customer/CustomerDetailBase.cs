@@ -79,6 +79,9 @@ namespace BrokerIQ.Online.Pages
         public IOptions<CalendlySettings> CalendlySettings { get; set; }
 
         [Inject]
+        public IDocumentVaultTypeService DocumentVaultTypeService { get; set; }
+
+        [Inject]
         public ICustomerAppointmentService CustomerAppointmentService { get; set; }
 
         [Inject]
@@ -154,9 +157,9 @@ namespace BrokerIQ.Online.Pages
 
         public MudBlazor.Color ChatBadgeColour { get; set; }
 
-        public Dictionary<int, string> DocumentTypeEnumValues = new Dictionary<int, string>();
+        public IEnumerable<DocumentVaultTypeDto> DocumentTypeValues = Array.Empty<DocumentVaultTypeDto>();
 
-        public Dictionary<DocuVaultTypeEnum, int> RequestedDocuments = new Dictionary<DocuVaultTypeEnum, int>();
+        public Dictionary<int, int> RequestedDocuments = new Dictionary<int, int>();
 
         public List<BrokerDefinedMessageDto> MergedMessages = new();
 
@@ -235,25 +238,7 @@ namespace BrokerIQ.Online.Pages
                 SelectedCustomerDocuments = CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
                 ResetUploadsBadge();
 
-                DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
-                if (DocumentsRequirement != null)
-                {
-                    CurrentRequirementsId = DocumentsRequirement.Id;
-                }
-
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
-
-                foreach (var item in Enum.GetValues(typeof(DocuVaultTypeEnum)).Cast<DocuVaultTypeEnum>())
-                {
-                    if (item == DocuVaultTypeEnum.ProfilePicture)
-                    {
-                        continue;
-                    }
-                    DocumentTypeEnumValues.Add((int)item, item.GetDisplayName());
-                    RequestedDocuments.Add(item, 0);
-                }
-
-                SetRequirementVisibility();
 
                 if (!User.IsAdmin)
                 {
@@ -271,6 +256,8 @@ namespace BrokerIQ.Online.Pages
                 {
                     Broker = await BrokerService.GetBroker(Customer.ChosenBrokerId, true);
                 }
+
+                await SetupDocumentRequirementSection();
             }
             catch
             {
@@ -295,7 +282,7 @@ namespace BrokerIQ.Online.Pages
 
             if (!User.IsAdmin)
             {
-                UpdateChat(firstTime: true);
+                await UpdateChat(firstTime: true);
 
                 timer = new System.Threading.Timer(async _ =>  // async void
                 {
@@ -316,6 +303,7 @@ namespace BrokerIQ.Online.Pages
                 await SetUserCalendlyDetails();
 
                 CalendlyLoginUri = $"{CalendlySettings.Value.BaseAuthUri}/oauth/authorize?client_id={CalendlySettings.Value.ClientId}&response_type=code&redirect_uri={CalendlySettings.Value.BiqReturnUri}";
+                
             }
             else
             {
@@ -328,6 +316,24 @@ namespace BrokerIQ.Online.Pages
                 }
             }
             fileUploadSettings = this.FileUploadSettingsOption.Value;
+        }
+
+        private async Task SetupDocumentRequirementSection()
+        {
+            DocumentTypeValues = await DocumentVaultTypeService.GetAllForBroker(Broker.Id);
+
+            DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
+            if (DocumentsRequirement != null)
+            {
+                CurrentRequirementsId = DocumentsRequirement.Id;
+            }
+
+            foreach (var type in DocumentTypeValues)
+            {
+                RequestedDocuments.Add(type.Id, 0);
+            }
+
+            SetRequirementVisibility();
         }
 
         private async Task SetUserCalendlyDetails()
@@ -424,7 +430,7 @@ namespace BrokerIQ.Online.Pages
                 dialogParams.Add("areBrokers", false);
                 var result = await DialogService.Show<ScrollableDialog>("Send Notification", dialogParams).Result;
 
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     var targetsId = new List<int>();
                     targetsId.Add(Customer.Id);
@@ -511,7 +517,7 @@ namespace BrokerIQ.Online.Pages
             bool succeeded = false;
             try
             {
-                succeeded = await CustomerDocumentService.UploadProfilePicture(sdoc);
+                succeeded = await CustomerService.SetProfilePicture(Customer.Id, dataBytes);
             }
             catch
             {
@@ -536,7 +542,7 @@ namespace BrokerIQ.Online.Pages
         {
             bool succeeded = false;
             var result = await DialogService.Show<NoteEditDialog>("New Note").Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var message = result.Data.ToString();
 
@@ -575,7 +581,7 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("Message", note.Message);
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var message = result.Data.ToString();
                 try
@@ -617,7 +623,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", $"Are you sure you want to delete this note?");
             var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var deleted = await NoteService.Delete(id);
                 if (deleted)
@@ -772,7 +778,7 @@ namespace BrokerIQ.Online.Pages
             dialogParams.Add("PrePopulatedMessage", messageToshow);
 
             var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var message = result.Data.ToString();
 
@@ -878,7 +884,7 @@ namespace BrokerIQ.Online.Pages
             {
                 dialogParams.Add("Message", $"Are you sure you want to delete the selected client documents?");
                 var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     foreach (var custDoc in SelectedItemsCustomerDocuments)
                     {
@@ -901,7 +907,7 @@ namespace BrokerIQ.Online.Pages
                 var dialogParams = new DialogParameters();
                 dialogParams.Add("Message", $"Are you sure you want to delete this client document?");
                 var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-                proceed = !result.Cancelled;
+                proceed = !result.Canceled;
             }
             if (proceed)
             {
@@ -1004,7 +1010,7 @@ namespace BrokerIQ.Online.Pages
                     };
                     documentsRequiredList.Add(requirement);
                     requirementSet = true;
-                    requirementsString += $"{req.Key.GetDisplayName()}: {req.Value}\n";
+                    requirementsString += $"{DocumentTypeValues.FirstOrDefault(t => t.Id == req.Key).Name}: {req.Value}\n";
                 }
             }
 
@@ -1015,7 +1021,7 @@ namespace BrokerIQ.Online.Pages
                     { "Message", $"Are you sure you want to set the document requirements as the following?\n{requirementsString}" }
                 };
                 var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     if (CurrentRequirementsId > 0)
                     {
@@ -1072,7 +1078,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", $"Are you sure you want to delete the document requirements currently set?");
             var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 await DocumentsRequirementService.Delete(DocumentsRequirement.Id);
                 DocumentsRequirement = null;
@@ -1301,7 +1307,7 @@ namespace BrokerIQ.Online.Pages
 
             var result = await DialogService.Show<IncomeProtectionQuoteDialog>("Income Protection Quote", parameters, options).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 await UpdateChat(true);
             }

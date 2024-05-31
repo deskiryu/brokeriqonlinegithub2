@@ -17,90 +17,98 @@
 
 @if (!Saved)
 {
-<section class="Broker-detail">
-    <div class="card">
-        <h4 class="card-header">Add employee</h4>
-        <div class="card-body">
-            <EditForm Model="@BrokerStaff" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+    <section class="Broker-detail">
+        <div class="card">
+            <h4 class="card-header">Add employee</h4>
+            <div class="card-body">
+                <EditForm Model="@BrokerStaff" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
 
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-                <div class="col-12 row">
+                    <div class="col-12 row">
 
-                    <div class="col-xs-12 col-sm-12 com-md-12 col-lg-12">
-                        <div class="form-group row" style="padding-left:15px">
-                            <div class="form-group col-6">
-                                <label> First Name</label>
-                                <InputText @bind-Value="BrokerStaff.FirstName" class="form-control" />
-                                <ValidationMessage For="@(() => BrokerStaff.FirstName)" />
+                        <div class="col-xs-12 col-sm-12 com-md-12 col-lg-12">
+                            <div class="form-group row" style="padding-left:15px">
+                                <div class="form-group col-6">
+                                    <label> First Name</label>
+                                    <InputText @bind-Value="BrokerStaff.FirstName" class="form-control" />
+                                    <ValidationMessage For="@(() => BrokerStaff.FirstName)" />
+                                </div>
+                                <div class="form-group col-6">
+                                    <label>Last Name</label>
+                                    <InputText @bind-Value="BrokerStaff.LastName" class="form-control" />
+                                    <ValidationMessage For="@(() => BrokerStaff.LastName)" />
+                                </div>
                             </div>
-                            <div class="form-group col-6">
-                                <label>Last Name</label>
-                                <InputText @bind-Value="BrokerStaff.LastName" class="form-control" />
-                                <ValidationMessage For="@(() => BrokerStaff.LastName)" />
-                            </div>
-                        </div>
-                        <div class="form-group row" style="padding-left:15px">
-                            <div class="form-group col-6">
-                                <label>Email Address</label>
-                                <InputText @bind-Value="BrokerStaff.EmailAddress" class="form-control" />
-                                <ValidationMessage For="@(() => BrokerStaff.EmailAddress)" />
-                            </div>
+                            <div class="form-group row" style="padding-left:15px">
+                                <div class="form-group col-6">
+                                    <label>Email Address</label>
+                                    <InputText @bind-Value="BrokerStaff.EmailAddress" class="form-control" />
+                                    <ValidationMessage For="@(() => BrokerStaff.EmailAddress)" />
+                                </div>
 
-                            @if(this.Options.Value.ShowStaffType)
-                            {
-                            <div class="form-group col-6">
-                                <label>Position</label>
-                                <MudSelect T="StaffTypeEnum" 
-                                    Margin="Margin.Dense"
-                                    @bind-Value="@BrokerStaff.StaffTypeId">
-                                        @{
-                                            var names = Enum.GetNames(typeof(StaffTypeEnum));
-                                            for (int i = 0; i < names.Length; i++)
-                                            {
-                                                StaffTypeEnum looped = (StaffTypeEnum)i;
-                                                <MudSelectItem Value=@looped>@looped.ToString()</MudSelectItem>
+                                @if (this.Options.Value.ShowStaffType)
+                                {
+                                    <div class="form-group col-6">
+                                        <label>Position</label>
+                                        <MudSelect T="StaffTypeEnum"
+                                                   Margin="Margin.Dense"
+                                                   @bind-Value="@BrokerStaff.StaffTypeId">
+                                            @{
+                                                var names = Enum.GetNames(typeof(StaffTypeEnum));
+                                                for (int i = 0; i < names.Length; i++)
+                                                {
+                                                    StaffTypeEnum looped = (StaffTypeEnum)i;
+                                                    <MudSelectItem Value=@looped>@looped.ToString()</MudSelectItem>
+                                                }
                                             }
-                                        }
-                                </MudSelect> 
+                                        </MudSelect>
+                                    </div>
+                                }
                             </div>
-                            }
-                        </div>
 
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label">Two Factor Type</label>
-                                <MudRadioGroup class="col-sm-4" @bind-SelectedOption="@BrokerStaff.TwoFactorType">
-                                    <MudRadio Option="@TwoFactorEnum.Email">Email</MudRadio>
-                                    <MudRadio Option="@TwoFactorEnum.Sms">Mobile Phone</MudRadio>
-                                </MudRadioGroup>
+                                <div class="form-group col-6">
+                                    <MudCheckBox T="bool" @bind-Checked="@BrokerStaff.IsAdminStaff" Label="Has same access rights as broker"></MudCheckBox>
+                                </div>
                             </div>
 
-                        <div class="form-group row" style="padding-left:15px">
-                            <div class="form-group col-6">
-                                <label>Two Factor SMS Phone Number</label>
-                                <InputText @bind-Value="BrokerStaff.TwoFactorPhoneNumber" class="form-control" />
-                                <ValidationMessage For="@(() => BrokerStaff.TwoFactorPhoneNumber)" />
+                            <div class="form-group row">
+                                <div class="form-group col-6">
+                                    <label class="col-6 col-form-label">Two Factor Type</label>
+                                    <MudRadioGroup class="col-sm-4" @bind-SelectedOption="@BrokerStaff.TwoFactorType">
+                                        <MudRadio Option="@TwoFactorEnum.Email">Email</MudRadio>
+                                        <MudRadio Option="@TwoFactorEnum.Sms">Mobile Phone</MudRadio>
+                                    </MudRadioGroup>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group row" style="padding-left:15px">
-                            <div class="form-group col-6">
-                                <label>Password</label>
-                                <MudTextField @bind-Value="BrokerStaff.Password" Label="Password" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPassword" AdornmentAriaLabel="Show Password"/>
-                                <ValidationMessage For="@(() => BrokerStaff.Password)" />
+                            <div class="form-group row" style="padding-left:15px">
+                                <div class="form-group col-6">
+                                    <label>Two Factor SMS Phone Number</label>
+                                    <InputText @bind-Value="BrokerStaff.TwoFactorPhoneNumber" class="form-control" />
+                                    <ValidationMessage For="@(() => BrokerStaff.TwoFactorPhoneNumber)" />
+                                </div>
                             </div>
-                            <div class="form-group col-6">
-                                <label>Confirm Password</label>
-                                <MudTextField @bind-Value="BrokerStaff.ConfirmPassword" Label="Password" InputType="@PasswordInputConfirm" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIconConfirm" OnAdornmentClick="ShowPasswordConfirm" AdornmentAriaLabel="Show Password"/>
-                                <ValidationMessage For="@(() => BrokerStaff.ConfirmPassword)" />
-                            </div>
-                        </div>
 
-                        <div class="form-group row">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link mr-1">Cancel</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Add Employee</MudButton>
-                        </div>
+                            <div class="form-group row" style="padding-left:15px">
+                                <div class="form-group col-6">
+                                    <label>Password</label>
+                                    <MudTextField @bind-Value="BrokerStaff.Password" Label="Password" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPassword" AdornmentAriaLabel="Show Password" />
+                                    <ValidationMessage For="@(() => BrokerStaff.Password)" />
+                                </div>
+                                <div class="form-group col-6">
+                                    <label>Confirm Password</label>
+                                    <MudTextField @bind-Value="BrokerStaff.ConfirmPassword" Label="Password" InputType="@PasswordInputConfirm" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIconConfirm" OnAdornmentClick="ShowPasswordConfirm" AdornmentAriaLabel="Show Password" />
+                                    <ValidationMessage For="@(() => BrokerStaff.ConfirmPassword)" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link mr-1">Cancel</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Add Employee</MudButton>
+                            </div>
 
                             @if (IsAdmin)
                             {
@@ -118,31 +126,31 @@
                                     </div>
                                 </div>
                             }
+                        </div>
+
                     </div>
 
-                </div>
-
-            </EditForm>
+                </EditForm>
             </div>
         </div>
-</section>
-@code{
-    bool isShow; InputType PasswordInput = InputType.Password;string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    </section>
+    @code{
+        bool isShow; InputType PasswordInput = InputType.Password; string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
-    void ShowPassword()
-    {
-        @if (isShow){isShow = false; PasswordInputIcon = Icons.Material.Filled.VisibilityOff; PasswordInput = InputType.Password;}
-        else {isShow = true; PasswordInputIcon = Icons.Material.Filled.Visibility; PasswordInput = InputType.Text;}
+        void ShowPassword()
+        {
+            @if (isShow) { isShow = false; PasswordInputIcon = Icons.Material.Filled.VisibilityOff; PasswordInput = InputType.Password; }
+            else { isShow = true; PasswordInputIcon = Icons.Material.Filled.Visibility; PasswordInput = InputType.Text; }
+        }
+
+        bool isShowConfirm; InputType PasswordInputConfirm = InputType.Password; string PasswordInputIconConfirm = Icons.Material.Filled.VisibilityOff;
+
+        void ShowPasswordConfirm()
+        {
+            @if (isShowConfirm) { isShowConfirm = false; PasswordInputIconConfirm = Icons.Material.Filled.VisibilityOff; PasswordInputConfirm = InputType.Password; }
+            else { isShowConfirm = true; PasswordInputIconConfirm = Icons.Material.Filled.Visibility; PasswordInputConfirm = InputType.Text; }
+        }
     }
-
-    bool isShowConfirm; InputType PasswordInputConfirm = InputType.Password;string PasswordInputIconConfirm = Icons.Material.Filled.VisibilityOff;
-
-    void ShowPasswordConfirm()
-    {
-        @if (isShowConfirm){isShowConfirm = false; PasswordInputIconConfirm = Icons.Material.Filled.VisibilityOff; PasswordInputConfirm = InputType.Password;}
-        else {isShowConfirm = true; PasswordInputIconConfirm = Icons.Material.Filled.Visibility; PasswordInputConfirm = InputType.Text;}
-    }
-}
 
 }
 else

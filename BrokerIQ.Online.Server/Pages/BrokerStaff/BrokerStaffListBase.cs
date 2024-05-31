@@ -57,7 +57,7 @@ namespace BrokerIQ.Online.Pages
                     BrokerStaffBase = BrokerStaff = (await BrokerStaffService.GetBrokerStaff()).ToList();
                     Brokers = (await BrokerService.GetBrokers()).ToList();
                 }
-                else if (user.IsBroker)
+                else if (user.IsBroker || user.IsAdminStaff)
                 {
                     BrokerStaff = (await BrokerStaffService.GetBrokerStaffbyBrokerId(user.MasterBrokerId)).ToList();
                 }       

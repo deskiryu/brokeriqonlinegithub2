@@ -80,7 +80,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             var result = await DialogService.Show<ConfirmationDialog>("Delete", parameters, dialogOptions).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var wasSuccessfull = await BrokerDefinedMessageService.Delete(message);
 
@@ -154,7 +154,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             var result = await DialogService.Show<DefinedMessageDialog>(title, parameters, options).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 await SaveDefinedMessage(template);
             }

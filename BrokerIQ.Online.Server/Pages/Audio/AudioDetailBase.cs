@@ -183,7 +183,7 @@ namespace BrokerIQ.Online.Server.Pages.Audio
             dialogParams.Add("areBrokers", false);
             var result = await DialogService.Show<ScrollableDialog>("Send Audio Notification", dialogParams).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var targets = new List<int>();
                 if (sendAll)

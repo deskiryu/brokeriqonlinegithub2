@@ -38,5 +38,7 @@ namespace BrokerIQ.Online.Models.Account
         public string ConfirmPassword { get; set; }
 
         public StaffTypeEnum StaffTypeId { get; set; }
+
+        public bool IsAdminStaff { get; set; }
     }
 }

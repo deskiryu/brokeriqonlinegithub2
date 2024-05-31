@@ -98,6 +98,8 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsBroker { get; set; }
 
+        public bool IsAdminStaff { get; set; }
+
         public bool IsBrokerStaff { get; set; }
 
         public Video WelcomeVideo { get; set; }
@@ -140,9 +142,10 @@ namespace BrokerIQ.Online.Pages
                     BrokerId = 0;
                     Brokers = (await BrokerService.GetBrokers()).ToList();
                 }
-                else if (user.IsBroker || user.IsBrokerStaff)
+                else if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
                     IsBroker = user.IsBroker;
+                    IsAdminStaff = user.IsAdminStaff;
                     BrokerId = user.MasterBrokerId;
                     IsBrokerStaff = user.IsBrokerStaff;
                 }
@@ -151,7 +154,7 @@ namespace BrokerIQ.Online.Pages
                     throw new Exception();
                 }
 
-                if (user.IsBroker || user.IsBrokerStaff)
+                if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
                     await RefreshVideos();
                     StateHasChanged();
@@ -188,7 +191,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this video?");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
                 bool succeeded = await VideoService.DeleteVideo(id, brokerId);
@@ -266,7 +269,7 @@ namespace BrokerIQ.Online.Pages
 
             var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 var returned = await VideoService.SetVideoSendDateTick(id, brokerId, !alreadyChecked);
 
@@ -352,7 +355,7 @@ namespace BrokerIQ.Online.Pages
             {
                 await VerifyAdmin();
             }
-            else if (user.IsBroker || user.IsBrokerStaff)
+            else if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 await VerifyBroker();
             }
@@ -465,7 +468,7 @@ namespace BrokerIQ.Online.Pages
                 responseParams.Add("Message", tupleResult.Item1);
 
                 var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     await ApplyDraggedChanges();
                 }
@@ -844,7 +847,7 @@ namespace BrokerIQ.Online.Pages
                 responseParams.Add("Message", message);
 
                 var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     switch (videoenum)
                     {
@@ -886,7 +889,7 @@ namespace BrokerIQ.Online.Pages
                 responseParams.Add("Message", message);
 
                 var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
                     await this.VideoService.DeleteVideo(video.Id, brokerId);
@@ -918,7 +921,7 @@ namespace BrokerIQ.Online.Pages
                     responseParams.Add("Message", message);
 
                     var result = await DialogService.Show<ConfirmCancelDialog>("Information", responseParams).Result;
-                    if (!result.Cancelled)
+                    if (!result.Canceled)
                     {
                         await this.VideoService.SetVetted(video.Id, true);
                     }

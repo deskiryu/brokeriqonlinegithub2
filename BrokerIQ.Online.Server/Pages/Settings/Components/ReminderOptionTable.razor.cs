@@ -53,7 +53,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             var result = await DialogService.Show<ConfirmationDialog>("Delete", parameters, dialogOptions).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 await BrokerReminderOptionService.Delete(option);
             }
@@ -97,7 +97,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             var result = await DialogService.Show<ReminderOptionDialog>(title, parameters, options).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 ReminderOptionDto updated = result.Data as ReminderOptionDto;
 

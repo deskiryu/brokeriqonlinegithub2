@@ -80,13 +80,14 @@ namespace BrokerIQ.Online.Pages
                 var user = await this.AccountService.GetUser();
                 ShowEmployee = false;
                 ShowBroker = false;
-                if (user.IsBroker || user.IsBrokerStaff)
+                if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
-                    if (user.IsBroker)
+                    BrokerId = user.MasterBrokerId;
+
+                    if (user.IsBroker || user.IsAdminStaff)
                     {
                         BrokerStaff = (await BrokerStaffService.GetBrokerStaffbyBrokerId(user.MasterBrokerId)).ToList();
                         ShowEmployee = true;
-                        BrokerId = user.MasterBrokerId;
                     }
 
                     NotificationsSentBase = (await NotificationService.GetNotificationByBrokerId(user.MasterBrokerId)).ToList();
