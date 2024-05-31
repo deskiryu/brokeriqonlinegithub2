@@ -4,10 +4,10 @@
 		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
 
-	<!--<PropertyGroup> Size of components too large compared to speed benefit
-		<RunAOTCompilation>true</RunAOTCompilation>
-	</PropertyGroup>-->	
-
+	<Content Update="wwwroot\js\calendly.js">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+	
 	  <ItemGroup>
     <Content Remove="appsettings.json" />
 	  <Content Remove="C:\Users\Livingroom\.nuget\packages\chartjs.blazor.fork\2.0.2\contentFiles\any\netstandard2.1\wwwroot\ChartJsBlazorInterop.js" />
@@ -79,6 +79,9 @@
     <Content Update="wwwroot\favicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+	  <Content Update="wwwroot\js\calendly.js">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>	  
   </ItemGroup>	
 
 	<ItemGroup>
@@ -104,10 +107,4 @@
 		<VirtualFunctions>true</VirtualFunctions>
 		<GenerateDebug>false</GenerateDebug>
 	</PropertyGroup>
-	
-    <Content Update="wwwroot\js\calendly.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>
