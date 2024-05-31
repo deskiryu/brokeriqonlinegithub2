@@ -65,6 +65,7 @@ namespace BrokerIQ.Online.Server
             builder.Services.AddScoped<IChartDataService, ChartDataService>();
             builder.Services.AddScoped<INoteService, NoteService>();
             builder.Services.AddScoped<IChatService, ChatService>();
+            builder.Services.AddScoped<IBrokerIdentifierService, BrokerIdentifierService>();
             builder.Services.AddScoped<IMetaDefenderCoreService, MetaDefenderCoreService>();
             builder.Services.AddScoped<IVersionService, VersionService>();
             builder.Services.AddScoped<ITelephoneInviteService, TelephoneInviteService>();
@@ -79,6 +80,7 @@ namespace BrokerIQ.Online.Server
             builder.Services.AddScoped<IBrokerIntegrationService, BrokerIntegrationService>();
             builder.Services.AddScoped<ICalendlyService, CalendlyService>();
             builder.Services.AddScoped<ICustomerAppointmentService, CustomerAppointmentService>();
+            builder.Services.AddScoped<IDocumentVaultTypeService, DocumentVaultTypeService>();
 
             builder.Services.AddAutoMapper(typeof(ReviewItMapper));
             builder.Services.AddScoped<LoggedInAppState>();

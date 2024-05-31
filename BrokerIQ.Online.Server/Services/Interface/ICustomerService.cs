@@ -30,5 +30,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<Customer> GetConnection(int id);
 
         Task Disconnect(int connectedCustomerId);
+
+        Task<bool> SetProfilePicture(int customerId, byte[] picture);
     }
 }

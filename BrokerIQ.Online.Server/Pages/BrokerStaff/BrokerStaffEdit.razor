@@ -56,25 +56,31 @@
                             </div>
                         </div>
 
-                        @if(this.Options.Value.ShowStaffType){
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Position</label>
-                            <div class="col-sm-8">
-                                <MudSelect T="StaffTypeEnum" 
-                                Margin="Margin.None"
-                                @bind-Value="@_brokerStaff.StaffTypeId">
-                                    @{
-                                        var names = Enum.GetNames(typeof(StaffTypeEnum));
-                                        for (int i = 0; i < names.Length; i++)
-                                        {
-                                            StaffTypeEnum looped = (StaffTypeEnum)i;
-                                            <MudSelectItem Value=@looped>@looped.ToString()</MudSelectItem>
+                        @if (this.Options.Value.ShowStaffType)
+                        {
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Position</label>
+                                <div class="col-sm-8">
+                                    <MudSelect T="StaffTypeEnum"
+                                               Margin="Margin.None"
+                                               @bind-Value="@_brokerStaff.StaffTypeId">
+                                        @{
+                                            var names = Enum.GetNames(typeof(StaffTypeEnum));
+                                            for (int i = 0; i < names.Length; i++)
+                                            {
+                                                StaffTypeEnum looped = (StaffTypeEnum)i;
+                                                <MudSelectItem Value=@looped>@looped.ToString()</MudSelectItem>
+                                            }
                                         }
-                                    }
-                                </MudSelect> 
+                                    </MudSelect>
+                                </div>
                             </div>
-                        </div>
                         }
+                        
+                        <div class="form-group row">
+                            <MudCheckBox T="bool" @bind-Checked="@_brokerStaff.IsAdminStaff" Label="Has same access rights as broker"></MudCheckBox>
+                         </div>
+
 
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Two Factor Type</label>
@@ -88,26 +94,26 @@
                             <label class="col-sm-4 col-form-label">Two Factor SMS Phone Number</label>
                             <div class="col-sm-8">
                                 <InputText @bind-Value="_brokerStaff.TwoFactorPhoneNumber" class="form-control col-sm-8" />
-                            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => _brokerStaff.TwoFactorPhoneNumber)" />
+                                <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => _brokerStaff.TwoFactorPhoneNumber)" />
                             </div>
                         </div>
 
                         @if (IsAdmin)
                         {
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Two Factor Enabled</label>
-                            <div class="col-sm-8">
-                                <MudCheckBox @bind-Checked="@_brokerStaff.TwoFactorEnabled" @onclick="async f => await SetTwoFactorEnabled()" Style="margin-left: -15px" />
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Two Factor Enabled</label>
+                                <div class="col-sm-8">
+                                    <MudCheckBox @bind-Checked="@_brokerStaff.TwoFactorEnabled" @onclick="async f => await SetTwoFactorEnabled()" Style="margin-left: -15px" />
+                                </div>
                             </div>
-                        </div>                        
-                        }                
+                        }
 
                         <div class="form-group row">
                             @if (!IsMinorAdmin)
                             {
-                            <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mr-8" @onclick="DeleteCustomer">
-                                Delete Employee
-                            </MudButton>               
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mr-8" @onclick="DeleteCustomer">
+                                    Delete Employee
+                                </MudButton>
                             }
                             @if (IsAdmin)
                             {

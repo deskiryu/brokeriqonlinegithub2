@@ -77,7 +77,7 @@ namespace BrokerIQ.Online.Pages
         }
         private async Task RefreshMessages()
         {
-            if (User.IsBroker || User.IsBrokerStaff)
+            if (User.IsBroker || User.IsAdminStaff || User.IsBrokerStaff)
             {
                 BrokerNotificationsSubset = BrokerNotifications = (await NotificationService.GetBrokerNotificationsByBrokerId()).ToList();
                 CurrentMessageCount.MessageCount = BrokerNotifications.Count;

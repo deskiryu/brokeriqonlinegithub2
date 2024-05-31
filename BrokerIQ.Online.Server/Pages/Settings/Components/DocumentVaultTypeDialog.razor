@@ -1,0 +1,12 @@
+@using BrokerIQ.Online.Server.Extensions <MudDialog>
+    <DialogContent>
+        <MudForm @ref="form">
+            <MudTextField Class="mb-2" @bind-Value=VaultType.Name Label="Name" Required="true" RequiredError="Name cannot be empty" />
+            <MudTextField Class="mb-2" @bind-Value=VaultType.AdditionalDetail Label="Additional Detail" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>

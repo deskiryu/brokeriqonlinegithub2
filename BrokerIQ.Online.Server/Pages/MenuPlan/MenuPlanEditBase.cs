@@ -94,7 +94,7 @@ namespace BrokerIQ.Online.Pages
         {
             var user = await AccountService.GetUser();
             IsAdmin = user.IsAdmin;
-            if (user.IsBroker || user.IsBrokerStaff)
+            if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
             {
                 var broker = user.MasterBrokerId;
 
@@ -183,7 +183,7 @@ namespace BrokerIQ.Online.Pages
 
 
                 var result = await DialogService.Show<ConfirmCancelDialog>("MenuPlan Add", dialogParams).Result;
-                if (!result.Cancelled)
+                if (!result.Canceled)
                 {
                     try
                     {
@@ -231,7 +231,7 @@ namespace BrokerIQ.Online.Pages
             var dialogParams = new DialogParameters();
             dialogParams.Add("Message", "Are you sure you want to delete this menu plan? All insurances within the plan will also be deleted.");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 try
                 {
