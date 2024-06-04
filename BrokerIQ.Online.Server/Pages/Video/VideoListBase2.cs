@@ -302,7 +302,7 @@ namespace BrokerIQ.Online.Pages
                 var memoryStream = new MemoryStream();
                 await fileListEntry.OpenReadStream(int.MaxValue).CopyToAsync(memoryStream);
 
-                var uploadedVideoId = (0,"");
+                var uploadedVideoId = (0, "");
                 var localBrokerId = BrokerId;
                 if (IsAdmin || IsMinorAdmin)
                 {
@@ -315,7 +315,7 @@ namespace BrokerIQ.Online.Pages
 
                 StateHasChanged();
 
-                if (uploadedVideoId.Item1>0)
+                if (uploadedVideoId.Item1 > 0)
                 {
                     StateHasChanged();
 
@@ -410,8 +410,9 @@ namespace BrokerIQ.Online.Pages
 
                 var user = await AccountService.GetUser();
                 IsBroker = user.IsBroker;
+                IsAdminStaff = user.IsAdminStaff;
 
-                verified = IsBroker || IsMinorAdmin || IsAdmin;
+                verified = IsBroker || IsAdminStaff || IsMinorAdmin || IsAdmin;
             }
             catch
             {
@@ -453,7 +454,7 @@ namespace BrokerIQ.Online.Pages
 
         public async Task RefreshVideoDrag(string newIdentifier)
         {
-            var tupleResult = (string.Empty,true);
+            var tupleResult = (string.Empty, true);
 
             if (newIdentifier.Contains("SendDateVideo"))
             {
@@ -493,10 +494,10 @@ namespace BrokerIQ.Online.Pages
             responseParams.Add("Message", message);
 
             await DialogService.Show<AlertDialog>("Information", responseParams).Result;
-   
+
         }
 
-        protected async Task<(string,bool)> CompareDraggedToVideoList()
+        protected async Task<(string, bool)> CompareDraggedToVideoList()
         {
             await VerifyAccess();
             var message = string.Empty;
@@ -504,11 +505,11 @@ namespace BrokerIQ.Online.Pages
 
             foreach (var video in Videos)
             {
-                if(video != null)
+                if (video != null)
                 {
-                    if(video.Identifier!="Welcome" && video.VideoSendTypeId == VideoSendEnum.WelcomeVideo)
+                    if (video.Identifier != "Welcome" && video.VideoSendTypeId == VideoSendEnum.WelcomeVideo)
                     {
-                        message += $"Video {video.Name} will no longer be a welcome video. ";                 
+                        message += $"Video {video.Name} will no longer be a welcome video. ";
                     }
                     else if (video.Identifier == "Welcome" && video.VideoSendTypeId != VideoSendEnum.WelcomeVideo)
                     {
@@ -601,7 +602,7 @@ namespace BrokerIQ.Online.Pages
                     }
                 }
             }
-            return (message,vetted);
+            return (message, vetted);
         }
 
         protected async Task<(string, bool)> AddDraggedToVideoSendList(string newIdentifier)
@@ -706,7 +707,7 @@ namespace BrokerIQ.Online.Pages
 
                 }
             }
-            return (message,vetted);
+            return (message, vetted);
         }
 
         protected async Task<string> RemoveDraggedToVideoSendList(string oldIdentifier)
@@ -722,7 +723,7 @@ namespace BrokerIQ.Online.Pages
                     if (oldIdentifier == "SendDateVideo1")
                     {
                         if (video.Identifier == "SendDateVideo1" && video.VideoSendTypeId == VideoSendEnum.SendOnDate)
-                        {  
+                        {
                             message += $"Video {video.Name} will no longer be sent on date {dateStr}.";
                         }
                     }
@@ -834,9 +835,9 @@ namespace BrokerIQ.Online.Pages
             {
                 message = await RemoveDraggedToVideoSendList(previousIdentifier);
                 video.Identifier = "Files";
-            }   
+            }
             else
-            {            
+            {
                 video.Identifier = "Files";
                 message = (await CompareDraggedToVideoList()).Item1;
             }
@@ -853,7 +854,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     switch (videoenum)
                     {
-                        case VideoSendEnum.WelcomeVideo: WelcomeVideo = null;break;
+                        case VideoSendEnum.WelcomeVideo: WelcomeVideo = null; break;
                         case VideoSendEnum.BirthdayVideo: BirthdayVideo = null; break;
                         case VideoSendEnum.MortgageVideo: MortgageVideo = null; break;
                         case VideoSendEnum.InsuranceVideo: InsuranceVideo = null; break;
@@ -927,9 +928,9 @@ namespace BrokerIQ.Online.Pages
                     {
                         await this.VideoService.SetVetted(video.Id, true);
                     }
-                    else 
-                    { 
-                        return; 
+                    else
+                    {
+                        return;
                     }
                 }
             }
@@ -986,7 +987,7 @@ namespace BrokerIQ.Online.Pages
                     InsuranceVideo = video;
                     video.Identifier = "Insurance";
                 }
-                else if(video.SendDateVideo)
+                else if (video.SendDateVideo)
                 {
                     if (SendDateVideo1 == null)
                     {

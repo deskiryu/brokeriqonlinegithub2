@@ -273,20 +273,27 @@ namespace BrokerIQ.Online.Pages
         protected async Task EditNote(string note, ClientReferral clientReferral)
         {
             bool succeeded = false;
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", note);
+
+            var dialogParams = new DialogParameters
+            {
+                { "Text", note },
+                { "HasNoteReminder", false },
+                { "ReminderDate", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
+            };
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
             if (!result.Canceled)
             {
-                var message = result.Data.ToString();
+                var detail = result.Data as NoteEditDialog.NoteDetail;
                 try
                 {
-                    if (!string.IsNullOrEmpty(message))
+                    if (!string.IsNullOrEmpty(detail.Text))
                     {
                         try
                         {
-                            clientReferral.ReferralNote = message;
+                            clientReferral.ReferralNote = detail.Text;
+                            clientReferral.NoteReminderDate = detail.ReminderDate;
+
                             var returned = await ClientReferralService.Update(clientReferral);
                             succeeded = returned != null;
                         }
