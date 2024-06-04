@@ -22,7 +22,7 @@
         </MudTd>
         <MudTd>
             @{
-                var tooltip = context.IsInUse ? "Cannot delete, in use" : "Delete";
+                var tooltip = context.IsInUse ? "Cannot delete, still in use" : "Delete";
                 <MudTooltip Text="@tooltip">
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Disabled="@context.IsInUse"
                                    OnClick=@(r => RemoveDocumentVaultType(context)) />
