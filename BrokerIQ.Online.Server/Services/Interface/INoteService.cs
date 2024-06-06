@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BrokerIQ.Online.Services.Interface
 {
@@ -9,13 +8,12 @@ namespace BrokerIQ.Online.Services.Interface
 
     public interface INoteService
     {
-        Task<Note> SaveNote(string message, int customerId);
+        Task<Note> SaveNote(string message, DateTime? ReminderDate, int customerId);
 
-        Task<Note> UpdateNote(string message, int id);
+        Task<Note> UpdateNote(string message, DateTime? ReminderDate, int id);
 
         Task<IEnumerable<Note>> GetNotesByBrokerId(int customerId);
 
         Task<bool> Delete(int id);
-
     }
 }

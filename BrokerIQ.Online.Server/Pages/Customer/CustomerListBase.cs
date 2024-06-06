@@ -77,6 +77,8 @@ namespace BrokerIQ.Online.Pages
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
+        public bool IsLimitedBroker { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             await GetCustomersInit();
@@ -104,6 +106,8 @@ namespace BrokerIQ.Online.Pages
 
                     var broker = await BrokerService.GetBroker(User.MasterBrokerId);
 
+                    IsLimitedBroker = broker.IsLimitedBroker;
+
                     if (broker.BrokerIdentifier.InsuranceOnly)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
@@ -120,7 +124,7 @@ namespace BrokerIQ.Online.Pages
 
         private async Task RefreshEmployees()
         {
-            Employees = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId)).Where(e => e.StaffTypeId != StaffTypeEnum.Unassigned).ToList();
+            Employees = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId)).ToList();
             GenerateEmployeeColours();
         }
 

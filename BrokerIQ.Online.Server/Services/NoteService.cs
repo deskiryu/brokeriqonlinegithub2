@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Server.Services
 {
-    using System.Linq;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Newtonsoft.Json;
-    using BrokerIQ.Dto.Models;
-    using BrokerIQ.Online.Models;
-    using BrokerIQ.Online.Services.Interface;
-    using BrokerIQ.Online.Services.Abstract;
-    using BrokerIQ.Online.Server.Models;
-
     public class NoteService : INoteService
     {
         private readonly string noteUrl = "note";
@@ -29,7 +23,7 @@ namespace BrokerIQ.Online.Server.Services
             this.accountService = accountService;
         }
 
-        public async Task<Note> SaveNote(string message, int customerId)
+        public async Task<Note> SaveNote(string message, DateTime? reminderDate, int customerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -40,12 +34,13 @@ namespace BrokerIQ.Online.Server.Services
                 Message = message,
                 CustomerId = customerId,    
                 BrokerId = brokerId,
+                ReminderDate = reminderDate
             };
             var answer = await this.requestProviderService.Post<CreateNoteDto, NoteDto>(this.noteUrl, note);
             return this.mapper.Map<Note>(answer);
         }
 
-        public async Task<Note> UpdateNote(string message, int id)
+        public async Task<Note> UpdateNote(string message, DateTime? reminderDate, int id)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -54,6 +49,7 @@ namespace BrokerIQ.Online.Server.Services
             {
                 Id = id,
                 Message = message,
+                ReminderDate = reminderDate
             };
             var answer = await this.requestProviderService.Put<UpdateNoteDto, NoteDto>(this.noteUrl, note);
             return this.mapper.Map<Note>(answer);
