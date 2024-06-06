@@ -191,7 +191,7 @@
                     </MudTabPanel>
                 }
 
-                 @if (IsAdmin && BrokerIdentifier!=null && BrokerIdentifier.IdentifierFound)
+                 @if (IsAdmin && ((BrokerIdentifier!=null && BrokerIdentifier.IdentifierFound) || IsCreatingWhiteLabel))
                 {
                  <MudTabPanel Text="White Label">
                      <EditForm Model="@BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
@@ -268,11 +268,12 @@
                                     <div class="col-sm-2 ">
                                         <MudCheckBox @bind-Checked="@BrokerIdentifier.InsuranceOnly" Style="margin-left: -15px" />
                                     </div>
-
+                                    @if (!IsCreatingWhiteLabel){
                                     <label class="col-sm-2 col-form-label">Use AI Chat</label>
                                     <div class="col-sm-2 ">
                                         <MudCheckBox @bind-Checked="@BrokerIdentifier.UseAIChat" Style="margin-left: -15px" />
                                     </div>
+                                    }
                                 </div>
                                 <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Link Colour </label>
@@ -364,14 +365,14 @@
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.FirebaseClient)" />
                                     </div>
                                 </div>
-
+                            @if (!IsCreatingWhiteLabel){
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Invitation Message </label>
                                     <div class="col-sm-10 ">
                                         <MudTextField Lines="5" style="white-space: pre-line; background-color: white;" @bind-Value="@BrokerIdentifier.InvitationMessage" />
                                     </div>
                                 </div>
-
+                            }
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Header Colour </label>
                                     <div class="col-sm-10 ">
@@ -384,7 +385,7 @@
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.HeaderColumnBGColour)" />
                                     </div>
                                 </div>
-
+                            @if (!IsCreatingWhiteLabel){
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Page 1 Title </label>
                                     <div class="col-sm-10 ">
@@ -456,14 +457,23 @@
                                         <ValidationMessage class="offset-sm-3" For="@(() => BrokerIdentifier.OnboardingThankYouText)" />
                                     </div>
                                 </div>
+                            }
+                            @if (IsCreatingWhiteLabel){
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Has limited functionality</label>
+                                    <div class="col-sm-2 ">
+                                        <MudCheckBox @bind-Checked="@BrokerIdentifier.IsLimitedBroker"  Style="margin-left: -15px" />
+                                    </div>
+                                </div>
+                            }
                             </div>
                         </div>
                         <div>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Update Broker Identifier</MudButton>
                             @if (IsAdmin)
                             {
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-lg-2 mt-1">Cancel Update Identifier</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link mr-2 mt-1">Cancel</MudButton>
                             }
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Save</MudButton>
                         </div>
                     </EditForm>
                 </MudTabPanel>                   

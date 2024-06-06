@@ -38,6 +38,20 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         public string SpinnerVisible { get; set; }
 
+        public bool MaxTemplatesReached
+        {
+            get
+            {
+                if (Broker is null) return true; // disabled while broker is not set
+
+                if (Broker.BrokerIdentifier is null || Broker.BrokerIdentifier.Id == 0) return false; // non white labels always unlimited
+
+                if (DefinedMessages is null) return true; // disabled while messages not loaded
+
+                return DefinedMessages.Count() >= Broker.BrokerIdentifier.MaxTemplates;
+            }
+        }
+
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
@@ -48,7 +62,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             DefinedMessages = new List<BrokerDefinedMessageDto>(await BrokerDefinedMessageService.GetAllForCurrentBroker());
             LastSortOrder = 0;
-            if(DefinedMessages!=null && DefinedMessages.Any())
+            if (DefinedMessages != null && DefinedMessages.Any())
             {
                 var maxSort = DefinedMessages.OrderByDescending(item => item.SortOrder).FirstOrDefault();
                 if (maxSort != null)

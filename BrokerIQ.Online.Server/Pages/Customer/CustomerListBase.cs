@@ -77,6 +77,8 @@ namespace BrokerIQ.Online.Pages
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
+        public bool IsLimitedBroker { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             await GetCustomersInit();
@@ -103,6 +105,8 @@ namespace BrokerIQ.Online.Pages
                     BrokerId = User.MasterBrokerId;
 
                     var broker = await BrokerService.GetBroker(User.MasterBrokerId);
+
+                    IsLimitedBroker = broker.IsLimitedBroker;
 
                     if (broker.BrokerIdentifier.InsuranceOnly)
                     {
