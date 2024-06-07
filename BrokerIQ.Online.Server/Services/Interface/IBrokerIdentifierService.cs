@@ -12,5 +12,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<BrokerIdentifier> AddBrokerIdentifier(CreateBrokerIdentifierDto brokerIdentifier);
 
         Task<bool> DeleteBrokerIdentifier(int id);
+
+        Task<BrokerIdentifier> GetDefaultBrokerIdentifier();
     }
 }
