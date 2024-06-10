@@ -47,5 +47,12 @@ namespace BrokerIQ.Online.Services
             return await this.requestProviderService.Delete(this.BrokerIdentifierUrl + $"/{id}");
         }
 
+        public async Task<BrokerIdentifier> GetDefaultBrokerIdentifier()
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var answer = await this.requestProviderService.Get<BrokerIdentifierDto>(this.BrokerIdentifierUrl+"/GetDefault");
+            return this.mapper.Map<BrokerIdentifier>(answer);
+        }
     }
 }

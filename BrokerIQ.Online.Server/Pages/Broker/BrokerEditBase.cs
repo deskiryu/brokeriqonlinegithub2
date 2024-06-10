@@ -213,6 +213,7 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Canceled)
             {
+                BrokerIdentifier = await this.BrokerIdentifierService.GetDefaultBrokerIdentifier();
                 IsCreatingWhiteLabel = true;
                 StateHasChanged();
             }
