@@ -106,7 +106,6 @@
                                         <div class="card-header">Welcome Video</div>
                                         <div class="card-title my_card_title">@(WelcomeVideo != null ? WelcomeVideo.Name : "")</div>
                                         <div class="card-body my_card_body">
-                                            A
                                             @if (WelcomeVideo != null)
                                             {
                                                 <div class="close" @onclick="@( async () => await RemoveDrag(WelcomeVideo.Id, VideoSendEnum.WelcomeVideo) )"></div>
