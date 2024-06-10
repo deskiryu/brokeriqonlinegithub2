@@ -48,7 +48,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
                 if (DefinedMessages is null) return true; // disabled while messages not loaded
 
-                return DefinedMessages.Count() >= Broker.BrokerIdentifier.MaxTemplates;
+                return Broker.BrokerIdentifier.IsLimitedBroker && DefinedMessages.Count() >= Broker.BrokerIdentifier.MaxTemplates;
             }
         }
 
