@@ -2,16 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Components;
-
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
-using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Services.Interface;
-
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace BrokerIQ.Online.Server.Pages.Customer.Components
@@ -65,18 +61,18 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             var currentDate = DateTime.UtcNow;
 
             var hasIncomeProtection = Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > currentDate);
-            var hasLifeAndIlness = Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Illness && i.ExpiryDate > currentDate);
+            var hasLifeAndIllness = Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Illness && i.ExpiryDate > currentDate);
 
             if (Customer.Employment == EmploymentEnum.SelfEmployed)
             {
-                if (!hasIncomeProtection && !hasLifeAndIlness) return "Customer is self employed, but has neither Income Protection nor Life and Ilness cover.";
+                if (!hasIncomeProtection && !hasLifeAndIllness) return "Customer is self employed, but has neither Income Protection nor Life and Illness cover.";
                 if (!hasIncomeProtection) return "Customer is self employed, but does not have Income Protection cover.";
-                if (!hasLifeAndIlness) return "Customer is self employed, but does not have Life and Ilness cover.";
+                if (!hasLifeAndIllness) return "Customer is self employed, but does not have Life and Illness cover.";
             }
 
             if (Customer.Employment == EmploymentEnum.Employed)
             {
-                return "Customer is employed, but does not have Life and Ilness cover.";
+                return "Customer is employed, but does not have Life and Illness cover.";
             }
 
             return string.Empty;

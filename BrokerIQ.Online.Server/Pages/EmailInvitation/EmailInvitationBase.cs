@@ -643,20 +643,24 @@ namespace BrokerIQ.Online.Pages
         protected async Task EditNote(string note, int id)
         {
             bool succeeded = false;
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", note);
+
+            var dialogParams = new DialogParameters
+            {
+                { "Text", note },
+                { "ShowReminderControls", false}
+            };
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
             if (!result.Canceled)
             {
-                var message = result.Data.ToString();
+                var detail = result.Data as NoteEditDialog.NoteDetail;
                 try
                 {
-                    if (!string.IsNullOrEmpty(message))
+                    if (!string.IsNullOrEmpty(detail.Text))
                     {
                         try
                         {
-                            succeeded = (await TelephoneInviteService.SaveTelephoneNotes(id, message));
+                            succeeded = (await TelephoneInviteService.SaveTelephoneNotes(id, detail.Text));
                         }
                         catch
                         {

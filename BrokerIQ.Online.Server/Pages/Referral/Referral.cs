@@ -46,9 +46,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IJSRuntime js { get; set; }
 
-        public List<ClientReferral> ClientReferralsSent { get; set; }
+        public List<ClientReferral> ClientReferralsSent { get; set; } = new List<ClientReferral>();
 
-        public List<ClientReferral> ClientReferralsSentBase { get; set; }
+        public List<ClientReferral> ClientReferralsSentBase { get; set; } = new List<ClientReferral>();
 
         public HashSet<ClientReferral> ClientReferralsSelected { get; set; }
 
@@ -157,14 +157,16 @@ namespace BrokerIQ.Online.Pages
                     BrokerStaffFirstName = brokerStaff.FirstName;
                 }
 
+                Brokers = new List<Broker>();
+                Broker = (await BrokerService.GetBroker(user.MasterBrokerId, eagerload: true));
+                if (Broker.BrokerIdentifier != null && Broker.BrokerIdentifier.IsLimitedBroker) return;
+
                 ClientReferralsSentBase = (await ClientReferralService.GetReferralsByBrokerId(user.MasterBrokerId))
                     .OrderByDescending(r => r.Id)
                     .ToList();
                 FillBrokerStaff();
                 FillCustomer();
                 ClientReferralsSent = ClientReferralsSentBase;
-                Brokers = new List<Broker>();
-                Broker = (await BrokerService.GetBroker(user.MasterBrokerId, eagerload: true));
             }
             else if (user.IsAdmin)
             {
@@ -271,20 +273,27 @@ namespace BrokerIQ.Online.Pages
         protected async Task EditNote(string note, ClientReferral clientReferral)
         {
             bool succeeded = false;
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", note);
+
+            var dialogParams = new DialogParameters
+            {
+                { "Text", note },
+                { "HasNoteReminder", false },
+                { "ReminderDate", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
+            };
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
             if (!result.Canceled)
             {
-                var message = result.Data.ToString();
+                var detail = result.Data as NoteEditDialog.NoteDetail;
                 try
                 {
-                    if (!string.IsNullOrEmpty(message))
+                    if (!string.IsNullOrEmpty(detail.Text))
                     {
                         try
                         {
-                            clientReferral.ReferralNote = message;
+                            clientReferral.ReferralNote = detail.Text;
+                            clientReferral.NoteReminderDate = detail.ReminderDate;
+
                             var returned = await ClientReferralService.Update(clientReferral);
                             succeeded = returned != null;
                         }
@@ -338,7 +347,6 @@ namespace BrokerIQ.Online.Pages
                 await RefreshInvitationsWithDialogMessage(succeeded, "Something went wrong updating the referral. Please try again");
             }
         }
-
 
         protected void NavigateToOverview()
         {

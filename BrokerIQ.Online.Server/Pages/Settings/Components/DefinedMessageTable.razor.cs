@@ -38,6 +38,20 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         public string SpinnerVisible { get; set; }
 
+        public bool MaxTemplatesReached
+        {
+            get
+            {
+                if (Broker is null) return true; // disabled while broker is not set
+
+                if (Broker.BrokerIdentifier is null || Broker.BrokerIdentifier.Id == 0) return false; // non white labels always unlimited
+
+                if (DefinedMessages is null) return true; // disabled while messages not loaded
+
+                return Broker.BrokerIdentifier.IsLimitedBroker && DefinedMessages.Count() >= Broker.BrokerIdentifier.MaxTemplates;
+            }
+        }
+
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";

@@ -19,7 +19,7 @@
         <DefinedMessageTable Broker="@Broker" User="@User"/>
     </MudTabPanel>
 
-    @if (this.api.Value.ShowProtection)
+    @if (this.api.Value.ShowProtection && ShowReminderSection())
     {
         <MudTabPanel Text="Reminder Options">
             <ReminderOptionTable Broker="@Broker" User="@User"/>
