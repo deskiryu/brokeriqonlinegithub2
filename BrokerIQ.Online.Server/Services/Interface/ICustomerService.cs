@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Request;
+using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Models;
 
@@ -32,5 +34,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task Disconnect(int connectedCustomerId);
 
         Task<bool> SetProfilePicture(int customerId, byte[] picture);
+
+        Task<ImportResponse> Import(ImportRequest request);
     }
 }

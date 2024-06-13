@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Components;
-
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Extensions;
@@ -12,7 +8,7 @@ using BrokerIQ.Online.Server.Models;
 using BrokerIQ.Online.Server.Pages.Customer.Components;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
-
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
@@ -79,6 +75,8 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsLimitedBroker { get; set; }
 
+        public bool CanImport { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             await GetCustomersInit();
@@ -107,6 +105,7 @@ namespace BrokerIQ.Online.Pages
                     var broker = await BrokerService.GetBroker(User.MasterBrokerId);
 
                     IsLimitedBroker = broker.IsLimitedBroker;
+                    CanImport = broker.CanImport;
 
                     if (broker.BrokerIdentifier.InsuranceOnly)
                     {
@@ -415,6 +414,24 @@ namespace BrokerIQ.Online.Pages
                 await GetCustomers();
                 await RefreshEmployees();
                 StateHasChanged();
+            }
+        }
+
+        protected async Task ShowImportDialog()
+        {
+            var dialogParams = new DialogParameters
+            {
+                { "BrokerId", BrokerId},
+            };
+
+            var result = await DialogService.Show<CustomerImportDialog>("Import customers", dialogParams).Result;
+
+            if (!result.Canceled)
+            {
+                await GetCustomers();
+                StateHasChanged();
+
+
             }
         }
     }

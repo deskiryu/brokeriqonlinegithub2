@@ -1,0 +1,41 @@
+<MudDialog>
+    <DialogContent>
+        <div class="d-flex flex-column align-center">
+
+            <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
+                <ButtonTemplate>
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Class="mb-1"
+                               Style="@($"color:{Colors.Shades.Black}")"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               for="@context.Id">
+                        Select CSV file
+                    </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+            <MudText Class="@CurrentFileClass">Current File : @CurrentFileName</MudText>
+        </div>
+
+        <div Class="@ErrorListClass">
+            <MudText Class="mb-1">Please review these errors and re-submit your file.</MudText>
+            <div class="d-flex flex-column">
+                @foreach (var error in ImportErrors)
+                {
+                    if (error.Line == 0)
+                    {
+                        <MudText Typo="Typo.body2" Style="@($"color:{Colors.Red.Darken1}")">@error.ErrorMessage</MudText>
+                        continue;
+                    }
+
+                    <MudText Typo="Typo.body2" Class="mud-error">Line @error.Line : @error.ErrorMessage</MudText>
+                }
+            </div>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Disabled="IsBusy">Cancel</MudButton>
+        <MudButton OnClick="ImportFromFile" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" Disabled="DisableImportButton">Import</MudButton>
+    </DialogActions>
+</MudDialog>

@@ -13,6 +13,8 @@ using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Models;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Dto.Response;
+using BrokerIQ.Dto.Request;
 
 namespace BrokerIQ.Online.Services
 {
@@ -203,6 +205,14 @@ namespace BrokerIQ.Online.Services
             await this.requestProviderService.Post<ProfilePictureDto, CustomerDto>($"{this.customerUrl}/profile_picture", postData);
 
             return true;
+        }
+
+        public async Task<ImportResponse> Import(ImportRequest request)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<ImportRequest, ImportResponse>($"{this.customerUrl}/import", request);
         }
     }
 }
