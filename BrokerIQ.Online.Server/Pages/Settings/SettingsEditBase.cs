@@ -294,5 +294,14 @@ namespace BrokerIQ.Online.Pages
             await DialogService.Show<AlertDialog>("Notification Preferences", dialogParams).Result;
 
         }
+
+        protected bool ShowReminderSection()
+        {
+            if (Broker is null) return false; // disabled while broker is not set
+
+            if (Broker.BrokerIdentifier is null || Broker.BrokerIdentifier.Id == 0) return true;
+
+            return !Broker.BrokerIdentifier.IsLimitedBroker || Broker.BrokerIdentifier.HasReminders;
+        }
     }
 }

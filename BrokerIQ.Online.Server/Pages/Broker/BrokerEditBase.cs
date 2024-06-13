@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Components.Forms;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Models;
-using BrokerIQ.Online.Server.Services;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
+using BrokerIQ.Dto.Models;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -56,6 +56,8 @@ namespace BrokerIQ.Online.Pages
         public bool IsAdmin { get; set; }
 
         public bool IsMinorAdmin { get; set; }
+
+        public bool IsCreatingWhiteLabel { get; set; } = false;
 
         public BrokerEditBase()
         {
@@ -138,20 +140,29 @@ namespace BrokerIQ.Online.Pages
         {
             StatusClass = "alert-success";
             Message = "Broker identifier updated successfully.";
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"Are you absolutely sure you want to change white label settings for {Broker.Name}? This changes can affect app, email and notifications!!!!");
+            var dialogParams = new DialogParameters
+            {
+                { "Message", $"Are you absolutely sure you want to change white label settings for {Broker.Name}? This changes can affect app, email and notifications!!!!" }
+            };
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Canceled)
             {
                 try
                 {
-                    await BrokerIdentifierService.UpdateBrokerIdentifier(BrokerIdentifier);
+                    if (IsCreatingWhiteLabel)
+                    {
+                        await BrokerIdentifierService.AddBrokerIdentifier(GetCreateBrokerIdentifierFrom(BrokerIdentifier));
+                        IsCreatingWhiteLabel = false;
+                    }
+                    else
+                    {
+                        await BrokerIdentifierService.UpdateBrokerIdentifier(BrokerIdentifier);
+                    }
                 }
                 catch
                 {
                     StatusClass = "alert-danger";
                     Message = "Something went wrong updating the Broker Identifier. Please try again.";
-
                 }
                 finally
                 {
@@ -161,31 +172,51 @@ namespace BrokerIQ.Online.Pages
 
         }
 
+        private CreateBrokerIdentifierDto GetCreateBrokerIdentifierFrom(BrokerIdentifier brokerIdentifier)
+        {
+            return new CreateBrokerIdentifierDto()
+            {
+                BrokerId = Broker.Id,
+                BundleIdentifier = brokerIdentifier.BundleIdentifier,
+                BackgroundColour = brokerIdentifier.BackgroundColour,
+                TextColour = brokerIdentifier.TextColour,
+                HttpLink = brokerIdentifier.HttpLink,
+                HttpAddress = brokerIdentifier.HttpAddress,
+                AppName = brokerIdentifier.AppName,
+                Invert = brokerIdentifier.Invert,
+                LinkColour = brokerIdentifier.LinkColour,
+                AppStoreLink = brokerIdentifier.AppStoreLink,
+                PlayStoreLink = brokerIdentifier.PlayStoreLink,
+                FromEmailName = brokerIdentifier.FromEmailName,
+                FromEmailAddress = brokerIdentifier.FromEmailAddress,
+                WelcomeVideoUrl = brokerIdentifier.WelcomeVideoUrl,
+                HubClientConnectString = brokerIdentifier.HubClientConnectString,
+                HubClientName = brokerIdentifier.HubClientName,
+                FirebaseKey = brokerIdentifier.FirebaseKey,
+                FirebaseClient = brokerIdentifier.FirebaseClient,
+                EmailTagLine = brokerIdentifier.EmailTagLine,
+                InsuranceOnly = brokerIdentifier.InsuranceOnly,
+                IsLimitedBroker = brokerIdentifier.IsLimitedBroker,
+            };
+        }
+
         protected async Task AddIdentifier()
         {
             StatusClass = "alert-success";
             Message = "Broker identifier added successfully.";
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"Are you absolutely sure you want to add white label settings for {Broker.Name}? This changes can SERIOUSLY affect app, email and notifications!!!!");
+
+            var dialogParams = new DialogParameters
+            {
+                { "Message", $"Are you absolutely sure you want to add white label settings for {Broker.Name}? This changes can SERIOUSLY affect app, email and notifications!!!!" }
+            };
+
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Canceled)
             {
-                try
-                {
-                    await BrokerIdentifierService.AddBrokerIdentifier(Broker.Id);
-                }
-                catch
-                {
-                    StatusClass = "alert-danger";
-                    Message = "Something went wrong adding the Broker Identifier. Please try again.";
-
-                }
-                finally
-                {
-                    Saved = true;
-                }
+                BrokerIdentifier = await this.BrokerIdentifierService.GetDefaultBrokerIdentifier();
+                IsCreatingWhiteLabel = true;
+                StateHasChanged();
             }
-
         }
 
         protected async Task DeleteIdentifier()

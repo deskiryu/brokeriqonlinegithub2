@@ -1,14 +1,14 @@
 ﻿using System.Threading.Tasks;
 
+using AutoMapper;
+
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
+
 namespace BrokerIQ.Online.Services
 {
-    using Abstract;
-    using AutoMapper;
-    using BrokerIQ.Online.Server.Models;
-    using Interface;
-    using BrokerIQ.Dto.Models;
-    using BrokerIQ.Online.Models;
-
     public class BrokerIdentifierService : IBrokerIdentifierService
     {
         private readonly string BrokerIdentifierUrl = "BrokerIdentifier";
@@ -23,7 +23,6 @@ namespace BrokerIQ.Online.Services
             this.accountService = accountService;
         }
 
-
         public async Task<BrokerIdentifier> UpdateBrokerIdentifier(BrokerIdentifier brokerIdentifier)
         {
             var user = await this.accountService.GetUser();
@@ -33,11 +32,11 @@ namespace BrokerIQ.Online.Services
             return this.mapper.Map<BrokerIdentifier>(answer);
         }
 
-        public async Task<BrokerIdentifier> AddBrokerIdentifier(int brokerID)
+        public async Task<BrokerIdentifier> AddBrokerIdentifier(CreateBrokerIdentifierDto brokerIdentifier)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var answer = await this.requestProviderService.Post<BrokerIdentifierDto>(this.BrokerIdentifierUrl+$"/{brokerID}");
+            var answer = await this.requestProviderService.Post<CreateBrokerIdentifierDto, BrokerIdentifierDto>(this.BrokerIdentifierUrl, brokerIdentifier);
             return this.mapper.Map<BrokerIdentifier>(answer);
         }
 
@@ -48,5 +47,12 @@ namespace BrokerIQ.Online.Services
             return await this.requestProviderService.Delete(this.BrokerIdentifierUrl + $"/{id}");
         }
 
+        public async Task<BrokerIdentifier> GetDefaultBrokerIdentifier()
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var answer = await this.requestProviderService.Get<BrokerIdentifierDto>(this.BrokerIdentifierUrl+"/GetDefault");
+            return this.mapper.Map<BrokerIdentifier>(answer);
+        }
     }
 }

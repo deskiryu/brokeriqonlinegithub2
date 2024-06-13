@@ -8,15 +8,22 @@
 
 <h3>Referrals</h3>
 
-@if (!Saved)
+@if (Broker.IsLimitedBroker)
 {
-    @if (ClientReferralsSent == null)
-    {
-        <div>
-            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-        </div>
-    }
-    else
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Upgrade your BrokerIQ</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText>You will be able to access your clients referrals along with other perks.</MudText>
+        </MudCardContent>
+    </MudCard>
+}
+else
+{
+    @if (!Saved)
     {
         <div class="card">
             <div class="card-header">
@@ -29,64 +36,66 @@
                     <div class="col-lg-6 control_wrapper mb-5">
                         <label>Filter By Referrer</label>
                         <input @bind-value="NameSearchTerm" @bind-value:event="oninput" placeholder="Type referrer name"
-                            class="filter_customerBroker" />
+                               class="filter_customerBroker" />
                     </div>
                     <div class="col-lg-6 control_wrapper mb-5">
                         <label>Filter By Name</label>
                         <input @bind-value="ReferralSearchTerm" @bind-value:event="oninput" placeholder="Type name"
-                            class="filter_customerBroker" />
+                               class="filter_customerBroker" />
                     </div>
                 </div>
 
-        @if (IsAdmin)
-        {
-                <div class="row mt-1">
+                @if (IsAdmin)
+                {
+                    <div class="row mt-1">
 
-                    <div class="col-lg-6 control_wrapper mb-5">
-                        <MudSelect T="int" Label="Filter By Broker" Placeholder="Select" Clearable="true" @bind-Value="BrokerId"
-                            SelectedValuesChanged="@AutoCompleteClickBroker" AdornmentColor="Color.Primary">
-                            <MudSelectItem Value="0">Select</MudSelectItem>
-                            @foreach (var item in @Brokers)
-                            {
-                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                            }
-                        </MudSelect>
+                        <div class="col-lg-6 control_wrapper mb-5">
+                            <MudSelect T="int" Label="Filter By Broker" Placeholder="Select" Clearable="true" @bind-Value="BrokerId"
+                                       SelectedValuesChanged="@AutoCompleteClickBroker" AdornmentColor="Color.Primary">
+                                <MudSelectItem Value="0">Select</MudSelectItem>
+                                @foreach (var item in @Brokers)
+                                {
+                                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
                     </div>
-                </div>
-        }
+                }
                 <div class="card">
                     <div class="card-header">Email Invites</div>
                     <div class="card-body">
                         <MudTable Items="@FilteredClientReferrals" Hover="true" SortLabel="Sort By" MultiSelection="true"
-                        @bind-SelectedItems="ClientReferralsSelected">
+                                  @bind-SelectedItems="ClientReferralsSelected">
                             <HeaderContent>
                                 @if (IsAdmin)
                                 {
-                                    <MudTh><MudTableSortLabel
-                                        SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.BrokerName)">Broker</MudTableSortLabel></MudTh>
+                                    <MudTh>
+                                        <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x => x.BrokerName)">Broker</MudTableSortLabel>
+                                    </MudTh>
                                 }
                                 <MudTh>
-                                    <MudTableSortLabel
-                                        SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.CustomerName)">
-                                        Referred By</MudTableSortLabel>
+                                    <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x => x.CustomerName)">
+                                        Referred By
+                                    </MudTableSortLabel>
                                 </MudTh>
                                 <MudTh>
-                                    <MudTableSortLabel
-                                        SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralName)">Name
+                                    <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x => x.ReferralName)">
+                                        Name
                                     </MudTableSortLabel>
                                 </MudTh>
                                 <MudTh>
                                     <MudTableSortLabel Enabled="@false"
-                                        SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralEmailAddress)">
-                                        Email</MudTableSortLabel>
+                                                       SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x => x.ReferralEmailAddress)">
+                                        Email
+                                    </MudTableSortLabel>
                                 </MudTh>
                                 <MudTh>
-                                    <MudTableSortLabel
-                                        SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ReferralTelephoneNumber)">
-                                        Phone</MudTableSortLabel>
+                                    <MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x => x.ReferralTelephoneNumber)">
+                                        Phone
+                                    </MudTableSortLabel>
                                 </MudTh>
                                 <MudTh>App Registered</MudTh>
-                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x=>x.ConvertedToProduct.GetDisplayName())">Status</MudTableSortLabel></MudTh>
+                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.ClientReferral, object>(x => x.ConvertedToProduct.GetDisplayName())">Status</MudTableSortLabel></MudTh>
                                 <MudTh>Prize Awarded</MudTh>
                                 <MudTh>Notes</MudTh>
                                 <MudTh>Delete</MudTh>
@@ -127,21 +136,21 @@
                                 </MudTd>
                                 <MudTd DataLabel="Notes">
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                                        Style="@($"color:{Colors.Shades.Black};")"
-                                        OnClick="() => EditNote(context.ReferralNote, context)"
-                                        class="btn btn-primary table-btn">
+                                               Style="@($"color:{Colors.Shades.Black};")"
+                                               OnClick="() => EditNote(context.ReferralNote, context)"
+                                               class="btn btn-primary table-btn">
                                         <i class="fas fa-sticky-note"></i>
                                     </MudButton>
                                 </MudTd>
                                 <MudTd DataLabel="">
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                                        Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteLink(context.Id))">
+                                               Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteLink(context.Id))">
                                         <i class="fas fa-trash"></i>
                                     </MudButton>
                                 </MudTd>
                             </RowTemplate>
                             <PagerContent>
-                                <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
+                                <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
                             </PagerContent>
                         </MudTable>
                     </div>
@@ -149,11 +158,10 @@
             </div>
         </div>
     }
+    else
+    {
+        <div class="alert @StatusClass">@Message</div>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+                   OnClick="@NavigateToOverview" class="btn btn-link">Back to invite list</MudButton>
+    }
 }
-else
-{
-    <div class="alert @StatusClass">@Message</div>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
-        OnClick="@NavigateToOverview" class="btn btn-link">Back to invite list</MudButton>
-}
-

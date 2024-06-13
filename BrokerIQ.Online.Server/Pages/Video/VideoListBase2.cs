@@ -1,30 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.IO;
-using System.Diagnostics;
-using System.Globalization;
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.JSInterop;
+using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {
-
-    using Microsoft.AspNetCore.Components;
-    using Microsoft.AspNetCore.Components.Forms;
-    using MudBlazor;
-    using BrokerIQ.Dto.Models;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Online.Services.Interface;
-    using BrokerIQ.Online.Server.Shared;
-    using BrokerIQ.Online.Models;
-    using System.ComponentModel.DataAnnotations;
-    using BrokerIQ.Online.Server.Helper;
-    using Microsoft.JSInterop;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
-    using Dto.Enum;
-    using MudBlazor;
-    using BrokerIQ.Online.Server.Extensions;
-
     public class DropItem
     {
         public string Name { get; init; }
@@ -118,6 +111,10 @@ namespace BrokerIQ.Online.Pages
 
         public Video SendDateVideo4 { get; set; }
 
+        protected bool IsLimitedBroker { get; set; }
+
+        protected int MaxVideos { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
@@ -133,6 +130,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     throw new Exception();
                 }
+
                 IsMinorAdmin = false;
                 if (user.IsAdmin || user.IsMinorAdmin || user.MasterBrokerId == 0)
                 {
@@ -148,6 +146,10 @@ namespace BrokerIQ.Online.Pages
                     IsAdminStaff = user.IsAdminStaff;
                     BrokerId = user.MasterBrokerId;
                     IsBrokerStaff = user.IsBrokerStaff;
+
+                    var broker = await BrokerService.GetBroker(user.MasterBrokerId);
+                    IsLimitedBroker = broker.IsLimitedBroker;
+                    MaxVideos = broker.BrokerIdentifier.MaxVideos;
                 }
                 else
                 {

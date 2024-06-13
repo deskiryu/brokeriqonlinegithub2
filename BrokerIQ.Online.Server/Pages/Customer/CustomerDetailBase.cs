@@ -3,13 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Options;
-using Microsoft.JSInterop;
-
 using BrokerIQ.Dto;
 using BrokerIQ.Dto.CreateDto;
 using BrokerIQ.Dto.Enum;
@@ -23,7 +16,11 @@ using BrokerIQ.Online.Server.Pages.Customer.Components;
 using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
-
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Options;
+using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
@@ -86,6 +83,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
+
+        [Inject]
+        public ISnackbar Snackbar { get; set; }
 
         [Inject]
         protected IJSRuntime js { get; set; }
@@ -540,89 +540,75 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task NewNote()
         {
-            bool succeeded = false;
-            var result = await DialogService.Show<NoteEditDialog>("New Note").Result;
+            var dialogParams = new DialogParameters
+            {
+                { "Text", string.Empty },
+                { "HasNoteReminder", false },
+                { "ReminderDate", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
+            };
+
+            var result = await DialogService.Show<NoteEditDialog>("New Note", dialogParams).Result;
             if (!result.Canceled)
             {
-                var message = result.Data.ToString();
+                var data = result.Data as NoteEditDialog.NoteDetail;
 
                 try
                 {
-                    if (!string.IsNullOrEmpty(message))
-                    {
-                        succeeded = (await NoteService.SaveNote(message, Customer.Id)).Id > 0;
-                    }
+                    await NoteService.SaveNote(data.Text, data.ReminderDate, Customer.Id);
+
+                    Snackbar.Add("Note was saved", Severity.Success);
                 }
                 catch
                 {
-
+                    Snackbar.Add("Unable to save note. Please try again", Severity.Error);
                 }
-            }
-            else
-            {
-                return;
-            }
 
-            if (succeeded)
-            {
-                await RefreshNotesWithDialogMessage(succeeded, "Note added successfully");
-            }
-            else
-            {
-                await RefreshNotesWithDialogMessage(succeeded, "Something went wrong adding the note. Please try again.");
+                await SetNotesFromInterval(noteFilterStartDate.Value, noteFilterEndDate.Value);
+
+                StateHasChanged();
             }
         }
 
         protected async Task EditNote(int id)
         {
-            bool succeeded = false;
             var note = Notes.FirstOrDefault(x => x.Id == id);
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", note.Message);
+            
+            var dialogParams = new DialogParameters
+            {
+                { "Text", note.Message },
+                { "HasNoteReminder", note.ReminderDate != null },
+                { "ReminderDate", note.ReminderDate},
+            };
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
             if (!result.Canceled)
             {
-                var message = result.Data.ToString();
+                var data = result.Data as NoteEditDialog.NoteDetail;
                 try
                 {
-                    if (!string.IsNullOrEmpty(message))
-                    {
-                        try
-                        {
-                            succeeded = (await NoteService.UpdateNote(message, note.Id)).Id > 0;
-                        }
-                        catch
-                        {
-                            await RefreshNotesWithDialogMessage(false, "Something went wrong updating the Note. Please try again.");
-                        }
-                    }
+                    await NoteService.UpdateNote(data.Text, data.ReminderDate, note.Id);
+
+                    Snackbar.Add("Note was saved", Severity.Success);
                 }
                 catch
                 {
-
+                    Snackbar.Add("Unable to save note. Please try again", Severity.Error);
                 }
-            }
-            else
-            {
-                return;
-            }
 
-            if (succeeded)
-            {
-                await RefreshNotesWithDialogMessage(succeeded, "Note updated successfully");
-            }
-            else
-            {
-                await RefreshNotesWithDialogMessage(succeeded, "Something went wrong updating the note. Please try again");
+                await SetNotesFromInterval(noteFilterStartDate.Value, noteFilterEndDate.Value);
+
+                StateHasChanged();
             }
         }
 
         protected async Task DeleteNote(int id)
         {
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"Are you sure you want to delete this note?");
-            var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
+            var dialogParams = new DialogParameters
+            {
+                { "Message", $"Are you sure you want to delete this note?" }
+            };
+
+            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Canceled)
             {
                 var deleted = await NoteService.Delete(id);
@@ -634,10 +620,6 @@ namespace BrokerIQ.Online.Pages
                 {
                     await RefreshNotesWithDialogMessage(deleted, "The note did not delete.");
                 }
-            }
-            else
-            {
-                return;
             }
         }
 
