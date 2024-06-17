@@ -14,7 +14,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 {
     public partial class CustomerImportDialog : ComponentBase
     {
-        private const string  SAMPLE_CONTENT = @"Title;Forename;Surname;Nationality;Telephone;Email;AddressLine;City;PostCode;DateOfBirth;Employment;ResidentialStatus
+        private const string SAMPLE_CONTENT = @"Title;Forename;Surname;Nationality;Telephone;Email;AddressLine;City;PostCode;DateOfBirth;Employment;ResidentialStatus
 Dr;Graham;Morales;1;070 9711 7201;m-graham@aol.couk;343-4795 Lectus Avenue;Devizes;RD8Q 6FA;1937-03-02;4;1
 Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kington;LJ8 5UJ;1939-07-23;2;3";
 
@@ -22,7 +22,7 @@ Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kingt
         MudDialogInstance MudDialog { get; set; }
 
         [Inject]
-        protected IJSRuntime js { get; set; }
+        protected IJSRuntime JSRuntime { get; set; }
 
         [Inject]
         public ISnackbar Snackbar { get; set; }
@@ -37,7 +37,9 @@ Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kingt
 
         private ImportResponse ImportResult { get; set; }
 
-        private string CurrentFileClass => csvFile is not null ? "visible" : "invisible";
+        public bool HasValidRecords => ImportResult is not null && ImportResult.RecordsImportedCount > 0;
+
+        private string CurrentFileClass => csvFile is not null ? string.Empty : "d-none";
 
         private string CurrentFileName => csvFile is not null ? csvFile.Name : string.Empty;
 
@@ -45,15 +47,33 @@ Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kingt
 
         private bool WasSimulatedRun { get; set; } = true;
 
-        private bool DisableImportButton => csvFile is null || IsBusy || !WasSimulatedRun;
+        private bool ShoulSendInvites { get; set; }
 
-        private string SimulationResultClass => ImportResult is null ? "mt-2 p-1 invisible" : "mt-2 p-1 visible";
+        private bool DisableImportButton
+        {
+            get
+            {
+                if (ImportResult is not null) return ImportResult.RecordsImportedCount == 0;
 
-        private string ErrorRecordsClass => WasSimulatedRun ? "invisible" : "visible";
+                return csvFile is null || IsBusy || !WasSimulatedRun;
+            }
+        }
+
+        private string ImportResultsClass => ImportResult is null ? "mt-2 p-1 d-none" : "mt-2 p-1";
+
+        private string ErrorRecordsDownloadClass => WasSimulatedRun ? "d-none" : string.Empty;
 
         private string ImportButtonText => ImportResult is null ? "Simulate Import" : "Import";
 
-        private string SucessfulRecordsMessage => ImportResult is null ? string.Empty : $"Records to import : {ImportResult.RecordsImportedCount}.";
+        private string SucessfulRecordsMessage
+        {
+            get
+            {
+                if (ImportResult is null) return string.Empty;
+
+                return WasSimulatedRun ? $"Records to import : {ImportResult.RecordsImportedCount}." : $"Records imported : {ImportResult.RecordsImportedCount}.";
+            }
+        }
 
         private string ErrorRecordsMessage
         {
@@ -64,9 +84,13 @@ Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kingt
                 // Exception error, display message returned
                 if (ImportResult.Errors.Count() == 1 && ImportResult.Errors.First().Line == 0) return ImportResult.Errors.First().ErrorMessage;
 
-                return ImportResult is not null && ImportResult.RecordsInErrorCount > 0 ? $"Records with errors : {ImportResult.RecordsInErrorCount}." : string.Empty;
+                if (ImportResult.RecordsInErrorCount == 0) return string.Empty;
+
+                return WasSimulatedRun ? $"Records with errors : {ImportResult.RecordsInErrorCount}." : $"Records NOT imported : {ImportResult.RecordsInErrorCount}.";
             }
         }
+
+        public string InviteBoxClass { get; set; } = "d-none";
 
         private void Cancel()
         {
@@ -76,6 +100,10 @@ Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kingt
         private void SaveFile(IBrowserFile file)
         {
             csvFile = file;
+
+            ImportResult = null;
+
+            StateHasChanged();
         }
 
         private async Task ImportFromFile()
@@ -96,7 +124,8 @@ Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kingt
                 BrokerId = BrokerId,
                 FileName = csvFile.Name,
                 CsvFile = fileContent,
-                IsSimulatedRun = ImportResult is null
+                IsSimulatedRun = ImportResult is null,
+                SendAppInviteToCustomers = ShoulSendInvites
             };
 
             ImportResult = await CustomerService.Import(request);
@@ -109,20 +138,24 @@ Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kingt
 
                 WasSimulatedRun = request.IsSimulatedRun;
 
+                InviteBoxClass = "d-none";
+
                 return;
             }
+
+            InviteBoxClass = HasValidRecords ? string.Empty : "d-none";
         }
 
         private async Task SaveSampleFile()
         {
             byte[] fileContent = Encoding.UTF8.GetBytes(SAMPLE_CONTENT);
-            await Extensions.Extensions.SaveAs(js, "Sample.csv", fileContent);
+            await Extensions.Extensions.SaveAs(JSRuntime, "Sample.csv", fileContent);
         }
 
         private async Task SaveRecordsInError()
         {
             byte[] fileContent = Encoding.UTF8.GetBytes(ImportResult.RecordsInError);
-            await Extensions.Extensions.SaveAs(js, "ErrorRecords.csv", fileContent);
+            await Extensions.Extensions.SaveAs(JSRuntime, "ErrorRecords.csv", fileContent);
         }
     }
 }

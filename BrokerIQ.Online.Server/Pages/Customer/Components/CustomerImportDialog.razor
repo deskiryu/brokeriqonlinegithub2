@@ -8,7 +8,7 @@
                     <MudButton HtmlTag="label"
                                Variant="Variant.Filled"
                                Color="Color.Primary"
-                               Class="mb-1"
+                               Class="m-1"
                                Style="@($"color:{Colors.Shades.Black}")"
                                StartIcon="@Icons.Material.Filled.CloudUpload"
                                for="@context.Id">
@@ -18,11 +18,13 @@
             </MudFileUpload>
             <MudText Class="@CurrentFileClass">Current File : @CurrentFileName</MudText>
 
-            <div Class="@SimulationResultClass">
-                <MudText Class="mb-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
-                <MudText Class="mb-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
-                <MudLink OnClick="SaveRecordsInError" Color="Color.Tertiary" Class="@ErrorRecordsClass">Save records in error</MudLink>
+            <div Class="@ImportResultsClass">
+                <MudText Class="m-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
+                <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
+                <MudLink OnClick="SaveRecordsInError" Color="Color.Tertiary" Class="@ErrorRecordsDownloadClass">Download records in error</MudLink>
             </div>
+
+            <MudCheckBox T="bool" @bind-Value="@ShoulSendInvites" Class="@InviteBoxClass">Send invites to imported customers</MudCheckBox>
         </div>
     </DialogContent>
     <DialogActions>
