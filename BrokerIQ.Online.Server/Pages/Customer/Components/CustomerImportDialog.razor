@@ -1,6 +1,7 @@
 <MudDialog>
     <DialogContent>
         <div class="d-flex flex-column align-center">
+            <MudLink OnClick="SaveSampleFile" Color="Color.Tertiary">Download sample file</MudLink>
 
             <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
                 <ButtonTemplate>
@@ -16,26 +17,16 @@
                 </ButtonTemplate>
             </MudFileUpload>
             <MudText Class="@CurrentFileClass">Current File : @CurrentFileName</MudText>
-        </div>
 
-        <div Class="@ErrorListClass">
-            <MudText Class="mb-1">Please review these errors and re-submit your file.</MudText>
-            <div class="d-flex flex-column">
-                @foreach (var error in ImportErrors)
-                {
-                    if (error.Line == 0)
-                    {
-                        <MudText Typo="Typo.body2" Style="@($"color:{Colors.Red.Darken1}")">@error.ErrorMessage</MudText>
-                        continue;
-                    }
-
-                    <MudText Typo="Typo.body2" Class="mud-error">Line @error.Line : @error.ErrorMessage</MudText>
-                }
+            <div Class="@SimulationResultClass">
+                <MudText Class="mb-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
+                <MudText Class="mb-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
+                <MudLink OnClick="SaveRecordsInError" Color="Color.Tertiary" Class="@ErrorRecordsClass">Save records in error</MudLink>
             </div>
         </div>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel" Disabled="IsBusy">Cancel</MudButton>
-        <MudButton OnClick="ImportFromFile" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" Disabled="DisableImportButton">Import</MudButton>
+        <MudButton OnClick="Cancel" Disabled="IsBusy">Close</MudButton>
+        <MudButton OnClick="ImportFromFile" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" Disabled="DisableImportButton">@ImportButtonText</MudButton>
     </DialogActions>
 </MudDialog>

@@ -424,15 +424,10 @@ namespace BrokerIQ.Online.Pages
                 { "BrokerId", BrokerId},
             };
 
-            var result = await DialogService.Show<CustomerImportDialog>("Import customers", dialogParams).Result;
+            await DialogService.Show<CustomerImportDialog>("Import customers", dialogParams).Result;
 
-            if (!result.Canceled)
-            {
-                await GetCustomers();
-                StateHasChanged();
-
-
-            }
+            await GetCustomers();
+            StateHasChanged();
         }
     }
 }
