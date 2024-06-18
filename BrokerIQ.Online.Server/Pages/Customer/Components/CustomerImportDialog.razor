@@ -20,8 +20,15 @@
 
             <div Class="@ImportResultsClass">
                 <MudText Class="m-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
-                <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
-                <MudLink OnClick="SaveRecordsInError" Color="Color.Tertiary" Class="@ErrorRecordsDownloadClass">Download records in error</MudLink>
+                <div class="d-flex">
+                    <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
+                    <MudTooltip Text="Download error list">
+                        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Small" OnClick="SaveErrorMessages" Class="@ErrorMessagesDownloadClass" />
+                    </MudTooltip>
+                    <MudTooltip Text="Download records in error">
+                        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Small" OnClick="SaveRecordsInError" Class="@ErrorRecordsDownloadClass" />
+                    </MudTooltip>
+                </div>
             </div>
 
             <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Class="@InviteBoxClass">Send invites to imported customers</MudCheckBox>

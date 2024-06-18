@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using MudBlazor;
 using System.Text;
+using System;
 
 namespace BrokerIQ.Online.Server.Pages.Customer.Components
 {
@@ -65,11 +66,21 @@ Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kingt
 
         private string ImportResultsClass => ImportResult is null ? "mt-2 p-1 d-none" : "mt-2 p-1";
 
+        private string ErrorMessagesDownloadClass
+        {
+            get
+            {
+                if (ImportResult is null || !WasSimulatedRun) return "d-none";
+
+                return ImportResult.RecordsInErrorCount > 0 ? string.Empty : "d-none";
+            }
+        }
+
         private string ErrorRecordsDownloadClass
         {
             get
             {
-                if (WasSimulatedRun) return "d-none";
+                if (ImportResult is null || WasSimulatedRun) return "d-none";
 
                 return ImportResult.RecordsInErrorCount > 0 ? string.Empty : "d-none";
             }
@@ -162,6 +173,14 @@ Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kingt
         {
             byte[] fileContent = Encoding.UTF8.GetBytes(SAMPLE_CONTENT);
             await Extensions.Extensions.SaveAs(JSRuntime, "Sample.csv", fileContent);
+        }
+
+        private async Task SaveErrorMessages()
+        {
+            var messages = string.Join(Environment.NewLine, ImportResult.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
+
+            byte[] fileContent = Encoding.UTF8.GetBytes(messages);
+            await Extensions.Extensions.SaveAs(JSRuntime, "ErrorMessages.csv", fileContent);
         }
 
         private async Task SaveRecordsInError()
