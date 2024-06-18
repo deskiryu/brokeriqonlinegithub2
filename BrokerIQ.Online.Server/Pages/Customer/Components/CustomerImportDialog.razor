@@ -24,7 +24,7 @@
                 <MudLink OnClick="SaveRecordsInError" Color="Color.Tertiary" Class="@ErrorRecordsDownloadClass">Download records in error</MudLink>
             </div>
 
-            <MudCheckBox T="bool" @bind-Value="@ShoulSendInvites" Class="@InviteBoxClass">Send invites to imported customers</MudCheckBox>
+            <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Class="@InviteBoxClass">Send invites to imported customers</MudCheckBox>
         </div>
     </DialogContent>
     <DialogActions>

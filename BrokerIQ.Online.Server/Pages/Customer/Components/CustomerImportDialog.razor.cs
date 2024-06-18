@@ -53,15 +53,27 @@ Dr;Cassady;Hinton;2;07624 157575;hinton-cassady@aol.net;762-9200 Donec St.;Kingt
         {
             get
             {
-                if (ImportResult is not null) return ImportResult.RecordsImportedCount == 0;
+                if (csvFile is null || IsBusy) return true;
 
-                return csvFile is null || IsBusy || !WasSimulatedRun;
+                if (ImportResult is null) return false; // waiting on run
+
+                if (!WasSimulatedRun) return ImportResult is not null; // disable until a new file is selected
+
+                return ImportResult.RecordsImportedCount == 0 || ImportResult.HasFatalError;
             }
         }
 
         private string ImportResultsClass => ImportResult is null ? "mt-2 p-1 d-none" : "mt-2 p-1";
 
-        private string ErrorRecordsDownloadClass => WasSimulatedRun ? "d-none" : string.Empty;
+        private string ErrorRecordsDownloadClass
+        {
+            get
+            {
+                if (WasSimulatedRun) return "d-none";
+
+                return ImportResult.RecordsInErrorCount > 0 ? string.Empty : "d-none";
+            }
+        }
 
         private string ImportButtonText => ImportResult is null ? "Simulate Import" : "Import";
 
