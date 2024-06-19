@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.JsonPatch;
-
 using AutoMapper;
-
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Import;
 using BrokerIQ.Dto.Models;
+using BrokerIQ.Dto.Request;
+using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Models;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Interface;
-using BrokerIQ.Dto.Response;
-using BrokerIQ.Dto.Request;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace BrokerIQ.Online.Services
 {
@@ -213,6 +211,30 @@ namespace BrokerIQ.Online.Services
             this.requestProviderService.Token = user?.Token;
 
             return await this.requestProviderService.Post<ImportRequest, ImportResponse>($"{this.customerUrl}/import", request);
+        }
+
+        public async Task<CsvImportCustomerDto> GetImportDetails(int customerId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Get<CsvImportCustomerDto>($"{this.customerUrl}/{customerId}/import");
+        }
+
+        public async Task<bool> UpdateImportDetails(CsvImportCustomerDto toUpdate)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<CsvImportCustomerDto, bool>($"{this.customerUrl}/{toUpdate.CustomerId}/import", toUpdate);
+        }
+
+        public async Task<bool> SendAppInvite(int customerId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<int, bool>($"{this.customerUrl}/{customerId}/sendappinvite", customerId);
         }
     }
 }
