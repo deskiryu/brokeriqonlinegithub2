@@ -160,7 +160,7 @@
                             <label type="text" readonly class="form-control-plaintext">@ImportDetails.CsvImport.ImportDate.ToBiqDateString()</label>
                         </div>
 
-                        @if (string.IsNullOrWhiteSpace(Customer.NotificationTag))
+                        @if (string.IsNullOrWhiteSpace(Customer.AppVersion))
                         {
                             <label class="col-lg-2 col-form-label">Last App Invite Sent</label>
                             <div class="d-flex">
@@ -240,7 +240,7 @@
                     </MudButton>
                 }
 
-                @if (string.IsNullOrWhiteSpace(Customer.NotificationTag))
+                @if (string.IsNullOrWhiteSpace(Customer.AppVersion))
                 {
                     // customer is not using the app
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="SendAppInvite">
