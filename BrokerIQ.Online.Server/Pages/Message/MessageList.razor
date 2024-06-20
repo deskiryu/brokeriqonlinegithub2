@@ -6,9 +6,6 @@
 @using BrokerIQ.Online.Server.Extensions
 @using BrokerIQ.Online.Services.Interface
 @using BrokerIQ.Online.Server.Helper
-@inject IEmailService EmailService
-
-<h3 class="page-title">Reminders</h3>
 
 @if (!Saved)
 {
@@ -20,19 +17,18 @@
     }
     else
     {
-        <div class="card">
-            <div class="card-header">Filter</div>
-            <div class="card-body">
-                @if (User.IsAdmin)
-                {
+        @if (User.IsAdmin)
+        {
+            <div class="card mb-1">
+                <div class="card-header">Filter</div>
+                <div class="card-body">
                     <div class="row">
-
                         <div class="col-lg-4 control_wrapper">
                             <MudSelect T="int"
                                        Label="Filter By Broker"
                                        Placeholder="Select"
                                        Clearable="true"
-                            @bind-Value="BrokerId"
+                                       @bind-Value="BrokerId"
                                        SelectedValuesChanged="@AutoCompleteClickBroker"
                                        AdornmentColor="Color.Primary">
                                 <MudSelectItem Value="0">Select</MudSelectItem>
@@ -43,65 +39,21 @@
                             </MudSelect>
                         </div>
                     </div>
-                }
+                </div>
             </div>
-        </div>
-        <MudTable Items="@BrokerNotificationsSubset" Hover="true" SortLabel="Sort By">
-            <HeaderContent>
-                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.SentDate)">Sent</MudTableSortLabel></MudTh>
-                @if (User.IsAdmin)
-                {
-                    <MudTh>Broker</MudTh>
-                }
-                else{
-                    <MudTh Style="text-align:center"><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.Read)">Actioned</MudTableSortLabel></MudTh>
-                }
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Message">
-                    @if (context.HasLink)
-                    {
-                        var messageParts = @context.FormattedLinkMessage;
-                        var url = context.HasEmbeddedLink ? messageParts[1] :
-                                context.IsReferral ? "referrals" : $"clientdetail/{context.RelevantCustomerId}";
-
-                        <span>@messageParts[0]</span>
-                        <MudLink href="@url" Color="Color.Tertiary">
-                            @messageParts[1]
-                        </MudLink>
-                        @messageParts[2]
-                    }
-                    else
-                    {
-                        @context.Message           
-                    }
-                </MudTd>
-                <MudTd DataLabel="Sent">@context.SentDate.ToBiqDateTimeString()</MudTd>   
-                @if (User.IsAdmin)
-                {
-                    <MudTd>@Brokers.FirstOrDefault(x => x.Id == context.BrokerId)?.Name</MudTd>
-                }
-                else{
-                <MudTd Style="text-align:center">
-                    @if (!context.Read){
-                    <MudCheckBox @bind-Checked="@context.Read" @onclick="async f => await SetReminderReadStatus(context.Id)" />
-                    }
-                    else{
-                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" @onclick="async f => await SetReminderReadStatus(context.Id)" />
-                    }
-                </MudTd>
-                }
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
-            </PagerContent>
-        </MudTable>
-
+        }
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+            <MudTabPanel Text="Reminders">
+                <BrokerNotificationTable User="@User" Brokers="@Brokers" Notifications="@(BrokerNotificationsSubset.Where(n=> !n.Read).ToList())" OnStatusToggle="@(async () => await RefreshMessages())" />
+            </MudTabPanel>
+            <MudTabPanel Text="Archived">
+                <BrokerNotificationTable User="@User" Brokers="@Brokers" Notifications="@(BrokerNotificationsSubset.Where(n=> n.Read).ToList())" OnStatusToggle="@(async () => await RefreshMessages())" />
+            </MudTabPanel>
+        </MudTabs>
     }
 }
 else
 {
-    <div class="alert @StatusClass">@Message</div>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to message list</MudButton>
+<div class="alert @StatusClass">@Message</div>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to message list</MudButton>
 }

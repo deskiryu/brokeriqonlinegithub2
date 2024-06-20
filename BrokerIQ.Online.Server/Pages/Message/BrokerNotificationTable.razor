@@ -1,0 +1,53 @@
+﻿@using BrokerIQ.Online.Server.Extensions
+
+<MudTable Items="@Notifications" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<BrokerIQ.Online.Models.BrokerNotification, object>(x=>x.SentDate)">Sent</MudTableSortLabel></MudTh>
+        @if (User.IsAdmin)
+        {
+            <MudTh>Broker</MudTh>
+        }
+        else
+        {
+            <MudTh></MudTh>
+        }
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Message">
+            @if (context.HasLink)
+            {
+                var messageParts = @context.FormattedLinkMessage;
+                var url = context.HasEmbeddedLink ? messageParts[1] :
+                context.IsReferral ? "referrals" : $"clientdetail/{context.RelevantCustomerId}";
+
+                <span>@messageParts[0]</span>
+                <MudLink href="@url" Color="Color.Tertiary">
+                    @messageParts[1]
+                </MudLink>
+                @messageParts[2]
+            }
+            else
+            {
+                @context.Message
+            }
+        </MudTd>
+        <MudTd DataLabel="Sent">@context.SentDate.ToBiqDateTimeString()</MudTd>
+        @if (User.IsAdmin)
+        {
+            <MudTd>@Brokers.FirstOrDefault(x => x.Id == context.BrokerId)?.Name</MudTd>
+        }
+        else
+        {
+            <MudTd Style="text-align:center">
+                @{
+                    var icon = context.Read ? Icons.Material.Filled.Unarchive : Icons.Material.Filled.Archive;
+                    <MudIconButton Icon="@icon" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="async f => await SetReminderReadStatus(context.Id)" />
+                }
+            </MudTd>
+        }
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
+    </PagerContent>
+</MudTable>
