@@ -40,9 +40,13 @@
         else
         {
             <MudTd Style="text-align:center">
-                @{
-                    var icon = context.Read ? Icons.Material.Filled.Unarchive : Icons.Material.Filled.Archive;
-                    <MudIconButton Icon="@icon" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="async f => await SetReminderReadStatus(context.Id)" />
+                @if (!context.Read)
+                {
+                    <MudCheckBox @bind-Checked="@context.Read" @onclick="async f => await SetReminderReadStatus(context.Id)" />
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" @onclick="async f => await SetReminderReadStatus(context.Id)" />
                 }
             </MudTd>
         }

@@ -46,7 +46,7 @@
             <MudTabPanel Text="Reminders">
                 <BrokerNotificationTable User="@User" Brokers="@Brokers" Notifications="@(BrokerNotificationsSubset.Where(n=> !n.Read).ToList())" OnStatusToggle="@(async () => await RefreshMessages())" />
             </MudTabPanel>
-            <MudTabPanel Text="Archived">
+            <MudTabPanel Text="Actioned">
                 <BrokerNotificationTable User="@User" Brokers="@Brokers" Notifications="@(BrokerNotificationsSubset.Where(n=> n.Read).ToList())" OnStatusToggle="@(async () => await RefreshMessages())" />
             </MudTabPanel>
         </MudTabs>
