@@ -8,7 +8,7 @@
 
 <h3>Referrals</h3>
 
-@if (Broker.IsLimitedBroker)
+@if (!IsAdmin && Broker!=null && Broker.IsLimitedBroker)
 {
     <MudCard>
         <MudCardHeader>
