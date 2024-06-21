@@ -12,5 +12,6 @@ namespace BrokerIQ.Online.Server.Models
         public int AgeRange { get; set; }
         public bool ProfilePictures { get; set; }
         public ProfilingOptionEnum? ProfilingOption { get; set; }
+        public bool NonAppUsersOnly { get; set; }
     }
 }

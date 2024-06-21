@@ -34,7 +34,8 @@ namespace BrokerIQ.Online.Services
         {
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures = false)
+        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0,
+            int filterAgeRange = 0, bool profilePictures = false, bool nonAppUsersOnly = false)
         {
             return await GetFilteredCustomers(new CustomerFilter()
             {
@@ -44,7 +45,8 @@ namespace BrokerIQ.Online.Services
                 Period = filterPeriod,
                 Category = filterCategory,
                 AgeRange = filterAgeRange,
-                ProfilePictures = profilePictures
+                ProfilePictures = profilePictures,
+                NonAppUsersOnly = nonAppUsersOnly
             });
         }
 
@@ -134,7 +136,8 @@ namespace BrokerIQ.Online.Services
                 CustomerCategory = (CustomerCategoryEnum)filter.Category,
                 AgeRange = (AgeRangeEnum)filter.AgeRange,
                 ProfilingOption = filter.ProfilingOption,
-                AssignedToId = filter.AssignedToId
+                AssignedToId = filter.AssignedToId,
+                NonAppUsersOnly = filter.NonAppUsersOnly
             };
 
             var url = this.customerUrl;

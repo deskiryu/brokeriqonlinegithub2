@@ -77,6 +77,14 @@ namespace BrokerIQ.Online.Pages
 
         public bool CanImport { get; set; }
 
+        private bool showNonAppUsersOnly;
+        protected async void  ShowNonAppUsersOnly()
+        {
+            showNonAppUsersOnly = !showNonAppUsersOnly;
+
+            await RefreshListFromFilterValues();
+        }
+
         protected override async Task OnInitializedAsync()
         {
             await GetCustomersInit();
@@ -252,7 +260,8 @@ namespace BrokerIQ.Online.Pages
                 Category = CustomerCategory,
                 AgeRange = AgeRange,
                 ProfilePictures = true,
-                ProfilingOption = ProfilingOption.HasValue ? (ProfilingOptionEnum)ProfilingOption : null
+                ProfilingOption = ProfilingOption.HasValue ? (ProfilingOptionEnum)ProfilingOption : null,
+                NonAppUsersOnly = showNonAppUsersOnly
             };
 
             Customers = (await CustomerService.GetFilteredCustomers(filterValues)).ToList();
