@@ -194,6 +194,7 @@ namespace BrokerIQ.Online.Pages
                 HubClientName = brokerIdentifier.HubClientName,
                 FirebaseKey = brokerIdentifier.FirebaseKey,
                 FirebaseClient = brokerIdentifier.FirebaseClient,
+                FirebaseProjectId = brokerIdentifier.FirebaseProjectId,
                 EmailTagLine = brokerIdentifier.EmailTagLine,
                 InsuranceOnly = brokerIdentifier.InsuranceOnly,
                 IsLimitedBroker = brokerIdentifier.IsLimitedBroker,
