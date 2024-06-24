@@ -24,19 +24,13 @@ else if (!Saved)
         <h3 class="page-title">@Customer.FirstName @Customer.LastName</h3>
         @if (CalendlyAccessIsAllowed)
         {
-            @if (IsConnectedToCalendly)
-            {
-                <div>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup"> Book appointment </MudButton>
-                    <MudTooltip Text="Disconnect from Calendly">
-                        <MudIconButton Icon="@Icons.Material.Filled.ExtensionOff" Variant="Variant.Filled" Color="Color.Error" OnClick="DisconnectFromCalendly" />
-                    </MudTooltip>
-                </div>
-            }
-            else
-            {
-                <MudButton StartIcon="@Icons.Material.Filled.Extension" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Href="@CalendlyLoginUri"> Login to Calendly </MudButton>
-            }
+            <MudButtonGroup Variant="Variant.Filled" Color="Color.Primary">
+                <MudIconButton Icon="@Icons.Material.Filled.EditCalendar" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup" />
+                @if (IsConnectedToCalendly)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.ExtensionOff" Color="Color.Error" OnClick="DisconnectFromCalendly" />
+                }
+            </MudButtonGroup>
         }
     </div>
 
@@ -397,13 +391,13 @@ else if (!Saved)
                                 <CardHeaderActions>
                                     @if (note.ReminderDate != null)
                                     {
-                                        <MudIcon Icon="@Icons.Material.Filled.Alarm" Color="Color.Default"/>
+                                        <MudIcon Icon="@Icons.Material.Filled.Alarm" Color="Color.Default" />
                                     }
-                                    @if(note.CreatedByName == $"{User.FirstName} {User.LastName}")
-                                        {
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" @onclick="f => DeleteNote(note.Id)" />
-                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" @onclick="f => EditNote(note.Id)" />
-                                        }
+                                    @if (note.CreatedByName == $"{User.FirstName} {User.LastName}")
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" @onclick="f => DeleteNote(note.Id)" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default" @onclick="f => EditNote(note.Id)" />
+                                    }
                                 </CardHeaderActions>
                             </MudCardHeader>
                             <MudCardContent>
