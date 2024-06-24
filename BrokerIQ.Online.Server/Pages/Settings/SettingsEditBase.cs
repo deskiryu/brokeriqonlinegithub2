@@ -301,7 +301,7 @@ namespace BrokerIQ.Online.Pages
 
             if (Broker.BrokerIdentifier is null || Broker.BrokerIdentifier.Id == 0) return true;
 
-            return !Broker.BrokerIdentifier.IsLimitedBroker || Broker.BrokerIdentifier.HasReminders;
+            return !Broker.BrokerIdentifier.IsLimitedBroker || Broker.BrokerIdentifier.HasReminders ;
         }
     }
 }
