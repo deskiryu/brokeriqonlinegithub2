@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.JsonPatch;
-
 using AutoMapper;
-
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Import;
 using BrokerIQ.Dto.Models;
+using BrokerIQ.Dto.Request;
+using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Models;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Interface;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace BrokerIQ.Online.Services
 {
@@ -34,7 +34,8 @@ namespace BrokerIQ.Online.Services
         {
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures = false)
+        public async Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0,
+            int filterAgeRange = 0, bool profilePictures = false, bool nonAppUsersOnly = false)
         {
             return await GetFilteredCustomers(new CustomerFilter()
             {
@@ -44,7 +45,8 @@ namespace BrokerIQ.Online.Services
                 Period = filterPeriod,
                 Category = filterCategory,
                 AgeRange = filterAgeRange,
-                ProfilePictures = profilePictures
+                ProfilePictures = profilePictures,
+                NonAppUsersOnly = nonAppUsersOnly
             });
         }
 
@@ -134,7 +136,8 @@ namespace BrokerIQ.Online.Services
                 CustomerCategory = (CustomerCategoryEnum)filter.Category,
                 AgeRange = (AgeRangeEnum)filter.AgeRange,
                 ProfilingOption = filter.ProfilingOption,
-                AssignedToId = filter.AssignedToId
+                AssignedToId = filter.AssignedToId,
+                NonAppUsersOnly = filter.NonAppUsersOnly
             };
 
             var url = this.customerUrl;
@@ -203,6 +206,38 @@ namespace BrokerIQ.Online.Services
             await this.requestProviderService.Post<ProfilePictureDto, CustomerDto>($"{this.customerUrl}/profile_picture", postData);
 
             return true;
+        }
+
+        public async Task<ImportResponse> Import(ImportRequest request)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<ImportRequest, ImportResponse>($"{this.customerUrl}/import", request);
+        }
+
+        public async Task<CsvImportCustomerDto> GetImportDetails(int customerId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Get<CsvImportCustomerDto>($"{this.customerUrl}/{customerId}/import");
+        }
+
+        public async Task<bool> UpdateImportDetails(CsvImportCustomerDto toUpdate)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<CsvImportCustomerDto, bool>($"{this.customerUrl}/{toUpdate.CustomerId}/import", toUpdate);
+        }
+
+        public async Task<bool> SendAppInvite(int customerId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<int, bool>($"{this.customerUrl}/{customerId}/sendappinvite", customerId);
         }
     }
 }

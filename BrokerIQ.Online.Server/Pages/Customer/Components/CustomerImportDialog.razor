@@ -1,0 +1,41 @@
+<MudDialog>
+    <DialogContent>
+        <div class="d-flex flex-column align-center">
+            <MudLink OnClick="SaveSampleFile" Color="Color.Tertiary">Download sample file</MudLink>
+
+            <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
+                <ButtonTemplate>
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Class="m-1"
+                               Style="@($"color:{Colors.Shades.Black}")"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               for="@context.Id">
+                        Select CSV file
+                    </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+            <MudText Class="@CurrentFileClass">Current File : @CurrentFileName</MudText>
+
+            <div Class="@ImportResultsClass">
+                <MudText Class="m-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
+                <div class="d-flex">
+                    <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
+                    <MudTooltip Text="Download error list">
+                        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Small" OnClick="SaveErrorMessages" Class="@ErrorMessagesDownloadClass" />
+                    </MudTooltip>
+                    <MudTooltip Text="Download records in error">
+                        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Small" OnClick="SaveRecordsInError" Class="@ErrorRecordsDownloadClass" />
+                    </MudTooltip>
+                </div>
+            </div>
+
+            <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Class="@InviteBoxClass">Send invites to imported customers</MudCheckBox>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Disabled="IsBusy">Close</MudButton>
+        <MudButton OnClick="ImportFromFile" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" Disabled="DisableImportButton">@ImportButtonText</MudButton>
+    </DialogActions>
+</MudDialog>

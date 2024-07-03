@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Import;
+using BrokerIQ.Dto.Request;
+using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Models;
 
@@ -9,7 +11,8 @@ namespace BrokerIQ.Online.Services.Interface
 {
     public interface ICustomerService
     {
-        Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0, int filterAgeRange = 0, bool profilePictures = false);
+        Task<IEnumerable<Customer>> GetAllCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0,
+            int filterAgeRange = 0, bool profilePictures = false, bool nonAppUsersOnly = false);
 
         Task<IEnumerable<Customer>> GetFilteredCustomers(CustomerFilter filter);
 
@@ -32,5 +35,11 @@ namespace BrokerIQ.Online.Services.Interface
         Task Disconnect(int connectedCustomerId);
 
         Task<bool> SetProfilePicture(int customerId, byte[] picture);
+
+        Task<ImportResponse> Import(ImportRequest request);
+
+        Task<CsvImportCustomerDto> GetImportDetails(int customerId);
+
+        Task<bool> SendAppInvite(int customerId);
     }
 }

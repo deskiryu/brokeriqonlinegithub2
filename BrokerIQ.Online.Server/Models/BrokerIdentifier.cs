@@ -110,5 +110,7 @@ namespace BrokerIQ.Online.Server.Models
         public bool HasAudio { get; set; }
 
         public bool HasReferrals { get; set; }
+
+        public bool CanImport { get; set; }
     }
 }

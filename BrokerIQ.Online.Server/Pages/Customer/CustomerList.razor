@@ -68,7 +68,7 @@ else
 
                 @if (!User.IsAdmin && !IsLimitedBroker)
                 {
-                    <div class="col-12">
+                    <div class="col-6">
                         <MudSelect T="int"
                                    Label="Filter By Assignee"
                                    Placeholder="Select employee"
@@ -82,6 +82,9 @@ else
                                 <MudSelectItem Value="@employee.Id">@employee.FullName</MudSelectItem>
                             }
                         </MudSelect>
+                    </div>
+                    <div class="col-6">
+                        <MudCheckBox T="bool"Label="Customers without App download only" CheckedChanged="ShowNonAppUsersOnly"></MudCheckBox>
                     </div>
                 }
             </div>
@@ -226,13 +229,15 @@ else
                         @if (!User.IsAdmin)
                         {
                             <MudTh Style="text-align:center">
-                                <MudIconButton Class="@(AssignVisibilityClass())"
-                                               Icon="@Icons.Material.Filled.GroupAdd"
-                                               Size="Size.Small"
-                                               Variant="Variant.Filled"
-                                               Color="Color.Primary"
-                                               Style="@($"color:{Colors.Shades.Black}")"
-                                               OnClick="AssignToStaff" />
+                                <MudTooltip Text="Assign">
+                                    <MudIconButton Class="@(AssignVisibilityClass())"
+                                                   Icon="@Icons.Material.Filled.GroupAdd"
+                                                   Size="Size.Small"
+                                                   Variant="Variant.Filled"
+                                                   Color="Color.Primary"
+                                                   Style="@($"color:{Colors.Shades.Black}")"
+                                                   OnClick="AssignToStaff" />
+                                </MudTooltip>
                             </MudTh>
                         }
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
@@ -250,7 +255,19 @@ else
                             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>
                         }
                         <MudTh>Verified</MudTh>
-                        <MudTh></MudTh>
+                        <MudTh>
+                            @if (CanImport)
+                            {
+                                <MudTooltip Text="Import">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Upload"
+                                                   Size="Size.Small"
+                                                   Variant="Variant.Filled"
+                                                   Color="Color.Primary"
+                                                   Style="@($"color:{Colors.Shades.Black}")"
+                                                   OnClick="ShowImportDialog" />
+                                </MudTooltip>
+                            }
+                        </MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         @if (api.Value.ShowClientPictureColumn)
