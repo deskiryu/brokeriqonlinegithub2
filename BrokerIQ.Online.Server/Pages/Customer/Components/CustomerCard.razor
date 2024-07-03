@@ -240,7 +240,7 @@
                     </MudButton>
                 }
 
-                @if (string.IsNullOrWhiteSpace(Customer.AppVersion))
+                @if (ImportDetails != null && string.IsNullOrWhiteSpace(Customer.AppVersion))
                 {
                     // customer is not using the app
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="SendAppInvite">
