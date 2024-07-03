@@ -209,7 +209,7 @@ namespace BrokerIQ.Online.Pages
 
         protected bool CalendlyAccessIsAllowed { get; set; } = false;
 
-        protected bool IsConnectedToCalendly { get; set; } = false;
+        protected bool IsConnectedToCalendly => CalendlyUser != null;
 
         protected CalendlyUserDto CalendlyUser { get; set; }
 
@@ -325,9 +325,7 @@ namespace BrokerIQ.Online.Pages
 
         private async Task SetUserCalendlyDetails()
         {
-            IsConnectedToCalendly = CalendlyAccessIsAllowed && await CustomerAppointmentService.IsUserConnected();
-
-            if (IsConnectedToCalendly) CalendlyUser = await CustomerAppointmentService.GetUser();
+            CalendlyUser = await CustomerAppointmentService.GetUser();
         }
 
         private void SetRequirementVisibility()
@@ -1308,6 +1306,14 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task ShowCalendlyPopup()
         {
+            if (CalendlyUser == null || string.IsNullOrWhiteSpace(CalendlyUser.AccessToken) || string.IsNullOrWhiteSpace(CalendlyUser.RefreshToken))
+            {
+                // User has never logged in, or was unable to refresh token after expiration
+                NavigationManager.NavigateTo(CalendlyLoginUri);
+
+                return;
+            }
+
             var thisPage = DotNetObjectReference.Create(this);
             await js.InvokeVoidAsync("PassPageComponent", thisPage);
 

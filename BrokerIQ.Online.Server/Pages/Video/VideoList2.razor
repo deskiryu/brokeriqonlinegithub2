@@ -2,6 +2,7 @@
 @inherits VideoListBase2
 @using System.Globalization
 @using BrokerIQ.Online.Pages
+@using BrokerIQ.Online.Server.Components
 @using Dto.Enum
 
 @if (!Saved)
@@ -81,16 +82,8 @@
         }
         else
         {
-            <MudCard Class="mb-2">
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">Upgrade your BrokerIQ</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudText>You will be able to upload additional videos along with other perks.</MudText>
-                </MudCardContent>
-            </MudCard>
+            <UpgradeBrokerIQCard Text="You will be able to upload additional videos along with other perks." />
+
         }
 
         <MudDropContainer T="BrokerIQ.Online.Server.Models.Video" @ref="_dropContainer" Items="Videos" Item ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">

@@ -152,6 +152,8 @@ namespace BrokerIQ.Online.Server.Services
 
         public async Task<IEnumerable<BrokerNotification>> GetBrokerNotifications()
         {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
             var answer = await this.requestProviderService.Get<IEnumerable<BrokerNotificationDto>>(this.notificationUrl + $"/broker");
             return this.mapper.Map<IEnumerable<BrokerNotification>>(answer);
         }
