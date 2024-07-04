@@ -263,7 +263,7 @@
         }
     </MudTabPanel>
 
-    @if (User != null && User.IsBroker)
+    @if (User != null && User.IsBroker && ShowAppointmentSection())
     {
         <MudTabPanel Text="Integrations">
             <IntegrationStack />
@@ -273,10 +273,16 @@
     @if (User != null && (User.IsBroker || User.IsBrokerStaff))
     {
         <MudTabPanel Text="Appointments">
-            <ClientAppointment Broker="@Broker" User="@User" />
+            @if (ShowAppointmentSection())
+            {
+                <ClientAppointment Broker="@Broker" User="@User" />
+            }
+            else
+            {
+                <UpgradeBrokerIQCard Text="You will be able to book apointments through Calendly along with other perks." />
+            }
         </MudTabPanel>
     }
-
 </MudTabs>
 
 @code {

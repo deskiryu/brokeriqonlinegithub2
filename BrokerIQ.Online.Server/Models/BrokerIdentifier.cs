@@ -112,5 +112,11 @@ namespace BrokerIQ.Online.Server.Models
         public bool HasReferrals { get; set; }
 
         public bool CanImport { get; set; }
+
+        public bool HasAppointments { get; set; }
+
+        public bool HasProfiling { get; set; }
+
+        public bool CanEditDocuvaultTypes { get; set; }
     }
 }

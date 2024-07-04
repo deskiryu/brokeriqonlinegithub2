@@ -299,9 +299,19 @@ namespace BrokerIQ.Online.Pages
         {
             if (Broker is null) return false; // disabled while broker is not set
 
-            if (Broker.BrokerIdentifier is null || Broker.BrokerIdentifier.Id == 0) return true;
+            if (Broker.BrokerIdentifier is null || !Broker.BrokerIdentifier.IdentifierFound) return true;
 
             return !Broker.BrokerIdentifier.IsLimitedBroker || Broker.BrokerIdentifier.HasReminders ;
         }
+
+        protected bool ShowAppointmentSection()
+        {
+            if (Broker is null) return false; // disabled while broker is not set
+
+            if (Broker.BrokerIdentifier is null || !Broker.BrokerIdentifier.IdentifierFound) return true;
+
+            return !Broker.BrokerIdentifier.IsLimitedBroker || Broker.BrokerIdentifier.HasAppointments;
+        }
+
     }
 }
