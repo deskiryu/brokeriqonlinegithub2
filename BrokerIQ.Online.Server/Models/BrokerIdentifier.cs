@@ -62,11 +62,11 @@ namespace BrokerIQ.Online.Server.Models
         [Required]
         public string HubClientName { get; set; }
 
-        [Required]
         public string FirebaseKey { get; set; }
 
-        [Required]
         public string FirebaseClient { get; set; }
+
+        public string FirebaseProjectId { get; set; }
 
         [Required]
         public bool InsuranceOnly { get; set; }
