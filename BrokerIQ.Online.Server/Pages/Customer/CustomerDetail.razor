@@ -56,16 +56,9 @@ else if (!Saved)
                 </div>
             </div>
 
-            <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Customer" />
+            <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Customer" IsAlreadyConnected="@(Connection != null)" OnCustomerConnectionChange="@(async () => await OnCustomerConnectionChange())" />
 
         </MudTabPanel>
-
-        @if (Connection != null)
-        {
-            <MudTabPanel Text="Connection">
-                <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Connection" OnDisconnection="@(async () => await OnConnetionRemoved())" />
-            </MudTabPanel>
-        }
 
         <MudTabPanel Text="Insurances">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
@@ -612,6 +605,13 @@ else if (!Saved)
                 </div>
             </div>
         </MudTabPanel>
+
+        @if (Connection != null)
+        {
+            <MudTabPanel Text="Connection">
+                <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Connection" OnCustomerConnectionChange="@(async () => await OnCustomerConnectionChange())" IsAlreadyConnected="true" />
+            </MudTabPanel>
+        }
     </MudTabs>
 
 

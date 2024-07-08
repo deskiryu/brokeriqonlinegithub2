@@ -41,5 +41,9 @@ namespace BrokerIQ.Online.Services.Interface
         Task<CsvImportCustomerDto> GetImportDetails(int customerId);
 
         Task<bool> SendAppInvite(int customerId);
+
+        Task<IEnumerable<Customer>> Search(int brokerId, string value);
+
+        Task<bool> Connect(int brokerId, int mainCustomerId, int connectedCustomerId);
     }
 }

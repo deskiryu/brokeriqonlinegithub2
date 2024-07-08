@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Import;
-using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Services.Interface;
@@ -53,11 +52,16 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         public Online.Models.Customer Customer { get; set; }
 
         [Parameter]
-        public Action OnDisconnection { get; set; }
+        public Action OnCustomerConnectionChange { get; set; }
+
+        [Parameter]
+        public bool IsAlreadyConnected { get; set; }
 
         protected OccupationDto Occupation { get; set; }
 
         protected CsvImportCustomerDto ImportDetails { get; set; }
+
+        protected bool HasConnection { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -154,7 +158,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             await CustomerService.Disconnect(Customer.TargetCustomerId);
 
-            OnDisconnection();
+            OnCustomerConnectionChange();
         }
 
         protected async Task SendAppInvite()
@@ -173,6 +177,28 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             }
 
             Snackbar.Add("Unable to send mobile app invite", Severity.Error);
+        }
+
+        protected async Task ConnectToCustomer()
+        {
+            var dialogParams = new DialogParameters
+            {
+                { "Customer", Customer},
+            };
+
+            var dialogOptions = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+
+            var result = await DialogService.Show<CustomerConnectionDialog>("Connect to customer", dialogParams, dialogOptions).Result;
+
+            if (result.Canceled) return;
+
+            await CustomerService.Connect(Customer.ChosenBrokerId, Customer.Id, (int)result.Data);
+
+            OnCustomerConnectionChange();
         }
     }
 }
