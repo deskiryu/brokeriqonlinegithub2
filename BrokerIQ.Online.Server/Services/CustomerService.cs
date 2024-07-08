@@ -239,5 +239,27 @@ namespace BrokerIQ.Online.Services
 
             return await this.requestProviderService.Post<int, bool>($"{this.customerUrl}/{customerId}/sendappinvite", customerId);
         }
+
+        public async Task<IEnumerable<Customer>> Search(int brokerId, string value)
+        {
+            var user = await this.accountService.GetUser();
+            requestProviderService.Token = user?.Token;
+
+            var answer = await requestProviderService.Get<IEnumerable<CustomerDto>>($"{customerUrl}/broker/{brokerId}/search?value={value}");
+            return mapper.Map<IEnumerable<Customer>>(answer);
+        }
+
+        public async Task<bool> Connect(int brokerId, int mainCustomerId, int connectedCustomerId)
+        {
+            var user = await this.accountService.GetUser();
+            requestProviderService.Token = user?.Token;
+
+            return await requestProviderService.Post<ConnectCustomersRequest, bool>($"{customerUrl}/connect", new ConnectCustomersRequest()
+            {
+                BrokerId= brokerId,
+                MainCustomerId = mainCustomerId,
+                ConnectedCustomerId = connectedCustomerId
+            });
+        }
     }
 }

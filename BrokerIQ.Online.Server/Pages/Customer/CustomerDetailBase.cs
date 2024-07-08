@@ -1293,11 +1293,11 @@ namespace BrokerIQ.Online.Pages
                 !Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > DateTime.UtcNow);
         }
 
-        public async Task OnConnetionRemoved()
+        public async Task OnCustomerConnectionChange()
         {
-            Connection = null;
-
             Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
+
+            Connection = await CustomerService.GetConnection(Customer.Id);
 
             Tabs.ActivatePanel(0);
 

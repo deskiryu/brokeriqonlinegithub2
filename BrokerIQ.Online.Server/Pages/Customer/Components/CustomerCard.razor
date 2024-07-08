@@ -226,49 +226,54 @@
 
                 }
 
-
-
-            <div class="row col-12 mt-1">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientedit/{Customer.Id}")" class="ml-1">
-                    Edit Client
-                </MudButton>
-
-                @if (!Customer.ConnectedToCustomerId.HasValue)
-                {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/0/{Customer.Id}")" class="ml-1">
-                        Add a Menu Plan
-                    </MudButton>
-                }
-
-                @if (ImportDetails != null && string.IsNullOrWhiteSpace(Customer.AppVersion))
-                {
-                    // customer is not using the app
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="SendAppInvite">
-                        Send mobile app invite
-                    </MudButton>
-                }
-
-                @if (User.IsAdmin)
-                {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-1" @onclick="ResendEmailCustomer">
-                        Resend Verify Email
+                <div class="row col-12 mt-1">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientedit/{Customer.Id}")" class="ml-1">
+                        Edit Client
                     </MudButton>
 
                     @if (!Customer.ConnectedToCustomerId.HasValue)
                     {
-                        <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="DeleteCustomer">
-                            Delete Client
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/0/{Customer.Id}")" class="ml-1">
+                            Add a Menu Plan
                         </MudButton>
                     }
-                }
 
-                @if (Customer.ConnectedToCustomerId.HasValue)
-                {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Disconnect" class="ml-1">
-                        Disconnect
-                    </MudButton>
-                }
-            </div>
+                    @if (ImportDetails != null && string.IsNullOrWhiteSpace(Customer.AppVersion))
+                    {
+                        // customer is not using the app
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="SendAppInvite">
+                            Send mobile app invite
+                        </MudButton>
+                    }
+
+                    @if (User.IsAdmin)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-1" @onclick="ResendEmailCustomer">
+                            Resend Verify Email
+                        </MudButton>
+
+                        @if (!Customer.ConnectedToCustomerId.HasValue)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="DeleteCustomer">
+                                Delete Client
+                            </MudButton>
+                        }
+                    }
+
+                    @if (!Customer.ConnectedToCustomerId.HasValue && !IsAlreadyConnected)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ConnectToCustomer" class="ml-1">
+                            Connect to customer
+                        </MudButton>
+                    }
+
+                    @if (Customer.ConnectedToCustomerId.HasValue)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Disconnect" class="ml-1">
+                            Disconnect
+                        </MudButton>
+                    }
+                </div>
             </div>
         </div>
     </div>
