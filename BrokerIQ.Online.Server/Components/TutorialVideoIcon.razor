@@ -1,4 +1,4 @@
-﻿@if (Visible)
+﻿@if (Visible && !string.IsNullOrWhiteSpace(VideoUrl))
 {
     <MudTooltip Text="@TooltipText" Size="Size.Small" Placement="@TooltipPlacement">
         <MudIcon Icon="@Icons.Material.Filled.Help" Color="Color.Primary" @onclick="PlayVideo" Size="Size.Small" />
@@ -24,7 +24,7 @@
     public void PlayVideo()
     {
         var parameters = new DialogParameters
-        {
+    {
                 { "VideoUrl",  VideoUrl}
         };
 

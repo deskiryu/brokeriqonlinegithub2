@@ -60,6 +60,11 @@ namespace BrokerIQ.Online.Pages
 
         protected FileUploadSettings fileUploadSettings { get; set; }
 
+        [Inject]
+        public IOptions<TutorialVideos> TutorialVideosOption { get; set; }
+
+        protected TutorialVideos tutorialVideos { get; set; }
+
         public List<MessageElement> MessageElements = new List<MessageElement>();
 
         protected List<IBrowserFile> SelectedFiles = new();
@@ -91,6 +96,8 @@ namespace BrokerIQ.Online.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            tutorialVideos = TutorialVideosOption.Value;
+
             try
             {
                 User = await AccountService.GetUser();

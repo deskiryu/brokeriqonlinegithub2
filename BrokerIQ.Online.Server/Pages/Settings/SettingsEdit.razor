@@ -19,7 +19,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">TEMPLATES</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="https://blobstoragebrokeriqdev.blob.core.windows.net/trainingvideocontainer/Turn on Client Profiling.mov" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.TemplatesVideoUrl" />
         </TabContent>
         <ChildContent>
             <DefinedMessageTable Broker="@Broker" User="@User" />
@@ -29,7 +29,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">REMINDER OPTIONS</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="https://blobstoragebrokeriqdev.blob.core.windows.net/trainingvideocontainer/Turn on Client Profiling.mov" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.RemindersVideoUrl" />
         </TabContent>
         <ChildContent>
             @if (this.api.Value.ShowProtection && ShowReminderSection())
@@ -46,7 +46,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">DOCUMENT VAULT TYPES</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="https://blobstoragebrokeriqdev.blob.core.windows.net/trainingvideocontainer/Turn on Client Profiling.mov" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" />
         </TabContent>
         <ChildContent>
             <DocumentVaultTypeTable Broker="@Broker" User="@User" />
@@ -56,7 +56,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">NOTIFICATIONS</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="https://blobstoragebrokeriqdev.blob.core.windows.net/trainingvideocontainer/Turn on Client Profiling.mov" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.NotificationSettingsVideoUrl" />
         </TabContent>
         <ChildContent>
             @if (IsBrokerStaff)
@@ -290,7 +290,7 @@
         <MudTabPanel>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">INTEGRATIONS</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="https://blobstoragebrokeriqdev.blob.core.windows.net/trainingvideocontainer/Turn on Client Profiling.mov" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.IntegrationsVideoUrl" />
             </TabContent>
             <ChildContent>
                 <IntegrationStack />
@@ -303,7 +303,7 @@
         <MudTabPanel>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">APPOINTMENTS</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="https://blobstoragebrokeriqdev.blob.core.windows.net/trainingvideocontainer/Turn on Client Profiling.mov" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.AppointmentsVideoUrl" />
             </TabContent>
             <ChildContent>
                 @if (ShowAppointmentSection())

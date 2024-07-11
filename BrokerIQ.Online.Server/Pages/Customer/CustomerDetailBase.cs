@@ -93,6 +93,11 @@ namespace BrokerIQ.Online.Pages
         [Parameter]
         public string CustomerId { get; set; }
 
+        [Inject]
+        public IOptions<TutorialVideos> TutorialVideosOption { get; set; }
+
+        protected TutorialVideos tutorialVideos { get; set; }
+
         protected User User { get; set; }
 
         protected const int DefaultMonthsToShow = -1;
@@ -215,6 +220,8 @@ namespace BrokerIQ.Online.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            tutorialVideos = TutorialVideosOption.Value;
+
             User = await AccountService.GetUser();
 
             ClearUnReadChat();
