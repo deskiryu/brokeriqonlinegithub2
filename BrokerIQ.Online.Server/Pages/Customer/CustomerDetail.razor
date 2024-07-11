@@ -39,7 +39,7 @@ else if (!Saved)
         <MudTabPanel>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">CUSTOMER</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.CustomerVideoUrl" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.CustomerVideoUrl" Visible="@(Tabs.ActivePanelIndex==0)" />
             </TabContent>
             <ChildContent>
                 <div class="card ">
@@ -68,7 +68,7 @@ else if (!Saved)
         <MudTabPanel>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">INSURANCE</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.InsuranceVideoUrl" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.InsuranceVideoUrl" Visible="@(Tabs.ActivePanelIndex==1)"/>
             </TabContent>
             <ChildContent>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
@@ -143,7 +143,7 @@ else if (!Saved)
             <MudTabPanel>
                 <TabContent>
                     <MudText Typo="Typo.subtitle2" Class="mr-1">MORTGAGES</MudText>
-                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.MortgageVideoUrl" />
+                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.MortgageVideoUrl" Visible="@(Tabs.ActivePanelIndex==2)" />
                 </TabContent>
                 <ChildContent>
                     <div class="form-group row">
@@ -223,7 +223,7 @@ else if (!Saved)
         <MudTabPanel BadgeData="@NewClientUploadsCount" BadgeColor="@UploadsBadgeColor" BadgeDot="@ShouldShowAsDot" OnClick="@(f => ResetUploadsBadge())">
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">UPLOADS</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.UploadsVideoUrl" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.UploadsVideoUrl" Visible="@(Tabs.ActivePanelIndex==3)" />
             </TabContent>
             <ChildContent>
                 <div class="row" @onclick="this.ResetUploadsBadge">
@@ -314,69 +314,12 @@ else if (!Saved)
             </ChildContent>
         </MudTabPanel>
 
-        @if (Customer.MenuPlans != null && Customer.MenuPlans.Any())
-        {
-            @foreach (var menuplan in Customer.MenuPlans)
-            {
-                <MudTabPanel>
-                    <TabContent>
-                        <MudText Typo="Typo.subtitle2" Class="mr-1">@($"MENUPLAN: {menuplan.Name}")</MudText>
-                        <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.MenuPlansVideoUrl" />
-                    </TabContent>
-                    <ChildContent>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary mb-2">
-                            Add New Insurance
-                        </MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/{menuplan.Id}/{Customer.Id}")" class="btn btn-primary table-btn mb-2">
-                            Edit this Menu Plan
-                        </MudButton>
-                        <table id="table-menuplan" class="table  col-sm-12 table-striped ">
-                            <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Insurer</th>
-                                    <th>Review</th>
-                                    <th>Expiry</th>
-                                    @if (User.IsAdmin)
-                                    {
-                                        <th>Broker</th>
-                                    }
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var insurance in Customer.Insurances)
-                                {
-                                    if (insurance.MenuPlanId.HasValue && insurance.MenuPlanId == menuplan.Id)
-                                    {
-                                        <tr>
-                                            <td>@insurance.InsType.GetDisplayName()</td>
-                                            <td>@insurance.Name</td>
-                                            <td>@insurance.ReviewDate.ToBiqDateString()</td>
-                                            <td>@(insurance.ExpiryDate.HasValue && insurance.ExpiryDate.Value != DateTime.MinValue ? insurance.ExpiryDate.Value.ToBiqDateString() : string.Empty)</td>
-                                            @if (User.IsAdmin)
-                                            {
-                                                <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
-                                            }
-                                            <td>
-                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary table-btn">
-                                                    <i class="fas fa-edit"></i>
-                                                </MudButton>
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                    </ChildContent>
-                </MudTabPanel>
-            }
-        }
+
 
         <MudTabPanel>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">NOTES</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.NotesVideoUrl" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.NotesVideoUrl" Visible="@(Tabs.ActivePanelIndex==4)" />
             </TabContent>
             <ChildContent>
                 <div class="card mb-1">
@@ -440,7 +383,7 @@ else if (!Saved)
         <MudTabPanel BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@ChatBadgeDot' OnClick="@(f => ClearUnReadChat())">
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">CHAT</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.ChatVideoUrl" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.ChatVideoUrl" Visible="@(Tabs.ActivePanelIndex==5)" />
             </TabContent>
             <ChildContent>
                 <div @onclick="this.ClearUnReadChat">
@@ -653,12 +596,70 @@ else if (!Saved)
             <MudTabPanel>
                 <TabContent>
                     <MudText Typo="Typo.subtitle2" Class="mr-1">CONNECTION</MudText>
-                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.ConnectionVideoUrl" />
+                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.ConnectionVideoUrl" Visible="@(Tabs.ActivePanelIndex==6)" />
                 </TabContent>
                 <ChildContent>
                     <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Connection" OnCustomerConnectionChange="@(async () => await OnCustomerConnectionChange())" IsAlreadyConnected="true" />
                 </ChildContent>
             </MudTabPanel>
+        }
+
+        @if (Customer.MenuPlans != null && Customer.MenuPlans.Any())
+        {
+            @foreach (var menuplan in Customer.MenuPlans)
+            {
+                <MudTabPanel>
+                    <TabContent>
+                        <MudText Typo="Typo.subtitle2" Class="mr-1">@($"MENUPLAN: {menuplan.Name}")</MudText>
+                    </TabContent>
+                    <ChildContent>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary mb-2">
+                            Add New Insurance
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/{menuplan.Id}/{Customer.Id}")" class="btn btn-primary table-btn mb-2">
+                            Edit this Menu Plan
+                        </MudButton>
+                        <table id="table-menuplan" class="table  col-sm-12 table-striped ">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Insurer</th>
+                                    <th>Review</th>
+                                    <th>Expiry</th>
+                                    @if (User.IsAdmin)
+                                    {
+                                        <th>Broker</th>
+                                    }
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var insurance in Customer.Insurances)
+                                {
+                                    if (insurance.MenuPlanId.HasValue && insurance.MenuPlanId == menuplan.Id)
+                                    {
+                                        <tr>
+                                            <td>@insurance.InsType.GetDisplayName()</td>
+                                            <td>@insurance.Name</td>
+                                            <td>@insurance.ReviewDate.ToBiqDateString()</td>
+                                            <td>@(insurance.ExpiryDate.HasValue && insurance.ExpiryDate.Value != DateTime.MinValue ? insurance.ExpiryDate.Value.ToBiqDateString() : string.Empty)</td>
+                                            @if (User.IsAdmin)
+                                            {
+                                                <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
+                                            }
+                                            <td>
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary table-btn">
+                                                    <i class="fas fa-edit"></i>
+                                                </MudButton>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </ChildContent>
+                </MudTabPanel>
+            }
         }
     </MudTabs>
 }

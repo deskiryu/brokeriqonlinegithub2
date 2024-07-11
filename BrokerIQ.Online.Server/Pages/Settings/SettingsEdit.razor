@@ -15,11 +15,11 @@
 @inject IJSRuntime js
 @inject IOptions<ReviewItAPIDetails> api
 
-<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" @ref="Tabs">
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">TEMPLATES</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.TemplatesVideoUrl" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.TemplatesVideoUrl" Visible="@(Tabs.ActivePanelIndex==0)" />
         </TabContent>
         <ChildContent>
             <DefinedMessageTable Broker="@Broker" User="@User" />
@@ -29,7 +29,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">REMINDER OPTIONS</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.RemindersVideoUrl" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.RemindersVideoUrl" Visible="@(Tabs.ActivePanelIndex==1)" />
         </TabContent>
         <ChildContent>
             @if (this.api.Value.ShowProtection && ShowReminderSection())
@@ -46,7 +46,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">DOCUMENT VAULT TYPES</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(Tabs.ActivePanelIndex==2)" />
         </TabContent>
         <ChildContent>
             <DocumentVaultTypeTable Broker="@Broker" User="@User" />
@@ -56,7 +56,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">NOTIFICATIONS</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.NotificationSettingsVideoUrl" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.NotificationSettingsVideoUrl" Visible="@(Tabs.ActivePanelIndex==3)" />
         </TabContent>
         <ChildContent>
             @if (IsBrokerStaff)
@@ -285,25 +285,12 @@
         </ChildContent>
     </MudTabPanel>
 
-    @if (User != null && User.IsBroker && ShowAppointmentSection())
-    {
-        <MudTabPanel>
-            <TabContent>
-                <MudText Typo="Typo.subtitle2" Class="mr-1">INTEGRATIONS</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.IntegrationsVideoUrl" />
-            </TabContent>
-            <ChildContent>
-                <IntegrationStack />
-            </ChildContent>
-        </MudTabPanel>
-    }
-
     @if (User != null && (User.IsBroker || User.IsBrokerStaff))
     {
         <MudTabPanel>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">APPOINTMENTS</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.AppointmentsVideoUrl" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.AppointmentsVideoUrl" Visible="@(Tabs.ActivePanelIndex==4)" />
             </TabContent>
             <ChildContent>
                 @if (ShowAppointmentSection())
@@ -317,6 +304,21 @@
             </ChildContent>
         </MudTabPanel>
     }
+
+    @if (User != null && User.IsBroker && ShowAppointmentSection())
+    {
+        <MudTabPanel>
+            <TabContent>
+                <MudText Typo="Typo.subtitle2" Class="mr-1">INTEGRATIONS</MudText>
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.IntegrationsVideoUrl" Visible="@(Tabs.ActivePanelIndex==5)" />
+            </TabContent>
+            <ChildContent>
+                <IntegrationStack />
+            </ChildContent>
+        </MudTabPanel>
+    }
+
+
 </MudTabs>
 
 @code {

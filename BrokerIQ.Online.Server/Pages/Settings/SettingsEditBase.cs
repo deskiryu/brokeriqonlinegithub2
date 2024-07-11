@@ -73,6 +73,8 @@ namespace BrokerIQ.Online.Pages
 
         protected string HoverClass;
 
+        protected MudTabs Tabs;
+
         protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
 
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
