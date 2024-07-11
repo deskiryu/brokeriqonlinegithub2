@@ -60,6 +60,11 @@ namespace BrokerIQ.Online.Pages
 
         protected FileUploadSettings fileUploadSettings { get; set; }
 
+        [Inject]
+        public IOptions<TutorialVideos> TutorialVideosOption { get; set; }
+
+        protected TutorialVideos tutorialVideos { get; set; }
+
         public List<MessageElement> MessageElements = new List<MessageElement>();
 
         protected List<IBrowserFile> SelectedFiles = new();
@@ -67,6 +72,8 @@ namespace BrokerIQ.Online.Pages
         protected bool IsCurrentFileToBeRemoved = false;
 
         protected string HoverClass;
+
+        protected MudTabs Tabs;
 
         protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
 
@@ -91,6 +98,8 @@ namespace BrokerIQ.Online.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            tutorialVideos = TutorialVideosOption.Value;
+
             try
             {
                 User = await AccountService.GetUser();
