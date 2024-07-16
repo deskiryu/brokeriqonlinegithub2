@@ -1,25 +1,19 @@
 ﻿@page "/referrals"
 @inherits ClientReferralBase
+
 @using BrokerIQ.Online.Pages
+@using BrokerIQ.Online.Server.Components
 @using System
 @using BrokerIQ.Online.Server.Extensions
 @using Dto.Enum
+
 @inject NavigationManager NavigationManager
 
 <h3>Referrals</h3>
 
-@if (!IsAdmin && Broker!=null && Broker.IsLimitedBroker)
+@if (!IsAdmin && Broker != null && Broker.IsLimitedBroker)
 {
-    <MudCard>
-        <MudCardHeader>
-            <CardHeaderContent>
-                <MudText Typo="Typo.h6">Upgrade your BrokerIQ</MudText>
-            </CardHeaderContent>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudText>You will be able to access your clients referrals along with other perks.</MudText>
-        </MudCardContent>
-    </MudCard>
+    <UpgradeBrokerIQCard Text="You will be able to access your clients referrals along with other perks." />
 }
 else
 {

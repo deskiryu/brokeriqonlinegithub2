@@ -1,0 +1,22 @@
+<MudDialog>
+    <DialogContent>
+        <div>
+            <video controls autoplay width="100%">
+                <source src="@VideoUrl" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string VideoUrl { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+}

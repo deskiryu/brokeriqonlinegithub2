@@ -60,6 +60,11 @@ namespace BrokerIQ.Online.Pages
 
         protected FileUploadSettings fileUploadSettings { get; set; }
 
+        [Inject]
+        public IOptions<TutorialVideos> TutorialVideosOption { get; set; }
+
+        protected TutorialVideos tutorialVideos { get; set; }
+
         public List<MessageElement> MessageElements = new List<MessageElement>();
 
         protected List<IBrowserFile> SelectedFiles = new();
@@ -67,6 +72,8 @@ namespace BrokerIQ.Online.Pages
         protected bool IsCurrentFileToBeRemoved = false;
 
         protected string HoverClass;
+
+        protected MudTabs Tabs;
 
         protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
 
@@ -91,6 +98,8 @@ namespace BrokerIQ.Online.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            tutorialVideos = TutorialVideosOption.Value;
+
             try
             {
                 User = await AccountService.GetUser();
@@ -299,9 +308,19 @@ namespace BrokerIQ.Online.Pages
         {
             if (Broker is null) return false; // disabled while broker is not set
 
-            if (Broker.BrokerIdentifier is null || Broker.BrokerIdentifier.Id == 0) return true;
+            if (Broker.BrokerIdentifier is null || !Broker.BrokerIdentifier.IdentifierFound) return true;
 
-            return !Broker.BrokerIdentifier.IsLimitedBroker || Broker.BrokerIdentifier.HasReminders;
+            return !Broker.BrokerIdentifier.IsLimitedBroker || Broker.BrokerIdentifier.HasReminders ;
         }
+
+        protected bool ShowAppointmentSection()
+        {
+            if (Broker is null) return false; // disabled while broker is not set
+
+            if (Broker.BrokerIdentifier is null || !Broker.BrokerIdentifier.IdentifierFound) return true;
+
+            return !Broker.BrokerIdentifier.IsLimitedBroker || Broker.BrokerIdentifier.HasAppointments;
+        }
+
     }
 }

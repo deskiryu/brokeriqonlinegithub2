@@ -1,4 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
@@ -6,7 +7,7 @@
         <OutputType>Library</OutputType>
         <StartupObject />
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <Version>1.2.67</Version>
+        <Version>1.2.70</Version>
         <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
@@ -37,7 +38,7 @@
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.0" />
         <PackageReference Include="MudBlazor" Version="6.11.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="BrokerIQ.Dto" Version="1.2.22" />
+        <PackageReference Include="BrokerIQ.Dto" Version="1.2.25" />
         <PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
     </ItemGroup>
 

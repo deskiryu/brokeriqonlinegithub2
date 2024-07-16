@@ -1,0 +1,10 @@
+<MudDialog>
+    <DialogContent>
+        <MudAutocomplete T="Online.Models.Customer" Label="Customers" @bind-Value="SelectedCustomer" Style="@($"color:{Colors.Shades.Black}")"
+                         SearchFunc="@Search" Variant="Variant.Outlined" ShowProgressIndicator="true" Converter="@CustomerConverter" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Disabled="IsBusy">Close</MudButton>
+        <MudButton OnClick="ConnectToCustomer" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" Disabled="@(SelectedCustomer == null)">Connect</MudButton>
+    </DialogActions>
+</MudDialog>
