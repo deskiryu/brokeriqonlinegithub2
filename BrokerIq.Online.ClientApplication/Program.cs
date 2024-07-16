@@ -35,6 +35,7 @@ namespace BrokerIQ.Online.Server
             builder.Services.Configure<FileUploadSettings>(builder.Configuration.GetSection(typeof(FileUploadSettings).Name));
             builder.Services.Configure<MetaDefenderCoreDetails>(builder.Configuration.GetSection(typeof(MetaDefenderCoreDetails).Name));
             builder.Services.Configure<CalendlySettings>(builder.Configuration.GetSection(typeof(CalendlySettings).Name));
+            builder.Services.Configure<TutorialVideos>(builder.Configuration.GetSection(typeof(TutorialVideos).Name));
 
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IAccountService, AccountService>();

@@ -1,6 +1,11 @@
 <MudDialog>
     <DialogContent>
         <MudText>@ContentText</MudText>
+        @if (!string.IsNullOrWhiteSpace(AdditionalText))
+        {
+            <br /><br />
+            <MudText>@AdditionalText</MudText>
+        }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -9,16 +14,18 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] 
+    [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
 
     [Parameter] public string ContentText { get; set; }
+
+    [Parameter] public string AdditionalText { get; set; }
 
     [Parameter] public string ButtonText { get; set; }
 
     [Parameter] public Color Color { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    
+
     void Cancel() => MudDialog.Cancel();
 }

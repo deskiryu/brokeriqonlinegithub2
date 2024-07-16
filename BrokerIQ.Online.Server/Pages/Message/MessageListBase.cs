@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Helper;
+using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using BrokerIQ.Online.Models;
-using BrokerIQ.Online.Services.Interface;
-using BrokerIQ.Online.Server.Helper;
-using BrokerIQ.Online.Services;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -75,7 +73,8 @@ namespace BrokerIQ.Online.Pages
                 BrokerNotificationsSubset = BrokerNotifications.Where(x => x.BrokerId == BrokerId).ToList();
             }
         }
-        private async Task RefreshMessages()
+
+        public async Task RefreshMessages()
         {
             if (User.IsBroker || User.IsAdminStaff || User.IsBrokerStaff)
             {
@@ -102,13 +101,6 @@ namespace BrokerIQ.Online.Pages
         protected void NavigateToOverview()
         {
             Saved = false;
-        }
-
-        protected async Task SetReminderReadStatus(int reminderId)
-        {
-            await NotificationService.ToggleNotificationReadStatus(reminderId);
-
-            await RefreshMessages();
         }
     }
 }

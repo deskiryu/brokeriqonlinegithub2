@@ -93,6 +93,11 @@ namespace BrokerIQ.Online.Pages
         [Parameter]
         public string CustomerId { get; set; }
 
+        [Inject]
+        public IOptions<TutorialVideos> TutorialVideosOption { get; set; }
+
+        protected TutorialVideos tutorialVideos { get; set; }
+
         protected User User { get; set; }
 
         protected const int DefaultMonthsToShow = -1;
@@ -214,12 +219,14 @@ namespace BrokerIQ.Online.Pages
 
         protected bool CalendlyAccessIsAllowed { get; set; } = false;
 
-        protected bool IsConnectedToCalendly { get; set; } = false;
+        protected bool IsConnectedToCalendly => CalendlyUser != null;
 
         protected CalendlyUserDto CalendlyUser { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            tutorialVideos = TutorialVideosOption.Value;
+
             User = await AccountService.GetUser();
             fileUploadSettings = this.FileUploadSettingsOption.Value;
             MyMaxAllowedFiles = fileUploadSettings.MaxAllowedFiles;
@@ -338,9 +345,7 @@ namespace BrokerIQ.Online.Pages
 
         private async Task SetUserCalendlyDetails()
         {
-            IsConnectedToCalendly = CalendlyAccessIsAllowed && await CustomerAppointmentService.IsUserConnected();
-
-            if (IsConnectedToCalendly) CalendlyUser = await CustomerAppointmentService.GetUser();
+            CalendlyUser = await CustomerAppointmentService.GetUser();
         }
 
         private void SetRequirementVisibility()
@@ -1305,11 +1310,11 @@ namespace BrokerIQ.Online.Pages
                 !Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > DateTime.UtcNow);
         }
 
-        public async Task OnConnetionRemoved()
+        public async Task OnCustomerConnectionChange()
         {
-            Connection = null;
-
             Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
+
+            Connection = await CustomerService.GetConnection(Customer.Id);
 
             Tabs.ActivatePanel(0);
 
@@ -1318,6 +1323,14 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task ShowCalendlyPopup()
         {
+            if (CalendlyUser == null || string.IsNullOrWhiteSpace(CalendlyUser.AccessToken) || string.IsNullOrWhiteSpace(CalendlyUser.RefreshToken))
+            {
+                // User has never logged in, or was unable to refresh token after expiration
+                NavigationManager.NavigateTo(CalendlyLoginUri);
+
+                return;
+            }
+
             var thisPage = DotNetObjectReference.Create(this);
             await js.InvokeVoidAsync("PassPageComponent", thisPage);
 
