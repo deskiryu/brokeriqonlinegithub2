@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.CreateDto;
 using BrokerIQ.Dto.Dto;
-using BrokerIQ.Dto.Models;
+using BrokerIQ.Dto.UpdateDto;
 
 namespace BrokerIQ.Online.Services.Interface
 {

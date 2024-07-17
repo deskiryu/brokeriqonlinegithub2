@@ -14,18 +14,20 @@ using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
 using BrokerIQ.Dto.Models;
+using BrokerIQ.Dto.Enum;
 
 namespace BrokerIQ.Online.Pages
 {
     public class BrokerEditBase : ComponentBase
     {
-        private int id;
-
         [Inject]
         public IBrokerService BrokerService { get; set; }
 
         [Inject]
         public IBrokerIdentifierService BrokerIdentifierService { get; set; }
+
+        [Inject]
+        public IBrokerSubscriptionService BrokerSubscriptionService { get; set; }
 
         [Inject]
         public IAccountService AccountService { get; set; }
@@ -42,59 +44,46 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IDialogService DialogService { get; set; }
 
-        public Broker Broker { get; set; }
-
-        public BrokerIdentifier BrokerIdentifier { get; set; }
-
-        protected string Message = string.Empty;
-        protected string StatusClass = string.Empty;
-        protected bool Saved;
-
         [Parameter]
         public string BrokerId { get; set; }
 
-        public bool IsAdmin { get; set; }
+        public User CurrentUser { get; set; }
 
-        public bool IsMinorAdmin { get; set; }
+        public Broker Broker { get; set; }
+
+        protected string Message = string.Empty;
+
+        protected string StatusClass = string.Empty;
+
+        protected bool Saved;
+
+        public string IdentifierTabLabel { get { return Broker.Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel) ? "White Label" : string.Empty; } }
 
         public bool IsCreatingWhiteLabel { get; set; } = false;
 
         public BrokerEditBase()
         {
-            Broker = new Broker();
-            BrokerIdentifier = new BrokerIdentifier
+            Broker = new Broker
             {
-                IdentifierFound = false
+                BrokerIdentifier = new BrokerIdentifier
+                {
+                    IdentifierFound = false
+                }
             };
-            IsAdmin = false;
-            IsMinorAdmin = false;
         }
 
         protected override async Task OnInitializedAsync()
         {
             try
             {
-                var user = await AccountService.GetUser();
-                IsAdmin = user.IsAdmin;
-                IsMinorAdmin = user.IsMinorAdmin;
-                if (IsAdmin || IsMinorAdmin)
+                CurrentUser = await AccountService.GetUser();
+
+                var id = CurrentUser.IsAdmin || CurrentUser.IsMinorAdmin ? Int32.Parse(BrokerId) : CurrentUser.MasterBrokerId;
+
+                if (id > 0)
                 {
-                    id = Int32.Parse(BrokerId);
-                    if (id > 0)
-                    {
-                        Broker = (await BrokerService.GetBroker(id));
-                        if (Broker.BrokerIdentifier != null && Broker.BrokerIdentifier.IdentifierFound)
-                        {
-                            BrokerIdentifier = Broker.BrokerIdentifier;
-                        }
-                    }
-                }
-                else
-                {
-                    if (user.MasterBrokerId > 0)
-                    {
-                        Broker = (await BrokerService.GetBroker(user.MasterBrokerId));
-                    }
+                    Broker = await BrokerService.GetBroker(id, true);
+                    Broker.Subscriptions = (await BrokerSubscriptionService.GetAllForBroker(id)).ToList();
                 }
             }
             catch
@@ -151,12 +140,12 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (IsCreatingWhiteLabel)
                     {
-                        await BrokerIdentifierService.AddBrokerIdentifier(GetCreateBrokerIdentifierFrom(BrokerIdentifier));
+                        await BrokerIdentifierService.AddBrokerIdentifier(GetCreateBrokerIdentifierFrom(Broker.BrokerIdentifier));
                         IsCreatingWhiteLabel = false;
                     }
                     else
                     {
-                        await BrokerIdentifierService.UpdateBrokerIdentifier(BrokerIdentifier);
+                        await BrokerIdentifierService.UpdateBrokerIdentifier(Broker.BrokerIdentifier);
                     }
                 }
                 catch
@@ -169,7 +158,6 @@ namespace BrokerIQ.Online.Pages
                     Saved = true;
                 }
             }
-
         }
 
         private CreateBrokerIdentifierDto GetCreateBrokerIdentifierFrom(BrokerIdentifier brokerIdentifier)
@@ -201,55 +189,55 @@ namespace BrokerIQ.Online.Pages
             };
         }
 
-        protected async Task AddIdentifier()
-        {
-            StatusClass = "alert-success";
-            Message = "Broker identifier added successfully.";
+        //protected async Task AddIdentifier()
+        //{
+        //    StatusClass = "alert-success";
+        //    Message = "Broker identifier added successfully.";
 
-            var dialogParams = new DialogParameters
-            {
-                { "Message", $"Are you absolutely sure you want to add white label settings for {Broker.Name}? This changes can SERIOUSLY affect app, email and notifications!!!!" }
-            };
+        //    var dialogParams = new DialogParameters
+        //    {
+        //        { "Message", $"Are you absolutely sure you want to add white label settings for {Broker.Name}? This changes can SERIOUSLY affect app, email and notifications!!!!" }
+        //    };
 
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Canceled)
-            {
-                BrokerIdentifier = await this.BrokerIdentifierService.GetDefaultBrokerIdentifier();
-                IsCreatingWhiteLabel = true;
-                StateHasChanged();
-            }
-        }
+        //    var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+        //    if (!result.Canceled)
+        //    {
+        //        Broker.BrokerIdentifier = await this.BrokerIdentifierService.GetDefaultBrokerIdentifier();
+        //        IsCreatingWhiteLabel = true;
+        //        StateHasChanged();
+        //    }
+        //}
 
-        protected async Task DeleteIdentifier()
-        {
-            StatusClass = "alert-success";
-            Message = "Broker identifier deleted successfully.";
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"Are you absolutely sure you want to delete white label settings for {Broker.Name}? This changes can SERIOUSLY affect app, email and notifications!!!!");
-            var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Canceled)
-            {
-                try
-                {
-                    await BrokerIdentifierService.DeleteBrokerIdentifier(BrokerIdentifier.Id);
-                }
-                catch
-                {
-                    StatusClass = "alert-danger";
-                    Message = "Something went wrong deleting the Broker Identifier. Please try again.";
+        //protected async Task DeleteIdentifier()
+        //{
+        //    StatusClass = "alert-success";
+        //    Message = "Broker identifier deleted successfully.";
+        //    var dialogParams = new DialogParameters();
+        //    dialogParams.Add("Message", $"Are you absolutely sure you want to delete white label settings for {Broker.Name}? This changes can SERIOUSLY affect app, email and notifications!!!!");
+        //    var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
+        //    if (!result.Canceled)
+        //    {
+        //        try
+        //        {
+        //            await BrokerIdentifierService.DeleteBrokerIdentifier(BrokerIdentifier.Id);
+        //        }
+        //        catch
+        //        {
+        //            StatusClass = "alert-danger";
+        //            Message = "Something went wrong deleting the Broker Identifier. Please try again.";
 
-                }
-                finally
-                {
-                    Saved = true;
-                }
-            }
+        //        }
+        //        finally
+        //        {
+        //            Saved = true;
+        //        }
+        //    }
 
-        }
+        //}
 
         protected async void NavigateToOverview()
         {
-            if (IsAdmin || IsMinorAdmin)
+            if (CurrentUser.IsAdmin || CurrentUser.IsMinorAdmin)
             {
                 NavigationManager.NavigateTo($"/brokerlist");
             }
