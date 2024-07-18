@@ -19,7 +19,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">TEMPLATES</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.TemplatesVideoUrl" Visible="@(Tabs.ActivePanelIndex==0)" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.TemplatesVideoUrl" Visible="@(IsLimitedBroker && Tabs.ActivePanelIndex==0)" />
         </TabContent>
         <ChildContent>
             <DefinedMessageTable Broker="@Broker" User="@User" />
@@ -29,7 +29,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">REMINDER OPTIONS</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.RemindersVideoUrl" Visible="@(Tabs.ActivePanelIndex==1)" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.RemindersVideoUrl" Visible="@(IsLimitedBroker && Tabs.ActivePanelIndex==1)" />
         </TabContent>
         <ChildContent>
             @if (this.api.Value.ShowProtection && ShowReminderSection())
@@ -46,7 +46,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">DOCUMENT VAULT TYPES</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(Tabs.ActivePanelIndex==2)" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(IsLimitedBroker && Tabs.ActivePanelIndex==2)" />
         </TabContent>
         <ChildContent>
             <DocumentVaultTypeTable Broker="@Broker" User="@User" />
@@ -56,7 +56,7 @@
     <MudTabPanel>
         <TabContent>
             <MudText Typo="Typo.subtitle2" Class="mr-1">NOTIFICATIONS</MudText>
-            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.NotificationSettingsVideoUrl" Visible="@(Tabs.ActivePanelIndex==3)" />
+            <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.NotificationSettingsVideoUrl" Visible="@(IsLimitedBroker && Tabs.ActivePanelIndex==3)" />
         </TabContent>
         <ChildContent>
             @if (IsBrokerStaff)
@@ -290,7 +290,7 @@
         <MudTabPanel>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">APPOINTMENTS</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.AppointmentsVideoUrl" Visible="@(Tabs.ActivePanelIndex==4)" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.AppointmentsVideoUrl" Visible="@(IsLimitedBroker && Tabs.ActivePanelIndex==4)" />
             </TabContent>
             <ChildContent>
                 @if (ShowAppointmentSection())
@@ -310,7 +310,7 @@
         <MudTabPanel>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">INTEGRATIONS</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.IntegrationsVideoUrl" Visible="@(Tabs.ActivePanelIndex==5)" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.IntegrationsVideoUrl" Visible="@(IsLimitedBroker && Tabs.ActivePanelIndex==5)" />
             </TabContent>
             <ChildContent>
                 <IntegrationStack />
