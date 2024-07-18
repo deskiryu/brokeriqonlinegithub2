@@ -40,7 +40,7 @@
 
         @if (IsLoggedIn)
         {
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
@@ -48,7 +48,7 @@
 
             @if (!User.IsMinorAdmin)
             {
-                <li class="nav-item px-3 row">
+                <li class="nav-item px-3 d-flex align-center">
                     <NavLink class="nav-link" href="clientlist">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Clients
                     </NavLink>
@@ -58,14 +58,14 @@
 
             @if (User.IsAdmin || User.IsMinorAdmin)
             {
-                <li class="nav-item px-3 row">
+                <li class="nav-item px-3 d-flex align-center">
                     <NavLink class="nav-link" href="videolist">
                         <span class="oi oi-monitor" aria-hidden="true"></span> Videos (admin)
                     </NavLink>
                 </li>
             }
 
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="videolist2">
                     <span class="oi oi-monitor" aria-hidden="true"></span> Videos
                 </NavLink>
@@ -74,7 +74,7 @@
 
             @if (!User.IsMinorAdmin && HasAudioFunctionality())
             {
-                <li class="nav-item px-3 row">
+                <li class="nav-item px-3 d-flex align-center">
                     <NavLink class="nav-link" href="audiolist">
                         <span class="oi oi-bullhorn" aria-hidden="true"></span> Voice Recordings
                     </NavLink>
@@ -82,28 +82,28 @@
                 </li>
             }
 
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="notifications">
                     <span class="oi oi-phone" aria-hidden="true"></span> Notifications
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowNotificationsTutorial" VideoUrl="@tutorialVideos.NotificationsVideoUrl" />
             </li>
 
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="emailinvitations">
                     <span class="oi oi-envelope-open" aria-hidden="true"></span> Invitations
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowInvitationsTutorial" VideoUrl="@tutorialVideos.InvitationsVideoUrl" />
             </li>
 
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="referrals">
                     <span class="oi oi-link-intact" aria-hidden="true"></span> Referrals
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowReferralsTutorial" VideoUrl="@tutorialVideos.ReferralsVideoUrl" />
             </li>
 
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="messagelist">
                     @if (NewMessageHide)
                     {
@@ -128,7 +128,7 @@
 
             @if (User.IsAdmin || User.IsMinorAdmin)
             {
-                <li class="nav-item px-3 row">
+                <li class="nav-item px-3 d-flex align-center">
                     <NavLink class="nav-link" href="brokerlist">
                         <span class="oi oi-grid-two-up" aria-hidden="true"></span> Brokers
                     </NavLink>
@@ -136,7 +136,7 @@
             }
             else
             {
-                <li class="nav-item px-3 row">
+                <li class="nav-item px-3 d-flex align-center">
                     <NavLink class="nav-link" href="brokeredit\0">
                         <span class="oi oi-grid-two-up" aria-hidden="true"></span> Details
                     </NavLink>
@@ -146,7 +146,7 @@
 
             @if (User.IsAdmin || User.IsMinorAdmin || User.IsBroker || User.IsAdminStaff)
             {
-                <li class="nav-item px-3 row">
+                <li class="nav-item px-3 d-flex align-center">
                     <NavLink class="nav-link" href="brokerstafflist">
                         <span class="oi oi-people" aria-hidden="true"></span> Employees
                     </NavLink>
@@ -157,7 +157,7 @@
 
             @if (!User.IsAdmin && !User.IsMinorAdmin)
             {
-                <li class="nav-item px-3 row">
+                <li class="nav-item px-3 d-flex align-center">
                     <NavLink class="nav-link" href="settingsedit\0">
                         <span class="oi oi-cog" aria-hidden="true"></span> Settings
                     </NavLink>
@@ -165,13 +165,13 @@
                 </li>
             }
 
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="trainingvideolist">
                     <span class="oi oi-monitor" aria-hidden="true"></span> Training Videos
                 </NavLink>
             </li>
 
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="account/logout">
                     <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
                 </NavLink>
@@ -179,7 +179,7 @@
 
             <li style="height:40px" />
 
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="https://brokeriq.co.uk/report-an-issue/" target="_blank">
                     <span class="oi oi-lightbulb" aria-hidden="true"></span> Report An Issue
                 </NavLink>
@@ -187,13 +187,13 @@
         }
         else
         {
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </li>
 
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="account/login">
                     <span class="oi oi-account-login" aria-hidden="true"></span> Login
                 </NavLink>
@@ -201,7 +201,7 @@
 
             <li style="height:40px" />
 
-            <li class="nav-item px-3 row">
+            <li class="nav-item px-3 d-flex align-center">
                 <NavLink class="nav-link" href="https://brokeriq.co.uk/report-an-issue" target="_blank">
                     <span class="oi oi-lightbulb" aria-hidden="true"></span> Report An Issue
                 </NavLink>
