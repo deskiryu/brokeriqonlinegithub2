@@ -84,7 +84,16 @@ else
                         </MudSelect>
                     </div>
                     <div class="col-lg-4">
-                        <MudCheckBox T="bool" Label="Clients who have not downloaded or logged in to app" CheckedChanged="ShowNonAppUsersOnly" Checked="showNonAppUsersOnly"></MudCheckBox>
+                            <MudSelect T="int"
+                                       Label="Filter By Usage"
+                                       Placeholder="Select"
+                                       Clearable="true"
+                                        @bind-Value="showNonAppUsersOnlyAsInt"
+                                       SelectedValuesChanged="@ShowNonAppUsersOnly"
+                                       AdornmentColor="Color.Primary">
+                                <MudSelectItem Value="0">All</MudSelectItem>
+                                <MudSelectItem Value="1">Not downloaded or logged in to app</MudSelectItem>
+                            </MudSelect>
                     </div>
                 }
             </div>
