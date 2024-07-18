@@ -96,6 +96,8 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsBrokerStaff { get; set; }
 
+        protected bool IsLimitedBroker { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             tutorialVideos = TutorialVideosOption.Value;
@@ -106,6 +108,7 @@ namespace BrokerIQ.Online.Pages
                 IsAdmin = User.IsAdmin;
                 IsMinorAdmin = User.IsMinorAdmin;
                 IsBrokerStaff = User.IsBrokerStaff;
+                IsLimitedBroker = false;
                 if (IsAdmin || IsMinorAdmin)
                 {
                     id = Int32.Parse(BrokerId);
@@ -130,6 +133,7 @@ namespace BrokerIQ.Online.Pages
                     if (User.MasterBrokerId > 0)
                     {
                         Broker = (await BrokerService.GetBroker(User.MasterBrokerId));
+                        IsLimitedBroker = Broker.IsLimitedBroker;
                     }
                 }
             }

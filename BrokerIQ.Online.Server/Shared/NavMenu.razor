@@ -301,23 +301,23 @@
         return !Identifier.IsLimitedBroker || Identifier.HasAudio;
     }
 
-    private bool ShowClientListTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("clientlist"); } }
+    private bool ShowClientListTutorial { get { return Identifier!=null && Identifier.IsLimitedBroker && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("clientlist"); } }
 
-    private bool ShowVideoListTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("videolist2"); } }
+    private bool ShowVideoListTutorial { get { return Identifier!=null && Identifier.IsLimitedBroker && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("videolist2"); } }
 
-    private bool ShowAudioListTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("audiolist"); } }
+    private bool ShowAudioListTutorial { get { return Identifier!=null && Identifier.IsLimitedBroker && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("audiolist"); } }
 
-    private bool ShowNotificationsTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("notifications"); } }
+    private bool ShowNotificationsTutorial { get { return Identifier!=null && Identifier.IsLimitedBroker && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("notifications"); } }
 
-    private bool ShowInvitationsTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("emailinvitations"); } }
+    private bool ShowInvitationsTutorial { get { return Identifier!=null && Identifier.IsLimitedBroker && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("emailinvitations"); } }
 
-    private bool ShowReferralsTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("referrals"); } }
+    private bool ShowReferralsTutorial { get { return Identifier!=null && Identifier.IsLimitedBroker && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("referrals"); } }
 
-    private bool ShowMessageListTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("messagelist"); } }
+    private bool ShowMessageListTutorial { get { return Identifier!=null && Identifier.IsLimitedBroker && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("messagelist"); } }
 
-    private bool ShowBrokerTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("brokeredit/0"); } }
+    private bool ShowBrokerTutorial { get { return Identifier!=null && Identifier.IsLimitedBroker && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("brokeredit/0"); } }
 
-    private bool ShowEmployeesTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("brokerstafflist"); } }
+    private bool ShowEmployeesTutorial { get { return Identifier!=null && Identifier.IsLimitedBroker && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("brokerstafflist"); } }
 
-    private bool ShowSettingsTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("settingsedit/0"); } }
+    private bool ShowSettingsTutorial { get { return Identifier!=null && Identifier.IsLimitedBroker && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("settingsedit/0"); } }
 }
