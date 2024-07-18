@@ -250,7 +250,19 @@ else
                             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>
                         }
                         <MudTh>Verified</MudTh>
-                        <MudTh></MudTh>
+                        <MudTh>
+                            @if (CanImport)
+                            {
+
+                                    <MudIconButton Icon="@Icons.Material.Filled.Upload"
+                                                   Size="Size.Small"
+                                                   Variant="Variant.Filled"
+                                                   Color="Color.Primary"
+                                                   Style="@($"color:{Colors.Shades.Black}")"
+                                                   OnClick="ShowImportDialog" />
+
+                            }
+                        </MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         @if (api.Value.ShowClientPictureColumn)
