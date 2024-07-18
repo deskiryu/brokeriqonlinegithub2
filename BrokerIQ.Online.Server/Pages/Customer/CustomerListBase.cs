@@ -77,11 +77,12 @@ namespace BrokerIQ.Online.Pages
 
         public bool CanImport { get; set; }
 
-        private bool showNonAppUsersOnly;
+        protected int showNonAppUsersOnlyAsInt;
+        protected bool showNonAppUsersOnly;
         protected async void  ShowNonAppUsersOnly()
         {
             showNonAppUsersOnly = !showNonAppUsersOnly;
-
+            showNonAppUsersOnlyAsInt = showNonAppUsersOnly ? 1 : 0;
             await RefreshListFromFilterValues();
         }
 
