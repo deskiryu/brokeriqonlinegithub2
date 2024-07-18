@@ -54,7 +54,7 @@ else
                                    Label="Filter By Broker"
                                    Placeholder="Select"
                                    Clearable="true"
-                                   @bind-Value="BrokerId"
+                        @bind-Value="BrokerId"
                                    SelectedValuesChanged="@AutoCompleteClickBroker"
                                    AdornmentColor="Color.Primary">
                             <MudSelectItem Value="0">Select</MudSelectItem>
@@ -68,12 +68,12 @@ else
 
                 @if (!User.IsAdmin && !IsLimitedBroker)
                 {
-                    <div class="col-6">
+                    <div class="col-12">
                         <MudSelect T="int"
                                    Label="Filter By Assignee"
                                    Placeholder="Select employee"
                                    Clearable="true"
-                                   @bind-Value="AssignedToId"
+                        @bind-Value="AssignedToId"
                                    SelectedValuesChanged="@RefreshListFromFilterValues"
                                    AdornmentColor="Color.Primary">
                             <MudSelectItem Value="0">Select</MudSelectItem>
@@ -82,9 +82,6 @@ else
                                 <MudSelectItem Value="@employee.Id">@employee.FullName</MudSelectItem>
                             }
                         </MudSelect>
-                    </div>
-                    <div class="col-6">
-                        <MudCheckBox T="bool"Label="Customers without App download only" CheckedChanged="ShowNonAppUsersOnly"></MudCheckBox>
                     </div>
                 }
             </div>
@@ -111,7 +108,7 @@ else
                                    Label="Filter By Upcoming"
                                    Placeholder="Select"
                                    Clearable="true"
-                                   @bind-Value="FilterRecent"
+                        @bind-Value="FilterRecent"
                                    SelectedValuesChanged="@RefreshListFromFilterValues"
                                    AdornmentColor="Color.Primary">
                             <MudSelectItem Value="0">None</MudSelectItem>
@@ -130,7 +127,7 @@ else
                                    Label="Mortgage Category"
                                    Placeholder="Select"
                                    Clearable="true"
-                                   @bind-Value="CustomerCategory"
+                        @bind-Value="CustomerCategory"
                                    SelectedValuesChanged="@RefreshListFromFilterValues"
                                    AdornmentColor="Color.Primary"
                                    MaxHeight="400">
@@ -147,7 +144,7 @@ else
                                    Label="Age Range"
                                    Placeholder="Select"
                                    Clearable="true"
-                                   @bind-Value="AgeRange"
+                        @bind-Value="AgeRange"
                                    SelectedValuesChanged="@RefreshListFromFilterValues"
                                    AdornmentColor="Color.Primary">
                             @if (true)
@@ -166,7 +163,7 @@ else
                                    Label="Time Period"
                                    Placeholder="Select"
                                    Clearable="true"
-                                   @bind-Value="FilterPeriod"
+                        @bind-Value="FilterPeriod"
                                    SelectedValuesChanged="@RefreshListFromFilterValues"
                                    AdornmentColor="Color.Primary">
                             <MudSelectItem Value="0">2 weeks</MudSelectItem>
@@ -186,7 +183,7 @@ else
                                        Label="Client Profiling *"
                                        Placeholder="Select"
                                        Clearable="true"
-                                       @bind-Value="ProfilingOption"
+                            @bind-Value="ProfilingOption"
                                        SelectedValuesChanged="@RefreshListFromFilterValues"
                                        AdornmentColor="Color.Primary">
                                 @{
@@ -220,7 +217,7 @@ else
                           SortLabel="Sort By"
                           MultiSelection="true"
                           Dense="true"
-                          @bind-SelectedItems="SelectedCustomers">
+                @bind-SelectedItems="SelectedCustomers">
                     <HeaderContent>
                         @if (api.Value.ShowClientPictureColumn)
                         {
@@ -229,15 +226,13 @@ else
                         @if (!User.IsAdmin)
                         {
                             <MudTh Style="text-align:center">
-                                <MudTooltip Text="Assign">
-                                    <MudIconButton Class="@(AssignVisibilityClass())"
-                                                   Icon="@Icons.Material.Filled.GroupAdd"
-                                                   Size="Size.Small"
-                                                   Variant="Variant.Filled"
-                                                   Color="Color.Primary"
-                                                   Style="@($"color:{Colors.Shades.Black}")"
-                                                   OnClick="AssignToStaff" />
-                                </MudTooltip>
+                                <MudIconButton Class="@(AssignVisibilityClass())"
+                                               Icon="@Icons.Material.Filled.GroupAdd"
+                                               Size="Size.Small"
+                                               Variant="Variant.Filled"
+                                               Color="Color.Primary"
+                                               Style="@($"color:{Colors.Shades.Black}")"
+                                               OnClick="AssignToStaff" />
                             </MudTh>
                         }
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
@@ -255,19 +250,7 @@ else
                             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>
                         }
                         <MudTh>Verified</MudTh>
-                        <MudTh>
-                            @if (CanImport)
-                            {
-                                <MudTooltip Text="Import">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Upload"
-                                                   Size="Size.Small"
-                                                   Variant="Variant.Filled"
-                                                   Color="Color.Primary"
-                                                   Style="@($"color:{Colors.Shades.Black}")"
-                                                   OnClick="ShowImportDialog" />
-                                </MudTooltip>
-                            }
-                        </MudTh>
+                        <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         @if (api.Value.ShowClientPictureColumn)
@@ -345,8 +328,8 @@ else
                             <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Filled" Size="Size.Small"
                                            Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" Link="@($"clientdetail/{@context.Id}")"></MudIconButton>
                             @* <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientdetail/{@context.Id}")" >
-                                    <i class="fas fa-info-circle"></i>
-                                </MudButton> *@
+                        <i class="fas fa-info-circle"></i>
+                        </MudButton> *@
                         </MudTd>
 
                     </RowTemplate>
