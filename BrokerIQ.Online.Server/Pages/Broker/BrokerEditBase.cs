@@ -131,7 +131,7 @@ namespace BrokerIQ.Online.Pages
             Message = "Broker identifier updated successfully.";
             var dialogParams = new DialogParameters
             {
-                { "Message", $"Are you absolutely sure you want to change white label settings for {Broker.Name}? This changes can affect app, email and notifications!!!!" }
+                { "Message", $"Are you absolutely sure you want to change settings for {Broker.Name}? This changes can affect app, email and notifications!!!!" }
             };
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Canceled)
