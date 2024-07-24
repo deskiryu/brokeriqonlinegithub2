@@ -1,5 +1,6 @@
 <MudDialog>
     <DialogContent>
+        <p>Type first three letters of client to connect to</p>
         <MudAutocomplete T="Online.Models.Customer" Label="Customers" @bind-Value="SelectedCustomer" Style="@($"color:{Colors.Shades.Black}")"
                          SearchFunc="@Search" Variant="Variant.Outlined" ShowProgressIndicator="true" Converter="@CustomerConverter" />
     </DialogContent>
