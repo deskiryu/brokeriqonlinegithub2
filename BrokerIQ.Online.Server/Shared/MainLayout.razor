@@ -1,8 +1,11 @@
 ﻿@inherits LayoutComponentBase
 @using BrokerIQ.Online.Server.Helper
+@using Microsoft.Extensions.Options;
+@using BrokerIQ.Online.AppSettings
 
 @inject IDialogService DialogService
 @inject LoggedInAppState AppState
+@inject IOptions<ReviewItAPIDetails> api
 
 <div class="sidebar">
     <NavMenu />
@@ -25,7 +28,15 @@
 
 <MudDialogProvider />
 <MudSnackbarProvider/>
-<MudThemeProvider Theme="MyCustomTheme2" />
+@if (api.Value.IsYAHTheme)
+{
+    <MudThemeProvider Theme="MyCustomThemeYah" />
+}
+else
+{
+    <MudThemeProvider Theme="MyCustomTheme2" />
+}
+
 
 
 
@@ -52,6 +63,28 @@
         }
     };
 
+
+    MudTheme MyCustomThemeYah = new MudTheme()
+        {
+            Palette = new Palette()
+            {
+                Primary = Colors.Purple.Lighten4,
+                Secondary = Colors.Shades.Black,
+                Tertiary = Colors.Blue.Default,
+
+                AppbarBackground = Colors.Red.Default,
+                TextPrimary = Colors.Shades.Black,
+                TextSecondary = Colors.Shades.Black,
+                Background = Colors.Grey.Lighten4,
+
+            },
+
+            LayoutProperties = new LayoutProperties()
+            {
+                DrawerWidthLeft = "260px",
+                DrawerWidthRight = "300px"
+            }
+        };
     protected override void OnInitialized()
     {
         AppState.OnChange += AppStateChangeHandler;
