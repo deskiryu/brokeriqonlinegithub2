@@ -412,6 +412,10 @@ app {
     margin-left: 1em !important;
 }
 
+.chat_broker_yah {
+    background-color: #E1BEE7 !important;
+}
+
 .chat_client {
     background-color: #dedede !important;
     margin-left: 6em !important;
