@@ -10,10 +10,11 @@ namespace BrokerIQ.Online.Models
         public int Id { get; set; }
         public string Message { get; set; }
         public bool BrokerSource { get; set; }
+        public bool YahTheme { get; set; }
         public DateTime SentTime { get; set; }
         public byte[] Image { get; set; }
         public int ChatId { get; set; }
-        public string Style { get => BrokerSource ? "chat_broker" : "chat_client"; }
+        public string Style { get => BrokerSource ? YahTheme ? "chat_broker chat_broker_yah" : "chat_broker" :  "chat_client"; }
         public bool IsRead { get; set; }
         public bool IsVideo { get; set; }
         public string VideoUrl { get; set; }
