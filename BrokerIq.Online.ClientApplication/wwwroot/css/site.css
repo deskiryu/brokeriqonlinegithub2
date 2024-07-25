@@ -98,6 +98,11 @@ app {
     color: #ede574;
 }
 
+
+    .sidebar .nav-item-yah a.active {
+        color: #e3c5e8;
+    }
+
 .sidebar .nav-item a:hover {
     background-color: rgba(255, 255, 255, 0.1);
     color: white;
