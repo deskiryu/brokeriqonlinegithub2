@@ -7,11 +7,11 @@
 @inject LoggedInAppState AppState
 @inject IOptions<ReviewItAPIDetails> api
 
-<div class="sidebar">
+<div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
     <NavMenu />
 </div>
 
-<div class="main">
+<div class="@(api.Value.IsYAHTheme? "main main-yah" : "main")">
     <div class="top-row px-4" style="background-color:black">
         <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Class="mr-2" Variant="Variant.Outlined" @onclick="OpenDialog" >About</MudButton>
         @if (AppState.LoggedIn)
