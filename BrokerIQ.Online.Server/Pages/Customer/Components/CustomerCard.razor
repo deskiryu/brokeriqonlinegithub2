@@ -260,12 +260,16 @@
                         }
                     }
 
-                    @if (!Customer.ConnectedToCustomerId.HasValue && !IsAlreadyConnected &&  Broker!=null && Broker.BrokerIdentifier!=null && !Broker.BrokerIdentifier.IsLimitedBroker)
+                    @if (this.api.Value.ShowConnectToCustomer)
                     {
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ConnectToCustomer" class="ml-1">
-                            Connect to customer
-                        </MudButton>
+                        @if (!Customer.ConnectedToCustomerId.HasValue && !IsAlreadyConnected &&  Broker!=null && Broker.BrokerIdentifier!=null && !Broker.BrokerIdentifier.IsLimitedBroker)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ConnectToCustomer" class="ml-1">
+                                Connect to customer
+                            </MudButton>
+                        }                        
                     }
+
 
                     @if (Customer.ConnectedToCustomerId.HasValue)
                     {

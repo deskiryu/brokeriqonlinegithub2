@@ -25,5 +25,9 @@
         public bool CanLoadInsuranceFromFile { get; set; }
 
         public bool CalendlyAvailable { get; set; }
+
+        public bool ShowConnectToCustomer { get; set; }
+
+        public bool IsYAHTheme { get; set; }
     }
 }
