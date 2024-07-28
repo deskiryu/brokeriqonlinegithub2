@@ -1,6 +1,18 @@
-@using BrokerIQ.Dto.Enum @using BrokerIQ.Online.Server.Extensions <div class="mb-2">
-    <MudButton StartIcon="@Icons.Material.Filled.PostAdd" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
-               OnClick=@(r=> EditDocumentVaultType(new Dto.Models.DocumentVaultTypeDto()))>Add Document Vault Type </MudButton>
+@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+@using BrokerIQ.Online.Server.Components
+
+<div class="mb-2">
+    @if (Broker.CanManageDocuvaultTypes)
+    {
+        <MudButton StartIcon="@Icons.Material.Filled.PostAdd" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
+                   OnClick=@(r => EditDocumentVaultType(new Dto.Models.DocumentVaultTypeDto()))>Add Document Vault Type </MudButton>
+    }
+    else
+    {
+        <UpgradeBrokerIQCard Text="You will be able to manage your document vault types along with other perks." />
+    }
+
 </div>
 <MudTable Items="@DocumentVaultTypes" Dense="true">
     <NoRecordsContent>
@@ -9,25 +21,31 @@
     <HeaderContent>
         <MudTh>Name</MudTh>
         <MudTh>Additional Detail</MudTh>
-        <MudTh></MudTh>
-        <MudTh></MudTh>
+        @if (Broker.CanManageDocuvaultTypes)
+        {
+            <MudTh></MudTh>
+            <MudTh></MudTh>
+        }
     </HeaderContent>
     <RowTemplate>
         <MudTd>@context.Name</MudTd>
         <MudTd> @context.AdditionalDetail </MudTd>
-        <MudTd>
-            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small"
-                           OnClick=@(r=> EditDocumentVaultType(context))>
-            </MudIconButton>
-        </MudTd>
-        <MudTd>
-            @{
-                var tooltip = context.IsInUse ? "Cannot delete, still in use" : "Delete";
-                <MudTooltip Text="@tooltip">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Disabled="@context.IsInUse"
-                                   OnClick=@(r => RemoveDocumentVaultType(context)) />
-                </MudTooltip>
-            }
-        </MudTd>
+        @if (Broker.CanManageDocuvaultTypes)
+        {
+            <MudTd>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small"
+                               OnClick=@(r => EditDocumentVaultType(context))>
+                </MudIconButton>
+            </MudTd>
+            <MudTd>
+                @{
+                    var tooltip = context.IsInUse ? "Cannot delete, still in use" : "Delete";
+                    <MudTooltip Text="@tooltip">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Disabled="@context.IsInUse"
+                                       OnClick=@(r => RemoveDocumentVaultType(context)) />
+                    </MudTooltip>
+                }
+            </MudTd>
+        }
     </RowTemplate>
 </MudTable>

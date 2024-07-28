@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Import;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Services.Interface;
@@ -30,7 +31,13 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         public IDialogService DialogService { get; set; }
 
         [Inject]
+        public IEmailService EmailService { get; set; }
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        public ISnackbar Snackbar { get; set; }
 
         [Parameter]
         public User User { get; set; }
@@ -45,13 +52,22 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         public Online.Models.Customer Customer { get; set; }
 
         [Parameter]
-        public Action OnDisconnection { get; set; }
+        public Action OnCustomerConnectionChange { get; set; }
+
+        [Parameter]
+        public bool IsAlreadyConnected { get; set; }
 
         protected OccupationDto Occupation { get; set; }
+
+        protected CsvImportCustomerDto ImportDetails { get; set; }
+
+        protected bool HasConnection { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             Occupation = await OccupationService.GetById(Customer.OccupationId);
+
+            ImportDetails = await CustomerService.GetImportDetails(Customer.Id);
         }
 
         protected string GetNeedsContent()
@@ -142,7 +158,47 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             await CustomerService.Disconnect(Customer.TargetCustomerId);
 
-            OnDisconnection();
+            OnCustomerConnectionChange();
+        }
+
+        protected async Task SendAppInvite()
+        {
+            var emailSent = await CustomerService.SendAppInvite(Customer.Id);
+
+            if (emailSent)
+            {
+                ImportDetails = await CustomerService.GetImportDetails(Customer.Id);
+
+                Snackbar.Add("Mobile App invitation has been sent", Severity.Success);
+
+                StateHasChanged();
+
+                return;
+            }
+
+            Snackbar.Add("Unable to send mobile app invite", Severity.Error);
+        }
+
+        protected async Task ConnectToCustomer()
+        {
+            var dialogParams = new DialogParameters
+            {
+                { "Customer", Customer},
+            };
+
+            var dialogOptions = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+
+            var result = await DialogService.Show<CustomerConnectionDialog>("Connect to customer", dialogParams, dialogOptions).Result;
+
+            if (result.Canceled) return;
+
+            await CustomerService.Connect(Customer.ChosenBrokerId, Customer.Id, (int)result.Data);
+
+            OnCustomerConnectionChange();
         }
     }
 }
