@@ -11,17 +11,17 @@
     </div>
     <div class="card-body">
         <div class="row">
-            @if(Customer.HasNeeds){
-            <div class="col-12 mb-1">
-                <MudAlert Severity="Severity.Warning" ContentAlignment="HorizontalAlignment.Center">@GetNeedsContent()</MudAlert>
-            </div>
+            @if (Customer.HasNeeds)
+            {
+                <div class="col-12 mb-1">
+                    <MudAlert Severity="Severity.Warning" ContentAlignment="HorizontalAlignment.Center">@GetNeedsContent()</MudAlert>
+                </div>
             }
             <div class="col-lg-2">
-
-            @if (Customer.ProfilePicture != null && Customer.ProfilePicture.Length > 0)
-            {
-                <img src="@Customer.PPAsImage" class="img-responsive customer-detail-img" style="width: 100%" />
-            }
+                @if (Customer.ProfilePicture != null && Customer.ProfilePicture.Length > 0)
+                {
+                    <img src="@Customer.PPAsImage" class="img-responsive customer-detail-img" style="width: 100%" />
+                }
             </div>
             <div class="col-lg-10">
                 <div class="form-group row">
@@ -67,18 +67,18 @@
                     </div>
 
                     <label class="col-lg-2 col-form-label">Email confirmed</label>
-                @if (Customer.EmailConfirmed)
-                {
-                    <div class="col-lg-4">
-                        <i class="fa fa-check-circle font_awesome_table_checks success"></i>
-                    </div>
-                }
-                else
-                {
-                    <div class="col-lg-4">
-                        <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
-                    </div>
-                }
+                    @if (Customer.EmailConfirmed)
+                    {
+                        <div class="col-lg-4">
+                            <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-4">
+                            <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                        </div>
+                    }
                 </div>
 
                 <div class="form-group row">
@@ -101,18 +101,18 @@
 
                     <label class="col-lg-2 ">Video Notifications Allowed</label>
 
-                @if (Customer.VideoNotificationsAllowed)
-                {
-                    <div class="col-lg-4">
-                        <i class="fa fa-check-circle font_awesome_table_checks success"></i>
-                    </div>
-                }
-                else
-                {
-                    <div class="col-lg-4">
-                        <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
-                    </div>
-                }      
+                    @if (Customer.VideoNotificationsAllowed)
+                    {
+                        <div class="col-lg-4">
+                            <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-4">
+                            <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                        </div>
+                    }
                 </div>
 
                 <div class="form-group row">
@@ -124,120 +124,159 @@
                     {
                         <label class="col-lg-2 col-form-label">Is Smoker/Vaper</label>
                         <div class="col-lg-4">
-                        <MudCheckBox ReadOnly Checked="@Customer.IsSmokerOrVaper" Style="margin-left: -15px" TriState="true" />
-                    </div>
+                            <MudCheckBox ReadOnly Checked="@Customer.IsSmokerOrVaper" Style="margin-left: -15px" TriState="true" />
+                        </div>
                     }
                 </div>
-            @if (this.api.Value.ShowProtection)
-            {
-            <div class="form-group row">
-                    <label class="col-lg-2 col-form-label">Occupation</label>
-                    <div class="col-lg-4">
-                        <label type="text" readonly class="form-control-plaintext"> @(Occupation == null ? String.Empty : $"{Occupation.Description} ({Occupation.OrigoCode})")</label>
+
+                @if (this.api.Value.ShowProtection)
+                {
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label">Occupation</label>
+                        <div class="col-lg-4">
+                            <label type="text" readonly class="form-control-plaintext"> @(Occupation == null ? String.Empty : $"{Occupation.Description} ({Occupation.OrigoCode})")</label>
+                        </div>
+
+                        <label class="col-lg-2 col-form-label">Annual Income</label>
+
+                        <div class="col-lg-4">
+                            <label type="text" readonly class="form-control-plaintext">£ @Customer.AnnualIncome</label>
+                        </div>
                     </div>
 
-                    <label class="col-lg-2 col-form-label">Annual Income</label>
-                    
-                    <div class="col-lg-4">
-                        <label type="text" readonly class="form-control-plaintext">£ @Customer.AnnualIncome</label>
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label">Gender</label>
+                        <div class="col-lg-4">
+                            <label type="text" readonly class="form-control-plaintext">@Customer.Gender.GetDisplayName()</label>
+                        </div>
                     </div>
-                </div>
+                }
 
-                <div class="form-group row">
-                    <label class="col-lg-2 col-form-label">Gender</label>
-                    <div class="col-lg-4">
-                        <label type="text" readonly class="form-control-plaintext">@Customer.Gender.GetDisplayName()</label>
+                @if (ImportDetails is not null)
+                {
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label">Import Date</label>
+                        <div class="col-lg-4">
+                            <label type="text" readonly class="form-control-plaintext">@ImportDetails.CsvImport.ImportDate.ToBiqDateString()</label>
+                        </div>
+
+                        @if (string.IsNullOrWhiteSpace(Customer.AppVersion))
+                        {
+                            <label class="col-lg-2 col-form-label">Last App Invite Sent</label>
+                            <div class="d-flex">
+                                <label type="text" readonly class="form-control-plaintext">
+                                    @(ImportDetails.LastCustomerInvitationDate.HasValue ? ImportDetails.LastCustomerInvitationDate.Value.ToBiqDateString() : "Not sent")
+                                </label>
+                            </div>
+                        }
                     </div>
-                </div>                            
-            }
-
+                }
 
                 <div class="form-group row">
                     <label class="col-lg-2 col-form-label">App Version</label>
                     <div class="col-lg-4">
                         <label type="text" readonly class="form-control-plaintext">@Customer.AppVersion</label>
                     </div>
-                @if (Broker != null && Broker.HasWhiteLabel)
-                {
-                    <label class="col-lg-2 ">Using Branded App</label>
-                    @if (Customer.IsWhiteLabel)
+                    @if (Broker != null && Broker.HasWhiteLabel)
                     {
-                        <div class="col-lg-4">
-                            <i class="fa fa-check-circle font_awesome_table_checks success"></i>
-                        </div>
+                        <label class="col-lg-2 ">Using Branded App</label>
+                        @if (Customer.IsWhiteLabel)
+                        {
+                            <div class="col-lg-4">
+                                <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-lg-4">
+                                <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                            </div>
+                        }
                     }
-                    else
-                    {
+                </div>
+
+                @if (User.IsAdmin)
+                {
+                    var broker = @Brokers.FirstOrDefault(x => x.Id == Customer.ChosenBrokerId);
+                    var name = broker?.Name ?? "None chosen";
+
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label">Broker</label>
                         <div class="col-lg-4">
-                            <i class="fa fa-times-circle font_awesome_table_checks fail"></i>
+                            <label type="text" readonly class="form-control-plaintext">@name</label>
                         </div>
-                    }                                
+
+                        <label class="col-lg-2 col-form-label">Suggested Broker 1</label>
+                        <div class="col-lg-4">
+                            <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker1</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label">Suggested Broker 2</label>
+                        <div class="col-lg-4">
+                            <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker2</label>
+                        </div>
+
+                        <label class="col-lg-2 col-form-label">Suggested Broker 3</label>
+                        <div class="col-lg-4">
+                            <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker3</label>
+                        </div>
+                    </div>
+
                 }
 
-                </div>
-
-            @if (User.IsAdmin)
-            {
-                var broker = @Brokers.FirstOrDefault(x => x.Id == Customer.ChosenBrokerId);
-                var name = broker?.Name ?? "None chosen";
-
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-form-label">Broker</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@name</label>
-                            </div>
-
-                            <label class="col-lg-2 col-form-label">Suggested Broker 1</label>
-                            <div class="col-lg-4">
-                                <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker1</label>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                    <label class="col-lg-2 col-form-label">Suggested Broker 2</label>
-                    <div class="col-lg-4">
-                        <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker2</label>
-                    </div>
-
-                    <label class="col-lg-2 col-form-label">Suggested Broker 3</label>
-                    <div class="col-lg-4">
-                        <label type="text" readonly class="form-control-plaintext">@Customer.PotentialBroker3</label>
-                    </div>
-                </div>
-
-            }
                 <div class="row col-12 mt-1">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientedit/{Customer.Id}")" class="ml-1">
                         Edit Client
                     </MudButton>
 
-                @if (!Customer.ConnectedToCustomerId.HasValue)
-                {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/0/{Customer.Id}")" class="ml-1">
-                        Add a Menu Plan
-                    </MudButton>
-                }
-
-                @if (User.IsAdmin)
-                {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="ResendEmailCustomer">
-                        Resend Verify Email
-                    </MudButton>
-
                     @if (!Customer.ConnectedToCustomerId.HasValue)
                     {
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="DeleteCustomer">
-                        Delete Client
-                    </MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/0/{Customer.Id}")" class="ml-1">
+                            Add a Menu Plan
+                        </MudButton>
                     }
-                }
 
-                @if (Customer.ConnectedToCustomerId.HasValue)
-                {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Disconnect" class="ml-1">
-                        Disconnect
-                    </MudButton>
-                }
+                    @if (ImportDetails != null && string.IsNullOrWhiteSpace(Customer.AppVersion))
+                    {
+                        // customer is not using the app
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="SendAppInvite">
+                            Send mobile app invite
+                        </MudButton>
+                    }
+
+                    @if (User.IsAdmin)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-1" @onclick="ResendEmailCustomer">
+                            Resend Verify Email
+                        </MudButton>
+
+                        @if (!Customer.ConnectedToCustomerId.HasValue)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="DeleteCustomer">
+                                Delete Client
+                            </MudButton>
+                        }
+                    }
+
+                    @if (this.api.Value.ShowConnectToCustomer)
+                    {
+                        @if (!Customer.ConnectedToCustomerId.HasValue && !IsAlreadyConnected &&  Broker!=null && Broker.BrokerIdentifier!=null && !Broker.BrokerIdentifier.IsLimitedBroker)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ConnectToCustomer" class="ml-1">
+                                Connect to customer
+                            </MudButton>
+                        }                        
+                    }
+
+
+                    @if (Customer.ConnectedToCustomerId.HasValue)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Disconnect" class="ml-1">
+                            Disconnect
+                        </MudButton>
+                    }
                 </div>
             </div>
         </div>

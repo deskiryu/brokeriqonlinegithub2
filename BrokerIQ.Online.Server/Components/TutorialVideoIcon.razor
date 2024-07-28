@@ -1,0 +1,36 @@
+﻿@if (Visible && !string.IsNullOrWhiteSpace(VideoUrl))
+{
+
+    <MudIcon Icon="@Icons.Material.Filled.Help" Color="Color.Primary" @onclick="PlayVideo" Size="Size.Small" Title="@TooltipText" />
+
+}
+
+@code {
+    [Inject]
+    public IDialogService DialogService { get; set; }
+
+    [Parameter]
+    public bool Visible { get; set; } = true;
+
+    [Parameter]
+    public Placement TooltipPlacement { get; set; } = Placement.Right;
+
+    [Parameter]
+    public string TooltipText { get; set; } = "Tutorial Video";
+
+    [Parameter]
+    public string VideoUrl { get; set; }
+
+    public void PlayVideo()
+    {
+        var parameters = new DialogParameters
+    {
+                { "VideoUrl",  VideoUrl}
+        };
+
+        DialogOptions options = new DialogOptions() { NoHeader = true, MaxWidth = MaxWidth.Large, FullWidth = true };
+
+        DialogService.Show<VideoPlayerDialog>(string.Empty, parameters, options);
+    }
+}
+

@@ -111,6 +111,10 @@ namespace BrokerIQ.Online.Models
 
         public bool NotifyAppointments { get; set; }
 
-        public bool IsLimitedBroker => BrokerIdentifier is not null && BrokerIdentifier.IsLimitedBroker;
+        public bool IsLimitedBroker => BrokerIdentifier is not null && BrokerIdentifier.IdentifierFound && BrokerIdentifier.IsLimitedBroker;
+
+        public bool CanImport => BrokerIdentifier is not null && BrokerIdentifier.IdentifierFound && BrokerIdentifier.CanImport;
+
+        public bool CanManageDocuvaultTypes => BrokerIdentifier is null || !BrokerIdentifier.IdentifierFound || BrokerIdentifier.CanEditDocuvaultTypes;
     }
 }
