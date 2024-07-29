@@ -189,52 +189,6 @@ namespace BrokerIQ.Online.Pages
             };
         }
 
-        //protected async Task AddIdentifier()
-        //{
-        //    StatusClass = "alert-success";
-        //    Message = "Broker identifier added successfully.";
-
-        //    var dialogParams = new DialogParameters
-        //    {
-        //        { "Message", $"Are you absolutely sure you want to add white label settings for {Broker.Name}? This changes can SERIOUSLY affect app, email and notifications!!!!" }
-        //    };
-
-        //    var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-        //    if (!result.Canceled)
-        //    {
-        //        Broker.BrokerIdentifier = await this.BrokerIdentifierService.GetDefaultBrokerIdentifier();
-        //        IsCreatingWhiteLabel = true;
-        //        StateHasChanged();
-        //    }
-        //}
-
-        //protected async Task DeleteIdentifier()
-        //{
-        //    StatusClass = "alert-success";
-        //    Message = "Broker identifier deleted successfully.";
-        //    var dialogParams = new DialogParameters();
-        //    dialogParams.Add("Message", $"Are you absolutely sure you want to delete white label settings for {Broker.Name}? This changes can SERIOUSLY affect app, email and notifications!!!!");
-        //    var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
-        //    if (!result.Canceled)
-        //    {
-        //        try
-        //        {
-        //            await BrokerIdentifierService.DeleteBrokerIdentifier(BrokerIdentifier.Id);
-        //        }
-        //        catch
-        //        {
-        //            StatusClass = "alert-danger";
-        //            Message = "Something went wrong deleting the Broker Identifier. Please try again.";
-
-        //        }
-        //        finally
-        //        {
-        //            Saved = true;
-        //        }
-        //    }
-
-        //}
-
         protected async void NavigateToOverview()
         {
             if (CurrentUser.IsAdmin || CurrentUser.IsMinorAdmin)
