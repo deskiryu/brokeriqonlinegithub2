@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.CreateDto;
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
-using BrokerIQ.Dto.Models;
+using BrokerIQ.Dto.UpdateDto;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -24,16 +26,24 @@ namespace BrokerIQ.Online.Server.Pages.Broker.Components
         [Parameter]
         public Online.Models.Broker Broker { get; set; }
 
-        private List<BrokerSubscriptionDto> Subscriptions { get; set; }
+        protected IEnumerable<SubscriptionServiceEnum> SystemSubscriptions = new SubscriptionServiceEnum[] { SubscriptionServiceEnum.BrokerIQ, SubscriptionServiceEnum.WhiteLabel, SubscriptionServiceEnum.YAH };
+
+        public bool SubscriptionsAreAvailable
+        {
+            get
+            {
+                var availableServices = Enum.GetValues<SubscriptionServiceEnum>();
+
+                var subscribedServices = Broker.Subscriptions.Select(s => (SubscriptionServiceEnum)s.SubscriptionServiceId);
+
+                return availableServices.Except(SystemSubscriptions).Except(subscribedServices).Count() > 0;
+            }
+        }
 
         protected override async Task OnInitializedAsync()
         {
-            Subscriptions = new List<BrokerSubscriptionDto>(await BrokerSubscriptionService.GetAllForBroker(Broker.Id));
-
-            ServicesAvailable = Enum.GetNames(typeof(SubscriptionServiceEnum)).Length > Subscriptions.Count;
+            await ReloadSubscriptions();
         }
-
-        public bool ServicesAvailable { get; set; }
 
         private async Task SaveSubscription(BrokerSubscriptionDto subscription)
         {
@@ -44,7 +54,6 @@ namespace BrokerIQ.Online.Server.Pages.Broker.Components
                 wasSuccessfull = await BrokerSubscriptionService.Create(new CreateBrokerSubscriptionDto()
                 {
                     BrokerId = Broker.Id,
-
                     SubscriptionServiceId = subscription.SubscriptionServiceId,
                     StartDate = subscription.StartDate,
                     EndDate = subscription.EndDate,
@@ -61,32 +70,50 @@ namespace BrokerIQ.Online.Server.Pages.Broker.Components
                 });
             }
 
-            // if (wasSuccessfull)
-            // {
-            //     Snackbar.Add("Susbscription was saved.", Severity.Success);
-            // }
-            // else
-            // {
-            //     Snackbar.Add("Subscription save failed. Please try again.", Severity.Error);
-            // }
+            //if (wasSuccessfull)
+            //{
+            //    Snackbar.Add("Susbscription was saved.", Severity.Success);
+            //}
+            //else
+            //{
+            //    Snackbar.Add("Subscription save failed. Please try again.", Severity.Error);
+            //}
         }
 
         private async Task ReloadSubscriptions()
         {
-            Subscriptions = new List<BrokerSubscriptionDto>(await BrokerSubscriptionService.GetAllForBroker(Broker.Id));
-
-            ServicesAvailable = Enum.GetNames(typeof(SubscriptionServiceEnum)).Length > Subscriptions.Count;
+            Broker.Subscriptions = new List<BrokerSubscriptionDto>(await BrokerSubscriptionService.GetAllForBroker(Broker.Id));
 
             StateHasChanged();
         }
 
         private async Task EditSubscription(BrokerSubscriptionDto subscription)
         {
-            var operation = subscription.BrokerId == 0 ? "Create" : "Edit";
+            string operation;
+            SubscriptionServiceEnum[] toExclude;
+            if (subscription.BrokerId == 0)
+            {
+                operation = "Create";
+                toExclude = SystemSubscriptions.ToArray();
+            }
+            else
+            {
+                operation = "Edit";
+                if (SystemSubscriptions.Contains((SubscriptionServiceEnum)subscription.SubscriptionServiceId))
+                {
+                    toExclude = Enum.GetValues<SubscriptionServiceEnum>().Except(SystemSubscriptions).ToArray();
+                }
+                else
+                {
+                    toExclude = SystemSubscriptions.ToArray();
+                }
+            }
+
             var title = $"{operation} subscription";
             var parameters = new DialogParameters
             {
-                { "Subscription", subscription }
+                { "Subscription", subscription },
+                { "Exclude", toExclude}
             };
 
             var options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-
+using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Online.Server.Models;
 
@@ -90,7 +90,7 @@ namespace BrokerIQ.Online.Models
 
         public BrokerIdentifier BrokerIdentifier { get; set; }
 
-        public virtual ICollection<BrokerSubscription> Subscriptions { get; set; }
+        public virtual ICollection<BrokerSubscriptionDto> Subscriptions { get; set; }
 
         public bool HasWhiteLabel { get => BrokerIdentifier != null && BrokerIdentifier.IdentifierFound; }
 
@@ -104,7 +104,7 @@ namespace BrokerIQ.Online.Models
             {
                 var today = DateTime.UtcNow;
 
-                return Subscriptions.Any(s => s.SubscriptionServiceId == SubscriptionServiceEnum.InsuranceQuote &&
+                return Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.InsuranceQuote &&
                                 s.StartDate <= today && today <= s.EndDate);
             }
         }
