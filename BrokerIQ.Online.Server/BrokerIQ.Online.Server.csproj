@@ -7,7 +7,7 @@
         <OutputType>Library</OutputType>
         <StartupObject />
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <Version>1.2.76</Version>
+        <Version>1.2.77</Version>
         <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
