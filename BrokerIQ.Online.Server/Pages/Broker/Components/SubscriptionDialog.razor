@@ -1,13 +1,18 @@
 @using BrokerIQ.Online.Server.Extensions
 @using System.Globalization
+
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form">
             <MudSelect Validation="@(new Func<int, string>(IsValidSubscriptionService))" Class="mb-2" T="int" Label="Service" @bind-Value="Subscription.SubscriptionServiceId">
-                <MudSelectItem Value="0">Not set</MudSelectItem> @{
-                    var names = Enum.GetNames(typeof(Dto.Enum.SubscriptionServiceEnum)); for (int i = 1; i <= names.Length; i++)
+                <MudSelectItem Value="0">Not set</MudSelectItem>
+                @{
+                    var names = Enum.GetNames(typeof(Dto.Enum.SubscriptionServiceEnum));
+                    for (int i = 1; i <= names.Length; i++)
                     {
-                        var looped = (Dto.Enum.ReminderTypeEnum)i;
+                        var looped = (Dto.Enum.SubscriptionServiceEnum)i;
+                        if (Exclude.Contains(looped)) continue;
+
                         <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
                     }
                 }

@@ -1,18 +1,23 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace BrokerIQ.Online.Server.Pages.Broker.Components
 {
     public partial class SubscriptionDialog
     {
-        [Microsoft.AspNetCore.Components.CascadingParameter]
+        [CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
 
-        [Microsoft.AspNetCore.Components.Parameter]
+        [Parameter]
         public BrokerSubscriptionDto Subscription { get; set; }
+
+        [Parameter]
+        public IEnumerable<SubscriptionServiceEnum> Exclude { get; set; }
 
         MudForm form;
 
@@ -33,7 +38,7 @@ namespace BrokerIQ.Online.Server.Pages.Broker.Components
             if (form.IsValid)
             {
                 Subscription.StartDate = StartDate.Value;
-                Subscription.EndDate = EndDate.Value;
+                Subscription.EndDate = EndDate.HasValue ? EndDate.Value : null;
 
                 MudDialog.Close(DialogResult.Ok(Subscription));
             };

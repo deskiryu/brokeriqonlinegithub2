@@ -18,6 +18,7 @@ namespace BrokerIQ.Online.Services
     using BrokerIQ.Online.Server.Models;
     using static System.Net.Mime.MediaTypeNames;
     using System.Text.RegularExpressions;
+    using Microsoft.Extensions.Options;
 
     public class ChatService : IChatService
     {
@@ -25,12 +26,14 @@ namespace BrokerIQ.Online.Services
         private readonly IRequestProviderService requestProviderService;
         private readonly IMapper mapper;
         private readonly IAccountService accountService;
+        private readonly ReviewItAPIDetails api;
 
-        public ChatService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService)
+        public ChatService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService, IOptions<ReviewItAPIDetails> api)
         {
             this.mapper = mapper;
             this.requestProviderService = requestProviderService;
             this.accountService = accountService;
+            this.api = api.Value;
         }
 
         public async Task<Chat> Get(int customerId, int brokerId = 0)
@@ -42,7 +45,14 @@ namespace BrokerIQ.Online.Services
 
             var ChatDto = await requestProviderService.Get<ChatDto>(newUrl);
             var chat = mapper.Map<Chat>(ChatDto);
-
+            if (this.api.IsYAHTheme)
+            {
+                if (chat!=null && chat.Messages != null)
+                {
+                    chat.Messages = chat.Messages.Select(c => { c.YahTheme = true; return c; }).ToList();
+                }
+    
+            }
             return chat;
         }
 
