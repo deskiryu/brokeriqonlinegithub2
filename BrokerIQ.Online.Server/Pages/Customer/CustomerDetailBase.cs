@@ -223,8 +223,6 @@ namespace BrokerIQ.Online.Pages
 
         protected CalendlyUserDto CalendlyUser { get; set; }
 
-        protected bool IsLimitedBroker { get; set; }
-
         protected override async Task OnInitializedAsync()
         {
             tutorialVideos = TutorialVideosOption.Value;
@@ -248,7 +246,6 @@ namespace BrokerIQ.Online.Pages
                 ResetUploadsBadge();
 
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
-                IsLimitedBroker = false;
 
                 if (!User.IsAdmin)
                 {
@@ -261,9 +258,6 @@ namespace BrokerIQ.Online.Pages
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
                         MyMaxAllowedFiles = MyMaxAllowedFiles * 2;
                     }
-
-                    IsLimitedBroker=Broker.IsLimitedBroker;
-
                 }
                 else
                 {
