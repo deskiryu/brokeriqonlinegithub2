@@ -105,14 +105,15 @@ app {
 }
 
     .sidebar .nav-item a.active {
-        background-color: #2d2141;
+        background-color: rgba(255, 255, 255, 0.0);
         color: #ede574;
     }
 
 
-    .sidebar .nav-item-yah a.active {
-        color: #e3c5e8;
-    }
+.sidebar .nav-item-yah a.active {
+    background-color: #2d2141;
+    color: #e3c5e8;
+}
 
 .sidebar .nav-item a:hover {
     background-color: rgba(255, 255, 255, 0.1);

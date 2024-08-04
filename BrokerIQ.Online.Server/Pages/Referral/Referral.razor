@@ -11,7 +11,7 @@
 
 <h3>Referrals</h3>
 
-@if (!IsAdmin && Broker != null && Broker.IsLimitedBroker)
+@if (!IsAdmin && Broker != null && Broker.BrokerIdentifier!=null && Broker.BrokerIdentifier.HasReferrals==false)
 {
     <UpgradeBrokerIQCard Text="You will be able to access your clients referrals along with other perks." />
 }

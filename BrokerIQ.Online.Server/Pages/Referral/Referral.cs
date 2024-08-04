@@ -159,7 +159,11 @@ namespace BrokerIQ.Online.Pages
 
                 Brokers = new List<Broker>();
                 Broker = (await BrokerService.GetBroker(user.MasterBrokerId, eagerload: true));
-                if (Broker.BrokerIdentifier != null && Broker.BrokerIdentifier.IsLimitedBroker) return;
+
+                if (Broker != null && Broker.BrokerIdentifier != null && Broker.BrokerIdentifier.HasReferrals == false)
+                { 
+                    return; 
+                }
 
                 ClientReferralsSentBase = (await ClientReferralService.GetReferralsByBrokerId(user.MasterBrokerId))
                     .OrderByDescending(r => r.Id)
