@@ -187,7 +187,11 @@
 
                 @if (Broker is not null && Broker.Subscriptions is not null)
                 {
-                    @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel) || IsCreatingWhiteLabel))
+                    @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s => 
+                    s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
+                    s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
+                    s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
+                    IsCreatingWhiteLabel))
                     {
                         <MudTabPanel Text="@IdentifierTabLabel">
                             <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
