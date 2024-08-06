@@ -47,7 +47,11 @@
                 <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Class="ml-auto" Disabled="@Loading">Login</MudButton>
             </MudCardActions>
         </MudCard>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:5px")" Link="account/register" class="btn btn-link">Register</MudButton>
+            @if(!api.Value.IsYAHTheme)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:5px")" Link="account/register" class="btn btn-link">Register</MudButton>               
+            }
+
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:5px")" Link="account/resetpassword" class="btn btn-link">Forgot Password</MudButton>
         </EditForm>
     </div>
