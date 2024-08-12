@@ -95,8 +95,6 @@ namespace BrokerIQ.Online.Server.Models
 
         public bool UseAIChat { get; set; }
 
-        public bool IsLimitedBroker { get; set; }
-
         public bool HasVideo { get; set; }
 
         public int MaxVideos { get; set; }

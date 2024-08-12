@@ -187,13 +187,13 @@
 
                 @if (Broker is not null && Broker.Subscriptions is not null)
                 {
-                    @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s => 
-                    s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
-                    s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
-                    s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
-                    IsCreatingWhiteLabel))
+                    @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s =>
+                  s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
+                  s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
+                  s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
+                  IsCreatingWhiteLabel))
                     {
-                        <MudTabPanel Text="@IdentifierTabLabel">
+                        <MudTabPanel Text="Identifier">
                             <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
                                 <DataAnnotationsValidator />
                                 <ValidationSummary />
@@ -485,103 +485,87 @@
                         </MudTabPanel>
                     }
 
-                    @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH)))
-                    {
-                        <MudTabPanel Text="Limited">
-                            <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
-                                <DataAnnotationsValidator />
-                                <ValidationSummary />
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group row">
-                                            <label class="col-sm-2 col-form-label">Is Limited Broker</label>
-                                            <div class="col-sm-2">
-                                                <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.IsLimitedBroker" />
-                                            </div>
+                    <MudTabPanel Text="Functionality">
+                        <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label">Has Video</label>
+                                        <div class="col-sm-2">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasVideo" />
+                                        </div>
+                                        <label class="col-sm-2 col-form-label">Max. Videos</label>
+                                        <div class="col-sm-2">
+                                            <InputNumber class="form-control" @bind-Value="@Broker.BrokerIdentifier.MaxVideos"></InputNumber>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label">Max. Templates</label>
+                                        <div class="col-sm-2">
+                                            <InputNumber class="form-control" @bind-Value="@Broker.BrokerIdentifier.MaxTemplates"></InputNumber>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                @if (Broker.BrokerIdentifier.IsLimitedBroker)
-                                {
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="form-group row">
-                                                <label class="col-sm-2 col-form-label">Has Video</label>
-                                                <div class="col-sm-2">
-                                                    <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasVideo" />
-                                                </div>
-                                                <label class="col-sm-2 col-form-label">Max. Videos</label>
-                                                <div class="col-sm-2">
-                                                    <InputNumber class="form-control" @bind-Value="@Broker.BrokerIdentifier.MaxVideos"></InputNumber>
-                                                </div>
-                                                <label class="col-sm-2 col-form-label">Max. Templates</label>
-                                                <div class="col-sm-2">
-                                                    <InputNumber class="form-control" @bind-Value="@Broker.BrokerIdentifier.MaxTemplates"></InputNumber>
-                                                </div>
-                                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label">Has Audio</label>
+                                        <div class="col-sm-2">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasAudio" />
+                                        </div>
+                                        <label class="col-sm-2 col-form-label">Has Reminders</label>
+                                        <div class="col-sm-2">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasReminders" />
+                                        </div>
+                                        <label class="col-sm-2 col-form-label">Has Filters</label>
+                                        <div class="col-sm-2">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasFilters" />
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="form-group row">
-                                                <label class="col-sm-2 col-form-label">Has Audio</label>
-                                                <div class="col-sm-2">
-                                                    <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasAudio" />
-                                                </div>
-                                                <label class="col-sm-2 col-form-label">Has Reminders</label>
-                                                <div class="col-sm-2">
-                                                    <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasReminders" />
-                                                </div>
-                                                <label class="col-sm-2 col-form-label">Has Filters</label>
-                                                <div class="col-sm-2">
-                                                    <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasFilters" />
-                                                </div>
-                                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label">Has Referrals</label>
+                                        <div class="col-sm-2">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasReferrals" />
+                                        </div>
+                                        <label class="col-sm-2 col-form-label">Can Import</label>
+                                        <div class="col-sm-2">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.CanImport" />
+                                        </div>
+                                        <label class="col-sm-2 col-form-label">Has Appointments</label>
+                                        <div class="col-sm-2 ">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasAppointments" />
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="form-group row">
-                                                <label class="col-sm-2 col-form-label">Has Referrals</label>
-                                                <div class="col-sm-2">
-                                                    <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasReferrals" />
-                                                </div>
-                                                <label class="col-sm-2 col-form-label">Can Import</label>
-                                                <div class="col-sm-2">
-                                                    <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.CanImport" />
-                                                </div>
-                                                <label class="col-sm-2 col-form-label">Has Appointments</label>
-                                                <div class="col-sm-2 ">
-                                                    <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasAppointments" />
-                                                </div>
-                                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group row">
+                                        <label class="col-sm-2 col-form-label">Has Profiling</label>
+                                        <div class="col-sm-2 ">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasProfiling" />
+                                        </div>
+                                        <label class="col-sm-2 col-form-label">Can edit Docuvault types</label>
+                                        <div class="col-sm-2 ">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.CanEditDocuvaultTypes" />
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="form-group row">
-                                                <label class="col-sm-2 col-form-label">Has Profiling</label>
-                                                <div class="col-sm-2 ">
-                                                    <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.HasProfiling" />
-                                                </div>
-                                                <label class="col-sm-2 col-form-label">Can edit Docuvault types</label>
-                                                <div class="col-sm-2 ">
-                                                    <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.CanEditDocuvaultTypes" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-lg-2 mt-1">Cancel</MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Save</MudButton>
-                            </EditForm>
-                        </MudTabPanel>
-                    }
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-lg-2 mt-1">Cancel</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Save</MudButton>
+                        </EditForm>
+                    </MudTabPanel>
                 }
             </MudTabs>
 

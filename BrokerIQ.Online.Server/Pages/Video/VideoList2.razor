@@ -30,8 +30,8 @@
     }
     else
     {
-        @if (!IsLimitedBroker || Videos.Count < MaxVideos)
-        {
+        @if (HasVideo && Videos.Count < MaxVideos)
+            {
             <div class="row">
                 <InputFile id="videofileinput" OnChange="LoadFiles" accept="video/mov,video/mp4,video/*" hidden multiple />
                 <MudButton HtmlTag="label" Class="col-2 ml-4 mb-2" Variant="Variant.Filled" Color="Color.Primary"
@@ -92,8 +92,8 @@
                     <div class="card-header"><h6>Automated Videos</h6></div>
                     <div class="card-body">
                         <div class="d-flex gap-1 mx-1  flex-wrap ">
-                            @if (!IsLimitedBroker)
-                            {
+                            @if (HasVideo)
+                                {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Welcome">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Welcome Video</div>
@@ -161,8 +161,8 @@
                                 </div>
                             </MudDropZone>
 
-                            @if (!IsLimitedBroker)
-                            {
+                            @if (HasVideo)
+                                {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Mortgage">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Mortgage Video</div>
@@ -230,8 +230,8 @@
                                 </MudDropZone>
                             }
 
-                            @if (!IsLimitedBroker || MaxVideos >= 1)
-                            {
+                            @if (HasVideo && MaxVideos >= 1)
+                                {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo1">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Send Date Video 1</div>
@@ -270,8 +270,8 @@
                                 </MudDropZone>
                             }
 
-                            @if (!IsLimitedBroker || MaxVideos >= 2)
-                            {
+                            @if (HasVideo && MaxVideos >= 2)
+                                {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo2">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Send Date Video 2</div>
@@ -310,8 +310,8 @@
                                 </MudDropZone>
                             }
 
-                            @if (!IsLimitedBroker || MaxVideos >= 3)
-                            {
+                            @if (HasVideo || MaxVideos >= 3)
+                                {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo3">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Send Date Video 3</div>
@@ -350,8 +350,8 @@
                                 </MudDropZone>
                             }
 
-                            @if (!IsLimitedBroker || MaxVideos >= 4)
-                            {
+                            @if (HasVideo && MaxVideos >= 4)
+                                {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo4">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Send Date Video 4</div>

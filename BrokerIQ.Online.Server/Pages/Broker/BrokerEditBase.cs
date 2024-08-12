@@ -57,7 +57,8 @@ namespace BrokerIQ.Online.Pages
 
         protected bool Saved;
 
-        public string IdentifierTabLabel { get { return Broker.Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel) ? "White Label" : string.Empty; } }
+        public string IdentifierTabLabel { get {
+                return Broker.Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel) ? "White Label" : string.Empty; } }
 
         public bool IsCreatingWhiteLabel { get; set; } = false;
 
@@ -184,8 +185,7 @@ namespace BrokerIQ.Online.Pages
                 FirebaseClient = brokerIdentifier.FirebaseClient,
                 FirebaseProjectId = brokerIdentifier.FirebaseProjectId,
                 EmailTagLine = brokerIdentifier.EmailTagLine,
-                InsuranceOnly = brokerIdentifier.InsuranceOnly,
-                IsLimitedBroker = brokerIdentifier.IsLimitedBroker,
+                InsuranceOnly = brokerIdentifier.InsuranceOnly
             };
         }
 
