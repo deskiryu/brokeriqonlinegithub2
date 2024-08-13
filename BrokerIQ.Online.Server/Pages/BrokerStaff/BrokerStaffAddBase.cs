@@ -1,25 +1,18 @@
-﻿namespace BrokerIQ.Online.Pages
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using AutoMapper;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Models.Account;
+using BrokerIQ.Online.Server.Helper;
+using BrokerIQ.Online.Services.Interface;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+
+namespace BrokerIQ.Online.Pages
 {
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AutoMapper;
-
-    using Microsoft.AspNetCore.Components;
-    using Models;
-    using BrokerIQ.Dto.Models;
-    using BrokerIQ.Online.Models.Account;
-    using BrokerIQ.Online.Server.Models;
-    using Services.Interface;
-    using BrokerIQ.Online.Server.Helper;
-    using Microsoft.JSInterop;
-    using System.Collections.Generic;
-    using BrokerIQ.Online.Services;
-    using System.ComponentModel.DataAnnotations;
-    using BrokerIQ.Dto.Enum;
-    using Microsoft.AspNetCore.WebUtilities;
-
     public class BrokerStaffAddBase : ComponentBase
     {
         private int id;
@@ -162,7 +155,7 @@
             }
             catch (Exception ex)
             {
-                AlertService.Error(ex.Message);
+                AlertService.Error($"Registration failed, are you at your employee limit? - {ex.Message}");
             }
             loading = false;
             StateHasChanged();

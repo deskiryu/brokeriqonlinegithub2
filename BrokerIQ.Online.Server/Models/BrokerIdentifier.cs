@@ -118,5 +118,7 @@ namespace BrokerIQ.Online.Server.Models
         public bool CanEditDocuvaultTypes { get; set; }
 
         public bool CanConnectCustomers{ get; set; }
+
+        public int MaxEmployeesAllowed { get; set; }
     }
 }
