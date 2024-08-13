@@ -262,14 +262,13 @@
 
                     @if (this.api.Value.ShowConnectToCustomer)
                     {
-                        @if (!Customer.ConnectedToCustomerId.HasValue && !IsAlreadyConnected)
+                        @if (!Customer.ConnectedToCustomerId.HasValue && !IsAlreadyConnected && Broker.BrokerIdentifier.CanConnectCustomers)
                         {
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ConnectToCustomer" class="ml-1">
                                 Connect to customer
                             </MudButton>
                         }
                     }
-
 
                     @if (Customer.ConnectedToCustomerId.HasValue)
                     {

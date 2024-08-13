@@ -116,5 +116,7 @@ namespace BrokerIQ.Online.Server.Models
         public bool HasProfiling { get; set; }
 
         public bool CanEditDocuvaultTypes { get; set; }
+
+        public bool CanConnectCustomers{ get; set; }
     }
 }
