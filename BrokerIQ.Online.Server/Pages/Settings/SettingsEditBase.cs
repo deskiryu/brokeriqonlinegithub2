@@ -130,7 +130,7 @@ namespace BrokerIQ.Online.Pages
                     }
                     if (User.MasterBrokerId > 0)
                     {
-                        Broker = (await BrokerService.GetBroker(User.MasterBrokerId));
+                        Broker = await BrokerService.GetBroker(User.MasterBrokerId);
                     }
                 }
             }
@@ -311,7 +311,7 @@ namespace BrokerIQ.Online.Pages
 
             if (Broker.BrokerIdentifier is null || !Broker.BrokerIdentifier.IdentifierFound) return true;
 
-            return !Broker.BrokerIdentifier.IsLimitedBroker || Broker.BrokerIdentifier.HasReminders ;
+            return Broker.BrokerIdentifier.HasReminders ;
         }
 
         protected bool ShowAppointmentSection()
@@ -320,7 +320,7 @@ namespace BrokerIQ.Online.Pages
 
             if (Broker.BrokerIdentifier is null || !Broker.BrokerIdentifier.IdentifierFound) return true;
 
-            return !Broker.BrokerIdentifier.IsLimitedBroker || Broker.BrokerIdentifier.HasAppointments;
+            return Broker.BrokerIdentifier.HasAppointments;
         }
 
     }

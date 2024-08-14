@@ -111,7 +111,7 @@ namespace BrokerIQ.Online.Pages
 
         public Video SendDateVideo4 { get; set; }
 
-        protected bool IsLimitedBroker { get; set; }
+        protected bool HasVideo { get; set; }
 
         protected int MaxVideos { get; set; }
 
@@ -148,7 +148,7 @@ namespace BrokerIQ.Online.Pages
                     IsBrokerStaff = user.IsBrokerStaff;
 
                     var broker = await BrokerService.GetBroker(user.MasterBrokerId);
-                    IsLimitedBroker = broker.IsLimitedBroker;
+                    HasVideo = broker.BrokerIdentifier.HasVideo;
                     MaxVideos = broker.BrokerIdentifier.MaxVideos;
                 }
                 else
