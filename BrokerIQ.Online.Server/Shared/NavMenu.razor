@@ -308,7 +308,7 @@
     {
         if (Identifier is null) return true;
 
-        return !Identifier.IsLimitedBroker || Identifier.HasAudio;
+        return Identifier.HasAudio;
     }
 
     private bool ShowClientListTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("clientlist"); } }

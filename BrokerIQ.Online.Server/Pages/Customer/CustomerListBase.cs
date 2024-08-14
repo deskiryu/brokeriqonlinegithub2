@@ -73,7 +73,7 @@ namespace BrokerIQ.Online.Pages
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
-        public bool IsLimitedBroker { get; set; }
+        public bool HasFilter { get; set; }
 
         public bool CanImport { get; set; }
 
@@ -113,7 +113,7 @@ namespace BrokerIQ.Online.Pages
 
                     var broker = await BrokerService.GetBroker(User.MasterBrokerId);
 
-                    IsLimitedBroker = broker.IsLimitedBroker;
+                    HasFilter = broker.HasFilter;
                     CanImport = broker.CanImport;
 
                     if (broker.BrokerIdentifier.InsuranceOnly)
