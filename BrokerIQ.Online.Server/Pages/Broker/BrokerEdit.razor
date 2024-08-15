@@ -165,8 +165,23 @@
                                         <label style="font-size:x-small">Ratio 2.2:1 Ideally 220px x 100px</label>
                                     </div>
                                 </div>
-                            </div>
+                                @if (!CurrentUser.IsBrokerStaff)
+                                {
+                                    <div class="form-group row">
+                                        <div class="col-4">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageTemplates" Label="Staff can manage templates" />
+                                        </div>
 
+                                        <div class="col-4">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageDocumentTypes" Label="Staff can manage document types" />
+                                        </div>
+
+                                        <div class="col-4">
+                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageReminders" Label="Staff can manage reminders" />
+                                        </div>
+                                    </div>
+                                }
+                            </div>
                         </div>
                         <div>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Update Broker</MudButton>
@@ -188,10 +203,10 @@
                 @if (Broker is not null && Broker.Subscriptions is not null)
                 {
                     @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s =>
-                       s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
-                       s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
-                       s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
-                       IsCreatingWhiteLabel))
+                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
+                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
+                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
+                        IsCreatingWhiteLabel))
                     {
                         <MudTabPanel Text="Identifier">
                             <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
@@ -483,7 +498,9 @@
                                 </div>
                             </EditForm>
                         </MudTabPanel>
-
+                    }
+                    @if (CurrentUser.IsAdmin)
+                    {
                         <MudTabPanel Text="Functionality">
                             <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
                                 <DataAnnotationsValidator />
@@ -587,10 +604,7 @@
                 </MudButton>
             }
         }
-
     </section>
-
-
 }
 else
 {
