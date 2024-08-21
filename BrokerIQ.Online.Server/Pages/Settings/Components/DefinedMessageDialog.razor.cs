@@ -174,6 +174,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         async void InsertLink()
         {
+            if (!TemplateLink.ToLower().StartsWith("http"))
+            {
+                TemplateLink = "http://" + TemplateLink;
+            }
+
             if (!TemplateLink.IsValidUrl())
             {
                 var dialogParams = new DialogParameters
@@ -184,6 +189,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 await DialogService.Show<AlertDialog>("Validation failure", dialogParams).Result;
                 return;
             }
+
 
             Template.Message += ' ';
             LinkStart = Template.Message.Length;
