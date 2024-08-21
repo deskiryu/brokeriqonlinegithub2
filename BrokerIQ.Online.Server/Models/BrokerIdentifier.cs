@@ -120,5 +120,11 @@ namespace BrokerIQ.Online.Server.Models
         public bool CanConnectCustomers{ get; set; }
 
         public int MaxEmployeesAllowed { get; set; }
+
+        public bool StaffCanManageTemplates { get; set; }
+
+        public bool StaffCanManageDocumentTypes { get; set; }
+
+        public bool StaffCanManageReminders { get; set; }
     }
 }

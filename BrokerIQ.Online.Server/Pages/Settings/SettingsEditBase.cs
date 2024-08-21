@@ -130,7 +130,7 @@ namespace BrokerIQ.Online.Pages
                     }
                     if (User.MasterBrokerId > 0)
                     {
-                        Broker = await BrokerService.GetBroker(User.MasterBrokerId);
+                        Broker = await BrokerService.GetBroker(User.MasterBrokerId, eagerload: true);
                     }
                 }
             }
