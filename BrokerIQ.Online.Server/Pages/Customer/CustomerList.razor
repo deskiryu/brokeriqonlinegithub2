@@ -113,7 +113,7 @@ else
                     </MudAutocomplete>
                 </div>
 
-                @if (HasFilter)
+                @if (User.IsAdmin || HasFilter)
                 {
                     <div class="col-lg-4">
                         <MudSelect T="int"
@@ -131,7 +131,7 @@ else
                 }
             </div>
 
-            @if (HasFilter)
+            @if (User.IsAdmin || HasFilter)
             {
                 <div class="row">
                     <div class="col-lg-4">
