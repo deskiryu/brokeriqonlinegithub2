@@ -1076,8 +1076,8 @@ namespace BrokerIQ.Online.Pages
                     // display broker defined message
                     template.Message = template.Message
                         .Replace("INSERT_CLIENT_NAME", Customer.FirstName)
-                        .Replace("INSERT_ADVISOR", User.FirstName)
-                        .Replace("INSERT_BROKER_NAME", Broker?.Name);
+                        .Replace("INSERT_BROKER_NAME", $"{Broker?.BrokerFirstName} {Broker?.BrokerLastName}")
+                        .Replace("INSERT_COMPANY_NAME", Broker?.Name);
                 }
 
                 if (template.WelcomeChat == false)
