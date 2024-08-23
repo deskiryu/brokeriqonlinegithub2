@@ -167,19 +167,7 @@
                                 </div>
                                 @if (!CurrentUser.IsBrokerStaff)
                                 {
-                                    <div class="form-group row">
-                                        <div class="col-4">
-                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageTemplates" Label="Staff can manage templates" />
-                                        </div>
 
-                                        <div class="col-4">
-                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageDocumentTypes" Label="Staff can manage document types" />
-                                        </div>
-
-                                        <div class="col-4">
-                                            <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageReminders" Label="Staff can manage reminders" />
-                                        </div>
-                                    </div>
                                 }
                             </div>
                         </div>
@@ -203,10 +191,10 @@
                 @if (Broker is not null && Broker.Subscriptions is not null)
                 {
                     @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s =>
-                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
-                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
-                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
-                        IsCreatingWhiteLabel))
+                      s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
+                      s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
+                      s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
+                      IsCreatingWhiteLabel))
                     {
                         <MudTabPanel Text="Identifier">
                             <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
@@ -578,6 +566,25 @@
                                             <label class="col-sm-2 col-form-label">Can connect customers</label>
                                             <div class="col-sm-2 ">
                                                 <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.CanConnectCustomers" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Staff can manage templates</label>
+                                            <div class="col-sm-2">
+                                                <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageTemplates" />
+                                            </div>
+                                            <label class="col-sm-2 col-form-label">Staff can manage document types</label>
+                                            <div class="col-sm-2">
+                                                <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageDocumentTypes" />
+                                            </div>
+                                            <label class="col-sm-2 col-form-label">Staff can manage reminders</label>
+                                            <div class="col-sm-2">
+                                                <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageReminders" />
                                             </div>
                                         </div>
                                     </div>
