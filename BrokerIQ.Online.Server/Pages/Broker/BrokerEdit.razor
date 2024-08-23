@@ -165,8 +165,11 @@
                                         <label style="font-size:x-small">Ratio 2.2:1 Ideally 220px x 100px</label>
                                     </div>
                                 </div>
-                            </div>
+                                @if (!CurrentUser.IsBrokerStaff)
+                                {
 
+                                }
+                            </div>
                         </div>
                         <div>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Update Broker</MudButton>
@@ -188,10 +191,10 @@
                 @if (Broker is not null && Broker.Subscriptions is not null)
                 {
                     @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s =>
-                  s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
-                  s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
-                  s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
-                  IsCreatingWhiteLabel))
+                      s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
+                      s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
+                      s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
+                      IsCreatingWhiteLabel))
                     {
                         <MudTabPanel Text="Identifier">
                             <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
@@ -568,6 +571,25 @@
                                     </div>
                                 </div>
 
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Staff can manage templates</label>
+                                            <div class="col-sm-2">
+                                                <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageTemplates" />
+                                            </div>
+                                            <label class="col-sm-2 col-form-label">Staff can manage document types</label>
+                                            <div class="col-sm-2">
+                                                <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageDocumentTypes" />
+                                            </div>
+                                            <label class="col-sm-2 col-form-label">Staff can manage reminders</label>
+                                            <div class="col-sm-2">
+                                                <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.StaffCanManageReminders" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-lg-2 mt-1">Cancel</MudButton>
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Save</MudButton>
                             </EditForm>
@@ -589,10 +611,7 @@
                 </MudButton>
             }
         }
-
     </section>
-
-
 }
 else
 {

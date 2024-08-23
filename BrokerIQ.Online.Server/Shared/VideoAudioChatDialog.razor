@@ -135,7 +135,7 @@
         }
         else
         {
-            succeeded = (await ChatService.SendMultipleVideoLink(model.MessageToSend, CustomerIds, BrokerID, MediaUrl, VideoThumbnailData));            
+            succeeded = (await ChatService.SendMultipleVideoLink(model.MessageToSend, CustomerIds, BrokerID, MediaUrl, VideoThumbnailData));
         }
 
         if (!succeeded)
@@ -155,6 +155,11 @@
 
     public async void InsertLink()
     {
+        if (!model.Link.ToLower().StartsWith("http"))
+        {
+            model.Link = "http://" + model.Link;
+        }
+
         if (!model.Link.IsValidUrl())
         {
             var dialogParams = new DialogParameters

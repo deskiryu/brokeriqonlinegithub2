@@ -140,6 +140,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         async void InsertLink()
         {
+            if (!OptionLink.ToLower().StartsWith("http"))
+            {
+                OptionLink = "http://" + OptionLink;
+            }
+
             if (!OptionLink.IsValidUrl())
             {
                 var dialogParams = new DialogParameters
@@ -160,7 +165,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             HideLink = true;
             StateHasChanged();
 
-            ReminderTypeSelect.ForceRender(false);
+
+            ReminderTypeSelect?.ForceRender(false);
         }
 
         private void ReminderTypeChanged(IEnumerable<int> selectedValue)
