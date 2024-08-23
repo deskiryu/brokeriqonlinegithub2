@@ -14,52 +14,48 @@
 
 <MudDialog Style="@($"background:{Colors.Grey.Lighten4};")">
     <DialogContent>
-        <MudContainer Style="width: 350px; height: 400px; overflow-y: scroll">
+        <MudContainer Style="overflow-y: scroll">
             <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
-                    <MudTextField T="string" Label="Message to send" Required="true" RequiredError="Please fill in the message" @bind-Value="model.MessageToSend" Lines="5"/>
-                    <div class="row">
-                        <div class="col-sm-2 mt-auto">
+                <MudTextField T="string" Label="Message to send" Required="true" RequiredError="Please fill in the message" @bind-Value="model.MessageToSend" Lines="5" AutoGrow="true" />
+                <div class="row">
+                    <div class="col-sm-2 mt-auto">
                         <MudIconButton Icon="@Icons.Material.Filled.InsertLink" Variant="Variant.Filled" Size="Size.Small"
                                        Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" OnClick="InsertLink" Disabled="@model.HideLink"></MudIconButton>
-                        </div>
-                        <div class="col-sm-10">
+                    </div>
+                    <div class="col-sm-10">
                         <MudTextField T="string" Placeholder="Link address" @bind-Value="model.Link" Disabled="@model.HideLink" />
-                        </div>
-
                     </div>
-
-                    <div class="row mt-1">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:10px")" OnClick="Cancel">Cancel</MudButton>
+                </div>
+                <div class="row mt-1">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:10px")" OnClick="Cancel">Cancel</MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:10px; margin-left:2px")" ButtonType="ButtonType.Submit">Ok</MudButton>
-                    </div>
-
+                </div>
             </EditForm>
             <br />
-                    <div>
-                   @if (@OverSized)
+            <div>
+                @if (@OverSized)
+                {
+                    <MudText Style="white-space: pre-line;">Some files were too big</MudText>
+
+                }
+                @if (FileNameAndStreams.Any())
+                {
+                    <MudText Style="white-space: pre-line;">The following file(s) :</MudText>
+                    @foreach (var fileName in FileNameAndStreams)
                     {
-                        <MudText Style="white-space: pre-line;">Some files were too big</MudText>
-                    
+                        <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">@fileName.Item1</MudText>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudButton>
                     }
-                    @if (FileNameAndStreams.Any())
-                    {
-                         <MudText Style="white-space: pre-line;">The following file(s) :</MudText>
-                        @foreach(var fileName in FileNameAndStreams)
-                        {
-                            <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">@fileName.Item1</MudText>                  
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudButton>                  
-                        }
-                        <MudText Style="white-space: pre-line;">will be attached to the chat message</MudText>
-                    }
-                    else
-                    {
-                        <MudText Style="white-space: pre-line;">No file(s) attached</MudText>
-                    }
-                </div>
+                    <MudText Style="white-space: pre-line;">will be attached to the chat message</MudText>
+                }
+                else
+                {
+                    <MudText Style="white-space: pre-line;">No file(s) attached</MudText>
+                }
+            </div>
         </MudContainer>
     </DialogContent>
 </MudDialog>
-
 
 @code {
     [Inject]
@@ -105,21 +101,21 @@
     {
         await base.OnInitializedAsync();
         model = new MyModel();
-        model.HasEmbeddedUrl=false;
+        model.HasEmbeddedUrl = false;
         model.HideLink = false;
 
-        if(!string.IsNullOrEmpty(Oversize) &&  Oversize.Contains("true"))
+        if (!string.IsNullOrEmpty(Oversize) && Oversize.Contains("true"))
         {
             OverSized = true;
         }
 
         FileNameAndStreams = new List<(string, MemoryStream)>();
 
-        if(FileNames!=null && MemoryStreams != null)
+        if (FileNames != null && MemoryStreams != null)
         {
-            if(FileNames.Count == MemoryStreams.Count && FileNames.Any())
+            if (FileNames.Count == MemoryStreams.Count && FileNames.Any())
             {
-                for(int i=0; i<FileNames.Count; i++)
+                for (int i = 0; i < FileNames.Count; i++)
                 {
                     FileNameAndStreams.Add((FileNames[i], MemoryStreams[i]));
                 }
@@ -143,14 +139,14 @@
             if (actualMessage.Length >= model.LinkStart)
             {
                 actualMessage = actualMessage.Insert(model.LinkStart, "<--");
-                if(actualMessage.Length >= model.LinkEnd + 3)
+                if (actualMessage.Length >= model.LinkEnd + 3)
                 {
                     actualMessage = actualMessage.Insert(model.LinkEnd + 3, "-->");
                 }
             }
         }
 
-        MudDialog.Close(DialogResult.Ok( actualMessage ));
+        MudDialog.Close(DialogResult.Ok(actualMessage));
     }
 
     void Cancel() => MudDialog.Cancel();
@@ -165,7 +161,7 @@
         if (!model.Link.IsValidUrl())
         {
             var dialogParams = new DialogParameters
-            {
+        {
                 { "Message", $"The URL supplied is not valid." }
             };
 

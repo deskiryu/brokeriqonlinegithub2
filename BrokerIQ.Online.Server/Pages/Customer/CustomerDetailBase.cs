@@ -559,7 +559,7 @@ namespace BrokerIQ.Online.Pages
         protected async Task EditNote(int id)
         {
             var note = Notes.FirstOrDefault(x => x.Id == id);
-            
+
             var dialogParams = new DialogParameters
             {
                 { "Text", note.Message },
@@ -745,8 +745,9 @@ namespace BrokerIQ.Online.Pages
             }
 
             dialogParams.Add("PrePopulatedMessage", messageToshow);
+            var dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
 
-            var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams).Result;
+            var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams, dialogOptions).Result;
             if (!result.Canceled)
             {
                 var message = result.Data.ToString();
