@@ -115,6 +115,8 @@ namespace BrokerIQ.Online.Pages
 
         protected int MaxVideos { get; set; }
 
+        protected bool CanDeleteVideos { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
@@ -146,10 +148,6 @@ namespace BrokerIQ.Online.Pages
                     IsAdminStaff = user.IsAdminStaff;
                     BrokerId = user.MasterBrokerId;
                     IsBrokerStaff = user.IsBrokerStaff;
-
-                    var broker = await BrokerService.GetBroker(user.MasterBrokerId);
-                    HasVideo = broker.BrokerIdentifier.HasVideo;
-                    MaxVideos = broker.BrokerIdentifier.MaxVideos;
                 }
                 else
                 {
@@ -878,7 +876,7 @@ namespace BrokerIQ.Online.Pages
 
         }
 
-        protected async Task DeleteVideoBottom(int videoId)
+        protected async Task DeleteVideoButton(int videoId)
         {
 
             var video = Videos.FirstOrDefault(x => x.Id == videoId);
@@ -946,6 +944,12 @@ namespace BrokerIQ.Online.Pages
         private async Task RefreshVideos()
         {
             var brokerId = (IsAdmin || IsMinorAdmin) ? FilterBrokerId : BrokerId;
+
+            var broker = await BrokerService.GetBroker(brokerId, true);
+            HasVideo = broker.BrokerIdentifier.HasVideo;
+            MaxVideos = broker.BrokerIdentifier.MaxVideos;
+
+            CanDeleteVideos = broker.Subscriptions.Any(s => s.SubscriptionServiceId != (int)SubscriptionServiceEnum.YAH);
 
             if (Videos != null)
             {
