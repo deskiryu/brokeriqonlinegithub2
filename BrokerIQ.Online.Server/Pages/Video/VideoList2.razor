@@ -31,7 +31,7 @@
     else
     {
         @if (HasVideo && Videos.Count < MaxVideos)
-            {
+        {
             <div class="row">
                 <InputFile id="videofileinput" OnChange="LoadFiles" accept="video/mov,video/mp4,video/*" hidden multiple />
                 <MudButton HtmlTag="label" Class="col-2 ml-4 mb-2" Variant="Variant.Filled" Color="Color.Primary"
@@ -93,7 +93,7 @@
                     <div class="card-body">
                         <div class="d-flex gap-1 mx-1  flex-wrap ">
                             @if (HasVideo)
-                                {
+                            {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Welcome">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Welcome Video</div>
@@ -162,7 +162,7 @@
                             </MudDropZone>
 
                             @if (HasVideo)
-                                {
+                            {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="Mortgage">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Mortgage Video</div>
@@ -231,7 +231,7 @@
                             }
 
                             @if (HasVideo && MaxVideos >= 1)
-                                {
+                            {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo1">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Send Date Video 1</div>
@@ -271,7 +271,7 @@
                             }
 
                             @if (HasVideo && MaxVideos >= 2)
-                                {
+                            {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo2">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Send Date Video 2</div>
@@ -311,7 +311,7 @@
                             }
 
                             @if (HasVideo || MaxVideos >= 3)
-                                {
+                            {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo3">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Send Date Video 3</div>
@@ -351,7 +351,7 @@
                             }
 
                             @if (HasVideo && MaxVideos >= 4)
-                                {
+                            {
                                 <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="SendDateVideo4">
                                     <div class="card " style="padding-left: 0px; padding-right: 0px">
                                         <div class="card-header">Send Date Video 4</div>
@@ -404,11 +404,12 @@
             </ChildContent>
 
             <ItemRenderer>
-
                 <div class="card " style="padding-left: 0px; padding-right: 0px">
                     <div class="card-title my_card_title">@context.Name</div>
                     <div class="card-body my_card_body">
-                        <div class="close close_no_header" @onclick="@( async () => await DeleteVideoBottom(context.Id) )"></div>
+                        @if(CanDeleteVideos){
+                        <div class="close close_no_header" @onclick="@( async () => await DeleteVideoButton(context.Id) )"></div>
+                        }
                         @if (DisplayEmbeddedVideo[context.Id])
                         {
                             <div class="video_play" style="border-color : @(context.Vetted ? "green":"red")">
