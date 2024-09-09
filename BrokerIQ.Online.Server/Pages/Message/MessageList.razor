@@ -42,6 +42,15 @@
                 </div>
             </div>
         }
+        @if ((User.IsBroker || User.IsAdminStaff))
+        {
+            <div class="row">
+                <MudButton HtmlTag="label" Class="col-4 ml-4 mb-2" Variant="Variant.Filled" Color="Color.Primary" Disabled="AllMessagesRead"
+                           Style="@($"color:{Colors.Shades.Black};")" StartIcon="@Icons.Filled.Delete" OnClick="@(async () => await ClearAllNotifications())">
+                    Action All In System
+                </MudButton>
+            </div>
+        }
         <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
             <MudTabPanel Text="Reminders">
                 <BrokerNotificationTable User="@User" Brokers="@Brokers" Notifications="@(BrokerNotificationsSubset.Where(n=> !n.Read).ToList())" OnStatusToggle="@(async () => await RefreshMessages())" />
@@ -54,6 +63,6 @@
 }
 else
 {
-<div class="alert @StatusClass">@Message</div>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to message list</MudButton>
+    <div class="alert @StatusClass">@Message</div>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to message list</MudButton>
 }

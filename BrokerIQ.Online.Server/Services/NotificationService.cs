@@ -194,5 +194,13 @@ namespace BrokerIQ.Online.Server.Services
 
             await this.requestProviderService.Post<int>(this.notificationUrl + $"/{notificationId}/{user.MasterBrokerId}/toggleread");
         }
+
+        public async Task MarkAllNotificationsAsRead()
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            await this.requestProviderService.Post<int>(this.notificationUrl + $"/{user.MasterBrokerId}/markallread");
+        }
     }
 }

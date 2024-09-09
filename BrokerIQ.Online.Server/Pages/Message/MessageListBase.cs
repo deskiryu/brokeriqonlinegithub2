@@ -21,6 +21,8 @@ namespace BrokerIQ.Online.Pages
 
         public string status;
 
+        protected bool AllMessagesRead => !BrokerNotificationsSubset.Where(n => !n.Read).Any();
+
         [Inject]
         public INotificationService NotificationService { get; set; }
 
@@ -101,6 +103,13 @@ namespace BrokerIQ.Online.Pages
         protected void NavigateToOverview()
         {
             Saved = false;
+        }
+
+        protected async Task ClearAllNotifications()
+        {
+            await NotificationService.MarkAllNotificationsAsRead();
+
+            await RefreshMessages();
         }
     }
 }
