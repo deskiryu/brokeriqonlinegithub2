@@ -90,7 +90,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             var title = $"{operation} {Enum.GetName((ReminderTargetEnum)option.ReminderTargetId)} {Enum.GetName((ReminderTypeEnum)option.ReminderTypeId)} reminder";
             var parameters = new DialogParameters
             {
-                { "Option", option }
+                { "Option", option },
+                { "BrokerIdentifier", Broker.BrokerIdentifier}
             };
 
             var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
