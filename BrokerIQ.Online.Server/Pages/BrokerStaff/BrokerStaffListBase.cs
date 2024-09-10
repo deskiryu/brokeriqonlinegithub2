@@ -42,6 +42,8 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsMinorAdmin { get; set; }
 
+        public bool ShowAddStaffButton { get; set; } = true;
+
         protected override async Task OnInitializedAsync()
         {
             try
@@ -60,6 +62,10 @@ namespace BrokerIQ.Online.Pages
                 else if (user.IsBroker || user.IsAdminStaff)
                 {
                     BrokerStaff = (await BrokerStaffService.GetBrokerStaffbyBrokerId(user.MasterBrokerId)).ToList();
+
+                    var broker = await BrokerService.GetBroker(user.MasterBrokerId, true);
+
+                    ShowAddStaffButton = BrokerStaff.Count() < broker.BrokerIdentifier.MaxEmployeesAllowed;
                 }       
             }
             catch

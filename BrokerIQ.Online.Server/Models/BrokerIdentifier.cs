@@ -95,8 +95,6 @@ namespace BrokerIQ.Online.Server.Models
 
         public bool UseAIChat { get; set; }
 
-        public bool IsLimitedBroker { get; set; }
-
         public bool HasVideo { get; set; }
 
         public int MaxVideos { get; set; }
@@ -118,5 +116,15 @@ namespace BrokerIQ.Online.Server.Models
         public bool HasProfiling { get; set; }
 
         public bool CanEditDocuvaultTypes { get; set; }
+
+        public bool CanConnectCustomers{ get; set; }
+
+        public int MaxEmployeesAllowed { get; set; }
+
+        public bool StaffCanManageTemplates { get; set; }
+
+        public bool StaffCanManageDocumentTypes { get; set; }
+
+        public bool StaffCanManageReminders { get; set; }
     }
 }

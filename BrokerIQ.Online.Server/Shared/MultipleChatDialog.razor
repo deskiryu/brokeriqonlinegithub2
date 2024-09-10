@@ -196,8 +196,9 @@
         }
 
         dialogParams.Add("PrePopulatedMessage", messageToshow);
+        var dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
 
-        var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams).Result;
+        var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams, dialogOptions).Result;
         if (!result.Cancelled)
         {
             var message = result.Data.ToString();

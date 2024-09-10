@@ -25,10 +25,12 @@
     }
     else
     {
-
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"brokerstaffadd")" class="btn btn-primary mb-2">
-            Add New Employee
-        </MudButton>
+        @if (ShowAddStaffButton)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"brokerstaffadd")" class="btn btn-primary mb-2">
+                Add New Employee
+            </MudButton>
+        }
 
         <div class="card">
             <div class="card-header">Filter Employees</div>
@@ -40,12 +42,12 @@
                     </div>
                     <div class="col-lg-8 control_wrapper">
                         <MudAutocomplete T="string"
-                                 Label="Go direct to staff"
-                                 Placeholder="Start typing name, email or telephone ..."
+                                         Label="Go direct to staff"
+                                         Placeholder="Start typing name, email or telephone ..."
                                          AllowFiltering="true"
-                                 AdornmentColor="Color.Primary"
-                                 TextChanged="@AutoCompleteClick"
-                                 SearchFunc="@OnFilter">
+                                         AdornmentColor="Color.Primary"
+                                         TextChanged="@AutoCompleteClick"
+                                         SearchFunc="@OnFilter">
                         </MudAutocomplete>
                     </div>
                 </div>
@@ -61,14 +63,14 @@
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
-                        @if (IsAdmin||IsMinorAdmin)
+                        @if (IsAdmin || IsMinorAdmin)
                         {
                             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.BrokerStaff, object>(x=>x.BrokerId)">Broker</MudTableSortLabel></MudTh>
-                            <MudTh>Two Factor</MudTh>                
+                            <MudTh>Two Factor</MudTh>
                         }
-                        @if(this.Options.Value.ShowStaffType)
+                        @if (this.Options.Value.ShowStaffType)
                         {
-                        <MudTh>Type</MudTh>
+                            <MudTh>Type</MudTh>
                         }
                         <MudTh></MudTh>
                     </HeaderContent>
@@ -80,11 +82,11 @@
                         {
                             var broker = @Brokers.FirstOrDefault(x => x.Id == @context.BrokerId);
                             <MudTd>@broker.Name</MudTd>
-                            <MudTd DataLabel="Two Factor"><MudCheckBox @bind-Checked="@context.TwoFactorEnabled" Disabled="true"></MudCheckBox></MudTd>                        
+                            <MudTd DataLabel="Two Factor"><MudCheckBox @bind-Checked="@context.TwoFactorEnabled" Disabled="true"></MudCheckBox></MudTd>
                         }
-                        @if(this.Options.Value.ShowStaffType)
+                        @if (this.Options.Value.ShowStaffType)
                         {
-                        <MudTd>@context.StaffTypeId.ToString()</MudTd>
+                            <MudTd>@context.StaffTypeId.ToString()</MudTd>
                         }
                         <MudTd>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"brokerstaffedit/{context.Id}")" class="btn btn-primary table-btn">
@@ -99,7 +101,7 @@
             </div>
         </div>
     }
-    
+
 }
 else
 {

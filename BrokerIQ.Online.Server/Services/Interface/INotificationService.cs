@@ -31,5 +31,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task MarkAsReadByBrokerId();
 
         Task ToggleNotificationReadStatus(int notificationId);
+
+        Task MarkAllNotificationsAsRead();
     }
 }

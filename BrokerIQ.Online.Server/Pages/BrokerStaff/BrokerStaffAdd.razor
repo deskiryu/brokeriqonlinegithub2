@@ -105,19 +105,14 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link mr-1">Cancel</MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Add Employee</MudButton>
-                            </div>
-
-                            @if (IsAdmin)
+                            @if (IsAdmin && Brokers != null)
                             {
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Choose Broker</label>
                                     <div class="col-sm-8">
                                         <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId">
 
-                                            @foreach (var broker in @Brokers)
+                                            @foreach (var broker in Brokers)
                                             {
                                                 <option value=@broker.Id>@broker.Name</option>
                                             }
@@ -126,8 +121,12 @@
                                     </div>
                                 </div>
                             }
-                        </div>
 
+                            <div class="form-group row">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link mr-1">Cancel</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn">Add Employee</MudButton>
+                            </div>
+                        </div>
                     </div>
 
                 </EditForm>

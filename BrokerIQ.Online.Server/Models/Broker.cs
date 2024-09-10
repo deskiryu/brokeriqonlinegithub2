@@ -92,7 +92,7 @@ namespace BrokerIQ.Online.Models
 
         public virtual ICollection<BrokerSubscriptionDto> Subscriptions { get; set; }
 
-        public bool HasWhiteLabel { get => BrokerIdentifier != null && BrokerIdentifier.IdentifierFound; }
+        public bool HasWhiteLabel { get => Subscriptions != null && Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel); }
 
         public bool IsInsuranceOnly { get => BrokerIdentifier != null && BrokerIdentifier.InsuranceOnly; }
 
@@ -111,7 +111,7 @@ namespace BrokerIQ.Online.Models
 
         public bool NotifyAppointments { get; set; }
 
-        public bool IsLimitedBroker => BrokerIdentifier is not null && BrokerIdentifier.IdentifierFound && BrokerIdentifier.IsLimitedBroker;
+        public bool HasFilter => BrokerIdentifier is not null && BrokerIdentifier.IdentifierFound && BrokerIdentifier.HasFilters;
 
         public bool CanImport => BrokerIdentifier is not null && BrokerIdentifier.IdentifierFound && BrokerIdentifier.CanImport;
 

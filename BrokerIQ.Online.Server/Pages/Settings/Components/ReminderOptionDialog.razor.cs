@@ -26,6 +26,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         [Microsoft.AspNetCore.Components.Parameter]
         public ReminderOptionDto Option { get; set; }
 
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Models.BrokerIdentifier BrokerIdentifier  { get; set; }
+
         MudForm form;
 
         MudSelect<int> ReminderTypeSelect;
@@ -140,6 +143,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         async void InsertLink()
         {
+            if (!OptionLink.ToLower().StartsWith("http"))
+            {
+                OptionLink = "http://" + OptionLink;
+            }
+
             if (!OptionLink.IsValidUrl())
             {
                 var dialogParams = new DialogParameters
@@ -160,7 +168,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             HideLink = true;
             StateHasChanged();
 
-            ReminderTypeSelect.ForceRender(false);
+
+            ReminderTypeSelect?.ForceRender(false);
         }
 
         private void ReminderTypeChanged(IEnumerable<int> selectedValue)
