@@ -298,7 +298,7 @@
             </ChildContent>
         </MudTabPanel>
 
-        @if (User != null && (User.IsBroker || User.IsBrokerStaff))
+        @if (User != null && !User.IsAdmin && !User.IsMinorAdmin)
         {
             <MudTabPanel>
                 <TabContent>

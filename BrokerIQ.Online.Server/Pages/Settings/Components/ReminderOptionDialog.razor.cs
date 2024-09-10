@@ -26,6 +26,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         [Microsoft.AspNetCore.Components.Parameter]
         public ReminderOptionDto Option { get; set; }
 
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Models.BrokerIdentifier BrokerIdentifier  { get; set; }
+
         MudForm form;
 
         MudSelect<int> ReminderTypeSelect;

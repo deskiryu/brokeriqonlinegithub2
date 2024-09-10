@@ -20,33 +20,33 @@
             <div class="mb-2">
                 <p>
                     <MudTooltip Text="Copy to clipboard">
-                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_CLIENT_NAME');"/>
+                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_CLIENT_NAME');" />
                     </MudTooltip>
                     <b>INSERT_CLIENT_NAME</b> is replaced in message by the currently selected client.
                 </p>
                 <p>
                     <MudTooltip Text="Copy to clipboard">
-                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_BROKER_NAME');"/>
+                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_COMPANY_NAME');" />
                     </MudTooltip>
-                    <b>INSERT_BROKER_NAME</b> is replaced in message by your brokerage name.
+                    <b>INSERT_COMPANY_NAME</b> is replaced in message by your brokerage name.
                 </p>
                 <p>
                     <MudTooltip Text="Copy to clipboard">
-                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_DATE');"/>
+                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_BROKER_NAME ');" />
+                    </MudTooltip>
+                    <b>INSERT_BROKER_NAME</b> is replaced with the chief broker name.
+                </p>
+                <p>
+                    <MudTooltip Text="Copy to clipboard">
+                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_DATE');" />
                     </MudTooltip>
                     <b>INSERT_DATE</b> is replaced by the date input.
                 </p>
                 <p>
                     <MudTooltip Text="Copy to clipboard">
-                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_TIME');"/>
+                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_TIME');" />
                     </MudTooltip>
                     <b>INSERT_TIME</b> is replaced by the time input.
-                </p>
-                <p>
-                    <MudTooltip Text="Copy to clipboard">
-                        <i class="fa-regular fa-copy" onclick="navigator.clipboard.writeText('INSERT_ADVISOR ');"/>
-                    </MudTooltip>
-                    <b>INSERT_ADVISOR</b> is replaced by your first name.
                 </p>
             </div>
             <MudTextField Class="mb-2" Lines="5" @bind-Value=Template.Message Label="Message Content" Required="true" RequiredError="Message content cannot be empty" /> @if (!IsCurrentFileToBeRemoved)
