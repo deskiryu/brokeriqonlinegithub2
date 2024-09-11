@@ -44,6 +44,23 @@ namespace BrokerIQ.Online.Server.Services
             return this.mapper.Map<List<Audio>>(answer);
         }
 
+        public async Task<Audio> GetAudio(int id, int brokerId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = this.audioUrl + $"/single/{id}?brokerid={brokerId}";
+            var answer = new AudioDto();
+            try
+            {
+                answer = await this.requestProviderService.Get<AudioDto>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"GetAudios: exception {ex.Message}");
+            }
+            return this.mapper.Map<Audio>(answer);
+        }
         public async Task<(bool,string)> UploadAndAnalyseAudio(string fileName, MemoryStream audioStream, int brokerId)
         {
             var user = await this.accountService.GetUser();
