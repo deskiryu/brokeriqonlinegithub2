@@ -86,7 +86,7 @@ namespace BrokerIQ.Online.Pages
         }
 
 
-        protected async Task DeleteAudio(string name)
+        protected async Task DeleteAudio(int id)
         {
             await VerifyAccess();
             var dialogParams = new DialogParameters();
@@ -94,7 +94,7 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Canceled)
             {
-                bool succeeded = await AudioService.DeleteAudio(name, BrokerId);
+                bool succeeded = await AudioService.DeleteAudio(id, BrokerId);
 
                 if (succeeded)
                 {

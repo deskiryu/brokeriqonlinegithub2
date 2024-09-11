@@ -44,7 +44,24 @@ namespace BrokerIQ.Online.Server.Services
             return this.mapper.Map<List<Audio>>(answer);
         }
 
-        public async Task<(bool,string)> UploadAndAnalyseAudio(string fileName, MemoryStream audioStream, int brokerId)
+        public async Task<Audio> GetAudio(int id, int brokerId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var url = this.audioUrl + $"/single/{id}?brokerid={brokerId}";
+            var answer = new AudioDto();
+            try
+            {
+                answer = await this.requestProviderService.Get<AudioDto>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"GetAudios: exception {ex.Message}");
+            }
+            return this.mapper.Map<Audio>(answer);
+        }
+        public async Task<(int, string)> UploadAndAnalyseAudio(string fileName, MemoryStream audioStream, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -54,10 +71,10 @@ namespace BrokerIQ.Online.Server.Services
             fileName = fileName.Replace("&", "%26");
 
             var url = this.audioUrl + $"/UploadAndAnalyseAudio?brokerId={brokerId}&fileName={fileName}";
-            var audioResponse = (false, "");
+            var audioResponse = (0, "");
             try
             {
-                audioResponse.Item1 = await this.requestProviderService.Post<MemoryStream, bool>(url, audioStream, "application/octet-stream");
+                audioResponse.Item1 = await this.requestProviderService.Post<MemoryStream, int>(url, audioStream, "application/octet-stream");
             }
             catch (Exception ex)
             {
@@ -66,11 +83,11 @@ namespace BrokerIQ.Online.Server.Services
             return audioResponse;
         }
 
-        public async Task<bool> DeleteAudio(string fileName, int brokerId)
+        public async Task<bool> DeleteAudio(int id, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.audioUrl + $"?brokerId={brokerId}&fileName={fileName}";
+            var url = this.audioUrl + $"?brokerId={brokerId}&id={id}";
             var answer = false;
             try
             {
@@ -79,24 +96,6 @@ namespace BrokerIQ.Online.Server.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"DeleteAudio: exception {ex.Message}");
-            }
-            return answer;
-        }
-
-        public async Task<bool> NameAvailable(string fileName, int brokerId)
-        {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
-            var url = this.audioUrl + $"/nameavailable/{fileName}?brokerId={brokerId}";
-            var answer = false;
-            try
-            {
-                answer = await this.requestProviderService.Get<bool>(url);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"NameAvailable: exception {ex.Message}");
             }
             return answer;
         }

@@ -14,6 +14,7 @@ using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
+using BrokerIQ.Online.Server.Services;
 
 namespace BrokerIQ.Online.Server.Pages.Audio
 {
@@ -50,13 +51,16 @@ namespace BrokerIQ.Online.Server.Pages.Audio
 
         protected string Url { get; set; }
 
-        protected string AudioName { get; set; }
+        [Parameter]
+        public string AudioId { get; set; }
 
         protected string AudioNameNoExtension { get; set; }
 
         protected string selectedNotification;
 
         protected string SearchTerm { get; set; } = "";
+
+        protected Models.Audio ThisAudio { get; set; }
 
         protected bool Vetted { get; set; }
 
@@ -79,32 +83,16 @@ namespace BrokerIQ.Online.Server.Pages.Audio
 
         protected override async Task OnInitializedAsync()
         {
-            var query = new Uri(NavigationManager.Uri).Query;
             selectedNotification = "A new voice recording has arrived";
 
             CustomerCategoriesByRelevance = Extensions.Extensions.GetAllCustomerCategories();
-
-            if (QueryHelpers.ParseQuery(query).TryGetValue("Url", out var value))
-            {
-                Url = value;
-                try
-                {
-                    int pos = Url.LastIndexOf("/") + 1;
-                    AudioName = Url.Substring(pos, Url.Length - pos);
-                    AudioNameNoExtension = Path.GetFileNameWithoutExtension(AudioName);
-                }
-                catch
-                {
-                    AlertService.Error("Get Audios failed");
-                }
-
-            }
 
             var user = await AccountService.GetUser();
             IsAdmin = user.IsAdmin;
             if (IsAdmin)
             {
                 Brokers = (await BrokerService.GetBrokers()).ToList();
+                BrokerId = 0;
             }
             else
             {
@@ -121,13 +109,16 @@ namespace BrokerIQ.Online.Server.Pages.Audio
 
             try
             {
-                Vetted = true;//await AudioService.IsVetted(AudioName);
                 var allCustomers = await CustomerService.GetAllCustomers();
                 Customers = allCustomers.Where(x => x.AudioNotificationsAllowed).ToList();
+
+                ThisAudio = await AudioService.GetAudio(int.Parse(AudioId), BrokerId);
+                Url = ThisAudio.Url;
+                Vetted = true;
             }
             catch
             {
-                AlertService.Error("Get Audios failed");
+                AlertService.Error("Get Audio failed");
             }
         }
 

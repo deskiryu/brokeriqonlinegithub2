@@ -65,13 +65,13 @@ else
                 <tr>
                     <td>@Path.GetFileNameWithoutExtension(Audio.Name)</td>
                     <td>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"audiodetail?url={Audio.Url}")" class="btn btn-primary table-btn">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"audiodetail/{Audio.Id}")" class="btn btn-primary table-btn">
                             <i class="fas fa-headphones"></i>
                         </MudButton>
                     </td>
 
                     <td>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn" @onclick="f => DeleteAudio(Audio.Name)">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn" @onclick="f => DeleteAudio(Audio.Id)">
                             <i class="fas fa-trash"></i>
                         </MudButton>
                     </td>
