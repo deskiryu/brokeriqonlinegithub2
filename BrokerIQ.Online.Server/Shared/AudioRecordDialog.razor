@@ -111,7 +111,7 @@
     private async Task UploadButtonPushed()
     {
 
-        var result = (false,"");
+        var result = (0,"");
         try{
             if(string.IsNullOrEmpty(AudioName)){
                 AlertService.Error("Please provide a name for the recording");
@@ -159,7 +159,7 @@
         }
 
         SpinnerVisible = "display:none";
-        if (result.Item1 == true)
+        if (result.Item1 > 0)
         {
             MudDialog.Close(DialogResult.Ok("true"));            
         }

@@ -61,7 +61,7 @@ namespace BrokerIQ.Online.Server.Services
             }
             return this.mapper.Map<Audio>(answer);
         }
-        public async Task<(bool,string)> UploadAndAnalyseAudio(string fileName, MemoryStream audioStream, int brokerId)
+        public async Task<(int, string)> UploadAndAnalyseAudio(string fileName, MemoryStream audioStream, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -71,10 +71,10 @@ namespace BrokerIQ.Online.Server.Services
             fileName = fileName.Replace("&", "%26");
 
             var url = this.audioUrl + $"/UploadAndAnalyseAudio?brokerId={brokerId}&fileName={fileName}";
-            var audioResponse = (false, "");
+            var audioResponse = (0, "");
             try
             {
-                audioResponse.Item1 = await this.requestProviderService.Post<MemoryStream, bool>(url, audioStream, "application/octet-stream");
+                audioResponse.Item1 = await this.requestProviderService.Post<MemoryStream, int>(url, audioStream, "application/octet-stream");
             }
             catch (Exception ex)
             {
