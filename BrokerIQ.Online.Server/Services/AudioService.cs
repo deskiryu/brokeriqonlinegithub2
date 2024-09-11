@@ -83,11 +83,11 @@ namespace BrokerIQ.Online.Server.Services
             return audioResponse;
         }
 
-        public async Task<bool> DeleteAudio(string fileName, int brokerId)
+        public async Task<bool> DeleteAudio(int id, int brokerId)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
-            var url = this.audioUrl + $"?brokerId={brokerId}&fileName={fileName}";
+            var url = this.audioUrl + $"?brokerId={brokerId}&id={id}";
             var answer = false;
             try
             {
@@ -96,24 +96,6 @@ namespace BrokerIQ.Online.Server.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"DeleteAudio: exception {ex.Message}");
-            }
-            return answer;
-        }
-
-        public async Task<bool> NameAvailable(string fileName, int brokerId)
-        {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
-            var url = this.audioUrl + $"/nameavailable/{fileName}?brokerId={brokerId}";
-            var answer = false;
-            try
-            {
-                answer = await this.requestProviderService.Get<bool>(url);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"NameAvailable: exception {ex.Message}");
             }
             return answer;
         }
