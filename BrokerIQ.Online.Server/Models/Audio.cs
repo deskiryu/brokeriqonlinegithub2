@@ -19,5 +19,7 @@ namespace BrokerIQ.Online.Server.Models
         public int BrokerId { get; set; }
 
         public bool Vetted { get; set; }
+        
+        public string BrokerName { get; set; }
     }
 }
