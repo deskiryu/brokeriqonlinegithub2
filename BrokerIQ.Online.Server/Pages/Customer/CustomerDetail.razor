@@ -222,6 +222,18 @@ else if (!Saved)
             </MudTabPanel>
         }
 
+        <MudTabPanel>
+            <TabContent>
+                <MudText Typo="Typo.subtitle2" Class="mr-1">PENSION</MudText>
+            </TabContent>
+            <ChildContent>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"pensionedit/0/{Customer.Id}")" class="mb-2">
+                    Add New Pension
+                </MudButton>
+                <CustomerPensionTable User="@User" Brokers="@Brokers" Customer="@Customer" />
+            </ChildContent>
+        </MudTabPanel>
+
         <MudTabPanel BadgeData="@NewClientUploadsCount" BadgeColor="@UploadsBadgeColor" BadgeDot="@ShouldShowAsDot" OnClick="@(f => ResetUploadsBadge())">
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">UPLOADS</MudText>
