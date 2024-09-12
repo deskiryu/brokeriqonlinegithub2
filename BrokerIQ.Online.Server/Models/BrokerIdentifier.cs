@@ -126,5 +126,7 @@ namespace BrokerIQ.Online.Server.Models
         public bool StaffCanManageDocumentTypes { get; set; }
 
         public bool StaffCanManageReminders { get; set; }
+
+        public string MatchingCode { get; set; }
     }
 }
