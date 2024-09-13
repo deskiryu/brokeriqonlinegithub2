@@ -11,6 +11,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Server.Models;
     using BrokerIQ.Online.Services.Interface;
     using BrokerIQ.Online.Server.Shared;
+    using BrokerIQ.Online.Models;
 
     public class AudioListBase : ComponentBase
     {
@@ -43,13 +44,23 @@ namespace BrokerIQ.Online.Pages
 
         public List<Audio> Audios { get; set; }
 
+        public List<Broker> Brokers { get; set; }
+
+        public bool IsAdmin { get; set; }       
+
+        public bool IsMinorAdmin { get; set; }              
+        
         public int BrokerId { get; set; }
+
+        public int FilterBrokerId { get; set; }        
 
         public string SpinnerVisible { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             SpinnerVisible = "display:none";
+            IsAdmin = false;
+            IsMinorAdmin = false;
 
             try
             {
@@ -58,10 +69,13 @@ namespace BrokerIQ.Online.Pages
                 {
                     throw new Exception();
                 }
-                if (user.IsAdmin || user.MasterBrokerId == 0)
+                if (user.IsAdmin || user.IsMinorAdmin || user.MasterBrokerId == 0)
                 {
                     await VerifyAdmin();
                     BrokerId = 0;
+                    Brokers = (await BrokerService.GetBrokers()).ToList();
+                    IsAdmin = user.IsAdmin; 
+                    IsMinorAdmin = user.IsMinorAdmin;                    
                 }
                 else if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
@@ -72,6 +86,13 @@ namespace BrokerIQ.Online.Pages
                     throw new Exception();
                 }
                 Audios = (await AudioService.GetAudios(BrokerId)).ToList();
+                foreach (Audio audio in Audios)
+                {
+                    if (IsAdmin)
+                    {
+                        audio.BrokerName = Brokers.FirstOrDefault(x => x.Id == audio.BrokerId)?.Name;
+                    }
+                }                
                 StateHasChanged();
             }
             catch
@@ -86,7 +107,7 @@ namespace BrokerIQ.Online.Pages
         }
 
 
-        protected async Task DeleteAudio(string name)
+        protected async Task DeleteAudio(int id)
         {
             await VerifyAccess();
             var dialogParams = new DialogParameters();
@@ -94,7 +115,7 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Canceled)
             {
-                bool succeeded = await AudioService.DeleteAudio(name, BrokerId);
+                bool succeeded = await AudioService.DeleteAudio(id, BrokerId);
 
                 if (succeeded)
                 {

@@ -112,7 +112,6 @@ namespace BrokerIQ.Online.Pages
             try
             {
                 await BrokerService.UpdateBroker(Broker);
-                await BrokerIdentifierService.UpdateBrokerIdentifier(Broker.BrokerIdentifier);
             }
             catch
             {
