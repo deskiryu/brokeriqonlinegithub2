@@ -1,9 +1,13 @@
 ﻿@page "/"
 @using BrokerIQ.Online.Services.Interface
+@using BrokerIQ.Dto.Enum;
+@using Microsoft.Extensions.Options
+@using BrokerIQ.Online.AppSettings
 
 @inject IBrokerService BrokerService
 @inject IBrokerStaffService BrokerStaffService
 @inject IAccountService AccountService
+@inject IOptions<ReviewItAPIDetails> api
 
 @if (Broker != null)
 {
@@ -20,8 +24,19 @@
     }
 
 <div>
-    Welcome to your new Digital Customer Engagement platform.
+        <h3>Welcome to your new Digital Customer Engagement platform.</h3>
 </div>
+<p></p>
+<p></p>
+    @if (_showBrokerMatchingCode)
+    {
+        <div>
+            <h5>Your unique broker code is @_brokerMatchingCode </h5>
+            <h6>Share this code with your clients to seamlessly connect with them on YAH.</h6>
+        </div>
+    }
+
+
 <div class="form-group row">
     <div class="col-sm-8">
         @if (Broker.LogoImage != null && Broker.LogoImage.Length > 0)
@@ -42,6 +57,8 @@ else
 @code{
     BrokerIQ.Online.Models.Broker Broker;
     BrokerIQ.Online.Models.BrokerStaff BrokerStaff;
+    bool _showBrokerMatchingCode = false;
+    string _brokerMatchingCode;
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,6 +70,16 @@ else
                 if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
                 {
                     Broker = await BrokerService.GetBroker(user.MasterBrokerId);
+                    if (Broker != null)
+                    {
+
+                        if (Broker != null && Broker.BrokerIdentifier != null && !string.IsNullOrEmpty(Broker.BrokerIdentifier.MatchingCode) && api.Value.IsYAHTheme)
+                        {
+                             _showBrokerMatchingCode = true;
+                            _brokerMatchingCode = Broker.BrokerIdentifier.MatchingCode;                           
+                        }
+
+                    }
                 }
 
                 if (user.IsAdminStaff || user.IsBrokerStaff)
