@@ -67,80 +67,83 @@ else if (!Saved)
             </ChildContent>
         </MudTabPanel>
 
-        <MudTabPanel>
-            <TabContent>
-                <MudText Typo="Typo.subtitle2" Class="mr-1">INSURANCE</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.InsuranceVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex==1)" />
-            </TabContent>
-            <ChildContent>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
-                    Add New Insurance
-                </MudButton>
-                @if (ShowGetQuote())
-                {
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick=@(r=> GetInsuranceQuote()) class="ml-2 mb-2">
-                        Get Quote
+        @if (Broker != null && (Broker.ProvidesPersonalInsuranceServices || Broker.ProvidesBusinessInsuranceServices))
+        {
+            <MudTabPanel>
+                <TabContent>
+                    <MudText Typo="Typo.subtitle2" Class="mr-1">INSURANCE</MudText>
+                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.InsuranceVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 1)" />
+                </TabContent>
+                <ChildContent>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
+                        Add New Insurance
                     </MudButton>
-                }
-                <table id="table-insurance" class="table  col-sm-12 table-striped ">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Insurer</th>
-                            <th>Review</th>
-                            <th>Expiry</th>
-                            <th Style="text-align:center">Available to Client</th>
-                            @if (User.IsAdmin)
+                    @if (ShowGetQuote())
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick=@(r => GetInsuranceQuote()) class="ml-2 mb-2">
+                            Get Quote
+                        </MudButton>
+                    }
+                    <table id="table-insurance" class="table  col-sm-12 table-striped ">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Insurer</th>
+                                <th>Review</th>
+                                <th>Expiry</th>
+                                <th Style="text-align:center">Available to Client</th>
+                                @if (User.IsAdmin)
+                                {
+                                    <th>Broker</th>
+                                }
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var insurance in Customer.Insurances)
                             {
-                                <th>Broker</th>
-                            }
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var insurance in Customer.Insurances)
-                        {
-                            if (!insurance.MenuPlanId.HasValue || insurance.MenuPlanId == 0)
-                            {
-                                var currentDate = DateTime.UtcNow;
+                                if (!insurance.MenuPlanId.HasValue || insurance.MenuPlanId == 0)
+                                {
+                                    var currentDate = DateTime.UtcNow;
 
-                                var rowClass = String.Empty;
+                                    var rowClass = String.Empty;
 
-                                if (@insurance.ExpiryDate < currentDate) rowClass = "expired";
+                                    if (@insurance.ExpiryDate < currentDate) rowClass = "expired";
 
-                                <tr class="@rowClass">
-                                    <td>@insurance.InsType.GetDisplayName()</td>
-                                    <td>@insurance.Name</td>
-                                    <td>@insurance.ReviewDate.ToBiqDateString()</td>
-                                    <td>@(insurance.ExpiryDate != DateTime.MaxValue ? insurance.ExpiryDate.Value.ToBiqDateString() : string.Empty)</td>
-                                    <td Style="text-align:center">
-                                        @if (insurance.AvailableToClient)
+                                    <tr class="@rowClass">
+                                        <td>@insurance.InsType.GetDisplayName()</td>
+                                        <td>@insurance.Name</td>
+                                        <td>@insurance.ReviewDate.ToBiqDateString()</td>
+                                        <td>@(insurance.ExpiryDate != DateTime.MaxValue ? insurance.ExpiryDate.Value.ToBiqDateString() : string.Empty)</td>
+                                        <td Style="text-align:center">
+                                            @if (insurance.AvailableToClient)
+                                            {
+                                                <span>Yes</span>
+                                            }
+                                            else
+                                            {
+                                                <b>No</b>
+                                            }
+                                        </td>
+                                        @if (User.IsAdmin)
                                         {
-                                            <span>Yes</span>
+                                            <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
                                         }
-                                        else
-                                        {
-                                            <b>No</b>
-                                        }
-                                    </td>
-                                    @if (User.IsAdmin)
-                                    {
-                                        <td>@Brokers.First(x => x.Id == insurance.BrokerId)?.Name</td>
-                                    }
-                                    <td>
-                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId=0")" class="btn btn-primary table-btn">
-                                            <i class="fas fa-edit"></i>
-                                        </MudButton>
-                                    </td>
-                                </tr>
+                                        <td>
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/{insurance.Id}/{Customer.Id}?menuplanId=0")" class="btn btn-primary table-btn">
+                                                <i class="fas fa-edit"></i>
+                                            </MudButton>
+                                        </td>
+                                    </tr>
+                                }
                             }
-                        }
-                    </tbody>
-                </table>
-            </ChildContent>
-        </MudTabPanel>
+                        </tbody>
+                    </table>
+                </ChildContent>
+            </MudTabPanel>
+        }
 
-        @if (Broker != null && !Broker.HasWhiteLabelAndIsInsuranceOnly)
+        @if (Broker != null && Broker.ProvidesMortgageServices)
         {
             <MudTabPanel>
                 <TabContent>
@@ -222,17 +225,20 @@ else if (!Saved)
             </MudTabPanel>
         }
 
-        <MudTabPanel>
-            <TabContent>
-                <MudText Typo="Typo.subtitle2" Class="mr-1">PENSION</MudText>
-            </TabContent>
-            <ChildContent>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"pensionedit/0/{Customer.Id}")" class="mb-2">
-                    Add New Pension
-                </MudButton>
-                <CustomerPensionTable User="@User" Brokers="@Brokers" Customer="@Customer" />
-            </ChildContent>
-        </MudTabPanel>
+        @if (Broker != null && Broker.ProvidesPensionServices)
+        {
+            <MudTabPanel>
+                <TabContent>
+                    <MudText Typo="Typo.subtitle2" Class="mr-1">PENSION</MudText>
+                </TabContent>
+                <ChildContent>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"pensionedit/0/{Customer.Id}")" class="mb-2">
+                        Add New Pension
+                    </MudButton>
+                    <CustomerPensionTable User="@User" Brokers="@Brokers" Customer="@Customer" />
+                </ChildContent>
+            </MudTabPanel>
+        }
 
         <MudTabPanel BadgeData="@NewClientUploadsCount" BadgeColor="@UploadsBadgeColor" BadgeDot="@ShouldShowAsDot" OnClick="@(f => ResetUploadsBadge())">
             <TabContent>
@@ -327,8 +333,6 @@ else if (!Saved)
                 </div>
             </ChildContent>
         </MudTabPanel>
-
-
 
         <MudTabPanel>
             <TabContent>
