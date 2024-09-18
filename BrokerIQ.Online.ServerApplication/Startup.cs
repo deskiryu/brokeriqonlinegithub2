@@ -102,6 +102,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.AddScoped<ICalendlyService, CalendlyService>();
             services.AddScoped<ICustomerAppointmentService, CustomerAppointmentService>();
             services.AddScoped<IDocumentVaultTypeService, DocumentVaultTypeService>();
+            services.AddScoped<IPensionService, PensionService>();
 
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
