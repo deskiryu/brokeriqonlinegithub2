@@ -686,6 +686,8 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<BrokerIdentifierDto, BrokerIdentifier>();
 
             CreateMap<BrokerIdentifier, UpdateBrokerIdentifierDto>();
+
+            CreateMap<BrokerServiceDto, BrokerService>();
         }
 
         private void BrokerStaffMapper()

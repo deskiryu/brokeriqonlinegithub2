@@ -169,7 +169,7 @@ namespace BrokerIQ.Online.Pages
 
                 try
                 {
-                    await PensionService.Add(Pension,  IsAdmin? this.BrokerListId : customer.ChosenBrokerId);
+                    await PensionService.Add(Pension, IsAdmin ? this.BrokerListId : customer.ChosenBrokerId);
                 }
                 catch
                 {
@@ -245,7 +245,7 @@ namespace BrokerIQ.Online.Pages
         {
             NavigationManager.NavigateTo($"/clientdetail/{CustomerId}");
         }
-        
+
         private string GetMessagePensionAdded(string customerName, string brokerName, string PensionName)
         {
             var messageToSend = $"{customerName}, your broker {brokerName} has added a new {PensionName} Pension to your app.";

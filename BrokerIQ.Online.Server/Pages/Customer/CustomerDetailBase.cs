@@ -246,7 +246,7 @@ namespace BrokerIQ.Online.Pages
 
                     await PopulateBrokerDefinedMessages();
 
-                    if (Broker.IsInsuranceOnly)
+                    if (!Broker.ProvidesMortgageServices && !Broker.ProvidesPensionServices)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
                     }

@@ -114,8 +114,6 @@ namespace BrokerIQ.Online.Pages
 
         public bool SendNotification { get; set; }
 
-        public bool BrokerHasWhiteLabelAndIsInsuranceOnly { get; set; }
-
         public List<(int, string)> ConsumerInsurances { get; set; }
 
         public List<(int, string)> BusinessInsurances { get; set; }
@@ -177,11 +175,9 @@ namespace BrokerIQ.Online.Pages
                 try
                 {
                     Broker = await BrokerService.GetBroker(brokerId);
-                    BrokerHasWhiteLabelAndIsInsuranceOnly = false;
                     if (!IsAdmin)
                     {
-                        BrokerHasWhiteLabelAndIsInsuranceOnly = Broker.BrokerIdentifier != null && Broker.BrokerIdentifier.IdentifierFound && Broker.BrokerIdentifier.InsuranceOnly;
-                        MyMaxAllowedFiles = BrokerHasWhiteLabelAndIsInsuranceOnly ? MyMaxAllowedFiles * 2 : MyMaxAllowedFiles;
+                        MyMaxAllowedFiles = Broker.ProvidesBusinessInsuranceServices ? MyMaxAllowedFiles * 2 : MyMaxAllowedFiles;
                     }
                 }
                 catch
@@ -193,7 +189,6 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
-                BrokerHasWhiteLabelAndIsInsuranceOnly = true;
                 MyMaxAllowedFiles = MyMaxAllowedFiles * 2;
                 try
                 {
