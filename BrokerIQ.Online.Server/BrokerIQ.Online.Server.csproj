@@ -40,8 +40,10 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Pages\Pension\" />
+	  <None Remove="Converters\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Pages\Pension\" />
+	  <Folder Include="Converters\" />
 	</ItemGroup>
 </Project>
