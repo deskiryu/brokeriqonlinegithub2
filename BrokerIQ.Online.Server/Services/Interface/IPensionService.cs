@@ -12,7 +12,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<Pension> Update(Pension pension);
 
-        Task<Pension> Add(Pension pension, int brokerId);
+        Task<Pension> Add(Pension pension, int brokerId, List<(string, byte[])> documents);
 
         Task<bool> Delete(int pension);
     }

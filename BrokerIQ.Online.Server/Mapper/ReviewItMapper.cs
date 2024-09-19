@@ -38,6 +38,7 @@ namespace BrokerIQ.Online.Mapper
             BrokerSubscriptionMapper();
             CustomerAppointmentMapper();
             PensionMapper();
+            PensionDocumentMapper();
         }
 
         private void CustomerMapper()
@@ -946,6 +947,12 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<Pension, PensionDto>().ReverseMap();
 
             CreateMap<Pension, UpdatePensionDto>();
+        }
+
+        private void PensionDocumentMapper()
+        {
+            CreateMap<PensionDocumentDto, PensionDocument>();
+            CreateMap<PensionDocument, CreatePensionDocumentDto>();
         }
     }
 }

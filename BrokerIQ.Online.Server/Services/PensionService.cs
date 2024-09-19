@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using AutoMapper;
+using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Services.Abstract;
@@ -50,13 +52,30 @@ namespace BrokerIQ.Online.Services
             return this.mapper.Map<Pension>(answer);
         }
         
-        public async Task<Pension> Add(Pension pension, int brokerId)
+        public async Task<Pension> Add(Pension pension, int brokerId, List<(string, byte[])> documents)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
 
             var mapped = mapper.Map<CreatePensionDto>(pension);
             mapped.BrokerId = brokerId;
+
+            if (documents != null && documents.Any())
+            {
+                mapped.Documents = new List<CreatePensionDocumentDto>();
+                foreach (var document in documents)
+                {
+                    var PensionDoc = new PensionDocument
+                    {
+                        File = document.Item2,
+                        FileName = document.Item1,
+                        SupportingDocumentType = DocumentTypeEnum.PDF
+                    };
+                    var mappedDoc = mapper.Map<CreatePensionDocumentDto>(PensionDoc);
+                    mapped.Documents.Add(mappedDoc);
+                }
+
+            }
 
             var answer = await this.requestProviderService.Post<CreatePensionDto, PensionDto>(this.PensionUrl, mapped);
             return this.mapper.Map<Pension>(answer);
