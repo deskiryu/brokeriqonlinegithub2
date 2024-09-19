@@ -87,5 +87,15 @@ namespace BrokerIQ.Online.Services
             var urlToGo = this.BrokerUrl + $"/verifybroker/{id}";
             return await this.requestProviderService.Post<BoolResponseDto>(urlToGo);
         }
+
+        public async Task<bool> ToggleService(int brokerId, int serviceId)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var urlToGo = this.BrokerUrl + $"/{brokerId}/toggleservice/{serviceId}";
+
+            return await this.requestProviderService.Post<bool>(urlToGo);
+        }
     }
 }
