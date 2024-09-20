@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace BrokerIQ.Online.Models
@@ -45,6 +46,8 @@ namespace BrokerIQ.Online.Models
         public decimal? EmployersMonthlyContribution { get; set; }
 
         public DateTime? NextReview { get; set; }
+
+        public virtual ICollection<PensionDocument> SupportingDocuments { get; set; }
     }
 }
 
