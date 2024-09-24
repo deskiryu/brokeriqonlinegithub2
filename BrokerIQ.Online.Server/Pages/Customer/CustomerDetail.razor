@@ -272,14 +272,7 @@ else if (!Saved)
                         <h6 style="padding-bottom: 5px;">Select Client Document Requirements</h6>
                         @foreach (var type in DocumentTypeValues)
                         {
-                            <MudSelect T="int" Label="@type.Name" AnchorOrigin="Origin.BottomCenter" @bind-Value="@RequestedDocuments[type.Id]">
-                                <MudSelectItem Value=0 />
-                                <MudSelectItem Value=1 />
-                                <MudSelectItem Value=2 />
-                                <MudSelectItem Value=3 />
-                                <MudSelectItem Value=4 />
-                                <MudSelectItem Value=5 />
-                            </MudSelect>
+                            <MudNumericField @bind-Value="@RequestedDocuments[type.Id]" Label="@type.Name" Variant="Variant.Text" Min="0" />
                         }
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await SubmitDocumentRequirements())" class="btn btn-secondary text-center">Submit Requirements</MudButton>
                     </div>
