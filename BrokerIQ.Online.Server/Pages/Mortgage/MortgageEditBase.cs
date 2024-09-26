@@ -23,6 +23,7 @@ namespace BrokerIQ.Online.Pages
     using Microsoft.AspNetCore.Components.Forms;
     using Microsoft.AspNetCore.Components.Web;
     using BrokerIQ.Online.Server.Shared;
+    using BrokerIQ.Online.Server.Pages.Insurance.Components;
 
     public class MortgageEditBase : ComponentBase
     {
@@ -724,6 +725,22 @@ namespace BrokerIQ.Online.Pages
             fileStream.Close();
             File.Delete(path);
             return bytes;
+        }
+
+        protected async Task OpenAnalyzerDialog()
+        {
+            var result = await DialogService.Show<DocumentAnalyzerDialog>("Document Analyzer").Result;
+
+            if (!result.Canceled)
+            {
+                var data = ((IBrowserFile, Mortgage))result.Data;
+                LoadedFiles.Clear();
+                LoadedFiles.Add((data.Item1, await GetFileBytes(data.Item1)));
+                Mortgage = data.Item2;
+                MortgageType = (int)Mortgage.MortgageType;
+            }
+
+            StateHasChanged();
         }
     }
 }

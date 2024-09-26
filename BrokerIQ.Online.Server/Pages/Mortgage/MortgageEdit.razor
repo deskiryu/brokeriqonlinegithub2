@@ -1,6 +1,7 @@
 ﻿
 
 @page "/mortgageedit/{MortgageId}/{CustomerId}"
+@using Microsoft.Extensions.Options
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Server.Extensions
@@ -8,7 +9,10 @@
 @using System.IO
 @using BrokerIQ.Online.Pages
 
+@using BrokerIQ.Online.AppSettings
+
 @inherits MortgageEditBase
+@inject IOptions<ReviewItAPIDetails> Options
 
 @inject IJSRuntime js
 @functions {
@@ -28,6 +32,13 @@
     <section class="mortgage-detail">
 
         <h4 class="page-title">Add or edit mortgage</h4>
+
+        @if (Options.Value.CanLoadInsuranceFromFile && Mortgage.Id == 0)
+        {
+            <MudPaper Class="pa-3 ma-2 col-sm-6" Outlined="true">
+                <MudButton Variant="Variant.Filled" FullWidth="true" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@OpenAnalyzerDialog">Fill Details From File ...</MudButton>
+            </MudPaper>
+        }
 
         <EditForm Model="@Mortgage" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit" id="@FormId">
 
