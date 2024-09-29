@@ -1,4 +1,6 @@
-﻿@using BrokerIQ.Online.Models
+﻿@using System.Net
+
+@using BrokerIQ.Online.Models
 @using BrokerIQ.Online.Services
 @using BrokerIQ.Online.Server.AppSettings;
 @using BrokerIQ.Online.AppSettings;
@@ -298,8 +300,14 @@
 
         if (User.IsAdmin == false && User.IsMinorAdmin == false)
         {
-            var count = await NotificationService.GetNewBrokerNotificationsCountByBrokerId();
-            NewMessageCount = count;
+            var response = await NotificationService.GetNewBrokerNotificationsCountByBrokerId();
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                Navigator.NavigateTo($"account/logout");
+                return;
+            }
+
+            NewMessageCount = response.Data;
             NewMessageHide = NewMessageCount == 0;
         }
     }

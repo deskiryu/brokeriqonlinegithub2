@@ -1,0 +1,40 @@
+﻿<table class="table col-sm-12 table-striped ">
+    <thead>
+        <tr>
+            <th>Provider</th>
+            <th>Policy</th>
+            <th>Monthly Contribution</th>
+            <th>Current Amount</th>
+            @if (User.IsAdmin)
+            {
+                <th>Broker</th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pension in Pensions)
+        {
+            var currentDate = DateTime.UtcNow;
+
+            var rowClass = String.Empty;
+
+            <tr class="@rowClass">
+                <td>@pension.ProviderName</td>
+                <td>@pension.PolicyNumber</td>
+                <td>£@pension.CustomerMonthlyContribution</td>
+                <td>£@pension.CurrentPensionAmount</td>
+
+                @if (User.IsAdmin)
+                {
+                    <td>@Brokers.First(x => x.Id == Customer.ChosenBrokerId)?.Name</td>
+                }
+                <td>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"pensionedit/{pension.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
+                        <i class="fas fa-edit"></i>
+                    </MudButton>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

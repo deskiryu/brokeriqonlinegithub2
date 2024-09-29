@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using BrokerIQ.Dto;
 using BrokerIQ.Dto.CreateDto;
@@ -27,6 +28,9 @@ namespace BrokerIQ.Online.Pages
 {
     public class CustomerDetailBase : ComponentBase
     {
+        [Inject]
+        NavigationManager Navigator { get; set; }
+
         [Inject]
         public ICustomerService CustomerService { get; set; }
 
@@ -242,7 +246,7 @@ namespace BrokerIQ.Online.Pages
 
                 Connection = await CustomerService.GetConnection(Customer.Id);
 
-                SelectedCustomerDocuments = CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                CustomerDocuments = await GetCustomerDocuments();
                 ResetUploadsBadge();
 
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
@@ -253,7 +257,7 @@ namespace BrokerIQ.Online.Pages
 
                     await PopulateBrokerDefinedMessages();
 
-                    if (Broker.IsInsuranceOnly)
+                    if (!Broker.ProvidesMortgageServices && !Broker.ProvidesPensionServices)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
                         MyMaxAllowedFiles = MyMaxAllowedFiles * 2;
@@ -325,6 +329,11 @@ namespace BrokerIQ.Online.Pages
             fileUploadSettings = this.FileUploadSettingsOption.Value;
         }
 
+        private async Task<IEnumerable<CustomerDocument>> GetCustomerDocuments()
+        {
+            return (await CustomerDocumentService.Get(Customer.Id)).Data;
+        }
+
         private async Task SetupDocumentRequirementSection()
         {
             DocumentTypeValues = await DocumentVaultTypeService.GetAllForBroker(Broker.Id);
@@ -356,21 +365,36 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task UpdateChat(bool firstTime = false)
         {
-            int latestUnreadchat = await ChatService.GetUnRead(Customer.Id);
-            if (firstTime || LastUnReadChat + latestUnreadchat != LastUnReadChat)
+            var response = await ChatService.GetUnRead(Customer.Id);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                UnReadChat += latestUnreadchat;
+                Navigator.NavigateTo($"account/logout");
+                return;
+            }
+
+            if (firstTime || LastUnReadChat + response.Data != LastUnReadChat)
+            {
+                UnReadChat += response.Data;
                 Chat = await ChatService.Get(Customer.Id);
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
                 ChatBadgeDot = UnReadChat == 0;
-                LastUnReadChat = latestUnreadchat;
+                LastUnReadChat = response.Data;
                 await InvokeAsync(StateHasChanged);
             }
         }
 
         protected async Task UpdateCustomerUploads()
         {
-            CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+            var response = await CustomerDocumentService.Get(Customer.Id);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                Navigator.NavigateTo($"account/logout");
+                return;
+            }
+
+            CustomerDocuments = response.Data;
             DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
 
             var incomingClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
@@ -879,7 +903,7 @@ namespace BrokerIQ.Online.Pages
                         await CustomerDocumentService.DeleteCustomerDocument(custDoc.Id);
                     }
 
-                    SelectedCustomerDocuments = CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                    CustomerDocuments = await GetCustomerDocuments();
                     SelectedItemsCustomerDocuments.Clear();
                     StateHasChanged();
                 }
@@ -908,7 +932,7 @@ namespace BrokerIQ.Online.Pages
                         responseParams.Add("Message", "Deleted successfully");
                         await DialogService.Show<AlertDialog>("Information", responseParams).Result;
 
-                        SelectedCustomerDocuments = CustomerDocuments = await CustomerDocumentService.Get(Customer.Id);
+                        CustomerDocuments = await GetCustomerDocuments();
                         StateHasChanged();
                     }
 

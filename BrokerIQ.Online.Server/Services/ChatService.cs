@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AutoMapper;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.AppSettings;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Services.Base;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
+using Microsoft.Extensions.Options;
 
 namespace BrokerIQ.Online.Services
 {
-    using System.Net;
-    using System.Net.Http;
-    using System.Text.Json;
-    using Abstract;
-    using AppSettings;
-    using AutoMapper;
-    using Dto.Models;
-    using Interface;
-    using Models;
-    using BrokerIQ.Dto.Request;
-    using BrokerIQ.Online.Server.Models;
-    using static System.Net.Mime.MediaTypeNames;
-    using System.Text.RegularExpressions;
-    using Microsoft.Extensions.Options;
-
     public class ChatService : IChatService
     {
         private readonly string ChatUrl = "Chat";
@@ -100,14 +94,14 @@ namespace BrokerIQ.Online.Services
             return answer != null && answer.Id > 0;
         }
 
-        public async Task<int> GetUnRead(int customerId, int brokerId = 0)
+        public async Task<ApiResponse<int>> GetUnRead(int customerId, int brokerId = 0)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             var localBrokerId = brokerId > 0 ? brokerId : user.MasterBrokerId;
             string newUrl = this.ChatUrl + $"/UnreadByBroker/{customerId}/{localBrokerId}";
 
-            var count = await requestProviderService.Get<int>(newUrl);
+            var count = await this.requestProviderService.GetResponse<int>(newUrl);
             return count;
         }
 
