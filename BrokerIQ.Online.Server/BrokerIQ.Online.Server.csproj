@@ -55,7 +55,7 @@
 	  <Folder Include="Pages\Pension\" />
 	  <Folder Include="Converters\" />
 	</ItemGroup>
-</Project>
+
 	<PropertyGroup>
 		<NameLength>3</NameLength>
 		<ObfuscateEvents>true</ObfuscateEvents>
