@@ -181,7 +181,7 @@
                     </EditForm>
                 </MudTabPanel>
 
-                @if (Broker is not null)
+                @if (Broker is not null && CurrentUser.IsAdmin)
                 {
                     <MudTabPanel Text="Services">
                         <ServicesStack Broker="@Broker"/> 
