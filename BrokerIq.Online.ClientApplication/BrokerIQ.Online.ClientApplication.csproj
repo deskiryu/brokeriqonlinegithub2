@@ -4,10 +4,10 @@
 		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
 
-	<Content Update="wwwroot\js\calendly.js">
-		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</Content>
-	
+	<!--<PropertyGroup> Size of components too large compared to speed benefit
+		<RunAOTCompilation>true</RunAOTCompilation>
+	</PropertyGroup>-->	
+
 	  <ItemGroup>
     <Content Remove="appsettings.json" />
 	  <Content Remove="C:\Users\Livingroom\.nuget\packages\chartjs.blazor.fork\2.0.2\contentFiles\any\netstandard2.1\wwwroot\ChartJsBlazorInterop.js" />
@@ -79,9 +79,12 @@
     <Content Update="wwwroot\favicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-	  <Content Update="wwwroot\js\calendly.js">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>	  
+	<Content Update="wwwroot\js\calendly.js">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+	<Content Condition="'$(ExcludeConfigFilesFromBuildOutput)'!='true'" Update="wwwroot\appsettings.development.json">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Content>	  
   </ItemGroup>	
 
 	<ItemGroup>
@@ -107,14 +110,5 @@
 		<VirtualFunctions>true</VirtualFunctions>
 		<GenerateDebug>false</GenerateDebug>
 	</PropertyGroup>
-</Project>
-	
-    <Content Update="wwwroot\js\calendly.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Condition="'$(ExcludeConfigFilesFromBuildOutput)'!='true'" Update="wwwroot\appsettings.development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-
 
 </Project>

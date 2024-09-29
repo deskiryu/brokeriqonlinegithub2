@@ -78,7 +78,7 @@
                                 <ValidationMessage class="offset-sm-3" For="@(() => InsuranceType)" />
                             </div>
                         </div>
-                        @if(BrokerHasWhiteLabelAndIsInsuranceOnly)
+                        @if(Broker != null && Broker.ProvidesBusinessInsuranceServices)
                         {
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Or Business Insurance</label>
@@ -287,8 +287,8 @@
                         </div>
                         }
                         
-                        @if (BrokerHasWhiteLabelAndIsInsuranceOnly && BrokerIQ.Dto.Extensions.Extensions.IsBusinessInsurance(Insurance.InsType))
-                        {
+                        @if (Broker != null && Broker.ProvidesBusinessInsuranceServices && BrokerIQ.Dto.Extensions.Extensions.IsBusinessInsurance(Insurance.InsType))
+                            {
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Policy number</label>
                                 <div class="col-sm-5">

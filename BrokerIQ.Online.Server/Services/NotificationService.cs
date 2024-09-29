@@ -5,6 +5,7 @@ using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Server.Services.Base;
 
 namespace BrokerIQ.Online.Server.Services
 {
@@ -168,13 +169,13 @@ namespace BrokerIQ.Online.Server.Services
             return this.mapper.Map<IEnumerable<BrokerNotification>>(answer);
         }
 
-        public async Task<int> GetNewBrokerNotificationsCountByBrokerId()
+        public async Task<ApiResponse<int>> GetNewBrokerNotificationsCountByBrokerId()
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
             var brokerId = user.MasterBrokerId;
 
-            var answer = await this.requestProviderService.Get<int>(this.notificationUrl + $"/brokerById/newcount?brokerId={brokerId}");
+            var answer = await this.requestProviderService.GetResponse<int>(this.notificationUrl + $"/brokerById/newcount?brokerId={brokerId}");
             return answer;
         }
 

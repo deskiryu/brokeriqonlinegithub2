@@ -94,10 +94,6 @@ namespace BrokerIQ.Online.Models
 
         public bool HasWhiteLabel { get => Subscriptions != null && Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel); }
 
-        public bool IsInsuranceOnly { get => BrokerIdentifier != null && BrokerIdentifier.InsuranceOnly; }
-
-        public bool HasWhiteLabelAndIsInsuranceOnly { get => HasWhiteLabel && IsInsuranceOnly; }
-
         public bool HasActiveInsuranceQuoteSubscription
         {
             get
@@ -116,5 +112,15 @@ namespace BrokerIQ.Online.Models
         public bool CanImport => BrokerIdentifier is not null && BrokerIdentifier.IdentifierFound && BrokerIdentifier.CanImport;
 
         public bool CanManageDocuvaultTypes => BrokerIdentifier is null || !BrokerIdentifier.IdentifierFound || BrokerIdentifier.CanEditDocuvaultTypes;
+            
+        public virtual ICollection<BrokerService> BrokerServices { get; set; }
+
+        public bool ProvidesPersonalInsuranceServices => BrokerServices.Any(s => s.ServiceId == (int)ServicesEnum.PersonalInsurance);
+
+        public bool ProvidesBusinessInsuranceServices => BrokerServices.Any(s => s.ServiceId == (int)ServicesEnum.BusinessInsurance);
+
+        public bool ProvidesMortgageServices => BrokerServices.Any(s => s.ServiceId == (int)ServicesEnum.Mortgage);
+
+        public bool ProvidesPensionServices => BrokerServices.Any(s => s.ServiceId == (int)ServicesEnum.Pension);
     }
 }
