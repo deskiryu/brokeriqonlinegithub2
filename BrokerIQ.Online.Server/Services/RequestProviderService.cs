@@ -1,19 +1,17 @@
-﻿namespace BrokerIQ.Online.Services.Concrete
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using BrokerIQ.Online.AppSettings;
+using BrokerIQ.Online.Server.Services.Base;
+using BrokerIQ.Online.Services.Abstract;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+
+namespace BrokerIQ.Online.Services.Concrete
 {
-    using System;
-    using System.Net;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Threading.Tasks;
-    using Abstract;
-    using AppSettings;
-    using Microsoft.Extensions.Options;
-    using Newtonsoft.Json;
-    using BrokerIQ.Online.Services.Interface;
-    using System.IO;
-    using Microsoft.AspNetCore.Components;
-
-
     public class RequestProviderService : IRequestProviderService
     {
         protected ReviewItAPIDetails api { get; set; }
@@ -71,7 +69,7 @@
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             HttpResponseMessage response = await _rememberhttpClient.PostAsync($"{this.BaseUrl}/{url}", content);
-            
+
             var consumed = ConsumeResponse<TReturn>(response);
             DisposeClient();
             return (consumed);
@@ -104,13 +102,13 @@
 
         }
 
-        public async Task<TReturn> Get<TReturn>(string url, int id, bool eager=false)
+        public async Task<TReturn> Get<TReturn>(string url, int id, bool eager = false)
         {
             string newUrl = $"{url}/{id}?eagerload={eager}";
             return await Get<TReturn>(newUrl);
         }
 
-        public async Task<TReturn> Get<TReturn>(string url, int id, bool eager = false, int brokerId=0)
+        public async Task<TReturn> Get<TReturn>(string url, int id, bool eager = false, int brokerId = 0)
         {
             string newUrl = $"{url}/{id}?eagerload={eager}&&brokerId={brokerId}";
             return await Get<TReturn>(newUrl);
@@ -127,6 +125,13 @@
             HttpClient httpClient = CreateHttpClient();
             HttpResponseMessage response = await httpClient.GetAsync($"{this.BaseUrl}/{url}");
             return ConsumeResponse<TReturn>(response);
+        }
+
+        public async Task<ApiResponse<TReturn>> GetResponse<TReturn>(string url)
+        {
+            HttpClient httpClient = CreateHttpClient();
+            HttpResponseMessage response = await httpClient.GetAsync($"{this.BaseUrl}/{url}");
+            return response.IsSuccessStatusCode ? new ApiResponse<TReturn>(response.StatusCode, ConsumeResponse<TReturn>(response)) : new ApiResponse<TReturn>(response.StatusCode);
         }
 
         public async Task<TReturn> Put<T, TReturn>(string url, T data)
@@ -189,7 +194,7 @@
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             }
-            
+
             return httpClient;
         }
 

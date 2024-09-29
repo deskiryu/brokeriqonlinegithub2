@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Services.Base;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services
 {
-    using System.Net.Http;
-    using System.Text.Json;
-    using Abstract;
-    using AppSettings;
-    using AutoMapper;
-    using Dto.Entities;
-    using Dto.Models;
-    using Interface;
-    using Mapper;
-    using Microsoft.Extensions.Options;
-    using Models;
-    using BrokerIQ.Dto.Enum;
-
     public class CustomerDocumentService : ICustomerDocumentService
     {
         private readonly string CustomerDocumentUrl = "CustomerDocument";
@@ -47,11 +39,15 @@ namespace BrokerIQ.Online.Services
             return answer;
         }
 
-        public async Task<IEnumerable<CustomerDocument>> Get(int customerId)
+        public async Task<ApiResponse<IEnumerable<CustomerDocument>>> Get(int customerId)
         {
-            var answer = await this.requestProviderService.Get<IEnumerable<CustomerDocumentDto>>(this.CustomerDocumentUrl + @"/bycustomer/" + $"{customerId}?eagerLoadPdf=true");
+            var answer = await this.requestProviderService.GetResponse<IEnumerable<CustomerDocumentDto>>(this.CustomerDocumentUrl + @"/bycustomer/" + $"{customerId}?eagerLoadPdf=true");
+            if (answer.IsSuccess)
+            {
+                return new ApiResponse<IEnumerable<CustomerDocument>>(answer.StatusCode, this.mapper.Map<IEnumerable<CustomerDocument>>(answer.Data));
+            }
 
-            return this.mapper.Map<IEnumerable<CustomerDocument>>(answer);
+            return new ApiResponse<IEnumerable<CustomerDocument>>(answer.StatusCode, Array.Empty<CustomerDocument>());
         }
 
         public async Task<bool> DeleteCustomerDocument(Guid id)
