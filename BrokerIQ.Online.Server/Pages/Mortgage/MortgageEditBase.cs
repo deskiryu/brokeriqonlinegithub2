@@ -24,6 +24,7 @@ namespace BrokerIQ.Online.Pages
     using Microsoft.AspNetCore.Components.Web;
     using BrokerIQ.Online.Server.Shared;
     using BrokerIQ.Online.Server.Pages.Insurance.Components;
+    using BrokerIQ.Online.Server.Pages.Mortgage.Components;
 
     public class MortgageEditBase : ComponentBase
     {
@@ -729,7 +730,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task OpenAnalyzerDialog()
         {
-            var result = await DialogService.Show<DocumentAnalyzerDialog>("Document Analyzer").Result;
+            var result = await DialogService.Show<DocumentAnalyzerMortgageDialog>("Document Analyzer").Result;
 
             if (!result.Canceled)
             {
