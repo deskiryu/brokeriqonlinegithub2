@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BrokerIQ.Online.Models;
 using System.Threading.Tasks;
+using BrokerIQ.Online.Server.Services.Base;
 
 namespace BrokerIQ.Online.Services.Interface
 {
@@ -26,7 +27,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<IEnumerable<BrokerNotification>> GetBrokerNotificationsByBrokerId();
 
-        Task<int> GetNewBrokerNotificationsCountByBrokerId();
+        Task<ApiResponse<int>> GetNewBrokerNotificationsCountByBrokerId();
 
         Task MarkAsReadByBrokerId();
 

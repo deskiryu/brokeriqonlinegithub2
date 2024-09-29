@@ -179,8 +179,15 @@
                             }
                         </div>
                     </EditForm>
-
                 </MudTabPanel>
+
+                @if (Broker is not null)
+                {
+                    <MudTabPanel Text="Services">
+                        <ServicesStack Broker="@Broker"/> 
+                    </MudTabPanel>
+                }
+
                 @if (CurrentUser.IsAdmin)
                 {
                     <MudTabPanel Text="Subscriptions">
@@ -191,10 +198,10 @@
                 @if (Broker is not null && Broker.Subscriptions is not null)
                 {
                     @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s =>
-                      s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
-                      s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
-                      s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
-                      IsCreatingWhiteLabel))
+               s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
+               s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
+               s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
+               IsCreatingWhiteLabel))
                     {
                         <MudTabPanel Text="Identifier">
                             <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
@@ -267,10 +274,6 @@
                                                 <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.Invert" Style="margin-left: -15px" />
                                             </div>
 
-                                            <label class="col-sm-2 col-form-label">Insurance Only</label>
-                                            <div class="col-sm-2 ">
-                                                <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.InsuranceOnly" Style="margin-left: -15px" />
-                                            </div>
                                             @if (!IsCreatingWhiteLabel)
                                             {
                                                 <label class="col-sm-2 col-form-label">Use AI Chat</label>
