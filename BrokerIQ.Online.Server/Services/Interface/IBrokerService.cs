@@ -20,5 +20,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> DeleteBroker(int id);
 
         Task<BoolResponseDto> VerifyBroker(int id);
+
+        Task<bool> ToggleService(int brokerId, int serviceId);
     }
 }

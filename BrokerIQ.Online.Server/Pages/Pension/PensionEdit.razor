@@ -1,0 +1,215 @@
+﻿@page "/pensionedit/{PensionId}/{CustomerId}"
+
+@using System.IO
+
+@using Microsoft.Extensions.Options
+
+@using BrokerIQ.Online.Models
+@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Pages
+@using BrokerIQ.Online.Server.Extensions
+@using BlazorDateRangePicker
+@using BrokerIQ.Online.Services.Interface
+
+@using BrokerIQ.Online.AppSettings
+
+@inherits PensionEditBase
+
+@inject IJSRuntime js
+
+@functions {
+    async void DownloadFile(PensionDocument sdoc)
+    {
+        await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
+    }
+    async void PreviewFile(PensionDocument sdoc)
+    {
+        var memoryStream = new MemoryStream(sdoc.File);
+        await Extensions.PreviewFile(js, memoryStream);
+    }
+}
+
+@if (!Saved)
+{
+    <section class="insurance-detail">
+
+        <h4 class="page-title">Add or edit Pension</h4>
+
+        <EditForm Model="@Pension" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit" id="@FormId">
+
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-8">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Name Of Provider</label>
+
+                        <div class="col-sm-5">
+                            <InputText class="form-control" @bind-Value="@Pension.ProviderName" placeholder="Enter provider"></InputText>
+                            <ValidationMessage class="offset-sm-3" For="@(() => Pension.ProviderName)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Policy Number</label>
+
+                        <div class="col-sm-5">
+                            <InputText class="form-control" @bind-Value="@Pension.PolicyNumber" placeholder="Enter policy number"></InputText>
+                            <ValidationMessage class="offset-sm-3" For="@(() => Pension.PolicyNumber)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Next Review</label>
+                        <div class="col-sm-5">
+                            <MudDatePicker @bind-Date="@Pension.NextReview" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Current Pension Amount</label>
+
+                        <MudItem class="col">
+                            <MudTextField @bind-Value="@Pension.CurrentPensionAmount" HelperText="Enter an amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                            <ValidationMessage class="offset-sm-3" For="@(() => Pension.CurrentPensionAmount)" />
+                        </MudItem>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Year To Date Growth Percent</label>
+
+                        <div class="col-sm-5">
+                            <MudItem class="col">
+                                <MudTextField @bind-Value="@Pension.YearToDateGrowthPercent" Clearable="true" HelperText="Enter an amount" Format="F2" Adornment="Adornment.End" AdornmentText="%" />
+                                <ValidationMessage class="offset-sm-3" For="@(() => Pension.YearToDateGrowthPercent)" />
+                            </MudItem>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Estimated Amount At Retirement</label>
+
+                        <div class="col-sm-5">
+                            <MudTextField @bind-Value="@Pension.EstimatedAmountAtRetirement" HelperText="Enter an amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                            <ValidationMessage class="offset-sm-3" For="@(() => Pension.EstimatedAmountAtRetirement)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Retirement Age Goal</label>
+
+                        <div class="col-sm-5">
+                            <MudTextField @bind-Value="@Pension.RetirementAgeGoal" HelperText="Enter the age" />
+                            <ValidationMessage class="offset-sm-3" For="@(() => Pension.RetirementAgeGoal)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Monthly Income Goal</label>
+
+                        <div class="col-sm-5">
+                            <MudTextField @bind-Value="@Pension.MonthlyIncomeGoal" HelperText="Enter an amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                            <ValidationMessage class="offset-sm-3" For="@(() => Pension.MonthlyIncomeGoal)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Customer Monthly Contribution (£)</label>
+
+                        <div class="col-sm-5">
+                            <MudTextField @bind-Value="@Pension.CustomerMonthlyContribution" HelperText="Enter an amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                            <ValidationMessage class="offset-sm-3" For="@(() => Pension.CustomerMonthlyContribution)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Employer's Monthly Contribution (£)</label>
+
+                        <div class="col-sm-5">
+                            <MudTextField @bind-Value="@Pension.EmployersMonthlyContribution" Clearable="true" HelperText="Enter an amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
+                            <ValidationMessage class="offset-sm-3" For="@(() => Pension.EmployersMonthlyContribution)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    </section>
+
+    @if (Pension.SupportingDocuments != null)
+    {
+        <div class="col-sm-6 mt-1">
+            <div class="card">
+                <div class="card-body">
+                    <MudTable Items="@Pension.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="">
+                        <RowTemplate>
+                            <MudTd>@context.FileName</MudTd>
+                            @if (Pension.Id > 0)
+                            {
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => PreviewFile(context))" class="btn btn-link">View</MudButton></MudTd>
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DownloadFile(context))" class="btn btn-link">Download</MudButton></MudTd>
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeletePensionFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
+                            }
+                            else
+                            {
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeletePensionFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
+                            }
+                        </RowTemplate>
+                    </MudTable>
+
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="col-sm-6 mt-1">
+        <div class="card">
+            <div class="card-body">
+                <label class="card-title">Upload pdf files</label>
+                <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave">
+                    <MudPaper class="drag-drop-zone">
+                        <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
+                        <MudText Typo="Typo.subtitle1">Drag and drop pdf files here or click to browse</MudText>
+                    </MudPaper>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <label type="text" class="form-control-plaintext col-sm-4">@LoadFileStatus</label>
+    <div class="col-sm">
+        <div class="spin-row spin-row-bg">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" style="@SpinnerVisible" />
+        </div>
+    </div>
+    <div>
+        @if (Pension == null || Pension.Id == 0)
+        {
+            <MudCheckBox @bind-Checked="@SendNotification" Label="Send Notification" LabelPosition="LabelPosition.End" />
+        }
+    </div>
+
+    <div>
+        @if (Pension?.Id > 0)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeletePension" Class="mr-8">Delete</MudButton>
+        }
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="mr-1">Cancel</MudButton>
+
+        @if (Pension?.Id > 0)
+        {
+            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" form="@FormId" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Class="mr-1">Save Pension</MudButton>
+        }
+        else
+        {
+            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" form="@FormId" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add Pension</MudButton>
+        }
+    </div>
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to client overview</MudButton>
+}

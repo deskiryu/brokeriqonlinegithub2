@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Services.Base;
 
 namespace BrokerIQ.Online.Services.Interface
 {
-    using Dto.Models;
-    using Models;
-    using BrokerIQ.Dto.Request;
-
     public interface IChatService
     {
         Task<Chat> Get(int customerId, int brokerId = 0);
@@ -23,7 +19,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<bool> SendMultipleAppLink(List<int> listCustomerId, int brokerId);
 
-        Task<int> GetUnRead(int customerId, int brokerId = 0);
+        Task<ApiResponse<int>> GetUnRead(int customerId, int brokerId = 0);
 
         Task<bool> SendMultipleVideoLink(string message, List<int> listCustomerId, int brokerId, string videoUrl, string VideoThumbnailData);
 

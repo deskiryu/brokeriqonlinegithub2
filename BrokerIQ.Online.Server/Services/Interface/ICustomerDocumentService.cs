@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Services.Base;
 
 namespace BrokerIQ.Online.Services.Interface
 {
-    using Dto.Models;
-    using Models;
-
     public interface ICustomerDocumentService
     {
         Task<bool> DeleteProfilePicture(Guid id);
@@ -16,7 +15,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<CustomerDocumentDto> GetProfilePicture(int customerId);
 
-        Task<IEnumerable<CustomerDocument>> Get(int customerId);
+        Task<ApiResponse<IEnumerable<CustomerDocument>>> Get(int customerId);
 
         Task<bool> DeleteCustomerDocument(Guid id);
 

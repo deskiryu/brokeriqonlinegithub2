@@ -1,0 +1,15 @@
+﻿@using BrokerIQ.Online.Server.Extensions
+
+<MudStack AlignItems="AlignItems.Stretch" Justify="Justify.FlexStart">
+    <MudPaper>
+        @{
+            @for (int i = 0; i < ServicesProvided.Length; i++)
+            {
+                var name = ServicesProvided[i].Item1.GetDisplayName();
+                var index = i;
+                <MudSwitch Class="ml-2" T="bool" Color="Color.Primary" Checked="@ServicesProvided[index].Item2" CheckedChanged="@(() => ToggleService(index))"
+                           Label="@name" />
+            }
+        }
+    </MudPaper>
+</MudStack>
