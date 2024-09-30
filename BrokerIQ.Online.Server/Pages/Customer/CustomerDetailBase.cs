@@ -301,7 +301,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     await UpdateChat();
 
-                }, null, 0, 5000);
+                }, null, 5000, 5000);
 
                 timerUploads = new System.Threading.Timer(async _ =>  // async void
                 {
