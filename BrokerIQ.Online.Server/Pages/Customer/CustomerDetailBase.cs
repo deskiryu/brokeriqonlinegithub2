@@ -179,6 +179,7 @@ namespace BrokerIQ.Online.Pages
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
         private System.Threading.Timer timer;
+        private System.Threading.Timer timerUploads;
 
         public MudSelect<string> TemplateSelect { get; set; }
 
@@ -213,6 +214,7 @@ namespace BrokerIQ.Online.Pages
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
         protected MudTabs Tabs;
+        protected int MyMaxAllowedFiles { get; set; }
 
         protected string CalendlyLoginUri { get; private set; }
 
@@ -227,6 +229,8 @@ namespace BrokerIQ.Online.Pages
             tutorialVideos = TutorialVideosOption.Value;
 
             User = await AccountService.GetUser();
+            fileUploadSettings = this.FileUploadSettingsOption.Value;
+            MyMaxAllowedFiles = fileUploadSettings.MaxAllowedFiles;
 
             ClearUnReadChat();
 
@@ -253,6 +257,12 @@ namespace BrokerIQ.Online.Pages
                     if (!Broker.ProvidesMortgageServices && !Broker.ProvidesPensionServices)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+  
+                    }
+
+                    if (Broker.ProvidesBusinessInsuranceServices)
+                    {
+                        MyMaxAllowedFiles = MyMaxAllowedFiles * 2;
                     }
                 }
                 else
@@ -291,9 +301,12 @@ namespace BrokerIQ.Online.Pages
                 {
                     await UpdateChat();
 
-                    await UpdateCustomerUploads();
-
                 }, null, 0, 5000);
+
+                timerUploads = new System.Threading.Timer(async _ =>  // async void
+                {
+                    await UpdateCustomerUploads();
+                }, null, 60000, 60000);
 
                 var integrations = await BrokerIntegrationService.GetBrokerIntegrations();
 
@@ -934,11 +947,11 @@ namespace BrokerIQ.Online.Pages
         protected async Task LoadFiles(InputFileChangeEventArgs e)
         {
             var alreadyUploaded = LoadedChatFiles.Count();
-            var remainingFiles = fileUploadSettings.MaxAllowedFiles - alreadyUploaded;
+            var remainingFiles = MyMaxAllowedFiles - alreadyUploaded;
             if (e.FileCount > remainingFiles)
             {
                 var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", $"A maximum of five documents can be shown in the app");
+                dialogParams.Add("Message", $"A maximum of {MyMaxAllowedFiles} documents can be shown in the app");
                 await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
 
             }
