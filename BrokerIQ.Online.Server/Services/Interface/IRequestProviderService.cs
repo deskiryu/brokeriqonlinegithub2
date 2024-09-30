@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using System.Threading.Tasks;
+    using BrokerIQ.Online.Server.Services.Base;
 
     public interface IRequestProviderService
     {
@@ -18,6 +19,8 @@
         Task<TReturn> Post<TReturn>(string url);
 
         Task<TReturn> Get<TReturn>(string url);
+
+        Task<ApiResponse<TReturn>> GetResponse<TReturn>(string url);
 
         Task<TReturn> Get<TReturn>(string url, int id, bool eager = false);
 
