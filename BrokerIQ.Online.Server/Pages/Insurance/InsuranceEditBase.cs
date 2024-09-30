@@ -348,7 +348,7 @@ namespace BrokerIQ.Online.Pages
                     {
                         await InsuranceService.AddInsurance(Insurance, fileNamesAndBytes);
                     }
-                    catch 
+                    catch
                     {
                         StatusClass = "alert-danger";
                         Message = "Something went wrong adding the new Insurance. Please try again.";
