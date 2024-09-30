@@ -1,5 +1,5 @@
-@using BrokerIQ.Dto.Enum
-@using BrokerIQ.Online.Server.Extensions
+@using BrokerIQ.Dto.Enum 
+@using BrokerIQ.Online.Server.Extensions 
 
 @inject IJSRuntime js
 
@@ -45,15 +45,14 @@
             </MudTd>
             <MudTd>@context.Prompt</MudTd>
             <MudTd> @((MarkupString)FormatTemplateForDisplay(context.Message))</MudTd>
-                <MudTd>
-                    @if (context.WelcomeChat)
+            <MudTd>
+                @if (context.WelcomeChat)
                 {
                     <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Dark" />
                 }
             </MudTd>
             <MudTd>
-                @if (!string.IsNullOrWhiteSpace(context.FileName))
-                {
+                @if (!string.IsNullOrWhiteSpace(context.FileName)){
                     <MudIconButton Icon="@Icons.Material.Filled.FilePresent" Color="Color.Secondary" OnClick=@(r => PreviewAttachment(context.File))></MudIconButton>
                 }
             </MudTd>
