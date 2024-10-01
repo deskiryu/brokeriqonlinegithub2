@@ -144,7 +144,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             }
         }
 
-        public string InviteBoxClass { get; set; } = HIDE_CLASS;
+        private string InviteBoxClass { get; set; } = HIDE_CLASS;
 
         private void Cancel()
         {
@@ -285,12 +285,18 @@ Dr{Delimiter}Cassady{Delimiter}HinAton{Delimiter}2{Delimiter}07624 157575{Delimi
                 { "Definitions" , RecordDefinitions }
             };
 
-            var result = await DialogService.Show<ClientImportDefinitionDialog>("Set definition", dialogParams).Result;
+            await DialogService.Show<ClientImportDefinitionDialog>("Set definition", dialogParams).Result;
+        }
 
-            if (!result.Canceled)
-            {
-                RecordDefinitions = result.Data as IEnumerable<ImportRecordDefinitionDto>;
-            }
+        private string GetRowStyle(CustomerImportDto record, int index)
+        {
+            return ImportResult.Errors.Any(e => e.Line == record.RecordNumber) ? "background-color: #FD846A;" : string.Empty;
+        }
+
+        private string GetErrorMessagesFor(CustomerImportDto record)
+        {
+            var errorMessages = ImportResult.Errors.Where(e => e.Line == record.RecordNumber).Select(e => e.ErrorMessage).ToArray();
+            return string.Join(" ", errorMessages);
         }
     }
 }

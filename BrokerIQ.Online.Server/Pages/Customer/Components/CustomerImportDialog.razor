@@ -3,7 +3,7 @@
 <MudDialog>
     <DialogContent>
         <MudStack Row="true" Class="d-flex">
-            <MudStack Class="flex-none">
+            <MudStack AlignItems="AlignItems.Center">
                 <MudLink OnClick="SaveSampleFile" Color="Color.Tertiary">Download sample file</MudLink>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
                            OnClick="OpenDefaultsDialog">Columns</MudButton>
@@ -22,13 +22,14 @@
             </MudStack>
             <MudStack Class="flex-auto d-flex align-center">
                 <MudText Class="@CurrentFileClass">Current File : @CurrentFileName</MudText>
-                @if (ImportResult is null || ImportResult.RecordsImportedCount == 0)
+                @if (ImportResult is null)
                 {
                     <div class="d-flex justify-center"><MudText>Select a file and click Preview to view what your data looks like for the import</MudText></div>
                 }
                 else
                 {
-                    <MudTable Dense="true" Hover="true" Striped="true" Items="@ImportResult.CorrectRecords" FixedHeader="true" Height="500px" Style="width:1024px">
+                    <MudTable Dense="true" Hover="true" Striped="true" Items="@ImportResult.Records" FixedHeader="true" Height="500px" Style="width:1024px"
+                              RowStyleFunc="GetRowStyle">
                         <HeaderContent>
                             @foreach (var item in RecordDefinitions.OrderBy(v => v.ColumnOrder))
                             {
@@ -40,11 +41,15 @@
                                 Type t = context.GetType();
                                 PropertyInfo[] props = t.GetProperties();
 
-                                @foreach (var item in RecordDefinitions.OrderBy(v => v.ColumnOrder))
+                                foreach (var item in RecordDefinitions.OrderBy(v => v.ColumnOrder))
                                 {
                                     if (props.Any(p => p.Name == item.FieldName))
                                     {
-                                        <MudTd DataLabel="@item.FieldName">@GetPropertyValue(context, props.First(p => p.Name == item.FieldName))</MudTd>
+                                        <MudTd DataLabel="@item.FieldName">
+                                            <MudTooltip Text="@GetErrorMessagesFor(context)">
+                                                @GetPropertyValue(context, props.First(p => p.Name == item.FieldName))
+                                            </MudTooltip>
+                                        </MudTd>
                                     }
                                     else
                                     {
