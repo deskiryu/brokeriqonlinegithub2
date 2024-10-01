@@ -43,8 +43,8 @@ namespace BrokerIQ.Online.Services.Concrete
         public async Task<TReturn> Post<T, TReturn>(string url, T data)
         {
             HttpClient httpClient = CreateHttpClient();
-
-            var content = new StringContent(JsonConvert.SerializeObject(data));
+            var asJson = JsonConvert.SerializeObject(data);
+            var content = new StringContent(asJson);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             HttpResponseMessage response = await httpClient.PostAsync($"{this.BaseUrl}/{url}", content);
