@@ -143,11 +143,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         async void InsertLink()
         {
-            if (!OptionLink.ToLower().StartsWith("http"))
-            {
-                OptionLink = "http://" + OptionLink;
-            }
-
             if (!OptionLink.IsValidUrl())
             {
                 var dialogParams = new DialogParameters

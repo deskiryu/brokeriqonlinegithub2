@@ -86,10 +86,6 @@
 
         public string Link { get; set; }
 
-        public int LinkStart;
-
-        public int LinkEnd;
-
         public bool HasEmbeddedUrl { get; set; }
 
         public bool HideLink { get; set; }
@@ -115,17 +111,6 @@
     public async Task OnValidSubmit(EditContext context)
     {
         var actualMessage = model.MessageToSend;
-        if (model.HasEmbeddedUrl)
-        {
-            if (actualMessage.Length >= model.LinkStart)
-            {
-                actualMessage = actualMessage.Insert(model.LinkStart, "<--");
-                if (actualMessage.Length >= model.LinkEnd + 3)
-                {
-                    actualMessage = actualMessage.Insert(model.LinkEnd + 3, "-->");
-                }
-            }
-        }
         model.MessageToSend = actualMessage;
 
         bool succeeded = false;
@@ -155,11 +140,6 @@
 
     public async void InsertLink()
     {
-        if (!model.Link.ToLower().StartsWith("http"))
-        {
-            model.Link = "http://" + model.Link;
-        }
-
         if (!model.Link.IsValidUrl())
         {
             var dialogParams = new DialogParameters
@@ -171,11 +151,7 @@
             return;
         }
 
-        model.MessageToSend += ' ';
-        model.LinkStart = model.MessageToSend.Length;
         model.MessageToSend += model.Link;
-        model.LinkEnd = model.MessageToSend.Length;
-        model.MessageToSend += ' ';
 
         model.HasEmbeddedUrl = true;
         model.HideLink = true;
