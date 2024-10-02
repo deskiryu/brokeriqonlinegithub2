@@ -14,6 +14,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         [Parameter]
         public IEnumerable<ImportRecordDefinitionDto> Definitions { get; set; }
 
+        public bool IsEditing { get; set; }
+
         private int LastSortOrder => Definitions.Max(d => d.ColumnOrder);
 
         private void MoveUp(ImportRecordDefinitionDto definition)
@@ -46,14 +48,24 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             StateHasChanged();
         }
 
-        private void Cancel()
+        private void Close()
         {
             MudDialog.Cancel();
         }
 
-        private void SetDefaults()
+        private void PreviewEditClick()
         {
-            MudDialog.Close(DialogResult.Ok(Definitions));
+            IsEditing = true;
+        }
+
+        private void CommitEditClick()
+        {
+            IsEditing = false;
+        }
+
+        private void CancelEditClick()
+        {
+            IsEditing = false;
         }
     }
 }

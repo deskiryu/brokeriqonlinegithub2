@@ -3,12 +3,12 @@
 
 <MudDialog>
     <DialogContent>
-        <MudTable Items="@Definitions" Dense="true" Hover CanCancelEdit="true">
+        <MudTable Items="@Definitions" Dense="true" Hover CanCancelEdit="true" OnPreviewEditClick="PreviewEditClick" OnCommitEditClick="CommitEditClick" OnCancelEditClick="CancelEditClick">
             <HeaderContent>
                 <MudTh Style="padding:0px!important"></MudTh>
                 <MudTh Style="padding:0px!important"></MudTh>
                 <MudTh>Field</MudTh>
-                <MudTh Style="padding:0px!important">Active</MudTh>
+                @*<MudTh Style="padding:0px!important">Active</MudTh>*@
                 <MudTh Style="padding:0px!important">Required</MudTh>
                 <MudTh>Default Value</MudTh>
             </HeaderContent>
@@ -16,22 +16,22 @@
                 <MudTd Style="padding:0px!important">
                     @if (context.ColumnOrder > 0)
                     {
-                        <MudIconButton Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary" OnClick=@(r => MoveUp(context))></MudIconButton>
+                        <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary" OnClick=@(r => MoveUp(context))></MudIconButton>
                     }
                 </MudTd>
                 <MudTd Style="padding:0px!important">
                     @if (context.ColumnOrder < LastSortOrder)
                     {
-                        <MudIconButton Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary" OnClick=@(r => MoveDown(context))></MudIconButton>
+                        <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary" OnClick=@(r => MoveDown(context))></MudIconButton>
                     }
                 </MudTd>
                 <MudTd>@context.FieldName</MudTd>
-                <MudTd>
+                @*<MudTd>
                     @if (context.Active)
                     {
                         <MudIcon Icon="@Icons.Material.Filled.Check" />
                     }
-                </MudTd>
+                </MudTd>*@
                 <MudTd>
                     @if (context.Required)
                     {
@@ -44,21 +44,21 @@
                 <MudTd Style="padding:0px!important">
                     @if (context.ColumnOrder > 0)
                     {
-                        <MudIconButton Disabled="true" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary"></MudIconButton>
+                        <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary"></MudIconButton>
                     }
                 </MudTd>
                 <MudTd Style="padding:0px!important">
                     @if (context.ColumnOrder < LastSortOrder)
                     {
-                        <MudIconButton Disabled="true" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary"></MudIconButton>
+                        <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary"></MudIconButton>
                     }
                 </MudTd>
                 <MudTd>
                     <MudText>@context.FieldName</MudText>
                 </MudTd>
-                <MudTd>
+                @*<MudTd>
                     <MudCheckBox @bind-Checked="context.Active" />
-                </MudTd>
+                </MudTd>*@
                 <MudTd>
                     <MudCheckBox @bind-Checked="@context.Required" />
                 </MudTd>
@@ -69,6 +69,6 @@
         </MudTable>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")">Close</MudButton>
+        <MudButton OnClick="Close" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")">Close</MudButton>
     </DialogActions>
 </MudDialog>
