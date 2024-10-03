@@ -2,6 +2,7 @@
 @using System.IO
 
 @using BrokerIQ.Online.Server.Extensions
+@using BrokerIQ.Online.Services.Interface
 
 @inject IJSRuntime js
 
@@ -60,6 +61,9 @@
 @code {
     [Inject]
     public IDialogService DialogService { get; set; }
+
+    [Inject]
+    public IAlertService AlertService { get; set; }
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
@@ -156,6 +160,10 @@
             {
                 actualMessage = actualMessage.Insert(found + model.Link.Length, "-->");
                 actualMessage = actualMessage.Insert(found , "<--");
+            }
+            else
+            {
+                this.AlertService.Warn("The link has been altered and may not show in the reminder correctly");
             }
         }
         MudDialog.Close(DialogResult.Ok(actualMessage));
