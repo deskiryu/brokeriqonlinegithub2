@@ -123,13 +123,13 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         protected override async Task OnInitializedAsync()
         {
             if(Option.Id > 0)
-            {
-                HideLink = true;
+            {         
                 var startLink = Option.MessageContent.IndexOf("<--") + 3;
                 var endLink = Option.MessageContent.IndexOf("-->");
 
                 if (startLink > 0 && endLink > 0)
                 {
+                    HideLink = true;
                     try
                     {
                         OptionLink = Option.MessageContent.Substring(startLink, endLink - startLink);
