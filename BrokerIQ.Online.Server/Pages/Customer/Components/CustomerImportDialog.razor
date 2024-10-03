@@ -5,9 +5,9 @@
         <MudStack Row="true" Class="d-flex">
             <MudStack AlignItems="AlignItems.Center">
                 <MudLink OnClick="SaveSampleFile" Color="Color.Tertiary">Download sample file</MudLink>
+                <MudCheckBox Label="Has header" @bind-Checked="HasHeaderRecord" Dense="true" Size="Size.Small" />
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
                            OnClick="OpenDefaultsDialog">Columns</MudButton>
-                <MudCheckBox Label="Has header" @bind-Checked="HasHeaderRecord" Dense="true" Size="Size.Small" />
                 <MudSelect @bind-Value="Delimiter" Dense="true" Margin="Margin.Dense">
                     <MudSelectItem T="string" Value="@(";")">Semicolon</MudSelectItem>
                     <MudSelectItem T="string" Value="@(",")">Comma</MudSelectItem>

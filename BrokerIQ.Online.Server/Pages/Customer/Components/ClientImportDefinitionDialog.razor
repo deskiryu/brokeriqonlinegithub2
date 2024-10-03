@@ -5,33 +5,39 @@
     <DialogContent>
         <MudTable Items="@Definitions" Dense="true" Hover CanCancelEdit="true" OnPreviewEditClick="PreviewEditClick" OnCommitEditClick="CommitEditClick" OnCancelEditClick="CancelEditClick">
             <HeaderContent>
-                <MudTh Style="padding:0px!important"></MudTh>
-                <MudTh Style="padding:0px!important"></MudTh>
+                @if (!HasHeaderRecord)
+                {
+                    <MudTh Style="padding:0px!important"></MudTh>
+                    <MudTh Style="padding:0px!important"></MudTh>
+                }
                 <MudTh>Field</MudTh>
                 @*<MudTh Style="padding:0px!important">Active</MudTh>*@
                 <MudTh Style="padding:0px!important">Required</MudTh>
                 <MudTh>Default Value</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd Style="padding:0px!important">
-                    @if (context.ColumnOrder > 0)
-                    {
-                        <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary" OnClick=@(r => MoveUp(context))></MudIconButton>
-                    }
-                </MudTd>
-                <MudTd Style="padding:0px!important">
-                    @if (context.ColumnOrder < LastSortOrder)
-                    {
-                        <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary" OnClick=@(r => MoveDown(context))></MudIconButton>
-                    }
-                </MudTd>
+                @if (!HasHeaderRecord)
+                {
+                    <MudTd Style="padding:0px!important">
+                        @if (context.ColumnOrder > 0)
+                        {
+                            <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary" OnClick=@(r => MoveUp(context))></MudIconButton>
+                        }
+                    </MudTd>
+                    <MudTd Style="padding:0px!important">
+                        @if (context.ColumnOrder < LastSortOrder)
+                        {
+                            <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary" OnClick=@(r => MoveDown(context))></MudIconButton>
+                        }
+                    </MudTd>
+                }
                 <MudTd>@context.FieldName</MudTd>
                 @*<MudTd>
-                    @if (context.Active)
-                    {
-                        <MudIcon Icon="@Icons.Material.Filled.Check" />
-                    }
-                </MudTd>*@
+                        @if (context.Active)
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.Check" />
+                        }
+                    </MudTd>*@
                 <MudTd>
                     @if (context.Required)
                     {
@@ -41,29 +47,94 @@
                 <MudTd>@context.DefaultValue</MudTd>
             </RowTemplate>
             <RowEditingTemplate>
-                <MudTd Style="padding:0px!important">
-                    @if (context.ColumnOrder > 0)
-                    {
-                        <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary"></MudIconButton>
-                    }
-                </MudTd>
-                <MudTd Style="padding:0px!important">
-                    @if (context.ColumnOrder < LastSortOrder)
-                    {
-                        <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary"></MudIconButton>
-                    }
-                </MudTd>
+                @if (!HasHeaderRecord)
+                {
+                    <MudTd Style="padding:0px!important">
+                        @if (context.ColumnOrder > 0)
+                        {
+                            <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary"></MudIconButton>
+                        }
+                    </MudTd>
+                    <MudTd Style="padding:0px!important">
+                        @if (context.ColumnOrder < LastSortOrder)
+                        {
+                            <MudIconButton Disabled="IsEditing" Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary"></MudIconButton>
+                        }
+                    </MudTd>
+                }
                 <MudTd>
                     <MudText>@context.FieldName</MudText>
                 </MudTd>
                 @*<MudTd>
-                    <MudCheckBox @bind-Checked="context.Active" />
-                </MudTd>*@
+                        <MudCheckBox @bind-Checked="context.Active" />
+                    </MudTd>*@
                 <MudTd>
-                    <MudCheckBox @bind-Checked="@context.Required" />
+                    @if (context.Required)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Check" />
+                    }
                 </MudTd>
                 <MudTd>
-                    <MudTextField @bind-Value="context.DefaultValue" />
+                    @switch (context.FieldName)
+                    {
+                        case "Nationality":
+                            <MudSelect Label="Nationality"
+                                       Placeholder="Select"
+                                       Clearable="true"
+                                       @bind-Value="context.DefaultValue"
+                                       AdornmentColor="Color.Primary"
+                                       Dense="true">
+                                @{
+                                    var names = Enum.GetNames(typeof(NationalityEnum));
+                                    for (int i = 1; i <= names.Length; i++)
+                                    {
+                                        NationalityEnum looped = (NationalityEnum)i;
+                                        <MudSelectItem Value="@looped.ToString("D")">@looped.GetDisplayName() (@looped.ToString("D"))</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                            break;
+                        case "Employment":
+                            <MudSelect Label="Employment"
+                                       Placeholder="Select"
+                                       Clearable="true"
+                                       @bind-Value="context.DefaultValue"
+                                       AdornmentColor="Color.Primary"
+                                       Dense="true">
+                                @{
+                                    var names = Enum.GetNames(typeof(EmploymentEnum));
+                                    for (int i = 1; i <= names.Length; i++)
+                                    {
+                                        EmploymentEnum looped = (EmploymentEnum)i;
+                                        <MudSelectItem Value="@looped.ToString("D")">@looped.GetDisplayName() (@looped.ToString("D"))</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                            break;
+                        case "ResidentialStatus":
+                            <MudSelect Label="Employment"
+                                       Placeholder="Select"
+                                       Clearable="true"
+                                       @bind-Value="context.DefaultValue"
+                                       AdornmentColor="Color.Primary"
+                                       Dense="true">
+                                @{
+                                    var names = Enum.GetNames(typeof(ResidentialStatusEnum));
+                                    for (int i = 1; i <= names.Length; i++)
+                                    {
+                                        ResidentialStatusEnum looped = (ResidentialStatusEnum)i;
+                                        <MudSelectItem Value="@looped.ToString("D")">@looped.GetDisplayName() (@looped.ToString("D"))</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                            break;
+                        case "DateOfBirth":
+                            <MudDatePicker Label="yyyy-MM-dd" Editable="true" @bind-Date="DefaultDateOfBirth" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="ISO Date" />
+                            break;
+                        default:
+                            <MudTextField @bind-Value="context.DefaultValue" />
+                            break;
+                    }
                 </MudTd>
             </RowEditingTemplate>
         </MudTable>

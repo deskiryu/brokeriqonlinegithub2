@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BrokerIQ.Dto.Dto.Import;
@@ -14,9 +15,14 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         [Parameter]
         public IEnumerable<ImportRecordDefinitionDto> Definitions { get; set; }
 
+        [Parameter]
+        public bool HasHeaderRecord { get; set; }
+
         public bool IsEditing { get; set; }
 
         private int LastSortOrder => Definitions.Max(d => d.ColumnOrder);
+
+        public DateTime? DefaultDateOfBirth { get; set; }
 
         private void MoveUp(ImportRecordDefinitionDto definition)
         {
@@ -50,6 +56,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private void Close()
         {
+            Definitions.First(d => d.FieldName.Equals("DateOfBirth")).DefaultValue = DefaultDateOfBirth.HasValue ? DefaultDateOfBirth.Value.ToString("yyyy-MM-dd") : string.Empty;
+
             MudDialog.Cancel();
         }
 

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Import;
+using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Request;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Services.Interface;
@@ -32,25 +33,25 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         [Inject]
         public ICustomerService CustomerService { get; set; }
-
+        
         [Parameter]
         public int BrokerId { get; set; }
 
         private const string HIDE_CLASS = "d-none";
 
         public IEnumerable<ImportRecordDefinitionDto> RecordDefinitions { get; set; } = new List<ImportRecordDefinitionDto>(){
-           new ImportRecordDefinitionDto() { ColumnOrder = 0, FieldName = "Title", Active=true, Required=true, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 1, FieldName = "Forename", Active=true, Required=true, DefaultValue="Unknown" },
-           new ImportRecordDefinitionDto() { ColumnOrder = 2, FieldName = "Surname", Active=true, Required=true, DefaultValue="Unknown" },
-           new ImportRecordDefinitionDto() { ColumnOrder = 3, FieldName = "Nationality", Active=true, Required=true, DefaultValue="1" },
-           new ImportRecordDefinitionDto() { ColumnOrder = 4, FieldName = "Telephone", Active=true, Required=true, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 0, FieldName = "Title", Active=true, Required=false, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 1, FieldName = "Forename", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 2, FieldName = "Surname", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 3, FieldName = "Nationality", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 4, FieldName = "Telephone", Active=true, Required=false, DefaultValue=string.Empty },
            new ImportRecordDefinitionDto() { ColumnOrder = 5, FieldName = "Email", Active=true, Required=true, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 6, FieldName = "AddressLine", Active=true, Required=true, DefaultValue="Unknown Address" },
-           new ImportRecordDefinitionDto() { ColumnOrder = 7, FieldName = "City", Active=true, Required=true, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 8, FieldName = "PostCode", Active=true, Required=true, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 9, FieldName = "DateOfBirth", Active=true, Required=true, DefaultValue=DateTime.UtcNow.AddYears(-30).ToString("yyyy-MM-dd") },
-           new ImportRecordDefinitionDto() { ColumnOrder = 10, FieldName = "Employment", Active=true, Required=true, DefaultValue="9" },
-           new ImportRecordDefinitionDto() { ColumnOrder = 11, FieldName = "ResidentialStatus", Active=true, Required=true, DefaultValue="2" }
+           new ImportRecordDefinitionDto() { ColumnOrder = 6, FieldName = "AddressLine", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 7, FieldName = "City", Active=true, Required=false, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 8, FieldName = "PostCode", Active=true, Required=false, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 9, FieldName = "DateOfBirth", Active=true, Required=false, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 10, FieldName = "Employment", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 11, FieldName = "ResidentialStatus", Active=true, Required=false, DefaultValue=string.Empty}
         };
 
         private IBrowserFile csvFile;
@@ -68,6 +69,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         private string CurrentFileName => csvFile is not null ? csvFile.Name : string.Empty;
 
         private bool IsBusy { get; set; }
+
+        private bool ImportHasRun { get; set; }
 
         private bool WasSimulatedRun { get; set; } = true;
 
@@ -93,7 +96,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
                 if (ImportResult is null) return false; // waiting on run
 
-                return ImportResult.RecordsImportedCount == 0 || ImportResult.HasFatalError;
+                return ImportResult.RecordsImportedCount == 0 || ImportResult.HasFatalError || ImportHasRun;
             }
         }
 
@@ -157,6 +160,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             ImportResult = null;
 
+            ImportHasRun = false;
+
             InviteBoxClass = HIDE_CLASS;
 
             StateHasChanged();
@@ -189,6 +194,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             if (ImportResult.RecordsImportedCount > 0)
             {
+                ImportHasRun = true;
+
                 Snackbar.Add("Import has finished", Severity.Success);
 
                 InviteBoxClass = HIDE_CLASS;
@@ -282,10 +289,11 @@ Dr{Delimiter}Cassady{Delimiter}HinAton{Delimiter}2{Delimiter}07624 157575{Delimi
         {
             var dialogParams = new DialogParameters()
             {
-                { "Definitions" , RecordDefinitions }
+                { "Definitions" , RecordDefinitions.OrderBy(d => d.ColumnOrder) },
+                { "HasHeaderRecord", HasHeaderRecord}
             };
 
-            await DialogService.Show<ClientImportDefinitionDialog>("Set definition", dialogParams).Result;
+            await DialogService.Show<ClientImportDefinitionDialog>("Columns", dialogParams).Result;
         }
 
         private string GetRowStyle(CustomerImportDto record, int index)
