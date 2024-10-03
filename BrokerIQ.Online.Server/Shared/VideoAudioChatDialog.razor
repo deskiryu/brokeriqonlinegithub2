@@ -111,6 +111,20 @@
     public async Task OnValidSubmit(EditContext context)
     {
         var actualMessage = model.MessageToSend;
+        if (model.HasEmbeddedUrl)
+        {
+            //Find substring
+            var found = actualMessage.IndexOf(model.Link);
+            if (found > 0)
+            {
+                actualMessage = actualMessage.Insert(found + model.Link.Length, "-->");
+                actualMessage = actualMessage.Insert(found, "<--");
+            }
+            else
+            {
+                this.AlertService.Warn("The link has been altered and may not show in the reminder correctly");
+            }
+        }
         model.MessageToSend = actualMessage;
 
         bool succeeded = false;
