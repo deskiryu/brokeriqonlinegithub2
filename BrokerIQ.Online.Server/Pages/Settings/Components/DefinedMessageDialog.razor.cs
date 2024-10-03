@@ -124,8 +124,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 var found = Template.Message.IndexOf(TemplateLink);
                 if (found > 0)
                 {
-                    Template.Message = Template.Message.Insert(found + TemplateLink.Length, LINK_START_INDICATOR);
-                    Template.Message = Template.Message.Insert(found, LINK_END_INDICATOR);
+                    Template.Message = Template.Message.Insert(found + TemplateLink.Length, LINK_END_INDICATOR);
+                    Template.Message = Template.Message.Insert(found, LINK_START_INDICATOR);
                 }
                 else
                 {
