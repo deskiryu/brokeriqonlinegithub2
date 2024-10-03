@@ -124,5 +124,10 @@ namespace BrokerIQ.Online.Server.Extensions
 
             return false;
         }
+
+        public static string FormatForMobileNotification(this string message)
+        {
+            return message.Replace("<--", "").Replace("-->", "").Trim();
+        }
     }
 }

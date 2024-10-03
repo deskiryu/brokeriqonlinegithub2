@@ -15,6 +15,8 @@ using BrokerIQ.Online.Server.AppSettings;
 
 using MudBlazor;
 using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Services.Interface;
+using Microsoft.VisualBasic.FileIO;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -22,6 +24,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
     {
         [Inject]
         public IDialogService DialogService { get; set; }
+
+        [Inject]
+        public IAlertService AlertService { get; set; }
 
         [Microsoft.AspNetCore.Components.CascadingParameter]
         MudDialogInstance MudDialog { get; set; }
@@ -79,10 +84,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private string TemplateLink { get; set; }
 
-        public int LinkStart;
-
-        public int LinkEnd;
-
         private bool HideLink { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -93,15 +94,44 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             if (HideLink)
             {
-                var linkStart = Template.Message.IndexOf(LINK_START_INDICATOR) + 3;
-                var linkEnd = Template.Message.IndexOf(LINK_END_INDICATOR);
-                TemplateLink = Template.Message[linkStart..linkEnd];
+                HideLink = true;
+                var startLink = Template.Message.IndexOf(LINK_START_INDICATOR) + 3;
+                var endLink = Template.Message.IndexOf(LINK_END_INDICATOR);
+
+                if (startLink > 0 && endLink > 0)
+                {
+                    try
+                    {
+                        TemplateLink = Template.Message.Substring(startLink, endLink - startLink);
+                        Template.Message = Template.Message.FormatForMobileNotification();
+                    }
+                    catch
+                    {
+
+                    }
+                }
             }
         }
 
         async Task Submit()
         {
             await form.Validate();
+
+            //Find substring
+            if (HideLink)
+            {
+
+                var found = Template.Message.IndexOf(TemplateLink);
+                if (found > 0)
+                {
+                    Template.Message = Template.Message.Insert(found + TemplateLink.Length, LINK_END_INDICATOR);
+                    Template.Message = Template.Message.Insert(found, LINK_START_INDICATOR);
+                }
+                else
+                {
+                    this.AlertService.Warn("The link has been altered and may not show in the reminder correctly");
+                }
+            }
 
             if (form.IsValid)
             {
@@ -123,12 +153,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                         Template.FileName = uploadedFile.Name;
                         Template.File = contents.ToArray();
                     }
-                }
-
-                if (LinkStart > 0)
-                {
-                    Template.Message = Template.Message.Insert(LinkEnd, LINK_END_INDICATOR);
-                    Template.Message = Template.Message.Insert(LinkStart, LINK_START_INDICATOR);
                 }
 
                 MudDialog.Close(DialogResult.Ok(Template));
@@ -174,10 +198,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         async void InsertLink()
         {
-            if (!TemplateLink.ToLower().StartsWith("http"))
-            {
-                TemplateLink = "http://" + TemplateLink;
-            }
 
             if (!TemplateLink.IsValidUrl())
             {
@@ -192,9 +212,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
 
             Template.Message += ' ';
-            LinkStart = Template.Message.Length;
             Template.Message += TemplateLink;
-            LinkEnd = Template.Message.Length;
             Template.Message += ' ';
 
             HideLink = true;

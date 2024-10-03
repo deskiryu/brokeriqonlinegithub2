@@ -205,9 +205,17 @@ namespace BrokerIQ.Online.Server.Pages.Video
             }
             else
             {
-                targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
+                if (SelectedCustomers != null && SelectedCustomers.Any())
+                {
+                    targetsName = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Name).ToList();
+                }
             }
 
+            if (targetsName == null || !targetsName.Any())
+            {
+                AlertService.Error("No targets chosen");
+                return;
+            }
 
             dialogParams.Add("Users", targetsName);
             dialogParams.Add("areBrokers", false);
@@ -225,35 +233,30 @@ namespace BrokerIQ.Online.Server.Pages.Video
                     targets = SelectedCustomers.Where(x => x.EmailConfirmed == true).Select(x => x.Id).ToList();
                 }
 
-                if (targets != null && targets.Any())
+
+                var succeeded = false;
+                try
                 {
-                    var succeeded = false;
-                    try
-                    {
-                        succeeded = await NotificationService.SendVideoNotification(selectedNotification, Url, targets, sendAll);
-                    }
-                    catch
-                    {
+                    succeeded = await NotificationService.SendVideoNotification(selectedNotification, Url, targets, sendAll);
+                }
+                catch
+                {
 
-                    }
+                }
 
-                    if (succeeded)
+                if (succeeded)
+                {
+                    AlertService.Alert(new AlertBIQ
                     {
-                        AlertService.Alert(new AlertBIQ
-                        {
-                            AutoClose = true,
-                            Message = "Notification Sent"
-                        });
-                    }
-                    else
-                    {
-                        AlertService.Error("Notification sending failed");
-                    };
+                        AutoClose = true,
+                        Message = "Notification Sent"
+                    });
                 }
                 else
                 {
-                    AlertService.Error("No targets chosen");
+                    AlertService.Error("Notification sending failed");
                 };
+
             }
         }
 
