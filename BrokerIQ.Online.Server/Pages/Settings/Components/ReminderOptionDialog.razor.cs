@@ -155,9 +155,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             }
 
             Option.MessageContent += ' ';
-            LinkStart = Option.MessageContent.Length;
             Option.MessageContent += OptionLink;
-            LinkEnd = Option.MessageContent.Length;
             Option.MessageContent += ' ';
 
             HideLink = true;

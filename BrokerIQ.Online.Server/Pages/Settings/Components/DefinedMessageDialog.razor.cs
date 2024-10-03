@@ -79,10 +79,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private string TemplateLink { get; set; }
 
-        public int LinkStart;
-
-        public int LinkEnd;
-
         private bool HideLink { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -125,11 +121,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                     }
                 }
 
-                if (LinkStart > 0)
-                {
-                    Template.Message = Template.Message.Insert(LinkEnd, LINK_END_INDICATOR);
-                    Template.Message = Template.Message.Insert(LinkStart, LINK_START_INDICATOR);
-                }
+                //if (LinkStart > 0)
+                //{
+                //    Template.Message = Template.Message.Insert(LinkEnd, LINK_END_INDICATOR);
+                //    Template.Message = Template.Message.Insert(LinkStart, LINK_START_INDICATOR);
+                //}
 
                 MudDialog.Close(DialogResult.Ok(Template));
             }
@@ -188,9 +184,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
 
             Template.Message += ' ';
-            LinkStart = Template.Message.Length;
             Template.Message += TemplateLink;
-            LinkEnd = Template.Message.Length;
             Template.Message += ' ';
 
             HideLink = true;
