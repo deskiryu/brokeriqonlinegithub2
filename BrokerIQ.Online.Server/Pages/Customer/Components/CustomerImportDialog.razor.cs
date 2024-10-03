@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Import;
-using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Request;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Services.Interface;
@@ -33,11 +33,13 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         [Inject]
         public ICustomerService CustomerService { get; set; }
-        
+
         [Parameter]
         public int BrokerId { get; set; }
 
         private const string HIDE_CLASS = "d-none";
+
+        private string TitleFileName => string.IsNullOrWhiteSpace(CurrentFileName) ? string.Empty : $" from {CurrentFileName}";
 
         public IEnumerable<ImportRecordDefinitionDto> RecordDefinitions { get; set; } = new List<ImportRecordDefinitionDto>(){
            new ImportRecordDefinitionDto() { ColumnOrder = 0, FieldName = "Title", Active=true, Required=false, DefaultValue=string.Empty },
@@ -63,8 +65,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         public string Delimiter { get; set; } = ";";
 
         public bool HasValidRecords => ImportResult is not null && ImportResult.RecordsImportedCount > 0;
-
-        private string CurrentFileClass => csvFile is not null ? string.Empty : HIDE_CLASS;
 
         private string CurrentFileName => csvFile is not null ? csvFile.Name : string.Empty;
 
@@ -122,6 +122,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             }
         }
 
+        private string InviteBoxClass { get; set; } = HIDE_CLASS;
+
         private string SucessfulRecordsMessage
         {
             get
@@ -147,7 +149,92 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             }
         }
 
-        private string InviteBoxClass { get; set; } = HIDE_CLASS;
+        private MarkupString SampleContent
+        {
+            get
+            {
+                var sampleContent = string.Empty;
+
+                if (HasHeaderRecord)
+                {
+                    sampleContent += $"{GetSampleHeader()}\n";
+                }
+
+                sampleContent += GetSampleContent();
+
+                return (MarkupString)sampleContent.Replace(Environment.NewLine, "<BR/>");
+            }
+        }
+
+        private string GetSampleHeader()
+        {
+            var header = string.Empty;
+            foreach (var field in RecordDefinitions.OrderBy(d => d.ColumnOrder))
+            {
+                if (!string.IsNullOrWhiteSpace(header)) header += Delimiter;
+                header += field.FieldName;
+            }
+
+            return header;
+        }
+
+        private string GetSampleContent()
+        {
+            var sampleRows = new CustomerImportDto[]
+            {
+                    new CustomerImportDto()
+                    {
+                        Title = "Dr",
+                        Forename = "Graham",
+                        Surname = "Morales",
+                        Nationality = 1,
+                        Telephone = "070 9711 7201",
+                        Email = "m-graham@aol.couk",
+                        AddressLine = "343-4795 Lectus Avenue",
+                        City = "Devizes",
+                        PostCode = "RD8Q 6FA",
+                        DateOfBirth = DateTime.Parse("1937-03-02"),
+                        Employment = 4,
+                        ResidentialStatus = 1
+                    },
+                    new CustomerImportDto()
+                    {
+                        Title = "Dr",
+                        Forename = "Cassady",
+                        Surname = "HinAton",
+                        Nationality = 2,
+                        Telephone = "07624 157575",
+                        Email = "hinton-cassady@aol.net",
+                        AddressLine = "762-9200 Donec St.",
+                        City = "Kington",
+                        PostCode = "LJ8 5UJ",
+                        DateOfBirth = DateTime.Parse("1939-07-23"),
+                        Employment = 2,
+                        ResidentialStatus = 3
+                    }
+            };
+
+            Type t = typeof(CustomerImportDto);
+            PropertyInfo[] props = t.GetProperties();
+
+            var contents = string.Empty;
+            foreach (var row in sampleRows)
+            {
+                var rowContent = string.Empty;
+                foreach (var field in RecordDefinitions.OrderBy(d => d.ColumnOrder))
+                {
+                    if (!string.IsNullOrWhiteSpace(rowContent)) rowContent += Delimiter;
+                    if (props.Any(p => p.Name == field.FieldName))
+                    {
+                        rowContent += GetPropertyValue(row, props.First(p => p.Name == field.FieldName), 25);
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(contents)) contents += "\n";
+                contents += $"{rowContent}";
+            }
+
+            return contents;
+        }
 
         private void Cancel()
         {
@@ -164,7 +251,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             InviteBoxClass = HIDE_CLASS;
 
-            StateHasChanged();
+            MudDialog.StateHasChanged();
         }
 
         private async Task PreviewFile()
@@ -230,24 +317,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             return request;
         }
 
-        private async Task SaveSampleFile()
-        {
-            var sampleContent = string.Empty;
-
-            if (HasHeaderRecord)
-            {
-                var header = $"Title{Delimiter}Forename{Delimiter}Surname{Delimiter}Nationality{Delimiter}Telephone{Delimiter}Email{Delimiter}AddressLine{Delimiter}City{Delimiter}PostCode{Delimiter}DateOfBirth{Delimiter}Employment{Delimiter}ResidentialStatus\n";
-                sampleContent = header;
-            }
-
-            sampleContent += @"Dr{Delimiter}Graham{Delimiter}Morales{Delimiter}1{Delimiter}070 9711 7201{Delimiter}m-graham@aol.couk{Delimiter}343-4795 Lectus Avenue{Delimiter}Devizes{Delimiter}RD8Q 6FA{Delimiter}1937-03-02{Delimiter}4{Delimiter}1
-Dr{Delimiter}Cassady{Delimiter}HinAton{Delimiter}2{Delimiter}07624 157575{Delimiter}hinton-cassady@aol.net{Delimiter}762-9200 Donec St.{Delimiter}Kington{Delimiter}LJ8 5UJ{Delimiter}1939-07-23{Delimiter}2{Delimiter}3";
-            sampleContent = sampleContent.Replace("{Delimiter}", Delimiter);
-
-            byte[] fileContent = Encoding.UTF8.GetBytes(sampleContent);
-            await Extensions.Extensions.SaveAs(JSRuntime, "Sample.csv", fileContent);
-        }
-
         private async Task SaveErrorMessages()
         {
             var messages = string.Join(Environment.NewLine, ImportResult.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
@@ -270,7 +339,7 @@ Dr{Delimiter}Cassady{Delimiter}HinAton{Delimiter}2{Delimiter}07624 157575{Delimi
 
         }
 
-        private string GetPropertyValue(CustomerImportDto dto, PropertyInfo property)
+        private string GetPropertyValue(CustomerImportDto dto, PropertyInfo property, byte maxLength = 18)
         {
             var typeName = property.PropertyType.FullName;
 
@@ -282,7 +351,7 @@ Dr{Delimiter}Cassady{Delimiter}HinAton{Delimiter}2{Delimiter}07624 157575{Delimi
             }
 
             var value = property.GetValue(dto).ToString();
-            return value.Length > 18 ? value.Substring(0, 15) + "..." : value;
+            return value.Length > maxLength ? value.Substring(0, 15) + "..." : value;
         }
 
         private async Task OpenDefaultsDialog()
