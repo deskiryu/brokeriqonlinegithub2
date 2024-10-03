@@ -3,7 +3,7 @@
 
 <MudDialog>
     <DialogContent>
-        <MudTable Items="@Definitions" Dense="true" Hover CanCancelEdit="true" OnPreviewEditClick="PreviewEditClick" OnCommitEditClick="CommitEditClick" OnCancelEditClick="CancelEditClick">
+        <MudTable Items="@Definitions" Dense="true" Hover OnPreviewEditClick="PreviewEditClick" OnCommitEditClick="CommitEditClick">
             <HeaderContent>
                 @if (!HasHeaderRecord)
                 {

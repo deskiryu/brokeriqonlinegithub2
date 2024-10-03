@@ -347,7 +347,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             {
                 var dateValue = property.GetValue(dto);
 
-                return dateValue == null ? string.Empty : ((DateTime)dateValue).ToString("yyyy MMM dd");
+                return dateValue == null ? string.Empty : ((DateTime)dateValue).ToString("yyyy-MM-dd");
             }
 
             var value = property.GetValue(dto).ToString();
