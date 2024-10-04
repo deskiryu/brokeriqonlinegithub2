@@ -76,18 +76,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private bool ShoulSendInvites { get; set; }
 
-        private bool DisablePreviewButton
-        {
-            get
-            {
-                if (csvFile is null || IsBusy) return true;
-
-                if (ImportResult is null) return false; // waiting on run
-
-                return !WasSimulatedRun;
-            }
-        }
-
         private bool DisableImportButton
         {
             get
@@ -241,7 +229,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             MudDialog.Cancel();
         }
 
-        private void SaveFile(IBrowserFile file)
+        private async Task SaveFile(IBrowserFile file)
         {
             csvFile = file;
 
@@ -250,6 +238,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             ImportHasRun = false;
 
             InviteBoxClass = HIDE_CLASS;
+
+            await PreviewFile();
 
             MudDialog.StateHasChanged();
         }
