@@ -12,8 +12,8 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
                        OnClick="OpenDefaultsDialog">Columns</MudButton>
             <MudSelect @bind-Value="Delimiter" Dense="true" Margin="Margin.Dense">
-                <MudSelectItem T="string" Value="@(";")">Semicolon</MudSelectItem>
                 <MudSelectItem T="string" Value="@(",")">Comma</MudSelectItem>
+                <MudSelectItem T="string" Value="@(";")">Semicolon</MudSelectItem>
                 <MudSelectItem T="string" Value="@("|")">Vertical Bar</MudSelectItem>
             </MudSelect>
             <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">

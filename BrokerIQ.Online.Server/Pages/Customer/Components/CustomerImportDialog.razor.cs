@@ -62,7 +62,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         public bool HasHeaderRecord { get; set; } = true;
 
-        public string Delimiter { get; set; } = ";";
+        public string Delimiter { get; set; } = ",";
 
         public bool HasValidRecords => ImportResult is not null && ImportResult.RecordsImportedCount > 0;
 
