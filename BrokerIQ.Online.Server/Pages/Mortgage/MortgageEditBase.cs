@@ -143,7 +143,7 @@ namespace BrokerIQ.Online.Pages
                 BrokerListId = user.MasterBrokerId;
                 try
                 {
-                    Broker = await BrokerService.GetBroker(user.MasterBrokerId);
+                    Broker = await BrokerService.GetBroker(user.MasterBrokerId, eagerload:true);
                 }
                 catch
                 {
