@@ -5,39 +5,41 @@
         <MudText>@($"Import customers {TitleFileName}")</MudText>
     </TitleContent>
     <DialogContent>
-        <MudStack Row="true" Class="d-flex">
-            <MudStack AlignItems="AlignItems.Center">
-                @*<MudLink OnClick="SaveSampleFile" Color="Color.Tertiary">Download sample file</MudLink>*@
-                <MudCheckBox Label="Has header" @bind-Checked="HasHeaderRecord" Dense="true" Size="Size.Small" />
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
-                           OnClick="OpenDefaultsDialog">Columns</MudButton>
-                <MudSelect @bind-Value="Delimiter" Dense="true" Margin="Margin.Dense">
-                    <MudSelectItem T="string" Value="@(",")">Comma</MudSelectItem>
-                    <MudSelectItem T="string" Value="@(";")">Semicolon</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("|")">Vertical Bar</MudSelectItem>
-                </MudSelect>
-                <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
-                    <ButtonTemplate>
-                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
-                                   StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id"> Select file </MudButton>
-                    </ButtonTemplate>
-                </MudFileUpload>
-            </MudStack>
-            <MudStack Class="flex-auto d-flex align-center">
-                @if (ImportResult is null)
-                {
-                    <MudStack lignItems="AlignItems.Center">
-                        <MudText>Select a file and click Preview to view what your data looks like for the import</MudText>
-                        <MudText>Your file contents should look something like this :</MudText>
-                        <MudText>@SampleContent</MudText>
+        <MudStack>
+            <MudStack>
+                <MudAlert Severity="Severity.Info" Dense="true" Style="@($"color:{Colors.Shades.Black}")">
+                    <MudStack Row="true" StretchItems="StretchItems.Start">
+                        <MudStack class="flex-grow-1">
+                            <p>Download and populate the <MudLink OnClick="DownloadSampleFile">import_template.csv</MudLink>. The email is mandatory, but all other fields are optional.</p>
+                            <p>If your file does not include a header, you'll need to tell us the <MudLink OnClick="OpenDefaultsDialog">format</MudLink> it is in.</p>
+                        </MudStack>
+                        <MudStack>
+                            <MudCheckBox Label="Has header" @bind-Checked="HasHeaderRecord" Dense="true" Size="Size.Small" Class="ma-1" />
+                            <MudSelect @bind-Value="Delimiter" Dense="true" Class="ma-1">
+                                <MudSelectItem T="string" Value="@(",")">Comma</MudSelectItem>
+                                <MudSelectItem T="string" Value="@(";")">Semicolon</MudSelectItem>
+                                <MudSelectItem T="string" Value="@("|")">Vertical Bar</MudSelectItem>
+                            </MudSelect>
+                        </MudStack>
                     </MudStack>
+                </MudAlert>
+            </MudStack>
+            <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+                @if (ImportPreview is null)
+                {
+                    <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
+                        <ButtonTemplate>
+                            <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id"> Select file </MudButton>
+                        </ButtonTemplate>
+                    </MudFileUpload>
                 }
                 else
                 {
-                    <MudTable Dense="true" Hover="true" Striped="true" Items="@ImportResult.Records" FixedHeader="true" Height="500px" Style="width:1024px"
+                    <MudTable Dense="true" Hover="true" Striped="true" Items="@ImportPreview.Records" FixedHeader="true" Height="500px" Style="width:1024px"
                               RowStyleFunc="GetRowStyle">
                         <HeaderContent>
-                            @foreach (var item in RecordDefinitions.OrderBy(v => v.ColumnOrder))
+                            @foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
                             {
                                 <MudTh>@item.FieldName</MudTh>
                             }
@@ -47,7 +49,7 @@
                                 Type t = context.GetType();
                                 PropertyInfo[] props = t.GetProperties();
 
-                                foreach (var item in RecordDefinitions.OrderBy(v => v.ColumnOrder))
+                                foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
                                 {
                                     if (props.Any(p => p.Name == item.FieldName))
                                     {
@@ -85,7 +87,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel" Disabled="IsBusy">Close</MudButton>
-        <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Class="@InviteBoxClass" Label="Send invites to imported customers" LabelPosition="LabelPosition.Start" />
+        <MudCheckBox T="bool" Size="Size.Small" @bind-Checked="@ShoulSendInvites" Class="@InviteBoxClass" Label="Send invites to imported customers" LabelPosition="LabelPosition.Start" />
         <MudButton OnClick="ImportFromFile" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")"
                    Disabled="DisableImportButton">Import</MudButton>
     </DialogActions>

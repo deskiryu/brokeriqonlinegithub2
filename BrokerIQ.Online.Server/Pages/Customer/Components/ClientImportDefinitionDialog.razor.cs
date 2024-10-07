@@ -15,9 +15,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         [Parameter]
         public IEnumerable<ImportRecordDefinitionDto> Definitions { get; set; }
 
-        [Parameter]
-        public bool HasHeaderRecord { get; set; }
-
         public bool IsEditing { get; set; }
 
         private int LastSortOrder => Definitions.Max(d => d.ColumnOrder);
@@ -67,11 +64,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         }
 
         private void CommitEditClick()
-        {
-            IsEditing = false;
-        }
-
-        private void CancelEditClick()
         {
             IsEditing = false;
         }

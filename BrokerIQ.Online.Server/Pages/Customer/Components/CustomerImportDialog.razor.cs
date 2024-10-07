@@ -58,13 +58,13 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private IBrowserFile csvFile;
 
-        private ImportResponse ImportResult { get; set; }
+        private ImportResponse ImportPreview { get; set; }
 
         public bool HasHeaderRecord { get; set; } = true;
 
         public string Delimiter { get; set; } = ",";
 
-        public bool HasValidRecords => ImportResult is not null && ImportResult.RecordsImportedCount > 0;
+        public bool HasValidRecords => ImportPreview is not null && ImportPreview.RecordsImportedCount > 0;
 
         private string CurrentFileName => csvFile is not null ? csvFile.Name : string.Empty;
 
@@ -82,21 +82,21 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             {
                 if (csvFile is null || IsBusy) return true;
 
-                if (ImportResult is null) return false; // waiting on run
+                if (ImportPreview is null) return false; // waiting on run
 
-                return ImportResult.RecordsImportedCount == 0 || ImportResult.HasFatalError || ImportHasRun;
+                return ImportPreview.RecordsImportedCount == 0 || ImportPreview.HasFatalError || ImportHasRun;
             }
         }
 
-        private string ImportResultsClass => ImportResult is null ? $"mt-2 p-1 {HIDE_CLASS}" : "mt-2 p-1";
+        private string ImportResultsClass => ImportPreview is null ? $"mt-2 p-1 {HIDE_CLASS}" : "mt-2 p-1";
 
         private string ErrorMessagesDownloadClass
         {
             get
             {
-                if (ImportResult is null) return HIDE_CLASS;
+                if (ImportPreview is null) return HIDE_CLASS;
 
-                return ImportResult.RecordsInErrorCount > 0 ? string.Empty : HIDE_CLASS;
+                return ImportPreview.RecordsInErrorCount > 0 ? string.Empty : HIDE_CLASS;
             }
         }
 
@@ -104,9 +104,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         {
             get
             {
-                if (ImportResult is null) return HIDE_CLASS;
+                if (ImportPreview is null) return HIDE_CLASS;
 
-                return ImportResult.RecordsInErrorCount > 0 ? string.Empty : HIDE_CLASS;
+                return ImportPreview.RecordsInErrorCount > 0 ? string.Empty : HIDE_CLASS;
             }
         }
 
@@ -116,9 +116,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         {
             get
             {
-                if (ImportResult is null) return string.Empty;
+                if (ImportPreview is null) return string.Empty;
 
-                return WasSimulatedRun ? $"Records to import : {ImportResult.RecordsImportedCount}." : $"Records imported : {ImportResult.RecordsImportedCount}.";
+                return WasSimulatedRun ? $"Records to import : {ImportPreview.RecordsImportedCount}." : $"Records imported : {ImportPreview.RecordsImportedCount}.";
             }
         }
 
@@ -126,31 +126,14 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         {
             get
             {
-                if (ImportResult is null) return string.Empty;
+                if (ImportPreview is null) return string.Empty;
 
                 // Exception error, display message returned
-                if (ImportResult.Errors.Count() == 1 && ImportResult.Errors.First().Line == 0) return ImportResult.Errors.First().ErrorMessage;
+                if (ImportPreview.Errors.Count() == 1 && ImportPreview.Errors.First().Line == 0) return ImportPreview.Errors.First().ErrorMessage;
 
-                if (ImportResult.RecordsInErrorCount == 0) return string.Empty;
+                if (ImportPreview.RecordsInErrorCount == 0) return string.Empty;
 
-                return WasSimulatedRun ? $"Records with errors : {ImportResult.RecordsInErrorCount}." : $"Records NOT imported : {ImportResult.RecordsInErrorCount}.";
-            }
-        }
-
-        private MarkupString SampleContent
-        {
-            get
-            {
-                var sampleContent = string.Empty;
-
-                if (HasHeaderRecord)
-                {
-                    sampleContent += $"{GetSampleHeader()}\n";
-                }
-
-                sampleContent += GetSampleContent();
-
-                return (MarkupString)sampleContent.Replace(Environment.NewLine, "<BR/>");
+                return WasSimulatedRun ? $"Records with errors : {ImportPreview.RecordsInErrorCount}." : $"Records NOT imported : {ImportPreview.RecordsInErrorCount}.";
             }
         }
 
@@ -166,64 +149,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             return header;
         }
 
-        private string GetSampleContent()
-        {
-            var sampleRows = new CustomerImportDto[]
-            {
-                    new CustomerImportDto()
-                    {
-                        Title = "Dr",
-                        Forename = "Graham",
-                        Surname = "Morales",
-                        Nationality = 1,
-                        Telephone = "070 9711 7201",
-                        Email = "m-graham@aol.couk",
-                        AddressLine = "343-4795 Lectus Avenue",
-                        City = "Devizes",
-                        PostCode = "RD8Q 6FA",
-                        DateOfBirth = DateTime.Parse("1937-03-02"),
-                        Employment = 4,
-                        ResidentialStatus = 1
-                    },
-                    new CustomerImportDto()
-                    {
-                        Title = "Dr",
-                        Forename = "Cassady",
-                        Surname = "HinAton",
-                        Nationality = 2,
-                        Telephone = "07624 157575",
-                        Email = "hinton-cassady@aol.net",
-                        AddressLine = "762-9200 Donec St.",
-                        City = "Kington",
-                        PostCode = "LJ8 5UJ",
-                        DateOfBirth = DateTime.Parse("1939-07-23"),
-                        Employment = 2,
-                        ResidentialStatus = 3
-                    }
-            };
-
-            Type t = typeof(CustomerImportDto);
-            PropertyInfo[] props = t.GetProperties();
-
-            var contents = string.Empty;
-            foreach (var row in sampleRows)
-            {
-                var rowContent = string.Empty;
-                foreach (var field in RecordDefinitions.OrderBy(d => d.ColumnOrder))
-                {
-                    if (!string.IsNullOrWhiteSpace(rowContent)) rowContent += Delimiter;
-                    if (props.Any(p => p.Name == field.FieldName))
-                    {
-                        rowContent += GetPropertyValue(row, props.First(p => p.Name == field.FieldName), 25);
-                    }
-                }
-                if (!string.IsNullOrWhiteSpace(contents)) contents += "\n";
-                contents += $"{rowContent}";
-            }
-
-            return contents;
-        }
-
         private void Cancel()
         {
             MudDialog.Cancel();
@@ -233,7 +158,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         {
             csvFile = file;
 
-            ImportResult = null;
+            ImportPreview = null;
 
             ImportHasRun = false;
 
@@ -251,11 +176,36 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             ImportRequest request = await BuildImportRequest();
             request.IsSimulatedRun = WasSimulatedRun = true;
 
-            ImportResult = await CustomerService.Import(request);
+            ImportPreview = await CustomerService.Import(request);
+
+            if (HasHeaderRecord) UpdateDefinitionsFrom(ImportPreview.HeaderFields);
 
             IsBusy = false;
 
             InviteBoxClass = HasValidRecords ? string.Empty : HIDE_CLASS;
+        }
+
+        private void UpdateDefinitionsFrom(string[] headerFields)
+        {
+            foreach (var field in RecordDefinitions)
+            {
+                field.Active = false;
+            }
+
+            for (int i = 0; i < headerFields.Length; i++)
+            {
+                var field = RecordDefinitions.FirstOrDefault(f => f.FieldName == headerFields[i]);
+                if (field == null) continue;
+
+                field.Active = true;
+                field.ColumnOrder = i;
+            }
+
+            var next = RecordDefinitions.Max(d => d.ColumnOrder) + 1;
+            foreach (var field in RecordDefinitions.Where(d => !d.Active))
+            {
+                field.ColumnOrder = next++;
+            }
         }
 
         private async Task ImportFromFile()
@@ -265,19 +215,17 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             ImportRequest request = await BuildImportRequest();
             request.IsSimulatedRun = WasSimulatedRun = false;
 
-            ImportResult = await CustomerService.Import(request);
+            ImportPreview = await CustomerService.Import(request);
 
             IsBusy = false;
 
-            if (ImportResult.RecordsImportedCount > 0)
+            if (ImportPreview.RecordsImportedCount > 0)
             {
-                ImportHasRun = true;
-
                 Snackbar.Add("Import has finished", Severity.Success);
 
                 InviteBoxClass = HIDE_CLASS;
 
-                return;
+                MudDialog.Close();
             }
         }
 
@@ -309,7 +257,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private async Task SaveErrorMessages()
         {
-            var messages = string.Join(Environment.NewLine, ImportResult.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
+            var messages = string.Join(Environment.NewLine, ImportPreview.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
 
             byte[] fileContent = Encoding.UTF8.GetBytes(messages);
             await Extensions.Extensions.SaveAs(JSRuntime, GetErrorFileName(csvFile.Name, "Error Messages"), fileContent);
@@ -317,7 +265,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private async Task SaveRecordsInError()
         {
-            byte[] fileContent = Encoding.UTF8.GetBytes(ImportResult.RecordsInError);
+            byte[] fileContent = Encoding.UTF8.GetBytes(ImportPreview.RecordsInError);
             await Extensions.Extensions.SaveAs(JSRuntime, GetErrorFileName(csvFile.Name, "Records In Error"), fileContent);
         }
 
@@ -340,7 +288,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 return dateValue == null ? string.Empty : ((DateTime)dateValue).ToString("yyyy-MM-dd");
             }
 
-            var value = property.GetValue(dto).ToString();
+            var propertyValue = property.GetValue(dto);
+            var value = propertyValue is not null ? property.GetValue(dto).ToString() : string.Empty;
             return value.Length > maxLength ? value.Substring(0, 15) + "..." : value;
         }
 
@@ -348,8 +297,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         {
             var dialogParams = new DialogParameters()
             {
-                { "Definitions" , RecordDefinitions.OrderBy(d => d.ColumnOrder) },
-                { "HasHeaderRecord", HasHeaderRecord}
+                { "Definitions" , RecordDefinitions.OrderBy(d => d.ColumnOrder) }
             };
 
             await DialogService.Show<ClientImportDefinitionDialog>("Columns", dialogParams).Result;
@@ -357,13 +305,26 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private string GetRowStyle(CustomerImportDto record, int index)
         {
-            return ImportResult.Errors.Any(e => e.Line == record.RecordNumber) ? "background-color: #FD846A;" : string.Empty;
+            return ImportPreview.Errors.Any(e => e.Line == record.RecordNumber) ? "background-color: #FD846A;" : string.Empty;
         }
 
         private string GetErrorMessagesFor(CustomerImportDto record)
         {
-            var errorMessages = ImportResult.Errors.Where(e => e.Line == record.RecordNumber).Select(e => e.ErrorMessage).ToArray();
+            var errorMessages = ImportPreview.Errors.Where(e => e.Line == record.RecordNumber).Select(e => e.ErrorMessage).ToArray();
             return string.Join(" ", errorMessages);
         }
+
+        private async Task DownloadSampleFile()
+        {
+            var sampleContent = GetSampleHeader();
+            sampleContent += "\n\n\n\n\n\n\nInstructions:\n";
+            sampleContent += "1. Fill in the data using the headers as guides as to what goes where\n";
+            sampleContent += "2. Remove these instructions from the file if still here when all the data is ready\n";
+            sampleContent += "3. Upload the file\n";
+
+            byte[] fileContent = Encoding.UTF8.GetBytes(sampleContent);
+            await Extensions.Extensions.SaveAs(JSRuntime, "customer_template.csv", fileContent);
+        }
+
     }
 }
