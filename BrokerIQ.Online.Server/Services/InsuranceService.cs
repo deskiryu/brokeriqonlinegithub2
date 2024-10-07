@@ -92,7 +92,7 @@ namespace BrokerIQ.Online.Services
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
 
-            return await this.requestProviderService.Post<DocumentDto, InsuranceFromDocumentDto>($"{this.InsuranceUrl}/getfromdocument", dto);
+            return await this.requestProviderService.Post<DocumentDto, InsuranceFromDocumentDto>($"{this.InsuranceUrl}/getfromdocumenttrained", dto);
         }
     }
 }
