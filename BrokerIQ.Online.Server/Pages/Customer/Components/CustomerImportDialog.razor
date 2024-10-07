@@ -1,41 +1,94 @@
+@using System.Reflection
+
 <MudDialog>
+    <TitleContent>
+        <MudText>@($"Import customers {TitleFileName}")</MudText>
+    </TitleContent>
     <DialogContent>
-        <div class="d-flex flex-column align-center">
-            <MudLink OnClick="SaveSampleFile" Color="Color.Tertiary">Download sample file</MudLink>
+        <MudStack>
+            <MudStack>
+                <MudAlert Severity="Severity.Info" Dense="true" Style="@($"color:{Colors.Shades.Black}")">
+                    <MudStack Row="true" StretchItems="StretchItems.Start">
+                        <MudStack class="flex-grow-1">
+                            <p>Download and populate the <MudLink OnClick="DownloadSampleFile">import_template.csv</MudLink>. The email is mandatory, but all other fields are optional.</p>
+                            <p>If your file does not include a header, you'll need to tell us the <MudLink OnClick="OpenDefaultsDialog">format</MudLink> it is in.</p>
+                        </MudStack>
+                        <MudStack>
+                            <MudCheckBox Label="Has header" @bind-Checked="HasHeaderRecord" Dense="true" Size="Size.Small" Class="ma-1" />
+                            <MudSelect @bind-Value="Delimiter" Dense="true" Class="ma-1">
+                                <MudSelectItem T="string" Value="@(",")">Comma</MudSelectItem>
+                                <MudSelectItem T="string" Value="@(";")">Semicolon</MudSelectItem>
+                                <MudSelectItem T="string" Value="@("|")">Vertical Bar</MudSelectItem>
+                            </MudSelect>
+                        </MudStack>
+                    </MudStack>
+                </MudAlert>
+            </MudStack>
+            <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+                @if (ImportPreview is null)
+                {
+                    <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
+                        <ButtonTemplate>
+                            <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id"> Select file </MudButton>
+                        </ButtonTemplate>
+                    </MudFileUpload>
+                }
+                else
+                {
+                    <MudTable Dense="true" Hover="true" Striped="true" Items="@ImportPreview.Records" FixedHeader="true" Height="500px" Style="width:1024px"
+                              RowStyleFunc="GetRowStyle">
+                        <HeaderContent>
+                            @foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
+                            {
+                                <MudTh>@item.FieldName</MudTh>
+                            }
+                        </HeaderContent>
+                        <RowTemplate>
+                            @{
+                                Type t = context.GetType();
+                                PropertyInfo[] props = t.GetProperties();
 
-            <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
-                <ButtonTemplate>
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               Class="m-1"
-                               Style="@($"color:{Colors.Shades.Black}")"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               for="@context.Id">
-                        Select CSV file
-                    </MudButton>
-                </ButtonTemplate>
-            </MudFileUpload>
-            <MudText Class="@CurrentFileClass">Current File : @CurrentFileName</MudText>
-
-            <div Class="@ImportResultsClass">
-                <MudText Class="m-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
-                <div class="d-flex">
-                    <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
-                    <MudTooltip Text="Download error list">
-                        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Small" OnClick="SaveErrorMessages" Class="@ErrorMessagesDownloadClass" />
-                    </MudTooltip>
-                    <MudTooltip Text="Download records in error">
-                        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Small" OnClick="SaveRecordsInError" Class="@ErrorRecordsDownloadClass" />
-                    </MudTooltip>
+                                foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
+                                {
+                                    if (props.Any(p => p.Name == item.FieldName))
+                                    {
+                                        <MudTd DataLabel="@item.FieldName">
+                                            <MudTooltip Text="@GetErrorMessagesFor(context)">
+                                                @GetPropertyValue(context, props.First(p => p.Name == item.FieldName))
+                                            </MudTooltip>
+                                        </MudTd>
+                                    }
+                                    else
+                                    {
+                                        <MudTd></MudTd>
+                                    }
+                                }
+                            }
+                        </RowTemplate>
+                    </MudTable>
+                }
+                <div>
+                    <MudStack Class="@ImportResultsClass" Row="true">
+                        <MudText Class="m-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
+                        <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
+                        <MudTooltip Text="Download error list">
+                            <MudIconButton Icon="@Icons.Material.Filled.FormatListBulleted" Size="Size.Small" OnClick="SaveErrorMessages"
+                                           Class="@ErrorMessagesDownloadClass" Color="Color.Error" />
+                        </MudTooltip>
+                        <MudTooltip Text="Download records in error">
+                            <MudIconButton Icon="@Icons.Material.Filled.TextSnippet" Size="Size.Small" OnClick="SaveRecordsInError"
+                                           Class="@ErrorRecordsDownloadClass" Color="Color.Error" />
+                        </MudTooltip>
+                    </MudStack>
                 </div>
-            </div>
-
-            <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Class="@InviteBoxClass">Send invites to imported customers</MudCheckBox>
-        </div>
+            </MudStack>
+        </MudStack>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel" Disabled="IsBusy">Close</MudButton>
-        <MudButton OnClick="ImportFromFile" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" Disabled="DisableImportButton">@ImportButtonText</MudButton>
+        <MudCheckBox T="bool" Size="Size.Small" @bind-Checked="@ShoulSendInvites" Class="@InviteBoxClass" Label="Send invites to imported customers" LabelPosition="LabelPosition.Start" />
+        <MudButton OnClick="ImportFromFile" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")"
+                   Disabled="DisableImportButton">Import</MudButton>
     </DialogActions>
 </MudDialog>
