@@ -9,7 +9,10 @@
         <MudStack>
             <MudAlert Severity="Severity.Info" Style="@($"color:{Colors.Shades.Black};")">
                 <p>
-                    To create your import file, you can download and populate the <MudLink OnClick="DownloadSampleFile" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">import_template.csv</MudLink>. Your file does not need to have all the columns, but the email has to be included and the header names must match.
+
+                    Your CSV file header columns must have exactly the same names as in <MudLink OnClick="DownloadSampleFile" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">here</MudLink>.
+                    <br /><br />
+                    The only column that <b>must</b> be there is Email. All other columns are optional and the order of the columns does not matter.
                     <br /><br />
                     If your file does not include a header, you'll need to tell us the <MudLink OnClick="OpenDefaultsDialog" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">format</MudLink> it is in.
                 </p>
@@ -21,7 +24,7 @@
                     <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
                         <ButtonTemplate>
                             <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
-                                       StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id"> Select file </MudButton>
+                                       StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id"> Select CSV file </MudButton>
                         </ButtonTemplate>
                     </MudFileUpload>
                 }
@@ -63,11 +66,11 @@
                     <MudStack Row="true">
                         <MudText Class="m-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
                         <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
-                        <MudTooltip Text="Download error list">
+                        <MudTooltip Text="Show errors">
                             <MudIconButton Icon="@Icons.Material.Filled.FormatListBulleted" Size="Size.Small" OnClick="SaveErrorMessages"
                                            Class="@ErrorMessagesDownloadClass" Color="Color.Error" />
                         </MudTooltip>
-                        <MudTooltip Text="Download records in error">
+                        <MudTooltip Text="Download the records that failed">
                             <MudIconButton Icon="@Icons.Material.Filled.TextSnippet" Size="Size.Small" OnClick="SaveRecordsInError"
                                            Class="@ErrorRecordsDownloadClass" Color="Color.Error" />
                         </MudTooltip>

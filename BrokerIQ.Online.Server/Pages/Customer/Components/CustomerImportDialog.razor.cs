@@ -255,10 +255,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private async Task SaveErrorMessages()
         {
-            var messages = string.Join(Environment.NewLine, ImportPreview.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
+            var messages = string.Join("<br/>", ImportPreview.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
 
-            byte[] fileContent = Encoding.UTF8.GetBytes(messages);
-            await Extensions.Extensions.SaveAs(JSRuntime, GetErrorFileName(csvFile.Name, "Error Messages"), fileContent);
+            await Extensions.Extensions.PreviewFileText(JSRuntime, messages);
         }
 
         private async Task SaveRecordsInError()
@@ -303,17 +302,71 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             var errorMessages = ImportPreview.Errors.Where(e => e.Line == record.RecordNumber).Select(e => e.ErrorMessage).ToArray();
             return string.Join(" ", errorMessages);
         }
+        private MarkupString GetSampleContent()
+        {
+            var sampleData = new CustomerImportDto[] {
+                new CustomerImportDto()
+                {
+                    Title = "Dr",
+                    Forename = "Graham",
+                    Surname = "Morales",
+                    Nationality = 1,
+                    Telephone = "070 9711 7201",
+                    Email = "m-graham@aol.couk",
+                    AddressLine = "343-4795 Lectus Avenue",
+                    City = "Devizes",
+                    PostCode = "RD8Q 6FA",
+                    DateOfBirth = DateTime.Parse("1997-03-02"),
+                    Employment = 4,
+                    ResidentialStatus = 1
+                },
+                new CustomerImportDto()
+                {
+                    Title = "Mrs",
+                    Forename = "Cassady",
+                    Surname = "HinAton",
+                    Nationality = 2,
+                    Telephone = "07624 157575",
+                    Email = "hinton-cassady@aol.net",
+                    AddressLine = "762-9200 Donec St.",
+                    City = "Kington",
+                    PostCode = "LJ8 5UJ",
+                    DateOfBirth = DateTime.Parse("1979-07-23"),
+                    Employment = 2,
+                    ResidentialStatus = 3
+                }
+            };
+
+            var result = string.Empty;
+            foreach (var customer in sampleData)
+            {
+                Type t = customer.GetType();
+                PropertyInfo[] props = t.GetProperties();
+
+                var line = string.Empty;
+                foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
+                {
+                    if (!string.IsNullOrWhiteSpace(line)) line += ",";
+
+                    if (props.Any(p => p.Name == item.FieldName))
+                    {
+                        line += customer.GetPropertyValue(props.First(p => p.Name == item.FieldName), 50);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(result)) result += "<br/>";
+                result += line;
+            }
+
+            return new MarkupString(result);
+        }
 
         private async Task DownloadSampleFile()
         {
             var sampleContent = GetSampleHeader();
-            sampleContent += "\n\n\n\n\n\n\nInstructions:\n";
-            sampleContent += "1. Fill in the data using the headers as guides as to what goes where\n";
-            sampleContent += "2. Remove these instructions from the file if still here when all the data is ready\n";
-            sampleContent += "3. Upload the file\n";
-
-            byte[] fileContent = Encoding.UTF8.GetBytes(sampleContent);
-            await Extensions.Extensions.SaveAs(JSRuntime, "customer_template.csv", fileContent);
+            sampleContent += "<hr />";
+            sampleContent += GetSampleContent();
+            await Extensions.Extensions.PreviewFileText(JSRuntime, sampleContent);
         }
     }
 }
