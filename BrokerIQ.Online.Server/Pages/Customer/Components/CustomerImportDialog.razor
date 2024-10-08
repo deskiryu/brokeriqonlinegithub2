@@ -66,11 +66,11 @@
                     <MudStack Row="true">
                         <MudText Class="m-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
                         <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
-                        <MudTooltip Text="Download error list">
+                        <MudTooltip Text="Show errors">
                             <MudIconButton Icon="@Icons.Material.Filled.FormatListBulleted" Size="Size.Small" OnClick="SaveErrorMessages"
                                            Class="@ErrorMessagesDownloadClass" Color="Color.Error" />
                         </MudTooltip>
-                        <MudTooltip Text="Download records in error">
+                        <MudTooltip Text="Download the records that failed">
                             <MudIconButton Icon="@Icons.Material.Filled.TextSnippet" Size="Size.Small" OnClick="SaveRecordsInError"
                                            Class="@ErrorRecordsDownloadClass" Color="Color.Error" />
                         </MudTooltip>

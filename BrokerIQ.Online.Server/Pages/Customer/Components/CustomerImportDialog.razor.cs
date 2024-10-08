@@ -255,10 +255,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private async Task SaveErrorMessages()
         {
-            var messages = string.Join(Environment.NewLine, ImportPreview.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
+            var messages = string.Join("<br/>", ImportPreview.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
 
-            byte[] fileContent = Encoding.UTF8.GetBytes(messages);
-            await Extensions.Extensions.SaveAs(JSRuntime, GetErrorFileName(csvFile.Name, "Error Messages"), fileContent);
+            await Extensions.Extensions.PreviewFileText(JSRuntime, messages);
         }
 
         private async Task SaveRecordsInError()
