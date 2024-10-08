@@ -6,26 +6,15 @@
     </TitleContent>
     <DialogContent>
         <MudStack>
-            <MudStack>
-                <MudAlert Severity="Severity.Info" Dense="true" Style="@($"color:{Colors.Shades.Black}")">
-                    <MudStack Row="true" StretchItems="StretchItems.Start">
-                        <MudStack class="flex-grow-1">
-                            <p>Download and populate the <MudLink OnClick="DownloadSampleFile">import_template.csv</MudLink>. The email is mandatory, but all other fields are optional.</p>
-                            <p>If your file does not include a header, you'll need to tell us the <MudLink OnClick="OpenDefaultsDialog">format</MudLink> it is in.</p>
-                        </MudStack>
-                        <MudStack>
-                            <MudCheckBox Label="Has header" @bind-Checked="HasHeaderRecord" Dense="true" Size="Size.Small" Class="ma-1" />
-                            <MudSelect @bind-Value="Delimiter" Dense="true" Class="ma-1">
-                                <MudSelectItem T="string" Value="@(",")">Comma</MudSelectItem>
-                                <MudSelectItem T="string" Value="@(";")">Semicolon</MudSelectItem>
-                                <MudSelectItem T="string" Value="@("|")">Vertical Bar</MudSelectItem>
-                            </MudSelect>
-                        </MudStack>
-                    </MudStack>
-                </MudAlert>
-            </MudStack>
+            <MudAlert Severity="Severity.Info" Style="@($"color:{Colors.Shades.Black};")">
+                <p>
+                    Download and populate the <MudLink OnClick="DownloadSampleFile" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">import_template.csv</MudLink>. The email is mandatory, but all other fields are optional.
+                    If your file does not include a header, you'll need to tell us the <MudLink OnClick="OpenDefaultsDialog" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">format</MudLink> it is in.
+                </p>
+            </MudAlert>
+
             <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
-                @if (ImportPreview is null)
+                @if (ImportPreview is null || FatalErrorOccurred)
                 {
                     <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
                         <ButtonTemplate>
@@ -36,7 +25,7 @@
                 }
                 else
                 {
-                    <MudTable Dense="true" Hover="true" Striped="true" Items="@ImportPreview.Records" FixedHeader="true" Height="500px" Style="width:1024px"
+                    <MudTable Dense="true" Hover="true" Striped="true" Items="@ImportPreview.Records" FixedHeader="true" Height="500px" Style="width:100%;"
                               RowStyleFunc="GetRowStyle">
                         <HeaderContent>
                             @foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
@@ -68,8 +57,8 @@
                         </RowTemplate>
                     </MudTable>
                 }
-                <div>
-                    <MudStack Class="@ImportResultsClass" Row="true">
+                <MudPaper Class="@ImportResultsClass">
+                    <MudStack Row="true">
                         <MudText Class="m-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
                         <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
                         <MudTooltip Text="Download error list">
@@ -81,13 +70,16 @@
                                            Class="@ErrorRecordsDownloadClass" Color="Color.Error" />
                         </MudTooltip>
                     </MudStack>
-                </div>
+                    <MudStack Row="true">
+                        <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Label="Send invites" LabelPosition="LabelPosition.Start" Class="@ImportOptionsClass"/>
+                    </MudStack>
+                </MudPaper>
             </MudStack>
         </MudStack>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel" Disabled="IsBusy">Close</MudButton>
-        <MudCheckBox T="bool" Size="Size.Small" @bind-Checked="@ShoulSendInvites" Class="@InviteBoxClass" Label="Send invites to imported customers" LabelPosition="LabelPosition.Start" />
+
         <MudButton OnClick="ImportFromFile" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")"
                    Disabled="DisableImportButton">Import</MudButton>
     </DialogActions>

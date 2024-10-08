@@ -34,6 +34,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         [Inject]
         public ICustomerService CustomerService { get; set; }
 
+        [Inject]
+        private IBrokerStaffService BrokerStaffService { get; set; }
+
         [Parameter]
         public int BrokerId { get; set; }
 
@@ -64,6 +67,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         public string Delimiter { get; set; } = ",";
 
+        private string FileContent { get; set; } = string.Empty;
+
         public bool HasValidRecords => ImportPreview is not null && ImportPreview.RecordsImportedCount > 0;
 
         private string CurrentFileName => csvFile is not null ? csvFile.Name : string.Empty;
@@ -88,7 +93,11 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             }
         }
 
+        private bool FatalErrorOccurred => ErrorRecordsMessage.Contains("Fatal");
+
         private string ImportResultsClass => ImportPreview is null ? $"mt-2 p-1 {HIDE_CLASS}" : "mt-2 p-1";
+
+        private string ImportOptionsClass => FatalErrorOccurred ? HIDE_CLASS : string.Empty;
 
         private string ErrorMessagesDownloadClass
         {
@@ -109,8 +118,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 return ImportPreview.RecordsInErrorCount > 0 ? string.Empty : HIDE_CLASS;
             }
         }
-
-        private string InviteBoxClass { get; set; } = HIDE_CLASS;
 
         private string SucessfulRecordsMessage
         {
@@ -140,7 +147,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         private string GetSampleHeader()
         {
             var header = string.Empty;
-            foreach (var field in RecordDefinitions.OrderBy(d => d.ColumnOrder))
+            foreach (var field in RecordDefinitions.Where(d => d.Active).OrderBy(d => d.ColumnOrder))
             {
                 if (!string.IsNullOrWhiteSpace(header)) header += Delimiter;
                 header += field.FieldName;
@@ -158,11 +165,11 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         {
             csvFile = file;
 
+            FileContent = string.Empty;
+
             ImportPreview = null;
 
             ImportHasRun = false;
-
-            InviteBoxClass = HIDE_CLASS;
 
             await PreviewFile();
 
@@ -181,12 +188,12 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             if (HasHeaderRecord) UpdateDefinitionsFrom(ImportPreview.HeaderFields);
 
             IsBusy = false;
-
-            InviteBoxClass = HasValidRecords ? string.Empty : HIDE_CLASS;
         }
 
         private void UpdateDefinitionsFrom(string[] headerFields)
         {
+            if (headerFields == null || headerFields.Length == 0) return;
+
             foreach (var field in RecordDefinitions)
             {
                 field.Active = false;
@@ -223,8 +230,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             {
                 Snackbar.Add("Import has finished", Severity.Success);
 
-                InviteBoxClass = HIDE_CLASS;
-
                 MudDialog.Close();
             }
         }
@@ -232,13 +237,12 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         private async Task<ImportRequest> BuildImportRequest()
         {
 
-            string fileContent = string.Empty;
-
-            var contentStream = csvFile.OpenReadStream();
-
-            using (var streamReader = new StreamReader(contentStream))
+            if (string.IsNullOrWhiteSpace(FileContent))
             {
-                fileContent = await streamReader.ReadToEndAsync();
+                var contentStream = csvFile.OpenReadStream();
+
+                using var streamReader = new StreamReader(contentStream);
+                FileContent = await streamReader.ReadToEndAsync();
             }
 
             var request = new ImportRequest()
@@ -247,7 +251,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 HasHeaderRecord = HasHeaderRecord,
                 Delimiter = Delimiter,
                 FileName = csvFile.Name,
-                CsvFile = fileContent,
+                CsvFile = FileContent,
                 SendAppInviteToCustomers = ShoulSendInvites,
                 RecordDefinitions = RecordDefinitions.ToArray()
             };
@@ -295,12 +299,20 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private async Task OpenDefaultsDialog()
         {
-            var dialogParams = new DialogParameters()
+            var parameters = new DialogParameters()
             {
-                { "Definitions" , RecordDefinitions.OrderBy(d => d.ColumnOrder) }
+                { "Definitions" , RecordDefinitions.OrderBy(d => d.ColumnOrder) },
+                { "HasHeaderRecord" , HasHeaderRecord },
+                { "Delimiter" , Delimiter }
             };
 
-            await DialogService.Show<ClientImportDefinitionDialog>("Columns", dialogParams).Result;
+            var options = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true
+            };
+
+            await DialogService.Show<ClientImportDefinitionDialog>("Columns", parameters, options).Result;
         }
 
         private string GetRowStyle(CustomerImportDto record, int index)
@@ -325,6 +337,5 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             byte[] fileContent = Encoding.UTF8.GetBytes(sampleContent);
             await Extensions.Extensions.SaveAs(JSRuntime, "customer_template.csv", fileContent);
         }
-
     }
 }

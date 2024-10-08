@@ -13,6 +13,12 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         MudDialogInstance MudDialog { get; set; }
 
         [Parameter]
+        public bool HasHeaderRecord { get; set; }
+
+        [Parameter]
+        public string Delimiter { get; set; }
+
+        [Parameter]
         public IEnumerable<ImportRecordDefinitionDto> Definitions { get; set; }
 
         public bool IsEditing { get; set; }
