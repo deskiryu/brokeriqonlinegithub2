@@ -1,4 +1,5 @@
 @using System.Reflection
+@using BrokerIQ.Online.Server.Extensions
 
 <MudDialog>
     <TitleContent>
@@ -8,7 +9,8 @@
         <MudStack>
             <MudAlert Severity="Severity.Info" Style="@($"color:{Colors.Shades.Black};")">
                 <p>
-                    Download and populate the <MudLink OnClick="DownloadSampleFile" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">import_template.csv</MudLink>. The email is mandatory, but all other fields are optional.
+                    To create your import file, you can download and populate the <MudLink OnClick="DownloadSampleFile" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">import_template.csv</MudLink>. Your file does not need to have all the columns, but the email has to be included and the header names must match.
+                    <br /><br />
                     If your file does not include a header, you'll need to tell us the <MudLink OnClick="OpenDefaultsDialog" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">format</MudLink> it is in.
                 </p>
             </MudAlert>
@@ -44,7 +46,7 @@
                                     {
                                         <MudTd DataLabel="@item.FieldName">
                                             <MudTooltip Text="@GetErrorMessagesFor(context)">
-                                                @GetPropertyValue(context, props.First(p => p.Name == item.FieldName))
+                                                @context.GetPropertyValue(props.First(p => p.Name == item.FieldName))
                                             </MudTooltip>
                                         </MudTd>
                                     }
@@ -71,7 +73,7 @@
                         </MudTooltip>
                     </MudStack>
                     <MudStack Row="true">
-                        <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Label="Send invites" LabelPosition="LabelPosition.Start" Class="@ImportOptionsClass"/>
+                        <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Label="Send invites" LabelPosition="LabelPosition.Start" Class="@ImportOptionsClass" />
                     </MudStack>
                 </MudPaper>
             </MudStack>

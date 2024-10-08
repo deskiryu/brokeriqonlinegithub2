@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Import;
 using BrokerIQ.Dto.Request;
 using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -146,14 +147,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private string GetSampleHeader()
         {
-            var header = string.Empty;
-            foreach (var field in RecordDefinitions.Where(d => d.Active).OrderBy(d => d.ColumnOrder))
-            {
-                if (!string.IsNullOrWhiteSpace(header)) header += Delimiter;
-                header += field.FieldName;
-            }
-
-            return header;
+            return Import.GetSampleHeader(RecordDefinitions, Delimiter);
         }
 
         private void Cancel()
@@ -279,22 +273,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             return $"{fileName} {toAppend}.csv";
 
-        }
-
-        private string GetPropertyValue(CustomerImportDto dto, PropertyInfo property, byte maxLength = 18)
-        {
-            var typeName = property.PropertyType.FullName;
-
-            if (typeName.Contains("DateTime"))
-            {
-                var dateValue = property.GetValue(dto);
-
-                return dateValue == null ? string.Empty : ((DateTime)dateValue).ToString("yyyy-MM-dd");
-            }
-
-            var propertyValue = property.GetValue(dto);
-            var value = propertyValue is not null ? property.GetValue(dto).ToString() : string.Empty;
-            return value.Length > maxLength ? value.Substring(0, 15) + "..." : value;
         }
 
         private async Task OpenDefaultsDialog()
