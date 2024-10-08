@@ -10,6 +10,7 @@ using BrokerIQ.Dto.Dto.Import;
 using BrokerIQ.Dto.Request;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Services;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -98,7 +99,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private string ImportResultsClass => ImportPreview is null ? $"mt-2 p-1 {HIDE_CLASS}" : "mt-2 p-1";
 
-        private string ImportOptionsClass => FatalErrorOccurred ? HIDE_CLASS : string.Empty;
+        private string ImportOptionsClass => FatalErrorOccurred ? $"ma-1 {HIDE_CLASS }" : "ma-1";
 
         private string ErrorMessagesDownloadClass
         {
@@ -143,6 +144,19 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
                 return WasSimulatedRun ? $"Records with errors : {ImportPreview.RecordsInErrorCount}." : $"Records NOT imported : {ImportPreview.RecordsInErrorCount}.";
             }
+        }
+
+        public IEnumerable<Online.Models.BrokerStaff> AssignableStaff { get; set; }
+
+        public int SelectedStaffId { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            AssignableStaff = Array.Empty<Online.Models.BrokerStaff>();
+
+            AssignableStaff = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId))
+                .Where(s => s.StaffTypeId == Dto.Enum.StaffTypeEnum.Admin || s.StaffTypeId == Dto.Enum.StaffTypeEnum.Advisor)
+                .ToArray();
         }
 
         private string GetSampleHeader()
@@ -247,7 +261,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 FileName = csvFile.Name,
                 CsvFile = FileContent,
                 SendAppInviteToCustomers = ShoulSendInvites,
-                RecordDefinitions = RecordDefinitions.ToArray()
+                RecordDefinitions = RecordDefinitions.ToArray(),
+                AssignToStaffId = SelectedStaffId != 0 ? SelectedStaffId : null
             };
 
             return request;
