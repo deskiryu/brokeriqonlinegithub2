@@ -77,6 +77,14 @@
                     </MudStack>
                     <MudStack Row="true">
                         <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Label="Send invites" LabelPosition="LabelPosition.Start" Class="@ImportOptionsClass" />
+                        <MudSelect Label="Assign clients to" @bind-Value="@SelectedStaffId">
+                            <MudSelectItem Class="@ImportOptionsClass" Value="0">No one</MudSelectItem>
+                            @foreach (Online.Models.BrokerStaff staff in AssignableStaff)
+                            {
+                                var current = staff;
+                                <MudSelectItem Value="@current.Id">@current.FullName </MudSelectItem>
+                            }
+                        </MudSelect>
                     </MudStack>
                 </MudPaper>
             </MudStack>
