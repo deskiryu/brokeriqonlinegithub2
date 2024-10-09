@@ -39,6 +39,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         IAccountService AccountService { get; set; }
 
+        [Inject]
+        ISnackbar Snackbar { get; set; }
+
         public User User { get; set; }
 
         public List<Customer> Customers { get; set; }
@@ -47,7 +50,7 @@ namespace BrokerIQ.Online.Pages
 
         public List<BrokerStaff> Employees { get; set; }
 
-        public HashSet<Customer> SelectedCustomers { get; set; }
+        public HashSet<Customer> SelectedCustomers { get; set; } = new HashSet<Customer>();
 
         public int BrokerId { get; set; }
 
@@ -444,6 +447,15 @@ namespace BrokerIQ.Online.Pages
             await GetCustomers();
 
             StateHasChanged();
+        }
+
+        protected async Task SendInvite()
+        {
+            var customerIds = SelectedCustomers.Select(c => c.Id).ToArray();
+            
+            var wasSuccessfull = await CustomerService.SendAppInvites(customerIds);
+
+            Snackbar.Add(wasSuccessfull ? "Emails sent successfully" : "Some emails failed" , wasSuccessfull ? Severity.Success : Severity.Warning);
         }
     }
 }
