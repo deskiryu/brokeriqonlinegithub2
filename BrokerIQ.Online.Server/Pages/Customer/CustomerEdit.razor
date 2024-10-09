@@ -80,11 +80,11 @@
                                    Dense="true"
                                    @bind-Value="@SelectedGender">
                             @{
-                                var names = Enum.GetNames(typeof(GenderEnum));
-                                for (int i = 0; i < names.Length; i++)
+                                var values = Enum.GetValues(typeof(GenderEnum)).Cast<GenderEnum>();
+                                foreach (var item in values)
                                 {
-                                    GenderEnum looped = (GenderEnum)i;
-                                    <MudSelectItem Value=@i>@looped.GetDisplayName()</MudSelectItem>
+                                    GenderEnum looped = item;
+                                    <MudSelectItem Value=@((int)looped)>@looped.GetDisplayName()</MudSelectItem>
                                 }
                             }
                         </MudSelect>
@@ -108,11 +108,13 @@
                                Dense="true"
                                Placeholder="None chosen"
                                @bind-Value="@SelectedCustomerCategory">
-                        @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
-                        {
-                            CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
-                            int id = (int)looped;
-                            <MudSelectItem Value="@id">@looped.GetDisplayName()</MudSelectItem>
+                        @{
+                            var values = Enum.GetValues(typeof(CustomerCategoryEnum)).Cast<CustomerCategoryEnum>();
+                            foreach (var item in values)
+                            {
+                                CustomerCategoryEnum looped = item;
+                                <MudSelectItem Value=@((int)looped)>@looped.GetDisplayName()</MudSelectItem>
+                            }
                         }
                     </MudSelect>
                 </div>
@@ -126,11 +128,11 @@
                                Dense="true"
                                @bind-Value="@SelectedEmploymentStatus">
                         @{
-                            var names = Enum.GetNames(typeof(EmploymentEnum));
-                            for (int i = 0; i < names.Length; i++)
+                            var values = Enum.GetValues(typeof(EmploymentEnum)).Cast<EmploymentEnum>();
+                            foreach (var item in values)
                             {
-                                EmploymentEnum looped = (EmploymentEnum)i;
-                                <MudSelectItem Value=@i>@looped.GetDisplayName()</MudSelectItem>
+                                EmploymentEnum looped = item;
+                                <MudSelectItem Value=@((int)looped)>@looped.GetDisplayName()</MudSelectItem>
                             }
                         }
                     </MudSelect>
@@ -145,11 +147,11 @@
                                Dense="true"
                                @bind-Value="@SelectedResidentialStatus">
                         @{
-                            var names = Enum.GetNames(typeof(ResidentialStatusEnum));
-                            for (int i = 0; i < names.Length; i++)
+                            var values = Enum.GetValues(typeof(ResidentialStatusEnum)).Cast<ResidentialStatusEnum>();
+                            foreach (var item in values)
                             {
-                                ResidentialStatusEnum looped = (ResidentialStatusEnum)i;
-                                <MudSelectItem Value=@i>@looped.GetDisplayName()</MudSelectItem>
+                                ResidentialStatusEnum looped = item;
+                                <MudSelectItem Value=@((int)looped)>@looped.GetDisplayName()</MudSelectItem>
                             }
                         }
                     </MudSelect>
