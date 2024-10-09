@@ -12,6 +12,8 @@ using MudBlazor;
 using System.Runtime.InteropServices;
 using System.Linq;
 using System.Collections.Generic;
+using BrokerIQ.Online.Services;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -29,15 +31,14 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         [Microsoft.AspNetCore.Components.Parameter]
         public Models.BrokerIdentifier BrokerIdentifier  { get; set; }
 
+        [Inject]
+        public IAlertService AlertService { get; set; }
+
         MudForm form;
 
         MudSelect<int> ReminderTypeSelect;
 
         private string OptionLink { get; set; }
-
-        public int LinkStart;
-
-        public int LinkEnd;
 
         private bool HideLink { get; set; }
 
@@ -98,10 +99,20 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             form.Validate();
 
-            if (LinkStart > 0)
+            //Find substring
+            if (HideLink)
             {
-                Option.MessageContent = Option.MessageContent.Insert(LinkEnd, "-->");
-                Option.MessageContent = Option.MessageContent.Insert(LinkStart, "<--");
+
+                var found = Option.MessageContent.IndexOf(OptionLink);
+                if (found > 0)
+                {
+                    Option.MessageContent = Option.MessageContent.Insert(found + OptionLink.Length, "-->");
+                    Option.MessageContent = Option.MessageContent.Insert(found, "<--");
+                }
+                else
+                {
+                    this.AlertService.Warn("The link has been altered and may not show in the reminder correctly");
+                }
             }
 
             if (form.IsValid) MudDialog.Close(DialogResult.Ok(Option));
@@ -111,13 +122,24 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         protected override async Task OnInitializedAsync()
         {
-            HideLink = Option.Id > 0 && Option.MessageContent.Contains("<--") && Option.MessageContent.Contains("-->");
+            if(Option.Id > 0)
+            {         
+                var startLink = Option.MessageContent.IndexOf("<--") + 3;
+                var endLink = Option.MessageContent.IndexOf("-->");
 
-            if (HideLink)
-            {
-                var linkStart = Option.MessageContent.IndexOf("<--") + 3;
-                var linkEnd = Option.MessageContent.IndexOf("-->");
-                OptionLink = Option.MessageContent[linkStart..linkEnd];
+                if (startLink > 0 && endLink > 0)
+                {
+                    HideLink = true;
+                    try
+                    {
+                        OptionLink = Option.MessageContent.Substring(startLink, endLink - startLink);
+                        Option.MessageContent = Option.MessageContent.FormatForMobileNotification();
+                    }
+                    catch
+                    {
+
+                    }
+                }
             }
         }
 
@@ -143,11 +165,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         async void InsertLink()
         {
-            if (!OptionLink.ToLower().StartsWith("http"))
-            {
-                OptionLink = "http://" + OptionLink;
-            }
-
             if (!OptionLink.IsValidUrl())
             {
                 var dialogParams = new DialogParameters
@@ -160,9 +177,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             }
 
             Option.MessageContent += ' ';
-            LinkStart = Option.MessageContent.Length;
             Option.MessageContent += OptionLink;
-            LinkEnd = Option.MessageContent.Length;
             Option.MessageContent += ' ';
 
             HideLink = true;

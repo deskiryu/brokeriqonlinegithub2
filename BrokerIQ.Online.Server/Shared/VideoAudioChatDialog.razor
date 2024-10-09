@@ -86,10 +86,6 @@
 
         public string Link { get; set; }
 
-        public int LinkStart;
-
-        public int LinkEnd;
-
         public bool HasEmbeddedUrl { get; set; }
 
         public bool HideLink { get; set; }
@@ -117,13 +113,16 @@
         var actualMessage = model.MessageToSend;
         if (model.HasEmbeddedUrl)
         {
-            if (actualMessage.Length >= model.LinkStart)
+            //Find substring
+            var found = actualMessage.IndexOf(model.Link);
+            if (found > 0)
             {
-                actualMessage = actualMessage.Insert(model.LinkStart, "<--");
-                if (actualMessage.Length >= model.LinkEnd + 3)
-                {
-                    actualMessage = actualMessage.Insert(model.LinkEnd + 3, "-->");
-                }
+                actualMessage = actualMessage.Insert(found + model.Link.Length, "-->");
+                actualMessage = actualMessage.Insert(found, "<--");
+            }
+            else
+            {
+                this.AlertService.Warn("The link has been altered and may not show in the reminder correctly");
             }
         }
         model.MessageToSend = actualMessage;
@@ -155,11 +154,6 @@
 
     public async void InsertLink()
     {
-        if (!model.Link.ToLower().StartsWith("http"))
-        {
-            model.Link = "http://" + model.Link;
-        }
-
         if (!model.Link.IsValidUrl())
         {
             var dialogParams = new DialogParameters
@@ -171,11 +165,7 @@
             return;
         }
 
-        model.MessageToSend += ' ';
-        model.LinkStart = model.MessageToSend.Length;
         model.MessageToSend += model.Link;
-        model.LinkEnd = model.MessageToSend.Length;
-        model.MessageToSend += ' ';
 
         model.HasEmbeddedUrl = true;
         model.HideLink = true;
