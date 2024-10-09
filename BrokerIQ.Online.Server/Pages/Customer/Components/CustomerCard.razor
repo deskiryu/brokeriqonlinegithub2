@@ -246,12 +246,12 @@
                         </MudButton>
                     }
 
-                    @if (User.IsAdmin)
-                    {
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-1" @onclick="ResendEmailCustomer">
                             Resend Verify Email
                         </MudButton>
 
+                    @if (User.IsAdmin)
+                    {
                         @if (!Customer.ConnectedToCustomerId.HasValue)
                         {
                             <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" class="ml-6" @onclick="DeleteCustomer">
