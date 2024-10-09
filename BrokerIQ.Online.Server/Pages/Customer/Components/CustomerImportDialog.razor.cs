@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Import;
 using BrokerIQ.Dto.Request;
 using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Extensions;
-using BrokerIQ.Online.Server.Services;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -40,7 +40,11 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         private IBrokerStaffService BrokerStaffService { get; set; }
 
         [Parameter]
+        public User User { get; set; }
+
+        [Parameter]
         public int BrokerId { get; set; }
+
 
         private const string HIDE_CLASS = "d-none";
 
@@ -253,6 +257,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 FileContent = await streamReader.ReadToEndAsync();
             }
 
+            var staffId = User.StaffBrokerId.HasValue ? User.StaffBrokerId : SelectedStaffId != 0 ? SelectedStaffId : null;
             var request = new ImportRequest()
             {
                 BrokerId = BrokerId,
@@ -262,7 +267,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 CsvFile = FileContent,
                 SendAppInviteToCustomers = ShoulSendInvites,
                 RecordDefinitions = RecordDefinitions.ToArray(),
-                AssignToStaffId = SelectedStaffId != 0 ? SelectedStaffId : null
+                AssignToStaffId = staffId
             };
 
             return request;
@@ -317,6 +322,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             var errorMessages = ImportPreview.Errors.Where(e => e.Line == record.RecordNumber).Select(e => e.ErrorMessage).ToArray();
             return string.Join(" ", errorMessages);
         }
+
         private MarkupString GetSampleContent()
         {
             var sampleData = new CustomerImportDto[] {

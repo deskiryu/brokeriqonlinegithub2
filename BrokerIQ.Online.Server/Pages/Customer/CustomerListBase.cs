@@ -433,6 +433,7 @@ namespace BrokerIQ.Online.Pages
         {
             var dialogParams = new DialogParameters
             {
+                { "User", User },
                 { "BrokerId", BrokerId},
             };
 
