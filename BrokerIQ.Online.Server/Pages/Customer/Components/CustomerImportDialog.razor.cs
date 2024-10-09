@@ -257,7 +257,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 FileContent = await streamReader.ReadToEndAsync();
             }
 
-            var staffId = User.StaffBrokerId.HasValue ? User.StaffBrokerId : SelectedStaffId != 0 ? SelectedStaffId : null;
             var request = new ImportRequest()
             {
                 BrokerId = BrokerId,
@@ -267,7 +266,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 CsvFile = FileContent,
                 SendAppInviteToCustomers = ShoulSendInvites,
                 RecordDefinitions = RecordDefinitions.ToArray(),
-                AssignToStaffId = staffId
+                AssignToStaffId = SelectedStaffId != 0 ? SelectedStaffId : null
             };
 
             return request;
