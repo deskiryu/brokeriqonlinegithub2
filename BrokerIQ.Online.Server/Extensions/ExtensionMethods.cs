@@ -44,6 +44,13 @@ namespace BrokerIQ.Online.Server.Extensions
             }
         }
 
+        public async static Task PreviewFileText(IJSRuntime js, string htmlIn)
+        {
+                await js.InvokeAsync<object>(
+                    "openInTabText",
+                    htmlIn);
+        }
+
         public async static Task OpenLinkInNewTab(IJSRuntime js, string url)
         {
             await js.InvokeVoidAsync("open", url, "_blank");
@@ -123,6 +130,11 @@ namespace BrokerIQ.Online.Server.Extensions
             }
 
             return false;
+        }
+
+        public static string FormatForMobileNotification(this string message)
+        {
+            return message.Replace("<--", "").Replace("-->", "").Trim();
         }
     }
 }

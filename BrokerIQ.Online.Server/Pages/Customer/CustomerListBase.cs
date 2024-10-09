@@ -78,8 +78,10 @@ namespace BrokerIQ.Online.Pages
         public bool CanImport { get; set; }
 
         protected int showNonAppUsersOnlyAsInt;
+
         protected bool showNonAppUsersOnly;
-        protected async void  ShowNonAppUsersOnly()
+
+        protected async void ShowNonAppUsersOnly()
         {
             showNonAppUsersOnly = !showNonAppUsersOnly;
             showNonAppUsersOnlyAsInt = showNonAppUsersOnly ? 1 : 0;
@@ -434,9 +436,12 @@ namespace BrokerIQ.Online.Pages
                 { "BrokerId", BrokerId},
             };
 
-            await DialogService.Show<CustomerImportDialog>("Import customers", dialogParams).Result;
+            var dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Large, FullWidth = true };
+
+            await DialogService.Show<CustomerImportDialog>("Import customers", dialogParams, dialogOptions).Result;
 
             await GetCustomers();
+
             StateHasChanged();
         }
     }
