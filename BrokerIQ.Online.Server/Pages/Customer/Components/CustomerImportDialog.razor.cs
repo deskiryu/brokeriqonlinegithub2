@@ -51,18 +51,15 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         private string TitleFileName => string.IsNullOrWhiteSpace(CurrentFileName) ? string.Empty : $" from {CurrentFileName}";
 
         public IEnumerable<ImportRecordDefinitionDto> RecordDefinitions { get; set; } = new List<ImportRecordDefinitionDto>(){
-           new ImportRecordDefinitionDto() { ColumnOrder = 0, FieldName = "Title", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 1, FieldName = "Forename", Active=true, Required=false, DefaultValue=string.Empty  },
-           new ImportRecordDefinitionDto() { ColumnOrder = 2, FieldName = "Surname", Active=true, Required=false, DefaultValue=string.Empty  },
-           new ImportRecordDefinitionDto() { ColumnOrder = 3, FieldName = "Nationality", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 0, FieldName = "Email", Active=true, Required=true, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 1, FieldName = "Title", Active=true, Required=false, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 2, FieldName = "Forename", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 3, FieldName = "Surname", Active=true, Required=false, DefaultValue=string.Empty  },
            new ImportRecordDefinitionDto() { ColumnOrder = 4, FieldName = "Telephone", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 5, FieldName = "Email", Active=true, Required=true, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 6, FieldName = "AddressLine", Active=true, Required=false, DefaultValue=string.Empty  },
-           new ImportRecordDefinitionDto() { ColumnOrder = 7, FieldName = "City", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 8, FieldName = "PostCode", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 9, FieldName = "DateOfBirth", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 10, FieldName = "Employment", Active=true, Required=false, DefaultValue=string.Empty  },
-           new ImportRecordDefinitionDto() { ColumnOrder = 11, FieldName = "ResidentialStatus", Active=true, Required=false, DefaultValue=string.Empty}
+           new ImportRecordDefinitionDto() { ColumnOrder = 5, FieldName = "AddressLine", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 6, FieldName = "City", Active=true, Required=false, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 7, FieldName = "PostCode", Active=true, Required=false, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 8, FieldName = "DateOfBirth", Active=true, Required=false, DefaultValue=string.Empty }
         };
 
         private IBrowserFile csvFile;
@@ -330,30 +327,24 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                     Title = "Dr",
                     Forename = "Graham",
                     Surname = "Morales",
-                    Nationality = 1,
                     Telephone = "070 9711 7201",
                     Email = "m-graham@aol.couk",
                     AddressLine = "343-4795 Lectus Avenue",
                     City = "Devizes",
                     PostCode = "RD8Q 6FA",
-                    DateOfBirth = DateTime.Parse("1997-03-02"),
-                    Employment = 4,
-                    ResidentialStatus = 1
+                    DateOfBirth = DateTime.Parse("1997-03-02")
                 },
                 new CustomerImportDto()
                 {
                     Title = "Mrs",
                     Forename = "Cassady",
                     Surname = "HinAton",
-                    Nationality = 2,
                     Telephone = "07624 157575",
                     Email = "hinton-cassady@aol.net",
                     AddressLine = "762-9200 Donec St.",
                     City = "Kington",
                     PostCode = "LJ8 5UJ",
-                    DateOfBirth = DateTime.Parse("1979-07-23"),
-                    Employment = 2,
-                    ResidentialStatus = 3
+                    DateOfBirth = DateTime.Parse("1979-07-23")
                 }
             };
 
