@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.Dto.Import;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Import;
 using BrokerIQ.Dto.Request;
@@ -41,6 +42,8 @@ namespace BrokerIQ.Online.Services.Interface
         Task<CsvImportCustomerDto> GetImportDetails(int customerId);
 
         Task<bool> SendAppInvite(int customerId);
+
+        Task<bool> SendAppInvites(int[] customerIds);
 
         Task<IEnumerable<Customer>> Search(int brokerId, string value);
 

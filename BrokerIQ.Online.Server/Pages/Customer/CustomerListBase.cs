@@ -39,6 +39,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         IAccountService AccountService { get; set; }
 
+        [Inject]
+        ISnackbar Snackbar { get; set; }
+
         public User User { get; set; }
 
         public List<Customer> Customers { get; set; }
@@ -47,7 +50,7 @@ namespace BrokerIQ.Online.Pages
 
         public List<BrokerStaff> Employees { get; set; }
 
-        public HashSet<Customer> SelectedCustomers { get; set; }
+        public HashSet<Customer> SelectedCustomers { get; set; } = new HashSet<Customer>();
 
         public int BrokerId { get; set; }
 
@@ -78,8 +81,10 @@ namespace BrokerIQ.Online.Pages
         public bool CanImport { get; set; }
 
         protected int showNonAppUsersOnlyAsInt;
+
         protected bool showNonAppUsersOnly;
-        protected async void  ShowNonAppUsersOnly()
+
+        protected async void ShowNonAppUsersOnly()
         {
             showNonAppUsersOnly = !showNonAppUsersOnly;
             showNonAppUsersOnlyAsInt = showNonAppUsersOnly ? 1 : 0;
@@ -431,13 +436,40 @@ namespace BrokerIQ.Online.Pages
         {
             var dialogParams = new DialogParameters
             {
+                { "User", User },
                 { "BrokerId", BrokerId},
             };
 
-            await DialogService.Show<CustomerImportDialog>("Import customers", dialogParams).Result;
+            var dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Large, FullWidth = true };
+
+            await DialogService.Show<CustomerImportDialog>("Import customers", dialogParams, dialogOptions).Result;
 
             await GetCustomers();
+
             StateHasChanged();
+        }
+
+        protected async Task SendInvite()
+        {
+            var toInvite = SelectedCustomers.Where(c => string.IsNullOrWhiteSpace(c.AppVersion)).ToArray();
+
+            var dialogParams = new DialogParameters
+            {
+                { "SelectedCustomers", toInvite }
+            };
+
+            var result = await DialogService.Show<BulkActionConfirmationDialog>("Import customers", dialogParams).Result;
+
+            if (!result.Canceled)
+            {
+                var customerIds = toInvite.Select(c => c.Id).ToArray();
+
+                var wasSuccessfull = await CustomerService.SendAppInvites(customerIds);
+
+                SelectedCustomers = new HashSet<Customer>();
+
+                Snackbar.Add(wasSuccessfull ? "Emails sent successfully" : "Some emails failed", wasSuccessfull ? Severity.Success : Severity.Warning);
+            }
         }
     }
 }

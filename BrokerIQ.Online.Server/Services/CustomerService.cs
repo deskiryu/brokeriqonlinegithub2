@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using BrokerIQ.Dto.Dto.Import;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Import;
 using BrokerIQ.Dto.Models;
@@ -208,6 +209,14 @@ namespace BrokerIQ.Online.Services
             return true;
         }
 
+        public async Task<IEnumerable<CustomerImportDto>> PreviewImportData(ImportRequest request)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<ImportRequest, IEnumerable<CustomerImportDto>>($"{this.customerUrl}/previewimportdata", request);
+        }
+
         public async Task<ImportResponse> Import(ImportRequest request)
         {
             var user = await this.accountService.GetUser();
@@ -240,6 +249,14 @@ namespace BrokerIQ.Online.Services
             return await this.requestProviderService.Post<int, bool>($"{this.customerUrl}/{customerId}/sendappinvite", customerId);
         }
 
+        public async Task<bool> SendAppInvites(int[] customerIds)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<int[], bool>($"{this.customerUrl}/sendappinvites", customerIds);
+        }
+
         public async Task<IEnumerable<Customer>> Search(int brokerId, string value)
         {
             var user = await this.accountService.GetUser();
@@ -256,7 +273,7 @@ namespace BrokerIQ.Online.Services
 
             return await requestProviderService.Post<ConnectCustomersRequest, bool>($"{customerUrl}/connect", new ConnectCustomersRequest()
             {
-                BrokerId= brokerId,
+                BrokerId = brokerId,
                 MainCustomerId = mainCustomerId,
                 ConnectedCustomerId = connectedCustomerId
             });
