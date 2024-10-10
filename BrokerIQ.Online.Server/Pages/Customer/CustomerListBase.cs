@@ -436,6 +436,7 @@ namespace BrokerIQ.Online.Pages
         {
             var dialogParams = new DialogParameters
             {
+                { "User", User },
                 { "BrokerId", BrokerId},
             };
 
@@ -450,11 +451,25 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task SendInvite()
         {
-            var customerIds = SelectedCustomers.Select(c => c.Id).ToArray();
-            
-            var wasSuccessfull = await CustomerService.SendAppInvites(customerIds);
+            var toInvite = SelectedCustomers.Where(c => string.IsNullOrWhiteSpace(c.AppVersion)).ToArray();
 
-            Snackbar.Add(wasSuccessfull ? "Emails sent successfully" : "Some emails failed" , wasSuccessfull ? Severity.Success : Severity.Warning);
+            var dialogParams = new DialogParameters
+            {
+                { "SelectedCustomers", toInvite }
+            };
+
+            var result = await DialogService.Show<BulkActionConfirmationDialog>("Import customers", dialogParams).Result;
+
+            if (!result.Canceled)
+            {
+                var customerIds = toInvite.Select(c => c.Id).ToArray();
+
+                var wasSuccessfull = await CustomerService.SendAppInvites(customerIds);
+
+                SelectedCustomers = new HashSet<Customer>();
+
+                Snackbar.Add(wasSuccessfull ? "Emails sent successfully" : "Some emails failed", wasSuccessfull ? Severity.Success : Severity.Warning);
+            }
         }
     }
 }
