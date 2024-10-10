@@ -9,12 +9,9 @@
         <MudStack>
             <MudAlert Severity="Severity.Info" Style="@($"color:{Colors.Shades.Black};")">
                 <p>
-
-                    Your CSV file header columns must have exactly the same names as in <MudLink OnClick="DownloadSampleFile" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">here</MudLink>.
+                    Your CSV file must have a header and the column names must must exactly the header names in the sample <MudLink OnClick="DownloadSampleFile" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">here</MudLink>.
                     <br /><br />
                     The only column that <b>must</b> be there is Email. All other columns are optional and the order of the columns does not matter.
-                    <br /><br />
-                    If your file does not include a header, you'll need to tell us the <MudLink OnClick="OpenDefaultsDialog" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">format</MudLink> it is in.
                 </p>
             </MudAlert>
 
