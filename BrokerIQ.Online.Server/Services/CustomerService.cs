@@ -249,6 +249,14 @@ namespace BrokerIQ.Online.Services
             return await this.requestProviderService.Post<int, bool>($"{this.customerUrl}/{customerId}/sendappinvite", customerId);
         }
 
+        public async Task<bool> SendAppInvites(int[] customerIds)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<int[], bool>($"{this.customerUrl}/sendappinvites", customerIds);
+        }
+
         public async Task<IEnumerable<Customer>> Search(int brokerId, string value)
         {
             var user = await this.accountService.GetUser();
