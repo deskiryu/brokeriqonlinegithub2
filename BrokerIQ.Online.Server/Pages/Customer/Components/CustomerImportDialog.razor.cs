@@ -53,8 +53,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         public IEnumerable<ImportRecordDefinitionDto> RecordDefinitions { get; set; } = new List<ImportRecordDefinitionDto>(){
            new ImportRecordDefinitionDto() { ColumnOrder = 0, FieldName = "Email", Active=true, Required=true, DefaultValue=string.Empty },
            new ImportRecordDefinitionDto() { ColumnOrder = 1, FieldName = "Title", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 2, FieldName = "Forename", Active=true, Required=false, DefaultValue=string.Empty  },
-           new ImportRecordDefinitionDto() { ColumnOrder = 3, FieldName = "Surname", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 2, FieldName = "Forename", Active=true, Required=true, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 3, FieldName = "Surname", Active=true, Required=true, DefaultValue=string.Empty  },
            new ImportRecordDefinitionDto() { ColumnOrder = 4, FieldName = "Telephone", Active=true, Required=false, DefaultValue=string.Empty },
            new ImportRecordDefinitionDto() { ColumnOrder = 5, FieldName = "AddressLine", Active=true, Required=false, DefaultValue=string.Empty  },
            new ImportRecordDefinitionDto() { ColumnOrder = 6, FieldName = "City", Active=true, Required=false, DefaultValue=string.Empty },
