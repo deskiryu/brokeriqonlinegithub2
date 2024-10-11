@@ -210,7 +210,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             for (int i = 0; i < headerFields.Length; i++)
             {
-                var field = RecordDefinitions.FirstOrDefault(f => f.FieldName == headerFields[i]);
+                var field = RecordDefinitions.FirstOrDefault(f => f.FieldName.ToLower().Equals(headerFields[i].ToLower()));
                 if (field == null) continue;
 
                 field.Active = true;
