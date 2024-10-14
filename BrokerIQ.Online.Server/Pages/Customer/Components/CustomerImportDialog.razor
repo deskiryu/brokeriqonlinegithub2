@@ -1,4 +1,5 @@
 @using System.Reflection
+@using BrokerIQ.Online.Server.Extensions
 
 <MudDialog>
     <TitleContent>
@@ -8,8 +9,9 @@
         <MudStack>
             <MudAlert Severity="Severity.Info" Style="@($"color:{Colors.Shades.Black};")">
                 <p>
-                    Download and populate the <MudLink OnClick="DownloadSampleFile" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">import_template.csv</MudLink>. The email is mandatory, but all other fields are optional.
-                    If your file does not include a header, you'll need to tell us the <MudLink OnClick="OpenDefaultsDialog" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">format</MudLink> it is in.
+                    Your CSV file must have a header and the column names must must exactly the header names in the sample <MudLink OnClick="DownloadSampleFile" Style="@($"color:{Colors.Blue.Accent4} !important;")" Typo="Typo.body2">here</MudLink>.
+                    <br /><br />
+                    The only columns that <b>must</b> be there are Email, Forename and Surname. All other columns are optional and the order of the columns does not matter.
                 </p>
             </MudAlert>
 
@@ -19,7 +21,7 @@
                     <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
                         <ButtonTemplate>
                             <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
-                                       StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id"> Select file </MudButton>
+                                       StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id"> Select CSV file </MudButton>
                         </ButtonTemplate>
                     </MudFileUpload>
                 }
@@ -44,7 +46,7 @@
                                     {
                                         <MudTd DataLabel="@item.FieldName">
                                             <MudTooltip Text="@GetErrorMessagesFor(context)">
-                                                @GetPropertyValue(context, props.First(p => p.Name == item.FieldName))
+                                                @context.GetPropertyValue(props.First(p => p.Name == item.FieldName))
                                             </MudTooltip>
                                         </MudTd>
                                     }
@@ -61,17 +63,28 @@
                     <MudStack Row="true">
                         <MudText Class="m-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
                         <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
-                        <MudTooltip Text="Download error list">
+                        <MudTooltip Text="Show errors">
                             <MudIconButton Icon="@Icons.Material.Filled.FormatListBulleted" Size="Size.Small" OnClick="SaveErrorMessages"
                                            Class="@ErrorMessagesDownloadClass" Color="Color.Error" />
                         </MudTooltip>
-                        <MudTooltip Text="Download records in error">
+                        <MudTooltip Text="Download the records that failed">
                             <MudIconButton Icon="@Icons.Material.Filled.TextSnippet" Size="Size.Small" OnClick="SaveRecordsInError"
                                            Class="@ErrorRecordsDownloadClass" Color="Color.Error" />
                         </MudTooltip>
                     </MudStack>
                     <MudStack Row="true">
-                        <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Label="Send invites" LabelPosition="LabelPosition.Start" Class="@ImportOptionsClass"/>
+                        <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Label="Send invites" LabelPosition="LabelPosition.Start" Class="@ImportOptionsClass" />
+                        @if (User.IsBroker || User.IsAdminStaff)
+                        {
+                            <MudSelect e Label="Assign clients to" @bind-Value="@SelectedStaffId">
+                                <MudSelectItem Class="@ImportOptionsClass" Value="0">No one</MudSelectItem>
+                                @foreach (Online.Models.BrokerStaff staff in AssignableStaff)
+                                {
+                                    var current = staff;
+                                    <MudSelectItem Value="@current.Id">@current.FullName </MudSelectItem>
+                                }
+                            </MudSelect>
+                        }
                     </MudStack>
                 </MudPaper>
             </MudStack>
@@ -79,7 +92,6 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel" Disabled="IsBusy">Close</MudButton>
-
         <MudButton OnClick="ImportFromFile" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")"
                    Disabled="DisableImportButton">Import</MudButton>
     </DialogActions>

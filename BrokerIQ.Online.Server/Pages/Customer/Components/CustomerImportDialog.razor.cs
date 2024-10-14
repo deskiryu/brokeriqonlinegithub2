@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Import;
 using BrokerIQ.Dto.Request;
 using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -38,25 +40,26 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         private IBrokerStaffService BrokerStaffService { get; set; }
 
         [Parameter]
+        public User User { get; set; }
+
+        [Parameter]
         public int BrokerId { get; set; }
+
 
         private const string HIDE_CLASS = "d-none";
 
         private string TitleFileName => string.IsNullOrWhiteSpace(CurrentFileName) ? string.Empty : $" from {CurrentFileName}";
 
         public IEnumerable<ImportRecordDefinitionDto> RecordDefinitions { get; set; } = new List<ImportRecordDefinitionDto>(){
-           new ImportRecordDefinitionDto() { ColumnOrder = 0, FieldName = "Title", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 1, FieldName = "Forename", Active=true, Required=false, DefaultValue=string.Empty  },
-           new ImportRecordDefinitionDto() { ColumnOrder = 2, FieldName = "Surname", Active=true, Required=false, DefaultValue=string.Empty  },
-           new ImportRecordDefinitionDto() { ColumnOrder = 3, FieldName = "Nationality", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 0, FieldName = "Email", Active=true, Required=true, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 1, FieldName = "Title", Active=true, Required=false, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 2, FieldName = "Forename", Active=true, Required=true, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 3, FieldName = "Surname", Active=true, Required=true, DefaultValue=string.Empty  },
            new ImportRecordDefinitionDto() { ColumnOrder = 4, FieldName = "Telephone", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 5, FieldName = "Email", Active=true, Required=true, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 6, FieldName = "AddressLine", Active=true, Required=false, DefaultValue=string.Empty  },
-           new ImportRecordDefinitionDto() { ColumnOrder = 7, FieldName = "City", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 8, FieldName = "PostCode", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 9, FieldName = "DateOfBirth", Active=true, Required=false, DefaultValue=string.Empty },
-           new ImportRecordDefinitionDto() { ColumnOrder = 10, FieldName = "Employment", Active=true, Required=false, DefaultValue=string.Empty  },
-           new ImportRecordDefinitionDto() { ColumnOrder = 11, FieldName = "ResidentialStatus", Active=true, Required=false, DefaultValue=string.Empty}
+           new ImportRecordDefinitionDto() { ColumnOrder = 5, FieldName = "AddressLine", Active=true, Required=false, DefaultValue=string.Empty  },
+           new ImportRecordDefinitionDto() { ColumnOrder = 6, FieldName = "City", Active=true, Required=false, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 7, FieldName = "PostCode", Active=true, Required=false, DefaultValue=string.Empty },
+           new ImportRecordDefinitionDto() { ColumnOrder = 8, FieldName = "DateOfBirth", Active=true, Required=false, DefaultValue=string.Empty }
         };
 
         private IBrowserFile csvFile;
@@ -97,7 +100,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private string ImportResultsClass => ImportPreview is null ? $"mt-2 p-1 {HIDE_CLASS}" : "mt-2 p-1";
 
-        private string ImportOptionsClass => FatalErrorOccurred ? HIDE_CLASS : string.Empty;
+        private string ImportOptionsClass => FatalErrorOccurred ? $"ma-1 {HIDE_CLASS }" : "ma-1";
 
         private string ErrorMessagesDownloadClass
         {
@@ -144,16 +147,22 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             }
         }
 
+        public IEnumerable<Online.Models.BrokerStaff> AssignableStaff { get; set; }
+
+        public int SelectedStaffId { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            AssignableStaff = Array.Empty<Online.Models.BrokerStaff>();
+
+            AssignableStaff = (await BrokerStaffService.GetBrokerStaffbyBrokerId(BrokerId))
+                .Where(s => s.StaffTypeId == Dto.Enum.StaffTypeEnum.Admin || s.StaffTypeId == Dto.Enum.StaffTypeEnum.Advisor)
+                .ToArray();
+        }
+
         private string GetSampleHeader()
         {
-            var header = string.Empty;
-            foreach (var field in RecordDefinitions.Where(d => d.Active).OrderBy(d => d.ColumnOrder))
-            {
-                if (!string.IsNullOrWhiteSpace(header)) header += Delimiter;
-                header += field.FieldName;
-            }
-
-            return header;
+            return Import.GetSampleHeader(RecordDefinitions, Delimiter);
         }
 
         private void Cancel()
@@ -201,7 +210,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             for (int i = 0; i < headerFields.Length; i++)
             {
-                var field = RecordDefinitions.FirstOrDefault(f => f.FieldName == headerFields[i]);
+                var field = RecordDefinitions.FirstOrDefault(f => f.FieldName.ToLower().Equals(headerFields[i].ToLower()));
                 if (field == null) continue;
 
                 field.Active = true;
@@ -253,7 +262,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 FileName = csvFile.Name,
                 CsvFile = FileContent,
                 SendAppInviteToCustomers = ShoulSendInvites,
-                RecordDefinitions = RecordDefinitions.ToArray()
+                RecordDefinitions = RecordDefinitions.ToArray(),
+                AssignToStaffId = SelectedStaffId != 0 ? SelectedStaffId : null
             };
 
             return request;
@@ -261,10 +271,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private async Task SaveErrorMessages()
         {
-            var messages = string.Join(Environment.NewLine, ImportPreview.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
+            var messages = string.Join("<br/>", ImportPreview.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
 
-            byte[] fileContent = Encoding.UTF8.GetBytes(messages);
-            await Extensions.Extensions.SaveAs(JSRuntime, GetErrorFileName(csvFile.Name, "Error Messages"), fileContent);
+            await Extensions.Extensions.PreviewFileText(JSRuntime, messages);
         }
 
         private async Task SaveRecordsInError()
@@ -279,22 +288,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             return $"{fileName} {toAppend}.csv";
 
-        }
-
-        private string GetPropertyValue(CustomerImportDto dto, PropertyInfo property, byte maxLength = 18)
-        {
-            var typeName = property.PropertyType.FullName;
-
-            if (typeName.Contains("DateTime"))
-            {
-                var dateValue = property.GetValue(dto);
-
-                return dateValue == null ? string.Empty : ((DateTime)dateValue).ToString("yyyy-MM-dd");
-            }
-
-            var propertyValue = property.GetValue(dto);
-            var value = propertyValue is not null ? property.GetValue(dto).ToString() : string.Empty;
-            return value.Length > maxLength ? value.Substring(0, 15) + "..." : value;
         }
 
         private async Task OpenDefaultsDialog()
@@ -326,16 +319,65 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             return string.Join(" ", errorMessages);
         }
 
+        private MarkupString GetSampleContent()
+        {
+            var sampleData = new CustomerImportDto[] {
+                new CustomerImportDto()
+                {
+                    Title = "Dr",
+                    Forename = "Graham",
+                    Surname = "Morales",
+                    Telephone = "070 9711 7201",
+                    Email = "m-graham@aol.couk",
+                    AddressLine = "343-4795 Lectus Avenue",
+                    City = "Devizes",
+                    PostCode = "RD8Q 6FA",
+                    DateOfBirth = DateTime.Parse("1997-03-02")
+                },
+                new CustomerImportDto()
+                {
+                    Title = "Mrs",
+                    Forename = "Cassady",
+                    Surname = "HinAton",
+                    Telephone = "07624 157575",
+                    Email = "hinton-cassady@aol.net",
+                    AddressLine = "762-9200 Donec St.",
+                    City = "Kington",
+                    PostCode = "LJ8 5UJ",
+                    DateOfBirth = DateTime.Parse("1979-07-23")
+                }
+            };
+
+            var result = string.Empty;
+            foreach (var customer in sampleData)
+            {
+                Type t = customer.GetType();
+                PropertyInfo[] props = t.GetProperties();
+
+                var line = string.Empty;
+                foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
+                {
+                    if (!string.IsNullOrWhiteSpace(line)) line += ",";
+
+                    if (props.Any(p => p.Name == item.FieldName))
+                    {
+                        line += customer.GetPropertyValue(props.First(p => p.Name == item.FieldName), 50);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(result)) result += "<br/>";
+                result += line;
+            }
+
+            return new MarkupString(result);
+        }
+
         private async Task DownloadSampleFile()
         {
             var sampleContent = GetSampleHeader();
-            sampleContent += "\n\n\n\n\n\n\nInstructions:\n";
-            sampleContent += "1. Fill in the data using the headers as guides as to what goes where\n";
-            sampleContent += "2. Remove these instructions from the file if still here when all the data is ready\n";
-            sampleContent += "3. Upload the file\n";
-
-            byte[] fileContent = Encoding.UTF8.GetBytes(sampleContent);
-            await Extensions.Extensions.SaveAs(JSRuntime, "customer_template.csv", fileContent);
+            sampleContent += "<hr />";
+            sampleContent += GetSampleContent();
+            await Extensions.Extensions.PreviewFileText(JSRuntime, sampleContent);
         }
     }
 }

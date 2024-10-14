@@ -1,0 +1,20 @@
+<MudDialog>
+    <TitleContent>
+        <MudText>Confirm recipients</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack AlignItems="AlignItems.Center">
+            <p><MudText>The following customers will be sent invites :</MudText></p>
+            <p>
+                @foreach (var customer in SelectedCustomers)
+                {
+                    <MudText>@customer.Name</MudText>
+                }
+            </p>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Confirm" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")">Confirm</MudButton>
+    </DialogActions>
+</MudDialog>
