@@ -531,6 +531,7 @@ namespace BrokerIQ.Online.Pages
             bool succeeded = false;
             try
             {
+                await PensionService.Update(Pension);
                 succeeded = await SupportingDocumentService.UploadPensionFile(sdoc);
             }
             catch

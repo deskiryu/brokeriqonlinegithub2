@@ -20,6 +20,7 @@ using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
+using BrokerIQ.Online.Services;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -496,6 +497,7 @@ namespace BrokerIQ.Online.Pages
             bool succeeded = false;
             try
             {
+                await InsuranceService.UpdateInsurance(Insurance);
                 succeeded = await SupportingDocumentService.UploadInsuranceFile(sdoc);
             }
             catch
