@@ -427,7 +427,7 @@ else if (!Saved)
                         <div class="col-sm-12 control_wrapper mb-5" style="display:flex; flex-direction: row;">
                             <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
                             <MudSpacer />
-                            <MudTimePicker Label="Replace INSERT_TIME in template" AmPm="false" @bind-Time="SelectedTemplateTimeReplacement" />
+                            <MudTimePicker Label="Replace INSERT_TIME in template"  MinuteSelectionStep="5" AmPm="false" @bind-Time="SelectedTemplateTimeReplacement" />
                             <MudSpacer />
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary">Send To Chat</MudButton>
                         </div>

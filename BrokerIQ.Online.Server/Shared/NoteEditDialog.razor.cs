@@ -1,4 +1,5 @@
 ﻿using System;
+using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -21,16 +22,38 @@ namespace BrokerIQ.Online.Server.Shared
         [Parameter]
         public DateTime? ReminderDate { get; set; }
 
+        [Parameter]
+        public TimeSpan? ReminderTime { get; set; }
+
+        [Inject]
+        protected IAlertService AlertService { get; set; }
+
+
         public bool DisableReminderDate => !HasNoteReminder;
 
         public bool TextIsEmpty => string.IsNullOrWhiteSpace(Text);
 
         private void Confirm()
         {
+            DateTime combined = new DateTime();
+            if (HasNoteReminder)
+            {
+                if(ReminderDate.HasValue && ReminderTime.HasValue)
+                {
+                    combined = ReminderDate.Value + ReminderTime.Value;
+                }
+                else
+                {
+                    this.AlertService.Error("You must choose a time and date");
+                    return;
+                }
+            }
+       
+
             MudDialog.Close(DialogResult.Ok(new NoteDetail()
             {
                 Text = Text,
-                ReminderDate = HasNoteReminder ? ReminderDate : null
+                ReminderDate = HasNoteReminder ? combined : null
             }));
 
             MudDialog.Close();
