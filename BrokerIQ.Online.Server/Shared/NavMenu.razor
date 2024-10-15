@@ -58,7 +58,7 @@
                 </NavLink>
             </li>
 
-            @if (User.IsBroker)
+            @if (!User.IsAdmin && !User.IsMinorAdmin)
             {
                 <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-3 d-flex align-center" : "nav-item px-3 d-flex align-center")">
                     <NavLink class="nav-link" href=@($"charts/dashboard/0")>

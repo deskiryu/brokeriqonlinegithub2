@@ -241,15 +241,14 @@ namespace BrokerIQ.Online.Pages
 
                 if (user is not null)
                 {
-                    if (user.IsBroker)
-                    {
-                        _brokerId = user.MasterBrokerId;
-                    }
-
                     if (user.IsAdmin || user.IsMinorAdmin)
                     {
                         _brokerId = 0;
                         Int32.TryParse(BrokerId, out _brokerId);
+                    }
+                    else
+                    {
+                        _brokerId = user.MasterBrokerId;
                     }
                 }
 
