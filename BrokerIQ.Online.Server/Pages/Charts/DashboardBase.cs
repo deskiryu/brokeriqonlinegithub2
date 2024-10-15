@@ -1,4 +1,10 @@
 ﻿
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BrokerIQ.Online.Pages.Samples.Shared;
+using BrokerIQ.Online.Services.Interface;
 using ChartJs.Blazor;
 using ChartJs.Blazor.BarChart;
 using ChartJs.Blazor.Common;
@@ -8,13 +14,6 @@ using ChartJs.Blazor.LineChart;
 using ChartJs.Blazor.PieChart;
 using ChartJs.Blazor.Util;
 using Microsoft.AspNetCore.Components;
-using BrokerIQ.Online.Pages.Samples.Shared;
-using BrokerIQ.Online.Services;
-using BrokerIQ.Online.Services.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -69,12 +68,8 @@ namespace BrokerIQ.Online.Pages
         public string BrokerName { get; set; }
         public int CustomerCount { get; set; }
 
-
         protected override async Task OnInitializedAsync()
         {
-            _brokerId = 0;
-            Int32.TryParse(BrokerId, out _brokerId);
-
             // Charting
             _lineConfig = new LineConfig
             {
@@ -243,20 +238,28 @@ namespace BrokerIQ.Online.Pages
             try
             {
                 var user = await AccountService.GetUser();
-                if (user!=null && (user.IsAdmin||user.IsMinorAdmin))
+
+                if (user is not null)
                 {
-                    BrokerName = (await BrokerService.GetBroker(_brokerId)).Name;
-                    CustomerCount = await CustomerService.GetCustomerCount(_brokerId);
+                    if (user.IsBroker)
+                    {
+                        _brokerId = user.MasterBrokerId;
+                    }
+
+                    if (user.IsAdmin || user.IsMinorAdmin)
+                    {
+                        _brokerId = 0;
+                        Int32.TryParse(BrokerId, out _brokerId);
+                    }
                 }
-                else
-                {
-                    throw new InvalidOperationException("Admin only");
-                }
+
+                BrokerName = (await BrokerService.GetBroker(_brokerId)).Name;
+                CustomerCount = await CustomerService.GetCustomerCount(_brokerId);
+
                 var invitesSentAndConverted = await ChartDataService.GetInvitesSentAndConvertedSequence(_brokerId);
 
                 var dates = new List<string>();
                 dates = invitesSentAndConverted.Select(x => x.Item1.ToShortDateString()).ToList();
-
 
                 foreach (var date in dates)
                 {
@@ -294,12 +297,12 @@ namespace BrokerIQ.Online.Pages
                 var emailInvitesSent = new List<int>();
                 var telephoneInvitesSent = new List<int>();
                 var appConversionsLoginEmail = new List<int>();
-                var appConversionsLoginTelephone = new List<int>(); 
+                var appConversionsLoginTelephone = new List<int>();
                 var unconvertedList = new List<int>();
                 emailInvitesSent = invitesSentAndConverted.Select(x => x.Item2).ToList();
-                telephoneInvitesSent = invitesSentAndConverted.Select(x => x.Item3).ToList(); 
+                telephoneInvitesSent = invitesSentAndConverted.Select(x => x.Item3).ToList();
                 appConversionsLoginEmail = invitesSentAndConverted.Select(x => x.Item4).ToList();
-                appConversionsLoginTelephone = invitesSentAndConverted.Select(x => x.Item5).ToList(); 
+                appConversionsLoginTelephone = invitesSentAndConverted.Select(x => x.Item5).ToList();
                 unconvertedList = invitesSentAndConverted.Select(x => x.Item6).ToList();
 
                 var EmailDataSet = new BarDataset<int>(emailInvitesSent)
@@ -324,7 +327,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     Label = "Sign up after invite telephone",
                     BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.BIQLightGray)
-                }; 
+                };
 
                 var unconverted = new BarDataset<int>(unconvertedList)
                 {
@@ -340,7 +343,7 @@ namespace BrokerIQ.Online.Pages
                 _barConfig.Data.Datasets.Add(EmailDataSet);
                 _barConfig.Data.Datasets.Add(TelephoneDataSet);
                 _barConfig.Data.Datasets.Add(SignupAfterInviteDataSetEmail);
-                _barConfig.Data.Datasets.Add(SignupAfterInviteDataSetTelephone); 
+                _barConfig.Data.Datasets.Add(SignupAfterInviteDataSetTelephone);
                 _barConfig.Data.Datasets.Add(unconverted);
 
 
@@ -349,12 +352,11 @@ namespace BrokerIQ.Online.Pages
                 _PieDataSet = new PieDataset<int>(new List<int> { totals.TotalConvertedLoginsEmail, totals.TotalConvertedLoginsTelephone, totals.TotalUnConvertedLogins })
                 {
                     BackgroundColor = SampleUtils.ChartColors.All.Take(3).Select(ColorUtil.FromDrawingColor).ToArray(),
-
                 };
 
                 _pieConfig.Data.Datasets.Add(_PieDataSet);
                 _pieConfig.Data.Labels.Add("Converted from email");
-                _pieConfig.Data.Labels.Add("Converted from telephone"); 
+                _pieConfig.Data.Labels.Add("Converted from telephone");
                 _pieConfig.Data.Labels.Add("Chose broker");
 
                 _PieDataSet2 = new PieDataset<int>(new List<int> { totals.TotalConvertedLoginsEmail, totals.TotalConvertedLoginsTelephone, totals.TotalEmailInvites + totals.TotalTelephoneInvites - totals.TotalConvertedLoginsEmail - totals.TotalConvertedLoginsTelephone })
