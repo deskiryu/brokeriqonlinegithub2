@@ -237,7 +237,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
             if (ImportPreview.RecordsImportedCount > 0)
             {
-                Snackbar.Add("Import has finished", Severity.Success);
+                Snackbar.Add($"Import successfully created {ImportPreview.RecordsImportedCount} clients", Severity.Success);
 
                 MudDialog.Close();
             }
