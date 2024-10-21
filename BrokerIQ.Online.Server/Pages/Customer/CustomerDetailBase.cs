@@ -580,7 +580,7 @@ namespace BrokerIQ.Online.Pages
             {
                 { "Text", string.Empty },
                 { "HasNoteReminder", false },
-                { "ReminderDate", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
+                { "ReminderDateTime", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
             };
 
             var result = await DialogService.Show<NoteEditDialog>("New Note", dialogParams).Result;
@@ -613,7 +613,7 @@ namespace BrokerIQ.Online.Pages
             {
                 { "Text", note.Message },
                 { "HasNoteReminder", note.ReminderDate != null },
-                { "ReminderDate", note.ReminderDate},
+                { "ReminderDateTime", note.ReminderDate.Value}         
             };
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;

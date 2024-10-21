@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -19,11 +20,13 @@ namespace BrokerIQ.Online.Server.Shared
         [Parameter]
         public bool HasNoteReminder { get; set; }
 
-        [Parameter]
         public DateTime? ReminderDate { get; set; }
 
-        [Parameter]
         public TimeSpan? ReminderTime { get; set; }
+
+        [Parameter]
+        public DateTime? ReminderDateTime { get; set; }
+    
 
         [Inject]
         protected IAlertService AlertService { get; set; }
@@ -33,6 +36,18 @@ namespace BrokerIQ.Online.Server.Shared
 
         public bool TextIsEmpty => string.IsNullOrWhiteSpace(Text);
 
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+
+            if (ReminderDateTime.HasValue)
+            {
+                ReminderDate = ReminderDateTime.Value.Date;
+                ReminderTime = ReminderDateTime.Value.TimeOfDay;
+            }
+
+        }
+
         private void Confirm()
         {
             DateTime combined = new DateTime();
@@ -40,7 +55,8 @@ namespace BrokerIQ.Online.Server.Shared
             {
                 if(ReminderDate.HasValue && ReminderTime.HasValue)
                 {
-                    combined = ReminderDate.Value + ReminderTime.Value;
+                    combined = ReminderDate.Value;
+                    combined = combined.AddTicks(ReminderTime.Value.Ticks);
                 }
                 else
                 {
