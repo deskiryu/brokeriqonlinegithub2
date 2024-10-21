@@ -224,6 +224,12 @@ namespace BrokerIQ.Online.Pages
 
         protected CalendlyUserDto CalendlyUser { get; set; }
 
+        protected int LastChatPageLoaded { get; set; }
+
+        protected int ChatPageSize { get; set; } = 25;
+
+        protected bool AllChatMessagesLoaded { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             tutorialVideos = TutorialVideosOption.Value;
@@ -373,13 +379,18 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
+            if(LastChatPageLoaded == 0)
+            {
+                Chat = await LoadChatMessages();
+            }
+
             if (firstTime || LastUnReadChat + response.Data != LastUnReadChat)
             {
                 UnReadChat += response.Data;
-                Chat = await ChatService.Get(Customer.Id);
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
                 ChatBadgeDot = UnReadChat == 0;
                 LastUnReadChat = response.Data;
+
                 await InvokeAsync(StateHasChanged);
             }
         }
@@ -414,7 +425,8 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task ChatBrokerChanged()
         {
-            Chat = await ChatService.Get(Customer.Id, BrokerListId);
+            LastChatPageLoaded = 0;
+            Chat = await ChatService.GetPaged(Customer.Id, BrokerListId, ++LastChatPageLoaded, ChatPageSize);
         }
 
         protected async Task SendNotificationToSelected()
@@ -876,7 +888,8 @@ namespace BrokerIQ.Online.Pages
         {
             if (success)
             {
-                Chat = await ChatService.Get(Customer.Id);
+                LastChatPageLoaded = 0;
+                Chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
                 StateHasChanged();
             }
             var responseParams = new DialogParameters();
@@ -1382,6 +1395,27 @@ namespace BrokerIQ.Online.Pages
             await SetUserCalendlyDetails();
 
             StateHasChanged();
+        }
+
+        protected async Task LoadMoreChatMessages()
+        {
+            Chat chat = await LoadChatMessages();
+
+            if (chat.Messages.Any())
+            {
+                Chat.Messages = Chat.Messages.Concat(chat.Messages).ToList();
+            }
+
+            StateHasChanged();
+        }
+
+        private async Task<Chat> LoadChatMessages()
+        {
+            var chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
+
+            AllChatMessagesLoaded = chat.Messages.Count() < ChatPageSize;
+
+            return chat;
         }
     }
 }

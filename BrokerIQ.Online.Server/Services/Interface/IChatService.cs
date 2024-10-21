@@ -24,5 +24,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> SendMultipleVideoLink(string message, List<int> listCustomerId, int brokerId, string videoUrl, string VideoThumbnailData);
 
         Task<bool> SendMultipleAudioLink(string message, List<int> listCustomerId, int brokerId, string audioUrl);
+
+        Task<Chat> GetPaged(int customerId, int brokerId, int pageNumber = 1, int pageSize = 25);
     }
 }
