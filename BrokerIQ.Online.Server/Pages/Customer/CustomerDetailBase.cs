@@ -170,7 +170,7 @@ namespace BrokerIQ.Online.Pages
 
         public List<BrokerDefinedMessageDto> MergedMessages = new();
 
-        public string SelectedTemplateMessage { get; set; }
+        public BrokerDefinedMessageDto SelectedTemplateMessage { get; set; }
 
         public DateTime? SelectedTemplateDateReplacement { get; set; }
 
@@ -263,7 +263,7 @@ namespace BrokerIQ.Online.Pages
                     if (!Broker.ProvidesMortgageServices && !Broker.ProvidesPensionServices)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
-  
+
                     }
 
                     if (Broker.ProvidesBusinessInsuranceServices)
@@ -379,7 +379,7 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            if(LastChatPageLoaded == 0)
+            if (LastChatPageLoaded == 0)
             {
                 Chat = await LoadChatMessages();
             }
@@ -613,7 +613,7 @@ namespace BrokerIQ.Online.Pages
             {
                 { "Text", note.Message },
                 { "HasNoteReminder", note.ReminderDate != null },
-                { "ReminderDateTime", note.ReminderDate.Value}         
+                { "ReminderDateTime", note.ReminderDate.Value}
             };
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
@@ -661,18 +661,14 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task InsertTemplateMessage()
         {
-            int.TryParse(SelectedTemplateMessage, out int id);
-
-            var message = MergedMessages.FirstOrDefault(m => m.Id == id);
-
-            if (message != null)
+            if (SelectedTemplateMessage != null)
             {
-                if (message.Message.Contains("INSERT_DATE"))
+                if (SelectedTemplateMessage.Message.Contains("INSERT_DATE"))
                 {
                     if (SelectedTemplateDateReplacement.HasValue)
                     {
                         DateTime value = SelectedTemplateDateReplacement.Value;
-                        message.Message = message.Message.Replace("INSERT_DATE", value.ToBiqDateString());
+                        SelectedTemplateMessage.Message = SelectedTemplateMessage.Message.Replace("INSERT_DATE", value.ToBiqDateString());
                     }
                     else
                     {
@@ -685,11 +681,11 @@ namespace BrokerIQ.Online.Pages
                     }
                 }
 
-                if (message.Message.Contains("INSERT_TIME"))
+                if (SelectedTemplateMessage.Message.Contains("INSERT_TIME"))
                 {
                     if (SelectedTemplateTimeReplacement.HasValue)
                     {
-                        message.Message = message.Message.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
+                        SelectedTemplateMessage.Message = SelectedTemplateMessage.Message.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
                     }
                     else
                     {
@@ -706,16 +702,16 @@ namespace BrokerIQ.Online.Pages
                 {
                     ChatDocument attachment = null;
 
-                    if (!string.IsNullOrEmpty(message.FileName))
+                    if (!string.IsNullOrEmpty(SelectedTemplateMessage.FileName))
                     {
                         attachment = new ChatDocument()
                         {
-                            FileName = message.FileName,
-                            File = message.File
+                            FileName = SelectedTemplateMessage.FileName,
+                            File = SelectedTemplateMessage.File
                         };
                     }
 
-                    await NewChat(message.Message, attachment);
+                    await NewChat(SelectedTemplateMessage.Message, attachment);
                 }
                 catch (Exception ex)
                 {
@@ -1292,25 +1288,6 @@ namespace BrokerIQ.Online.Pages
             await Extensions.PreviewFile(js, memoryStream);
         }
 
-        protected async Task MessageTemplateChanged()
-        {
-            var isConverted = int.TryParse(SelectedTemplateMessage, out int selectedMessageId);
-
-            if (isConverted)
-            {
-                var definedMessages = await BrokerDefinedMessageService.GetAllForCurrentBroker();
-
-                var message = definedMessages.FirstOrDefault(m => (int)m.Id == selectedMessageId);
-
-                UploadSectionClass = DEFAULT_UPLOAD_CLASS;
-
-                if (message != null && !String.IsNullOrWhiteSpace(message.FileName))
-                {
-                    UploadSectionClass += @" d-none";
-                }
-            }
-        }
-
         private async Task<byte[]> GetFileBytes(IBrowserFile file)
         {
             var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -1416,6 +1393,11 @@ namespace BrokerIQ.Online.Pages
             AllChatMessagesLoaded = chat.Messages.Count() < ChatPageSize;
 
             return chat;
+        }
+
+        protected async Task<IEnumerable<BrokerDefinedMessageDto>> OnTemplateFilter(string value)
+        {
+            return MergedMessages.Where(mm => mm.Prompt.ToLower().Contains(value.ToLower())).ToArray();
         }
     }
 }
