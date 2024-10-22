@@ -221,10 +221,6 @@ namespace BrokerIQ.Online.Pages
                 {
                     InsuranceType = ConsumerInsurances.First().Item1;
                     Insurance.InsType = (InsuranceEnum)ConsumerInsurances.First().Item1;
-                    if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
-                    {
-                        Insurance.ContactNumber = Broker?.TelephoneNumber ?? "";
-                    }
                 }
 
                 var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -785,10 +781,6 @@ namespace BrokerIQ.Online.Pages
                 LoadedFiles.Add((data.Item1, await GetFileBytes(data.Item1)));
                 Insurance = data.Item2;
                 InsuranceType = (int)Insurance.InsType;
-                if (Broker!=null)
-                {
-                    Insurance.ContactNumber = Broker?.TelephoneNumber ?? "";
-                }
             }
 
             StateHasChanged();
