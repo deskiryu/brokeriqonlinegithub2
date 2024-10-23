@@ -1390,7 +1390,7 @@ namespace BrokerIQ.Online.Pages
         {
             var chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
 
-            AllChatMessagesLoaded = chat.Messages.Count() < ChatPageSize;
+            AllChatMessagesLoaded = !chat.MoreMessagesAvailable;
 
             return chat;
         }
