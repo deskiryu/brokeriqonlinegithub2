@@ -105,7 +105,7 @@ namespace BrokerIQ.Online.Pages
                 User = await AccountService.GetUser();
                 IsAdmin = User.IsAdmin;
                 IsMinorAdmin = User.IsMinorAdmin;
-                IsBrokerStaff = User.IsBrokerStaff;
+                IsBrokerStaff = User.IsBrokerStaff || User.IsAdminStaff;
 
                 if (IsAdmin || IsMinorAdmin)
                 {
