@@ -399,6 +399,8 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task UpdateCustomerUploads()
         {
+            var tmpSelectedIds = SelectedItemsCustomerDocuments.Select(d => d.Id).ToArray();
+
             var response = await CustomerDocumentService.Get(Customer.Id);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -414,6 +416,12 @@ namespace BrokerIQ.Online.Pages
             ShouldShowAsDot = NewClientUploadsCount == 0;
             UploadsBadgeColor = ShouldShowAsDot ? Color.Transparent : Color.Error;
 
+            SelectedItemsCustomerDocuments.Clear();
+            foreach (var document in CustomerDocuments)
+            {
+                if (tmpSelectedIds.Contains(document.Id)) SelectedItemsCustomerDocuments.Add(document);
+            }
+            
             await InvokeAsync(StateHasChanged);
         }
 
