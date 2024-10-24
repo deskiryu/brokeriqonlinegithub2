@@ -10,6 +10,7 @@ using BrokerIQ.Dto.Dto.Import;
 using BrokerIQ.Dto.Request;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Components;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
@@ -44,7 +45,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         [Parameter]
         public int BrokerId { get; set; }
-
 
         private const string HIDE_CLASS = "d-none";
 
@@ -100,7 +100,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private string ImportResultsClass => ImportPreview is null ? $"mt-2 p-1 {HIDE_CLASS}" : "mt-2 p-1";
 
-        private string ImportOptionsClass => FatalErrorOccurred ? $"ma-1 {HIDE_CLASS }" : "ma-1";
+        private string ImportOptionsClass => FatalErrorOccurred ? $"ma-1 {HIDE_CLASS}" : "ma-1";
 
         private string ErrorMessagesDownloadClass
         {
@@ -226,21 +226,38 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         private async Task ImportFromFile()
         {
+            var assignedName = SelectedStaffId > 0 ? AssignableStaff.First(s => s.Id == SelectedStaffId).FullName : string.Empty;
+
+            var parameters = new DialogParameters
+            {
+                { "ContentText", $"{ImportPreview.RecordsImportedCount} new customers will be created. OK to proceed ?" },
+                { "AdditionalText", string.IsNullOrWhiteSpace(assignedName) ? "Customers will not be assigned to anyone." : $"Customer will be assigned to {assignedName}"  },
+                { "ButtonText", "Confirm" },
+                { "Color", Color.Success },
+            };
+
+            var dialogOptions = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
             IsBusy = true;
 
-            ImportRequest request = await BuildImportRequest();
-            request.IsSimulatedRun = WasSimulatedRun = false;
+            var result = await DialogService.Show<ConfirmationDialog>("Confirm", parameters, dialogOptions).Result;
 
-            ImportPreview = await CustomerService.Import(request);
+            if (!result.Canceled)
+            {
+                ImportRequest request = await BuildImportRequest();
+                request.IsSimulatedRun = WasSimulatedRun = false;
+
+                ImportPreview = await CustomerService.Import(request);
+
+                if (ImportPreview.RecordsImportedCount > 0)
+                {
+                    Snackbar.Add($"Import successfully created {ImportPreview.RecordsImportedCount} clients", Severity.Success);
+
+                    MudDialog.Close();
+                }
+            }
 
             IsBusy = false;
-
-            if (ImportPreview.RecordsImportedCount > 0)
-            {
-                Snackbar.Add($"Import successfully created {ImportPreview.RecordsImportedCount} clients", Severity.Success);
-
-                MudDialog.Close();
-            }
         }
 
         private async Task<ImportRequest> BuildImportRequest()
