@@ -5,7 +5,7 @@
         {
             <MudCheckBox T="bool" Label="Set note reminder" @bind-Checked="HasNoteReminder" />
             <MudDatePicker T="DateTime?" Label="Reminder Date" @bind-Date="ReminderDate" Disabled="DisableReminderDate" />
-            <MudTimePicker Label="Reminder Time" MinuteSelectionStep="5" AmPm="false" @bind-Time="ReminderTime" />
+            <MudTimePicker Label="Reminder Time" MinuteSelectionStep="5" AmPm="false" @bind-Time="ReminderTime" Disabled="DisableReminderDate"/>
             <MudSpacer />
         }
     </DialogContent>
