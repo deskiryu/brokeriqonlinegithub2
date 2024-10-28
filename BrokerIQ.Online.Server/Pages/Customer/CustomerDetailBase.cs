@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor;
+using static MudBlazor.Icons;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -397,6 +399,8 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task UpdateCustomerUploads()
         {
+            var tmpSelectedIds = SelectedItemsCustomerDocuments.Select(d => d.Id).ToArray();
+
             var response = await CustomerDocumentService.Get(Customer.Id);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -412,6 +416,12 @@ namespace BrokerIQ.Online.Pages
             ShouldShowAsDot = NewClientUploadsCount == 0;
             UploadsBadgeColor = ShouldShowAsDot ? Color.Transparent : Color.Error;
 
+            SelectedItemsCustomerDocuments.Clear();
+            foreach (var document in CustomerDocuments)
+            {
+                if (tmpSelectedIds.Contains(document.Id)) SelectedItemsCustomerDocuments.Add(document);
+            }
+            
             await InvokeAsync(StateHasChanged);
         }
 
@@ -1217,11 +1227,40 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task SaveSelectedDocumentUpload()
         {
-            foreach (var custDoc in SelectedItemsCustomerDocuments)
+            if (!SelectedItemsCustomerDocuments.Any()) return;
+
+            if (SelectedItemsCustomerDocuments.Count == 1)
             {
-                await SaveDocumentUpload(custDoc);
+                await SaveDocumentUpload(SelectedItemsCustomerDocuments.First());
             }
+            else
+            {
+                await SaveZipFile();
+            }
+
             SelectedItemsCustomerDocuments.Clear();
+        }
+
+        private async Task SaveZipFile()
+        {
+            var zipName = $"{Customer.Name}-{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
+            using (MemoryStream ms = new MemoryStream())
+            {
+                //required: using System.IO.Compression;  
+                using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                {
+                    foreach (var file in SelectedItemsCustomerDocuments)
+                    {
+                        var entry = zip.CreateEntry(file.FileName);
+                        using (var fileStream = new MemoryStream(file.File))
+                        using (var entryStream = entry.Open())
+                        {
+                            fileStream.CopyTo(entryStream);
+                        }
+                    }
+                }
+                await Extensions.SaveAs(js, zipName, ms.ToArray());
+            }
         }
 
         protected async Task ViewDocumentUpload(CustomerDocument doc)
