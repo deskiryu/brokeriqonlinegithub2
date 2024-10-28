@@ -623,7 +623,7 @@ namespace BrokerIQ.Online.Pages
             {
                 { "Text", note.Message },
                 { "HasNoteReminder", note.ReminderDate != null },
-                { "ReminderDateTime", note.ReminderDate.Value}
+                { "ReminderDateTime", note.ReminderDate.HasValue ? note.ReminderDate.Value : null}
             };
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
