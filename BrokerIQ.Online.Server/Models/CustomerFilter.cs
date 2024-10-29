@@ -13,5 +13,9 @@ namespace BrokerIQ.Online.Server.Models
         public bool ProfilePictures { get; set; }
         public ProfilingOptionEnum? ProfilingOption { get; set; }
         public bool NonAppUsersOnly { get; set; }
+        public SortOrderEnum SortOrder { get; set; }
+        public SortByEnum SortBy { get; set; }
+        public int? PageNumber { get; set; }
+        public int? PageSize { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BrokerIQ.Dto.Dto.Import;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Import;
 using BrokerIQ.Dto.Request;
@@ -48,5 +47,11 @@ namespace BrokerIQ.Online.Services.Interface
         Task<IEnumerable<Customer>> Search(int brokerId, string value);
 
         Task<bool> Connect(int brokerId, int mainCustomerId, int connectedCustomerId);
+
+        Task<PagedResponse<Customer>> GetPagedCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0,
+            int filterAgeRange = 0, bool nonAppUsersOnly = false, ProfilingOptionEnum? profilingOption = null, SortOrderEnum sortOrder = SortOrderEnum.Id, SortByEnum sortBy = SortByEnum.Descending,
+            bool profilePictures = false, int pageNumber = 1, int pageSize = 10);
+
+        Task<PagedResponse<Customer>> GetPagedFilteredCustomers(CustomerFilter filter);
     }
 }
