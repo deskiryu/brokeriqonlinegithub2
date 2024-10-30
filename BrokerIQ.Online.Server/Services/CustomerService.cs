@@ -281,7 +281,7 @@ namespace BrokerIQ.Online.Services
 
         public async Task<PagedResponse<Customer>> GetPagedCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0,
             int filterAgeRange = 0, bool nonAppUsersOnly = false, ProfilingOptionEnum? profilingOption = null, SortOrderEnum sortOrder = SortOrderEnum.Id, SortByEnum sortBy = SortByEnum.Descending,
-            bool profilePictures = false, int pageNumber = 1, int pageSize = 10)
+            string partialName = null, bool profilePictures = false, int pageNumber = 1, int pageSize = 10)
         {
             return await GetPagedFilteredCustomers(new CustomerFilter()
             {
@@ -294,6 +294,7 @@ namespace BrokerIQ.Online.Services
                 ProfilePictures = profilePictures,
                 NonAppUsersOnly = nonAppUsersOnly,
                 ProfilingOption = profilingOption,
+                PartialName = partialName,
                 SortOrder = sortOrder,
                 SortBy = sortBy,
                 PageNumber = pageNumber,
@@ -317,6 +318,7 @@ namespace BrokerIQ.Online.Services
                 CustomerCategory = (CustomerCategoryEnum)filter.Category,
                 AgeRange = (AgeRangeEnum)filter.AgeRange,
                 ProfilingOption = filter.ProfilingOption,
+                PartialName = filter.PartialName,
                 SortOrder = filter.SortOrder,
                 SortBy = filter.SortBy,
                 AssignedToId = filter.AssignedToId,

@@ -52,6 +52,8 @@ namespace BrokerIQ.Online.Pages
 
         public HashSet<Customer> SelectedCustomers { get; set; } = new HashSet<Customer>();
 
+        public Customer SelectedCustomer { get; set; }
+
         public int BrokerId { get; set; }
 
         public int AssignedToId { get; set; }
@@ -70,10 +72,6 @@ namespace BrokerIQ.Online.Pages
         protected int? ProfilingOption { get; set; }
 
         protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
-
-        //filter
-        protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrWhiteSpace(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower()) ||
-            !string.IsNullOrWhiteSpace(i.BusinessName) && i.BusinessName.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
@@ -180,24 +178,11 @@ namespace BrokerIQ.Online.Pages
         //    }
         //}
 
-        protected async Task<IEnumerable<string>> OnFilter(string value)
+        protected async Task<IEnumerable<Customer>> SearchCustomer(string value)
         {
-            if (!string.IsNullOrEmpty(value) && Customers != null && Customers.Any())
-            {
-                // In real life use an asynchronous function for fetching data from an api.
-                var filtered = Customers
-                    .Where(
-                            i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(value.ToLower()) ||
-                                 !string.IsNullOrEmpty(i.EmailAddress) && i.EmailAddress.ToLower().Contains(value.ToLower()) ||
-                                 !string.IsNullOrEmpty(i.TelephoneNumber) && i.TelephoneNumber.ToLower().Contains(value.ToLower())
-                            );
-                var results = await Task.FromResult(filtered.Select(x => x.Name).Distinct().ToList());
-                return results;
-            }
-            else
-            {
-                return new List<string>();
-            }
+            if (string.IsNullOrWhiteSpace(value)) return Array.Empty<Customer>();
+
+            return (await CustomerService.Search(BrokerId, value)).ToArray();
         }
 
         protected async Task<IEnumerable<string>> OnFilterBroker(string value)
@@ -226,13 +211,11 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected void AutoCompleteClick(string args)
+        protected void OnCustomerSelected(string args)
         {
-            var customer = Customers.FirstOrDefault(x => x.Name == args);
-            if (customer != null)
-            {
-                NavigationManager.NavigateTo($"clientdetail/{customer.Id}");
-            }
+            if (SelectedCustomer is null) return;
+
+            NavigationManager.NavigateTo($"clientdetail/{SelectedCustomer.Id}");
         }
 
         protected async Task AutoCompleteClickBroker()
@@ -463,7 +446,9 @@ namespace BrokerIQ.Online.Pages
             var pagedResponse = await CustomerService.GetPagedCustomers(brokerId: BrokerId, assignedToId: AssignedToId, filterRecent: FilterRecent,
                 filterPeriod: FilterPeriod, filterCategory: CustomerCategory, filterAgeRange: AgeRange, nonAppUsersOnly: showNonAppUsersOnly,
                 profilingOption: profilingOption, sortOrder: (SortOrderEnum)sortOrder, sortBy: (SortByEnum)sortBy,
-                profilePictures: true, pageNumber: state.Page, pageSize: state.PageSize);
+                partialName: SearchTerm, profilePictures: true, pageNumber: state.Page, pageSize: state.PageSize);
+
+            Customers = pagedResponse.PageData.ToList();
 
             return new TableData<Customer>() { TotalItems = pagedResponse.TotalRecords, Items = pagedResponse.PageData };
         }

@@ -23,7 +23,6 @@
 }
 else
 {
-
     <div class="card ">
         <div class="card-header">Notifications</div>
         <div class="card-body">
@@ -99,17 +98,21 @@ else
 
             <div class="row">
                 <div class="col-lg-4">
-                    <label>Filter the list below by name</label>
-                    <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" />
+                    @* <label>Filter the list below by name</label> *@
+                    @* <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" /> *@
+                    <MudTextField @bind-Value="SearchTerm" Label="Company or Individual Name" Placeholder="Type name or business name"
+                                  Immediate="true" OnKeyUp="RefreshListFromFilterValues" />
                 </div>
                 <div class="col-lg-4 control_wrapper">
-                    <MudAutocomplete T="string"
+                    <MudAutocomplete T="Online.Models.Customer"
                                      Label="Go direct to client"
                                      Placeholder="Start typing name, email or telephone ..."
                                      AdornmentColor="Color.Primary"
-                                     TextChanged="@AutoCompleteClick"
-                                     SearchFunc="@OnFilter">
-                    </MudAutocomplete>
+                                     @bind-Value="SelectedCustomer"
+                                     SearchFunc="@SearchCustomer"
+                                     ToStringFunc="@(c => c?.Name)"
+                                     TextChanged="@OnCustomerSelected"
+                                     MaxItems="50"/>
                 </div>
 
                 @if ((User is not null && User.IsAdmin) || HasFilter)
@@ -219,7 +222,6 @@ else
         </div>
     </div>
     <div>
-
         <div class="card">
             <div class="card-header">Clients</div>
             <div class="card-body">
@@ -228,7 +230,9 @@ else
                           SortLabel="Sort By"
                           MultiSelection="true"
                           Dense="true"
+                          @bind-SelectedItems="SelectedCustomers"
                           ServerData="GetCustomersPage"
+                          LoadingProgressColor="Color.Primary"
                           @ref="CustomerTable">
                     <HeaderContent>
                         @if (api.Value.ShowClientPictureColumn)
