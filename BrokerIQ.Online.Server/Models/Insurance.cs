@@ -24,9 +24,8 @@ namespace BrokerIQ.Online.Models
         [Required]
         public InsuranceEnum InsType { get; set; }
 
-        [Required]
         [StringLength(15, ErrorMessage = "Number is too long.")]
-        public string ContactNumber { get; set; }
+        public string ContactNumber { get; set; } = string.Empty;
 
         [StringLength(15, ErrorMessage = "Number is too long.")]
         [RegularExpression("^[-a-zA-Z0-9(&)' - .-.]*$", ErrorMessage = "Name contains disallowed characters")]
