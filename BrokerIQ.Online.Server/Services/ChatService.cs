@@ -225,7 +225,8 @@ namespace BrokerIQ.Online.Services
                 GetDocumentFileContents = true,
                 GetImageDocumentFileContents  =true,
                 PageNumber = pageNumber,
-                PageSize = pageSize
+                PageSize = pageSize,
+                MarkAsRead = true
             });
             var chat = mapper.Map<Chat>(ChatDto);
 

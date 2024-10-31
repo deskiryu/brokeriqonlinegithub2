@@ -160,8 +160,6 @@ namespace BrokerIQ.Online.Pages
 
         public int UnReadChat { get; set; }
 
-        public int LastUnReadChat { get; set; }
-
         public bool ChatBadgeDot { get; set; }
 
         public MudBlazor.Color ChatBadgeColour { get; set; }
@@ -304,7 +302,6 @@ namespace BrokerIQ.Online.Pages
             if (!User.IsAdmin)
             {
                 await UpdateChat(firstTime: true);
-
                 timer = new System.Threading.Timer(async _ =>  // async void
                 {
                     await UpdateChat();
@@ -314,7 +311,7 @@ namespace BrokerIQ.Online.Pages
                 timerUploads = new System.Threading.Timer(async _ =>  // async void
                 {
                     await UpdateCustomerUploads();
-                }, null, 60000, 60000);
+                }, null, 10000, 60000);
 
                 var integrations = await BrokerIntegrationService.GetBrokerIntegrations();
 
@@ -380,18 +377,15 @@ namespace BrokerIQ.Online.Pages
                 Navigator.NavigateTo($"account/logout");
                 return;
             }
+            var unread = response.Data;
 
-            if (LastChatPageLoaded == 0)
+            if (firstTime || unread > 0)
             {
+                LastChatPageLoaded = 0;
                 Chat = await LoadChatMessages();
-            }
-
-            if (firstTime || LastUnReadChat + response.Data != LastUnReadChat)
-            {
-                UnReadChat += response.Data;
+                UnReadChat = unread;
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
                 ChatBadgeDot = UnReadChat == 0;
-                LastUnReadChat = response.Data;
 
                 await InvokeAsync(StateHasChanged);
             }
