@@ -1063,6 +1063,8 @@ namespace BrokerIQ.Online.Pages
                         DocumentsRequirement = await DocumentsRequirementService.Create(Customer.Id, documentsRequiredList);
                     }
 
+                    await UpdateChat(true);
+
                     SetRequirementVisibility();
 
                     StateHasChanged();
