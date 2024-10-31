@@ -16,50 +16,57 @@
             </MudAlert>
 
             <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
-                @if (ImportPreview is null || FatalErrorOccurred)
+                @if (IsBusy)
                 {
-                    <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
-                        <ButtonTemplate>
-                            <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
-                                       StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id"> Select CSV file </MudButton>
-                        </ButtonTemplate>
-                    </MudFileUpload>
+                    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" Striped="true" />
                 }
                 else
                 {
-                    <MudTable Dense="true" Hover="true" Striped="true" Items="@ImportPreview.Records" FixedHeader="true" Height="500px" Style="width:100%;"
-                              RowStyleFunc="GetRowStyle">
-                        <HeaderContent>
-                            @foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
-                            {
-                                <MudTh>@item.FieldName</MudTh>
-                            }
-                        </HeaderContent>
-                        <RowTemplate>
-                            @{
-                                Type t = context.GetType();
-                                PropertyInfo[] props = t.GetProperties();
-
-                                foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
+                    @if (ImportPreview is null || FatalErrorOccurred)
+                    {
+                        <MudFileUpload T="IBrowserFile" FilesChanged="SaveFile">
+                            <ButtonTemplate>
+                                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" Class="m-1" Style="@($"color:{Colors.Shades.Black}")"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload" for="@context.Id"> Select CSV file </MudButton>
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                    }
+                    else
+                    {
+                        <MudTable Dense="true" Hover="true" Striped="true" Items="@ImportPreview.Records" FixedHeader="true" Height="500px" Style="width:100%;"
+                                  RowStyleFunc="GetRowStyle">
+                            <HeaderContent>
+                                @foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
                                 {
-                                    if (props.Any(p => p.Name == item.FieldName))
+                                    <MudTh>@item.FieldName</MudTh>
+                                }
+                            </HeaderContent>
+                            <RowTemplate>
+                                @{
+                                    Type t = context.GetType();
+                                    PropertyInfo[] props = t.GetProperties();
+
+                                    foreach (var item in RecordDefinitions.Where(d => d.Active).OrderBy(v => v.ColumnOrder))
                                     {
-                                        <MudTd DataLabel="@item.FieldName">
-                                            <MudTooltip Text="@GetErrorMessagesFor(context)">
-                                                @context.GetPropertyValue(props.First(p => p.Name == item.FieldName))
-                                            </MudTooltip>
-                                        </MudTd>
-                                    }
-                                    else
-                                    {
-                                        <MudTd></MudTd>
+                                        if (props.Any(p => p.Name == item.FieldName))
+                                        {
+                                            <MudTd DataLabel="@item.FieldName">
+                                                <MudTooltip Text="@GetErrorMessagesFor(context)">
+                                                    @context.GetPropertyValue(props.First(p => p.Name == item.FieldName))
+                                                </MudTooltip>
+                                            </MudTd>
+                                        }
+                                        else
+                                        {
+                                            <MudTd></MudTd>
+                                        }
                                     }
                                 }
-                            }
-                        </RowTemplate>
-                    </MudTable>
+                            </RowTemplate>
+                        </MudTable>
+                    }
                 }
-                <MudPaper Class="@ImportResultsClass">
+                <MudPaper Class="@ImportResultsClass" MinWidth="30%">
                     <MudStack Row="true">
                         <MudText Class="m-1" Style="@($"color:{Colors.Green.Darken1}")">@SucessfulRecordsMessage</MudText>
                         <MudText Class="m-1" Style="@($"color:{Colors.Red.Darken1}")">@ErrorRecordsMessage</MudText>
@@ -72,20 +79,23 @@
                                            Class="@ErrorRecordsDownloadClass" Color="Color.Error" />
                         </MudTooltip>
                     </MudStack>
-                    <MudStack Row="true">
-                        <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Label="Send invites" LabelPosition="LabelPosition.Start" Class="@ImportOptionsClass" />
-                        @if (User.IsBroker || User.IsAdminStaff)
-                        {
-                            <MudSelect e Label="Assign clients to" @bind-Value="@SelectedStaffId">
-                                <MudSelectItem Class="@ImportOptionsClass" Value="0">No one</MudSelectItem>
-                                @foreach (Online.Models.BrokerStaff staff in AssignableStaff)
-                                {
-                                    var current = staff;
-                                    <MudSelectItem Value="@current.Id">@current.FullName </MudSelectItem>
-                                }
-                            </MudSelect>
-                        }
-                    </MudStack>
+                    @if (ImportPreview is not null && ImportPreview.RecordsImportedCount > 0)
+                    {
+                        <MudStack Row="true">
+                            <MudCheckBox T="bool" @bind-Checked="@ShoulSendInvites" Label="Send invites" LabelPosition="LabelPosition.Start" Class="@ImportOptionsClass" />
+                            @if (User.IsBroker || User.IsAdminStaff)
+                            {
+                                <MudSelect e Label="Assign clients to" @bind-Value="@SelectedStaffId">
+                                    <MudSelectItem Class="@ImportOptionsClass" Value="0">No one</MudSelectItem>
+                                    @foreach (Online.Models.BrokerStaff staff in AssignableStaff)
+                                    {
+                                        var current = staff;
+                                        <MudSelectItem Value="@current.Id">@current.FullName </MudSelectItem>
+                                    }
+                                </MudSelect>
+                            }
+                        </MudStack>
+                    }
                 </MudPaper>
             </MudStack>
         </MudStack>

@@ -368,9 +368,9 @@ else if (!Saved)
                                             <MudText Typo="Typo.subtitle2">@(Brokers.First(x => x.Id == note.BrokerId)?.Name)</MudText>
                                         }
                                         <MudText Typo="Typo.subtitle2">@note.CreatedByName</MudText>
-                                        @if(note.ReminderDate!=null && note.ReminderDate.HasValue)
+                                        @if (note.ReminderDate != null && note.ReminderDate.HasValue)
                                         {
-                                            <MudText Typo="Typo.subtitle2">Reminder Date @(note.ReminderDate.Value.ToBiqDateString())</MudText> 
+                                            <MudText Typo="Typo.subtitle2">Reminder Date @(note.ReminderDate.Value.ToBiqDateTimeString())</MudText>
                                         }
                                     </CardHeaderContent>
                                     <CardHeaderActions>
@@ -405,29 +405,19 @@ else if (!Saved)
                     @if (!User.IsAdmin)
                     {
                         <div class="col-sm-6 control_wrapper mb-5">
-                            <MudSelect T="string" @ref="TemplateSelect"
-                                       Label="Select Message Template"
-                                       Placeholder="Select Message Template"
-                                       Clearable="true"
-                                       AdornmentColor="Color.Primary"
-                                       SelectedValuesChanged="@MessageTemplateChanged"
-                                       @bind-Value="SelectedTemplateMessage">
-                                @foreach (var message in MergedMessages)
-                                {
-                                    var attachment = String.IsNullOrWhiteSpace(message.FileName)
-                                    ? String.Empty
-                                    : $"<br/><br/><i class=\"fa fa-file-pdf\"> &nbsp;{message.FileName}</i>";
-
-                                    var itemContent = $"{message.Message}{@attachment}";
-
-                                    <MudSelectItem Value="@(((int)message.Id).ToString())">@message.Prompt</MudSelectItem>
-                                }
-                            </MudSelect>
+                            <MudAutocomplete T="BrokerIQ.Dto.Models.BrokerDefinedMessageDto"
+                                             Label="Select Message Template"
+                                             Placeholder="Type part of the template prompt"ı
+                                             @bind-Value="SelectedTemplateMessage"
+                                             AdornmentColor="Color.Primary"
+                                             SearchFunc="@OnTemplateFilter"a
+                                             ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)">
+                            </MudAutocomplete>
                         </div>
                         <div class="col-sm-12 control_wrapper mb-5" style="display:flex; flex-direction: row;">
                             <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
                             <MudSpacer />
-                            <MudTimePicker Label="Replace INSERT_TIME in template" AmPm="false" @bind-Time="SelectedTemplateTimeReplacement" />
+                            <MudTimePicker Label="Replace INSERT_TIME in template" MinuteSelectionStep="5" AmPm="false" @bind-Time="SelectedTemplateTimeReplacement" />
                             <MudSpacer />
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@InsertTemplateMessage" class="btn btn-primary">Send To Chat</MudButton>
                         </div>
@@ -594,6 +584,14 @@ else if (!Saved)
                                                         var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToBiqDateTimeString()}";
                                                         <MudText Typo="Typo.body2">@combined</MudText>
                                                     }
+                                                </MudCardContent>
+                                            </MudCard>
+                                        }
+                                        @if (!AllChatMessagesLoaded)
+                                        {
+                                            <MudCard Class="col-sm-12 mb-1">
+                                                <MudCardContent>
+                                                    <MudButton FullWidth="true" OnClick="LoadMoreChatMessages">Load More</MudButton>
                                                 </MudCardContent>
                                             </MudCard>
                                         }

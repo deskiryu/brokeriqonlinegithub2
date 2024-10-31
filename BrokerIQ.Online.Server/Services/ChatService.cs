@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using BrokerIQ.Dto.Models;
+using BrokerIQ.Dto.Request;
 using BrokerIQ.Online.AppSettings;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Services.Base;
@@ -208,6 +209,37 @@ namespace BrokerIQ.Online.Services
 
             var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
             return answer;
+        }
+
+        public async Task<Chat> GetPaged(int customerId, int brokerId, int pageNumber = 1, int pageSize = 25)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var localBrokerId = brokerId > 0 ? brokerId : user.MasterBrokerId;
+
+            string newUrl = this.ChatUrl + $"/pagedchat";
+            var ChatDto = await requestProviderService.Post<GetChatRequestDto, ChatDto>(newUrl, new GetChatRequestDto()
+            {
+                BrokerId = brokerId,
+                CustomerId = customerId,
+                GetDocumentFileContents = true,
+                GetImageDocumentFileContents  =true,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                MarkAsRead = true
+            });
+            var chat = mapper.Map<Chat>(ChatDto);
+
+            if (this.api.IsYAHTheme)
+            {
+                if (chat != null && chat.Messages != null)
+                {
+                    chat.Messages = chat.Messages.Select(c => { c.YahTheme = true; return c; }).ToList();
+                }
+
+            }
+
+            return chat;
         }
     }
 }

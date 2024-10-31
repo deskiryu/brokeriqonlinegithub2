@@ -72,7 +72,8 @@ namespace BrokerIQ.Online.Pages
         protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
 
         //filter
-        protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrWhiteSpace(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower()) ||
+            !string.IsNullOrWhiteSpace(i.BusinessName) && i.BusinessName.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 

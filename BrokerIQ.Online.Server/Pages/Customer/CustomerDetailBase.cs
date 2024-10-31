@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor;
+using static MudBlazor.Icons;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -170,7 +172,7 @@ namespace BrokerIQ.Online.Pages
 
         public List<BrokerDefinedMessageDto> MergedMessages = new();
 
-        public string SelectedTemplateMessage { get; set; }
+        public BrokerDefinedMessageDto SelectedTemplateMessage { get; set; }
 
         public DateTime? SelectedTemplateDateReplacement { get; set; }
 
@@ -224,6 +226,12 @@ namespace BrokerIQ.Online.Pages
 
         protected CalendlyUserDto CalendlyUser { get; set; }
 
+        protected int LastChatPageLoaded { get; set; }
+
+        protected int ChatPageSize { get; set; } = 25;
+
+        protected bool AllChatMessagesLoaded { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             tutorialVideos = TutorialVideosOption.Value;
@@ -257,7 +265,7 @@ namespace BrokerIQ.Online.Pages
                     if (!Broker.ProvidesMortgageServices && !Broker.ProvidesPensionServices)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
-  
+
                     }
 
                     if (Broker.ProvidesBusinessInsuranceServices)
@@ -296,7 +304,6 @@ namespace BrokerIQ.Online.Pages
             if (!User.IsAdmin)
             {
                 await UpdateChat(firstTime: true);
-
                 timer = new System.Threading.Timer(async _ =>  // async void
                 {
                     await UpdateChat();
@@ -306,7 +313,7 @@ namespace BrokerIQ.Online.Pages
                 timerUploads = new System.Threading.Timer(async _ =>  // async void
                 {
                     await UpdateCustomerUploads();
-                }, null, 60000, 60000);
+                }, null, 10000, 60000);
 
                 var integrations = await BrokerIntegrationService.GetBrokerIntegrations();
 
@@ -372,20 +379,23 @@ namespace BrokerIQ.Online.Pages
                 Navigator.NavigateTo($"account/logout");
                 return;
             }
+            var unread = response.Data;
 
-            if (firstTime || LastUnReadChat + response.Data != LastUnReadChat)
+            if (firstTime || LastUnReadChat + unread != LastUnReadChat)
             {
-                UnReadChat += response.Data;
-                Chat = await ChatService.Get(Customer.Id);
+                UnReadChat += unread;
+                LastChatPageLoaded = 0; Chat = await LoadChatMessages();
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
                 ChatBadgeDot = UnReadChat == 0;
-                LastUnReadChat = response.Data;
-                await InvokeAsync(StateHasChanged);
+                LastUnReadChat = unread;
             }
+            await InvokeAsync(StateHasChanged);
         }
 
         protected async Task UpdateCustomerUploads()
         {
+            var tmpSelectedIds = SelectedItemsCustomerDocuments.Select(d => d.Id).ToArray();
+
             var response = await CustomerDocumentService.Get(Customer.Id);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -401,6 +411,12 @@ namespace BrokerIQ.Online.Pages
             ShouldShowAsDot = NewClientUploadsCount == 0;
             UploadsBadgeColor = ShouldShowAsDot ? Color.Transparent : Color.Error;
 
+            SelectedItemsCustomerDocuments.Clear();
+            foreach (var document in CustomerDocuments)
+            {
+                if (tmpSelectedIds.Contains(document.Id)) SelectedItemsCustomerDocuments.Add(document);
+            }
+            
             await InvokeAsync(StateHasChanged);
         }
 
@@ -414,7 +430,8 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task ChatBrokerChanged()
         {
-            Chat = await ChatService.Get(Customer.Id, BrokerListId);
+            LastChatPageLoaded = 0;
+            Chat = await ChatService.GetPaged(Customer.Id, BrokerListId, ++LastChatPageLoaded, ChatPageSize);
         }
 
         protected async Task SendNotificationToSelected()
@@ -568,7 +585,7 @@ namespace BrokerIQ.Online.Pages
             {
                 { "Text", string.Empty },
                 { "HasNoteReminder", false },
-                { "ReminderDate", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
+                { "ReminderDateTime", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
             };
 
             var result = await DialogService.Show<NoteEditDialog>("New Note", dialogParams).Result;
@@ -601,7 +618,7 @@ namespace BrokerIQ.Online.Pages
             {
                 { "Text", note.Message },
                 { "HasNoteReminder", note.ReminderDate != null },
-                { "ReminderDate", note.ReminderDate},
+                { "ReminderDateTime", note.ReminderDate.HasValue ? note.ReminderDate.Value : null}
             };
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;
@@ -649,18 +666,14 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task InsertTemplateMessage()
         {
-            int.TryParse(SelectedTemplateMessage, out int id);
-
-            var message = MergedMessages.FirstOrDefault(m => m.Id == id);
-
-            if (message != null)
+            if (SelectedTemplateMessage != null)
             {
-                if (message.Message.Contains("INSERT_DATE"))
+                if (SelectedTemplateMessage.Message.Contains("INSERT_DATE"))
                 {
                     if (SelectedTemplateDateReplacement.HasValue)
                     {
                         DateTime value = SelectedTemplateDateReplacement.Value;
-                        message.Message = message.Message.Replace("INSERT_DATE", value.ToBiqDateString());
+                        SelectedTemplateMessage.Message = SelectedTemplateMessage.Message.Replace("INSERT_DATE", value.ToBiqDateString());
                     }
                     else
                     {
@@ -673,11 +686,11 @@ namespace BrokerIQ.Online.Pages
                     }
                 }
 
-                if (message.Message.Contains("INSERT_TIME"))
+                if (SelectedTemplateMessage.Message.Contains("INSERT_TIME"))
                 {
                     if (SelectedTemplateTimeReplacement.HasValue)
                     {
-                        message.Message = message.Message.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
+                        SelectedTemplateMessage.Message = SelectedTemplateMessage.Message.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
                     }
                     else
                     {
@@ -694,16 +707,16 @@ namespace BrokerIQ.Online.Pages
                 {
                     ChatDocument attachment = null;
 
-                    if (!string.IsNullOrEmpty(message.FileName))
+                    if (!string.IsNullOrEmpty(SelectedTemplateMessage.FileName))
                     {
                         attachment = new ChatDocument()
                         {
-                            FileName = message.FileName,
-                            File = message.File
+                            FileName = SelectedTemplateMessage.FileName,
+                            File = SelectedTemplateMessage.File
                         };
                     }
 
-                    await NewChat(message.Message, attachment);
+                    await NewChat(SelectedTemplateMessage.Message, attachment);
                 }
                 catch (Exception ex)
                 {
@@ -876,7 +889,8 @@ namespace BrokerIQ.Online.Pages
         {
             if (success)
             {
-                Chat = await ChatService.Get(Customer.Id);
+                LastChatPageLoaded = 0;
+                Chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
                 StateHasChanged();
             }
             var responseParams = new DialogParameters();
@@ -1208,11 +1222,40 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task SaveSelectedDocumentUpload()
         {
-            foreach (var custDoc in SelectedItemsCustomerDocuments)
+            if (!SelectedItemsCustomerDocuments.Any()) return;
+
+            if (SelectedItemsCustomerDocuments.Count == 1)
             {
-                await SaveDocumentUpload(custDoc);
+                await SaveDocumentUpload(SelectedItemsCustomerDocuments.First());
             }
+            else
+            {
+                await SaveZipFile();
+            }
+
             SelectedItemsCustomerDocuments.Clear();
+        }
+
+        private async Task SaveZipFile()
+        {
+            var zipName = $"{Customer.Name}-{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
+            using (MemoryStream ms = new MemoryStream())
+            {
+                //required: using System.IO.Compression;  
+                using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                {
+                    foreach (var file in SelectedItemsCustomerDocuments)
+                    {
+                        var entry = zip.CreateEntry(file.FileName);
+                        using (var fileStream = new MemoryStream(file.File))
+                        using (var entryStream = entry.Open())
+                        {
+                            fileStream.CopyTo(entryStream);
+                        }
+                    }
+                }
+                await Extensions.SaveAs(js, zipName, ms.ToArray());
+            }
         }
 
         protected async Task ViewDocumentUpload(CustomerDocument doc)
@@ -1277,25 +1320,6 @@ namespace BrokerIQ.Online.Pages
         {
             var memoryStream = new MemoryStream(sdoc.File);
             await Extensions.PreviewFile(js, memoryStream);
-        }
-
-        protected async Task MessageTemplateChanged()
-        {
-            var isConverted = int.TryParse(SelectedTemplateMessage, out int selectedMessageId);
-
-            if (isConverted)
-            {
-                var definedMessages = await BrokerDefinedMessageService.GetAllForCurrentBroker();
-
-                var message = definedMessages.FirstOrDefault(m => (int)m.Id == selectedMessageId);
-
-                UploadSectionClass = DEFAULT_UPLOAD_CLASS;
-
-                if (message != null && !String.IsNullOrWhiteSpace(message.FileName))
-                {
-                    UploadSectionClass += @" d-none";
-                }
-            }
         }
 
         private async Task<byte[]> GetFileBytes(IBrowserFile file)
@@ -1382,6 +1406,32 @@ namespace BrokerIQ.Online.Pages
             await SetUserCalendlyDetails();
 
             StateHasChanged();
+        }
+
+        protected async Task LoadMoreChatMessages()
+        {
+            Chat chat = await LoadChatMessages();
+
+            if (chat.Messages.Any())
+            {
+                Chat.Messages = Chat.Messages.Concat(chat.Messages).ToList();
+            }
+
+            StateHasChanged();
+        }
+
+        private async Task<Chat> LoadChatMessages()
+        {
+            var chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
+
+            AllChatMessagesLoaded = !chat.MoreMessagesAvailable;
+
+            return chat;
+        }
+
+        protected async Task<IEnumerable<BrokerDefinedMessageDto>> OnTemplateFilter(string value)
+        {
+            return MergedMessages.Where(mm => mm.Prompt.ToLower().Contains(value.ToLower())).ToArray();
         }
     }
 }
