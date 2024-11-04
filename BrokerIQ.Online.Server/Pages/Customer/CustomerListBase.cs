@@ -161,23 +161,6 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        //protected async Task GetCustomers(bool clear = false)
-        //{
-        //    try
-        //    {
-        //        Customers = (await CustomerService.GetPagedCustomers(profilePictures: true, pageNumber : 1, pageSize : 10 )).OrderByDescending(x => x.Id).ToList();
-        //    }
-        //    catch
-        //    {
-        //        NavigationManager.NavigateTo($"account/logout");
-        //    }
-
-        //    if (clear)
-        //    {
-        //        StateHasChanged();
-        //    }
-        //}
-
         protected async Task<IEnumerable<Customer>> SearchCustomer(string value)
         {
             if (string.IsNullOrWhiteSpace(value)) return Array.Empty<Customer>();
