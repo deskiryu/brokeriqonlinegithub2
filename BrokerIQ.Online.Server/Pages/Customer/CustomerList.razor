@@ -23,7 +23,6 @@
 }
 else
 {
-
     <div class="card ">
         <div class="card-header">Notifications</div>
         <div class="card-body">
@@ -46,7 +45,7 @@ else
         <div class="card-body">
 
             <div class="row">
-                @if (User.IsAdmin)
+                @if (User is not null && User.IsAdmin)
                 {
                     <div class="col-12">
                         <MudSelect T="int"
@@ -54,7 +53,7 @@ else
                                    Placeholder="Select"
                                    Clearable="true"
                                    @bind-Value="BrokerId"
-                                   SelectedValuesChanged="@AutoCompleteClickBroker"
+                                   SelectedValuesChanged="@RefreshListFromFilterValues"
                                    AdornmentColor="Color.Primary">
                             <MudSelectItem Value="0">Select</MudSelectItem>
                             @foreach (var item in @Brokers)
@@ -65,7 +64,7 @@ else
                     </div>
                 }
 
-                @if (!User.IsAdmin && HasFilter)
+                @if ((User is not null && !User.IsAdmin) && HasFilter)
                 {
                     <div class="col-lg-8">
                         <MudSelect T="int"
@@ -99,20 +98,24 @@ else
 
             <div class="row">
                 <div class="col-lg-4">
-                    <label>Filter the list below by name</label>
-                    <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" />
+                    @* <label>Filter the list below by name</label> *@
+                    @* <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" /> *@
+                    <MudTextField @bind-Value="SearchTerm" Label="Company or Individual Name" Placeholder="Type name or business name"
+                                  Immediate="true" OnKeyUp="RefreshListFromFilterValues" />
                 </div>
                 <div class="col-lg-4 control_wrapper">
-                    <MudAutocomplete T="string"
+                    <MudAutocomplete T="Online.Models.Customer"
                                      Label="Go direct to client"
                                      Placeholder="Start typing name, email or telephone ..."
                                      AdornmentColor="Color.Primary"
-                                     TextChanged="@AutoCompleteClick"
-                                     SearchFunc="@OnFilter">
-                    </MudAutocomplete>
+                                     @bind-Value="SelectedCustomer"
+                                     SearchFunc="@SearchCustomer"
+                                     ToStringFunc="@(c => c?.Name)"
+                                     TextChanged="@OnCustomerSelected"
+                                     MaxItems="50"/>
                 </div>
 
-                @if (User.IsAdmin || HasFilter)
+                @if ((User is not null && User.IsAdmin) || HasFilter)
                 {
                     <div class="col-lg-4">
                         <MudSelect T="int"
@@ -130,7 +133,7 @@ else
                 }
             </div>
 
-            @if (User.IsAdmin || HasFilter)
+            @if ((User is not null && User.IsAdmin) || HasFilter)
             {
                 <div class="row">
                     <div class="col-lg-4">
@@ -219,46 +222,40 @@ else
         </div>
     </div>
     <div>
-
         <div class="card">
             <div class="card-header">Clients</div>
             <div class="card-body">
-                <MudTable Items="@FilteredCustomers"
+                <MudTable T="Online.Models.Customer"
                           Hover="true"
                           SortLabel="Sort By"
                           MultiSelection="true"
                           Dense="true"
-                          @bind-SelectedItems="SelectedCustomers">
+                          @bind-SelectedItems="SelectedCustomers"
+                          ServerData="GetCustomersPage"
+                          LoadingProgressColor="Color.Primary"
+                          @ref="CustomerTable">
                     <HeaderContent>
                         @if (api.Value.ShowClientPictureColumn)
                         {
                             <MudTh></MudTh>
                         }
-                        @if (!User.IsAdmin)
+                        @if (User is not null && !User.IsAdmin)
                         {
-                            <MudTh Style="text-align:center">
-                                @*<MudIconButton Class="@(AssignVisibilityClass())"
-                                    Icon="@Icons.Material.Filled.GroupAdd"
-                                    Size="Size.Small"
-                                    Title="Assign"
-                                    Variant="Variant.Filled"
-                                    Color="Color.Primary"
-                                    Style="@($"color:{Colors.Shades.Black}")" />*@
-                            </MudTh>
+                            <MudTh Style="text-align:center"></MudTh>
                         }
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortLabel="1" T="Online.Models.Customer">First Name</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortLabel="2" T="Online.Models.Customer">Last Name</MudTableSortLabel></MudTh>
                         @if (api.Value.ShowClientPhoneColumn)
                         {
-                            <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel Enabled="@false" SortLabel="9" T="Online.Models.Customer">Telephone Number</MudTableSortLabel></MudTh>
                         }
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.DateOfBirth)">Date Of Birth</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.CustomerCategory.GetDisplayName())">Category</MudTableSortLabel></MudTh>
-                        @if (User.IsAdmin)
+                        <MudTh><MudTableSortLabel SortLabel="6" T="Online.Models.Customer">Email Address</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortLabel="3" T="Online.Models.Customer">Date Of Birth</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortLabel="7" T="Online.Models.Customer">Category</MudTableSortLabel></MudTh>
+                        @if (User is not null && User.IsAdmin)
                         {
-                            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.AppVersion)">App</MudTableSortLabel></MudTh>
-                            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortLabel="10" T="Online.Models.Customer">App</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortLabel="11" T="Online.Models.Customer">WL</MudTableSortLabel></MudTh>
                         }
                         <MudTh>Verified</MudTh>
                         <MudTh>
@@ -274,7 +271,7 @@ else
                                     }
                                     @if (SelectedCustomers.Any())
                                     {
-                                        @if (!User.IsAdmin && !User.IsBrokerStaff)
+                                        @if (User is not null && !User.IsAdmin && !User.IsBrokerStaff)
                                         {
                                             <MudMenuItem OnClick="AssignToStaff">Assign</MudMenuItem>
                                         }
@@ -316,7 +313,7 @@ else
                                 }
                             </MudTd>
                         }
-                        @if (!User.IsAdmin)
+                        @if (User is not null && !User.IsAdmin)
                         {
                             <MudTh>
                                 <MudAvatarGroup Max="4" Spacing="2" MaxSize="Size.Small" MaxColor="Color.Secondary">
@@ -350,7 +347,7 @@ else
                                 </ChildContent>
                             </MudMenu>
                         </MudTd>
-                        @if (User.IsAdmin)
+                        @if (User is not null && User.IsAdmin)
                         {
                             <MudTd DataLabel="App">@context.AppVersion</MudTd>
                             <MudTd DataLabel="WL"><MudCheckBox @bind-Checked="@context.IsWhiteLabel" Disabled="true"></MudCheckBox></MudTd>
@@ -366,7 +363,7 @@ else
 
                     </RowTemplate>
                     <PagerContent>
-                        <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
+                        <MudTablePager />
                     </PagerContent>
                 </MudTable>
             </div>
