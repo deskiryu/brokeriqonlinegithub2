@@ -304,7 +304,6 @@ namespace BrokerIQ.Online.Pages
             if (!User.IsAdmin)
             {
                 await UpdateChat(firstTime: true);
-
                 timer = new System.Threading.Timer(async _ =>  // async void
                 {
                     await UpdateChat();
@@ -314,7 +313,7 @@ namespace BrokerIQ.Online.Pages
                 timerUploads = new System.Threading.Timer(async _ =>  // async void
                 {
                     await UpdateCustomerUploads();
-                }, null, 60000, 60000);
+                }, null, 10000, 60000);
 
                 var integrations = await BrokerIntegrationService.GetBrokerIntegrations();
 
@@ -380,21 +379,17 @@ namespace BrokerIQ.Online.Pages
                 Navigator.NavigateTo($"account/logout");
                 return;
             }
+            var unread = response.Data;
 
-            if (LastChatPageLoaded == 0)
+            if (firstTime || LastUnReadChat + unread != LastUnReadChat)
             {
-                Chat = await LoadChatMessages();
-            }
-
-            if (firstTime || LastUnReadChat + response.Data != LastUnReadChat)
-            {
-                UnReadChat += response.Data;
+                UnReadChat += unread;
+                LastChatPageLoaded = 0; Chat = await LoadChatMessages();
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
                 ChatBadgeDot = UnReadChat == 0;
-                LastUnReadChat = response.Data;
-
-                await InvokeAsync(StateHasChanged);
+                LastUnReadChat = unread;
             }
+            await InvokeAsync(StateHasChanged);
         }
 
         protected async Task UpdateCustomerUploads()
