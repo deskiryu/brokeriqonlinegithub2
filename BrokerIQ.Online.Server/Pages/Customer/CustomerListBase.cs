@@ -194,11 +194,9 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected void OnCustomerSelected(string args)
+        protected void OnCustomerSelected(Customer args)
         {
-            if (SelectedCustomer is null) return;
-
-            NavigationManager.NavigateTo($"clientdetail/{SelectedCustomer.Id}");
+            NavigationManager.NavigateTo($"clientdetail/{args.Id}");
         }
 
         protected async Task AutoCompleteClickBroker()
