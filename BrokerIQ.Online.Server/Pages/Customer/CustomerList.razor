@@ -110,7 +110,7 @@ else
                                      AdornmentColor="Color.Primary"
                                      SearchFunc="@SearchCustomer"
                                      ToStringFunc="@(c => c?.Name)"
-                                     ValueChanged="@OnCustomerSelected"/>
+                                     ValueChanged="@OnCustomerSelected" />
                     @*<MudAutocomplete T="string"
                                          Label="Go direct to client"
                                          Placeholder="Start typing name, email or telephone ..."
@@ -198,16 +198,16 @@ else
                 {
                     <div class="row mb-2">
                         <div class="col-12">
-                            <MudSelect T="int?"
+                            <MudSelect T="int"
                                        Label="Client Profiling *"
-                                       Placeholder="Select"
                                        Clearable="true"
                                        @bind-Value="ProfilingOption"
                                        SelectedValuesChanged="@RefreshListFromFilterValues"
                                        AdornmentColor="Color.Primary">
+                                <MudSelectItem Value="int.MaxValue">Select</MudSelectItem>
                                 @{
                                     var names = Enum.GetNames(typeof(ProfilingOptionEnum));
-                                    @for (int? i = 0; i <= names.Length; i++)
+                                    @for (int i = 0; i <= names.Length; i++)
                                     {
                                         ProfilingOptionEnum looped = (ProfilingOptionEnum)i;
                                         <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
