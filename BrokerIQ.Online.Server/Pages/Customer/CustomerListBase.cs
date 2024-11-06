@@ -69,7 +69,7 @@ namespace BrokerIQ.Online.Pages
         public int CustomerCategory { get; set; }
         public int AgeRange { get; set; }
 
-        protected int? ProfilingOption { get; set; }
+        protected int ProfilingOption { get; set; } = int.MaxValue;
 
         protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
 
@@ -422,7 +422,7 @@ namespace BrokerIQ.Online.Pages
             }
 
             ProfilingOptionEnum? profilingOption = null;
-            if (ProfilingOption.HasValue) profilingOption = (ProfilingOptionEnum)ProfilingOption;
+            if (ProfilingOption != int.MaxValue) profilingOption = (ProfilingOptionEnum)ProfilingOption;
 
             var pagedResponse = await CustomerService.GetPagedCustomers(brokerId: BrokerId, assignedToId: AssignedToId, filterRecent: FilterRecent,
                 filterPeriod: FilterPeriod, filterCategory: CustomerCategory, filterAgeRange: AgeRange, nonAppUsersOnly: showNonAppUsersOnly,
