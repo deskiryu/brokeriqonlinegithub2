@@ -1242,7 +1242,7 @@ namespace BrokerIQ.Online.Pages
             var zipName = $"{Customer.Name}-{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
             using (MemoryStream ms = new MemoryStream())
             {
-                //required: using System.IO.Compression;  
+                //required: using System.IO.Compression;
                 using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
                 {
                     foreach (var file in SelectedItemsCustomerDocuments)
