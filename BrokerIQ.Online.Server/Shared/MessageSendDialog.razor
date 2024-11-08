@@ -13,49 +13,66 @@
     }
 }
 
-<MudDialog Style="@($"background:{Colors.Grey.Lighten4};")">
+<MudDialog>
     <DialogContent>
         <MudContainer Style="overflow-y: scroll">
-            <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
-                <MudTextField T="string" Label="Message to send" Required="true" RequiredError="Please fill in the message" @bind-Value="model.MessageToSend" Lines="5" AutoGrow="true" />
-                <div class="row">
-                    <div class="col-sm-2 mt-auto">
-                        <MudIconButton Icon="@Icons.Material.Filled.InsertLink" Variant="Variant.Filled" Size="Size.Small"
-                                       Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" OnClick="InsertLink" Disabled="@model.HideLinkButton"></MudIconButton>
-                    </div>
-                    <div class="col-sm-10">
-                        <MudTextField T="string" Placeholder="Link address" @bind-Value="model.Link" Disabled="@model.HideLinkButton" />
-                    </div>
+            <MudTextField T="string" Label="Message to send" Required="true" RequiredError="Please fill in the message" @bind-Value="model.MessageToSend" Lines="5" AutoGrow="true" Immediate="true" />
+            <div class="row">
+                <div class="col-sm-2 mt-auto">
+                    <MudIconButton Icon="@Icons.Material.Filled.InsertLink" Variant="Variant.Filled" Size="Size.Small"
+                                   Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" OnClick="InsertLink"
+                                   Disabled="@model.HideLinkButton">
+                    </MudIconButton>
                 </div>
-                <div class="row mt-1">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:10px")" OnClick="Cancel">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:10px; margin-left:2px")" ButtonType="ButtonType.Submit">Ok</MudButton>
+                <div class="col-sm-10">
+                    <MudTextField T="string" Placeholder="Link address" @bind-Value="model.Link" Disabled="@model.HideLinkButton" />
                 </div>
-            </EditForm>
-            <br />
+            </div>
             <div>
                 @if (@OverSized)
                 {
-                    <MudText Style="white-space: pre-line;">Some files were too big</MudText>
-
+                    <br />
+                    <MudText>Some files were too big</MudText>
                 }
+
                 @if (FileNameAndStreams.Any())
                 {
-                    <MudText Style="white-space: pre-line;">The following file(s) :</MudText>
+                    <br />
+                    <MudText>Attachments :</MudText>
                     @foreach (var fileName in FileNameAndStreams)
                     {
-                        <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">@fileName.Item1</MudText>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudButton>
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Preview" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudIconButton>
+                            </div>
+                            <div class="col-sm-10">
+                                <MudText Style="font-weight: bold;">@fileName.Item1</MudText>
+                            </div>
+                        </div>
                     }
-                    <MudText Style="white-space: pre-line;">will be attached to the chat message</MudText>
                 }
                 else
                 {
-                    <MudText Style="white-space: pre-line;">No file(s) attached</MudText>
+                    <br />
+                    <MudText>No file(s) attached</MudText>
                 }
+                <div class="row">
+                    <div class="col-sm-6 mt-auto">
+                        <MudDatePicker Clearable="true" Placeholder="Deliver message on" @bind-Date="@model.DeliveryDate"
+                                       MinDate="DateTime.Today" MaxDate="DateTime.Today.AddDays(7)"/>
+                    </div>
+                    <div class="col-sm-6 mt-auto">
+                        <MudTimePicker Clearable="true" Placeholder="Deliver message at" @bind-Time="@model.DeliveryTime"
+                                       MinuteSelectionStep="5" AmPm="false"/>
+                    </div>
+                </div>
             </div>
         </MudContainer>
     </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="SendMessage" Disabled="DetailsAreInvalid">Send</MudButton>
+    </DialogActions>
 </MudDialog>
 
 @code {
@@ -79,28 +96,18 @@
 
     public bool OverSized { get; set; }
 
-    public class MyModel
-    {
-        [Required]
-        public string MessageToSend { get; set; }
-
-        public string Link { get; set; }
-
-        public bool HasEmbeddedUrl { get; set; }
-
-        public bool HideLinkButton { get; set; }
-    }
-
-
     bool success;
     string[] errors = { };
     MudForm form;
-    MyModel model;
+    MessageSendModel model;
+
+    bool DetailsAreInvalid => string.IsNullOrWhiteSpace(model.MessageToSend) ||
+        (model.DeliveryDate.HasValue && !model.DeliveryTime.HasValue) || (!model.DeliveryDate.HasValue && model.DeliveryTime.HasValue);
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        model = new MyModel();
+        model = new MessageSendModel();
         model.HasEmbeddedUrl = false;
         model.HideLinkButton = false;
 
@@ -123,11 +130,11 @@
         }
 
         if (!string.IsNullOrEmpty(PrePopulatedMessage))
-        {       
-            var startLink = PrePopulatedMessage.IndexOf("<--")+3;
+        {
+            var startLink = PrePopulatedMessage.IndexOf("<--") + 3;
             var endLink = PrePopulatedMessage.IndexOf("-->");
 
-            model.HideLinkButton = startLink>0 && endLink>0;
+            model.HideLinkButton = startLink > 0 && endLink > 0;
             if (model.HideLinkButton)
             {
                 try
@@ -138,35 +145,34 @@
                 }
                 catch
                 {
-                    
-                }
 
+                }
             }
 
             model.MessageToSend = PrePopulatedMessage;
-
         }
     }
 
-
-    public void OnValidSubmit(EditContext context)
+    public void SendMessage()
     {
-        var actualMessage = model.MessageToSend;
+        var messageDetails = model.MessageToSend;
         if (model.HasEmbeddedUrl)
         {
             //Find substring
-            var found = actualMessage.IndexOf(model.Link);
+            var found = messageDetails.IndexOf(model.Link);
             if (found > 0)
             {
-                actualMessage = actualMessage.Insert(found + model.Link.Length, "-->");
-                actualMessage = actualMessage.Insert(found , "<--");
+                messageDetails = messageDetails.Insert(found + model.Link.Length, "-->");
+                messageDetails = messageDetails.Insert(found, "<--");
             }
             else
             {
                 this.AlertService.Warn("The link has been altered and may not show in the reminder correctly");
             }
         }
-        MudDialog.Close(DialogResult.Ok(actualMessage));
+
+        model.MessageToSend = messageDetails;
+        MudDialog.Close(DialogResult.Ok(model));
     }
 
     void Cancel() => MudDialog.Cancel();
@@ -176,7 +182,7 @@
         if (!model.Link.IsValidUrl())
         {
             var dialogParams = new DialogParameters
-        {
+{
                 { "Message", $"The URL supplied is not valid." }
             };
 
@@ -193,4 +199,23 @@
         StateHasChanged();
     }
 
+    public class MessageSendModel
+    {
+        [Required]
+        public string MessageToSend { get; set; }
+
+        public string Link { get; set; }
+
+        public bool HasEmbeddedUrl { get; set; }
+
+        public bool HideLinkButton { get; set; }
+
+        public DateTime? DeliveryDate;
+
+        public TimeSpan? DeliveryTime;
+
+        public bool IsDelayedMessage => DeliveryDate.HasValue && DeliveryTime.HasValue;
+
+        public DateTime? ToBeSentOn => IsDelayedMessage ? DeliveryDate.Value.Add(DeliveryTime.Value) : null;
+    }
 }

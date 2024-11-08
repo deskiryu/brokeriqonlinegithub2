@@ -411,7 +411,8 @@ else if (!Saved)
                                              @bind-Value="SelectedTemplateMessage"
                                              AdornmentColor="Color.Primary"
                                              SearchFunc="@OnTemplateFilter"a
-                                             ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)">
+                                             ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)"
+                                             @ref="TemplateAutoComplete">
                             </MudAutocomplete>
                         </div>
                         <div class="col-sm-12 control_wrapper mb-5" style="display:flex; flex-direction: row;">

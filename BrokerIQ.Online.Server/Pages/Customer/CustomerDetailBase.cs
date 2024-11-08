@@ -24,7 +24,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor;
-using static MudBlazor.Icons;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -183,7 +182,7 @@ namespace BrokerIQ.Online.Pages
         private System.Threading.Timer timer;
         private System.Threading.Timer timerUploads;
 
-        public MudSelect<string> TemplateSelect { get; set; }
+        public MudAutocomplete<BrokerDefinedMessageDto> TemplateAutoComplete { get; set; }
 
         protected MudDatePicker NoteFilterFrom { get; set; }
 
@@ -416,7 +415,7 @@ namespace BrokerIQ.Online.Pages
             {
                 if (tmpSelectedIds.Contains(document.Id)) SelectedItemsCustomerDocuments.Add(document);
             }
-            
+
             await InvokeAsync(StateHasChanged);
         }
 
@@ -800,15 +799,16 @@ namespace BrokerIQ.Online.Pages
             var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams, dialogOptions).Result;
             if (!result.Canceled)
             {
-                var message = result.Data.ToString();
+                var message = (MessageSendDialog.MessageSendModel)result.Data;
 
                 try
                 {
-                    if (!string.IsNullOrEmpty(message))
+                    if (!string.IsNullOrEmpty(message.MessageToSend))
                     {
                         if (templateFileAttached)
                         {
-                            succeeded = (await ChatService.SendWithDoc(message, Customer.Id, sdoc));
+                            succeeded = message.IsDelayedMessage ? (await ChatService.SendDraftWithDoc(message.MessageToSend, Customer.Id, sdoc, message.ToBeSentOn.Value)) :
+                                (await ChatService.SendWithDoc(message.MessageToSend, Customer.Id, sdoc));
                         }
                         else if (filesAttached)
                         {
@@ -823,14 +823,15 @@ namespace BrokerIQ.Online.Pages
                                         File = memoryStreams[i].ToArray(),
                                         SupportingDocumentType = DocumentTypeEnum.PDF
                                     };
-                                    succeeded = (await ChatService.SendWithDoc(noNotification ? string.Empty : message, Customer.Id, file, noNotification));
+                                    succeeded = message.IsDelayedMessage ? (await ChatService.SendDraftWithDoc(message.MessageToSend, Customer.Id, sdoc, message.ToBeSentOn.Value, noNotification)) :
+                                        (await ChatService.SendWithDoc(message.MessageToSend, Customer.Id, sdoc, noNotification));
                                 }
                             }
-
                         }
                         else
                         {
-                            succeeded = (await ChatService.Send(message, Customer.Id));
+                            succeeded = succeeded = message.IsDelayedMessage ? (await ChatService.SendDraft(message.MessageToSend, Customer.Id, message.ToBeSentOn.Value)) :
+                                (await ChatService.Send(message.MessageToSend, Customer.Id));
                         }
                     }
                 }
@@ -850,16 +851,15 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-
             if (succeeded)
             {
-                await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
-                TemplateSelect.SelectedValues = new string[] { };
+                await RefreshChatWithMessage(succeeded, "Message sent successfully");
+                await TemplateAutoComplete.Clear();
                 UploadSectionClass = DEFAULT_UPLOAD_CLASS;
             }
             else
             {
-                await RefreshChatWithDialogMessage(succeeded, "Something went wrong sending the message.Please try again.");
+                await RefreshChatWithMessage(succeeded, "Something went wrong sending the message.Please try again.");
             }
         }
 
@@ -885,17 +885,18 @@ namespace BrokerIQ.Online.Pages
         /// </summary>
         /// <param name="success">Success of prior API call</param>
         /// <param name="message">Message to be displayed in dialog</param>
-        private async Task RefreshChatWithDialogMessage(bool success, string message)
+        private async Task RefreshChatWithMessage(bool success, string message)
         {
             if (success)
             {
                 LastChatPageLoaded = 0;
                 Chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
                 StateHasChanged();
+
+                Snackbar.Add(message, Severity.Success);
             }
-            var responseParams = new DialogParameters();
-            responseParams.Add("Message", message);
-            await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+
+            Snackbar.Add(message, Severity.Error);
         }
 
         protected async Task DeleteSelectedDocumentUpload()

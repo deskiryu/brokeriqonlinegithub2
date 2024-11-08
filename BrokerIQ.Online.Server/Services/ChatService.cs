@@ -42,11 +42,11 @@ namespace BrokerIQ.Online.Services
             var chat = mapper.Map<Chat>(ChatDto);
             if (this.api.IsYAHTheme)
             {
-                if (chat!=null && chat.Messages != null)
+                if (chat != null && chat.Messages != null)
                 {
                     chat.Messages = chat.Messages.Select(c => { c.YahTheme = true; return c; }).ToList();
                 }
-    
+
             }
             return chat;
         }
@@ -223,7 +223,7 @@ namespace BrokerIQ.Online.Services
                 BrokerId = brokerId,
                 CustomerId = customerId,
                 GetDocumentFileContents = true,
-                GetImageDocumentFileContents  =true,
+                GetImageDocumentFileContents = true,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 MarkAsRead = true
@@ -240,6 +240,53 @@ namespace BrokerIQ.Online.Services
             }
 
             return chat;
+        }
+
+        public async Task<bool> SendDraft(string message, int customerId, DateTime toBeSentOn)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var brokerId = user.MasterBrokerId;
+
+            var createChatMessage = new CreateChatDraftMessageDto
+            {
+                BrokerId = brokerId,
+                CustomerId = customerId,
+                Message = message,
+                BrokerSource = true,
+                NoNotification = false,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
+                ToBeSentOn = toBeSentOn
+            };
+
+            var answer = await requestProviderService.Post<CreateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft", createChatMessage);
+            return answer != null && answer.Id > 0;
+        }
+
+        public async Task<bool> SendDraftWithDoc(string message, int customerId, ChatDocument chatDocument, DateTime toBeSentOn, bool NoNotification = false)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var brokerId = user.MasterBrokerId;
+            var createChatMessage = new CreateChatDraftMessageDto
+            {
+                BrokerId = brokerId,
+                CustomerId = customerId,
+                Message = message,
+                BrokerSource = true,
+                NoNotification = NoNotification,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
+                ToBeSentOn = toBeSentOn,
+                ChatDocument = new CreateChatDocumentDto
+                {
+                    File = chatDocument.File,
+                    FileName = chatDocument.FileName,
+                    SupportingDocumentType = chatDocument.SupportingDocumentType,
+                }
+            };
+
+            var answer = await requestProviderService.Post<CreateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft", createChatMessage);
+            return answer != null && answer.Id > 0;
         }
     }
 }

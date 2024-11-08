@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Services.Base;
@@ -26,5 +27,9 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> SendMultipleAudioLink(string message, List<int> listCustomerId, int brokerId, string audioUrl);
 
         Task<Chat> GetPaged(int customerId, int brokerId, int pageNumber = 1, int pageSize = 25);
+
+        Task<bool> SendDraft(string message, int customerId, DateTime toBeSentOn);
+
+        Task<bool> SendDraftWithDoc(string message, int customerId, ChatDocument chatDocument, DateTime toBeSentOn, bool NoNotification = false);
     }
 }
