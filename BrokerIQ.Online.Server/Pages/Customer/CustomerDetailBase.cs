@@ -183,8 +183,6 @@ namespace BrokerIQ.Online.Pages
         private System.Threading.Timer timer;
         private System.Threading.Timer timerUploads;
 
-        public MudSelect<string> TemplateSelect { get; set; }
-
         protected MudDatePicker NoteFilterFrom { get; set; }
 
         protected MudDatePicker NoteFilterTo { get; set; }
@@ -854,7 +852,6 @@ namespace BrokerIQ.Online.Pages
             if (succeeded)
             {
                 await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
-                TemplateSelect.SelectedValues = new string[] { };
                 UploadSectionClass = DEFAULT_UPLOAD_CLASS;
             }
             else

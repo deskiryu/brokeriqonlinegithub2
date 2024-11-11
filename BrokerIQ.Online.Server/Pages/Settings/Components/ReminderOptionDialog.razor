@@ -10,7 +10,7 @@
                     var names = Enum.GetNames(typeof(Dto.Enum.ReminderTypeEnum)); for (int i = 1; i <= names.Length; i++)
                     {
                         var looped = (Dto.Enum.ReminderTypeEnum)i;
-                        if (looped != ReminderTypeEnum.Profiling || BrokerIdentifier.HasProfiling)
+                        if (looped != ReminderTypeEnum.Profiling && looped != ReminderTypeEnum.Notes)
                         {
                             <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
                         }

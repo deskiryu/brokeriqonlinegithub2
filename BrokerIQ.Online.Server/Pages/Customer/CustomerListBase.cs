@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Extensions;
-using BrokerIQ.Online.Server.Models;
 using BrokerIQ.Online.Server.Pages.Customer.Components;
 using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
@@ -52,6 +52,8 @@ namespace BrokerIQ.Online.Pages
 
         public HashSet<Customer> SelectedCustomers { get; set; } = new HashSet<Customer>();
 
+        public Customer SelectedCustomer { get; set; }
+
         public int BrokerId { get; set; }
 
         public int AssignedToId { get; set; }
@@ -67,13 +69,9 @@ namespace BrokerIQ.Online.Pages
         public int CustomerCategory { get; set; }
         public int AgeRange { get; set; }
 
-        protected int? ProfilingOption { get; set; }
+        protected int ProfilingOption { get; set; } = int.MaxValue;
 
         protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
-
-        //filter
-        protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrWhiteSpace(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower()) ||
-            !string.IsNullOrWhiteSpace(i.BusinessName) && i.BusinessName.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
@@ -92,17 +90,14 @@ namespace BrokerIQ.Online.Pages
             await RefreshListFromFilterValues();
         }
 
-        protected override async Task OnInitializedAsync()
-        {
-            await GetCustomersInit();
-        }
+        protected MudTable<Customer> CustomerTable;
 
-        protected async Task GetCustomersInit()
+        protected override async Task OnInitializedAsync()
         {
             try
             {
                 SelectFilled = false;
-                await GetCustomers();
+                Customers = new List<Customer>();
                 User = await AccountService.GetUser();
 
                 CustomerCategoriesByRelevance = Extensions.GetAllCustomerCategories();
@@ -116,6 +111,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     Brokers = new List<Broker>();
                     BrokerId = User.MasterBrokerId;
+                    await RefreshEmployees();
 
                     var broker = await BrokerService.GetBroker(User.MasterBrokerId);
 
@@ -126,8 +122,6 @@ namespace BrokerIQ.Online.Pages
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
                     }
-
-                    await RefreshEmployees();
                 }
             }
             catch
@@ -167,41 +161,11 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task GetCustomers(bool clear = false)
+        protected async Task<IEnumerable<Customer>> SearchCustomer(string value)
         {
-            try
-            {
-                Customers = (await CustomerService.GetAllCustomers(profilePictures: true)).OrderByDescending(x => x.Id).ToList();
-            }
-            catch
-            {
-                NavigationManager.NavigateTo($"account/logout");
-            }
+            if (string.IsNullOrWhiteSpace(value)) return Array.Empty<Customer>();
 
-            if (clear)
-            {
-                StateHasChanged();
-            }
-        }
-
-        protected async Task<IEnumerable<string>> OnFilter(string value)
-        {
-            if (!string.IsNullOrEmpty(value) && Customers != null && Customers.Any())
-            {
-                // In real life use an asynchronous function for fetching data from an api.
-                var filtered = Customers
-                    .Where(
-                            i => !string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(value.ToLower()) ||
-                                 !string.IsNullOrEmpty(i.EmailAddress) && i.EmailAddress.ToLower().Contains(value.ToLower()) ||
-                                 !string.IsNullOrEmpty(i.TelephoneNumber) && i.TelephoneNumber.ToLower().Contains(value.ToLower())
-                            );
-                var results = await Task.FromResult(filtered.Select(x => x.Name).Distinct().ToList());
-                return results;
-            }
-            else
-            {
-                return new List<string>();
-            }
+            return (await CustomerService.Search(BrokerId, value)).ToArray();
         }
 
         protected async Task<IEnumerable<string>> OnFilterBroker(string value)
@@ -230,19 +194,13 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected void AutoCompleteClick(string args)
+        protected void OnCustomerSelected(Customer args)
         {
-            var customer = Customers.FirstOrDefault(x => x.Name == args);
-            if (customer != null)
-            {
-                NavigationManager.NavigateTo($"clientdetail/{customer.Id}");
-            }
+            NavigationManager.NavigateTo($"clientdetail/{args.Id}");
         }
 
         protected async Task AutoCompleteClickBroker()
         {
-            Customers.Clear();
-            Customers = null;
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
 
             if (SelectedCustomers != null && SelectedCustomers.Any())
@@ -255,28 +213,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task RefreshListFromFilterValues()
         {
-            Customers.Clear();
-            Customers = null;
-
-            var filterValues = new CustomerFilter()
-            {
-                BrokerId = BrokerId,
-                AssignedToId = AssignedToId,
-                Recent = FilterRecent,
-                Period = FilterPeriod,
-                Category = CustomerCategory,
-                AgeRange = AgeRange,
-                ProfilePictures = true,
-                ProfilingOption = ProfilingOption.HasValue ? (ProfilingOptionEnum)ProfilingOption : null,
-                NonAppUsersOnly = showNonAppUsersOnly
-            };
-
-            Customers = (await CustomerService.GetFilteredCustomers(filterValues)).ToList();
-
-            if (SelectedCustomers != null && SelectedCustomers.Any())
-            {
-                SelectedCustomers.Clear();
-            }
+            await CustomerTable.ReloadServerData();
 
             StateHasChanged();
         }
@@ -399,7 +336,7 @@ namespace BrokerIQ.Online.Pages
         {
             await CustomerService.SetCustomerCategory(customerId, (CustomerCategoryEnum)newCategory);
 
-            await GetCustomers();
+            await CustomerTable.ReloadServerData();
         }
 
         protected string GetCategoryDisplayName(Customer c)
@@ -427,8 +364,8 @@ namespace BrokerIQ.Online.Pages
             if (!result.Canceled)
             {
                 SelectedCustomers = null;
-                await GetCustomers();
                 await RefreshEmployees();
+                await CustomerTable.ReloadServerData();
                 StateHasChanged();
             }
         }
@@ -445,7 +382,7 @@ namespace BrokerIQ.Online.Pages
 
             await DialogService.Show<CustomerImportDialog>("Import customers", dialogParams, dialogOptions).Result;
 
-            await GetCustomers();
+            await CustomerTable.ReloadServerData();
 
             StateHasChanged();
         }
@@ -471,6 +408,30 @@ namespace BrokerIQ.Online.Pages
 
                 Snackbar.Add(wasSuccessfull ? "Emails sent successfully" : "Some emails failed", wasSuccessfull ? Severity.Success : Severity.Warning);
             }
+        }
+
+        protected async Task<TableData<Customer>> GetCustomersPage(TableState state)
+        {
+            var sortOrder = SortOrderEnum.Id;
+            var sortBy = SortByEnum.Descending;
+
+            if (!string.IsNullOrWhiteSpace(state.SortLabel))
+            {
+                sortOrder = (SortOrderEnum)Int32.Parse(state.SortLabel);
+                sortBy = state.SortDirection == SortDirection.Ascending ? SortByEnum.Ascending : SortByEnum.Descending;
+            }
+
+            ProfilingOptionEnum? profilingOption = null;
+            if (ProfilingOption != int.MaxValue) profilingOption = (ProfilingOptionEnum)ProfilingOption;
+
+            var pagedResponse = await CustomerService.GetPagedCustomers(brokerId: BrokerId, assignedToId: AssignedToId, filterRecent: FilterRecent,
+                filterPeriod: FilterPeriod, filterCategory: CustomerCategory, filterAgeRange: AgeRange, nonAppUsersOnly: showNonAppUsersOnly,
+                profilingOption: profilingOption, sortOrder: (SortOrderEnum)sortOrder, sortBy: (SortByEnum)sortBy,
+                partialName: SearchTerm, profilePictures: true, pageNumber: state.Page, pageSize: state.PageSize);
+
+            Customers = pagedResponse.PageData.ToList();
+
+            return new TableData<Customer>() { TotalItems = pagedResponse.TotalRecords, Items = pagedResponse.PageData };
         }
     }
 }
