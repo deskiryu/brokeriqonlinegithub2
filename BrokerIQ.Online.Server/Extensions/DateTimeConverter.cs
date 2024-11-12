@@ -19,6 +19,11 @@ namespace BrokerIQ.Online.Server.Extensions
             return timeIn.ToString(@"hh\:mm");
         }
 
+        public static string ToBiqDateTimeStringNoConversion(this DateTime dateIn)
+        {
+            return dateIn.ToString("dd/MM/yyyy HH:mm");
+        }
+
         private static DateTime Get(DateTime dateIn)
         {
             var zone = "GMT Standard Time";
