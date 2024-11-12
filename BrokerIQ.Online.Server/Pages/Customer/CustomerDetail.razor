@@ -370,7 +370,7 @@ else if (!Saved)
                                         <MudText Typo="Typo.subtitle2">@note.CreatedByName</MudText>
                                         @if (note.ReminderDate != null && note.ReminderDate.HasValue)
                                         {
-                                            <MudText Typo="Typo.subtitle2">Reminder Date @(note.ReminderDate.Value.ToBiqDateTimeString())</MudText>
+                                            <MudText Typo="Typo.subtitle2">Reminder Date @(note.ReminderDate.Value.ToBiqDateTimeStringNoConversion())</MudText>
                                         }
                                     </CardHeaderContent>
                                     <CardHeaderActions>
