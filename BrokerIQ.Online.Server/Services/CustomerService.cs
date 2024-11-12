@@ -278,5 +278,69 @@ namespace BrokerIQ.Online.Services
                 ConnectedCustomerId = connectedCustomerId
             });
         }
+
+        public async Task<PagedResponse<Customer>> GetPagedCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0,
+            int filterAgeRange = 0, bool nonAppUsersOnly = false, ProfilingOptionEnum? profilingOption = null, SortOrderEnum sortOrder = SortOrderEnum.Id, SortByEnum sortBy = SortByEnum.Descending,
+            string partialName = null, bool profilePictures = false, int pageNumber = 1, int pageSize = 10)
+        {
+            return await GetPagedFilteredCustomers(new CustomerFilter()
+            {
+                BrokerId = brokerId,
+                AssignedToId = assignedToId,
+                Recent = filterRecent,
+                Period = filterPeriod,
+                Category = filterCategory,
+                AgeRange = filterAgeRange,
+                ProfilePictures = profilePictures,
+                NonAppUsersOnly = nonAppUsersOnly,
+                ProfilingOption = profilingOption,
+                PartialName = partialName,
+                SortOrder = sortOrder,
+                SortBy = sortBy,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            });
+        }
+
+        public async Task<PagedResponse<Customer>> GetPagedFilteredCustomers(CustomerFilter filter)
+        {
+            var user = await this.accountService.GetUser();
+            requestProviderService.Token = user?.Token;
+
+            var option = (RecentEnum)filter.Recent;
+            var ts = ((RecentPeriodEnum)filter.Period).TransformToTS();
+            var searchOption = new SearchOptionDto
+            {
+                InsuranceEndingSoon = option == RecentEnum.RecentInsurance,
+                MortgagePromotionEndingSoon = option == RecentEnum.RecentMortgage,
+                InsuranceRecentPeriod = ts,
+                MortgagePromotionRecentPeriod = ts,
+                CustomerCategory = (CustomerCategoryEnum)filter.Category,
+                AgeRange = (AgeRangeEnum)filter.AgeRange,
+                ProfilingOption = filter.ProfilingOption,
+                PartialName = filter.PartialName,
+                SortOrder = filter.SortOrder,
+                SortBy = filter.SortBy,
+                AssignedToId = filter.AssignedToId,
+                NonAppUsersOnly = filter.NonAppUsersOnly
+            };
+
+            var usePaging = filter.PageNumber is not null && filter.PageSize is not null;
+            var url = this.customerUrl;
+
+            url += $"/brokerpaged/{filter.BrokerId}";
+            url += $"?profilePictures={filter.ProfilePictures}";
+            if (usePaging) url += $"&pagenumber={filter.PageNumber}&pageSize={filter.PageSize}";
+
+            var answer = await requestProviderService.Post<SearchOptionDto, PagedResponse<CustomerDto>>(url, searchOption);
+
+            return new PagedResponse<Customer>()
+            {
+                CurrentPage = answer.CurrentPage,
+                TotalPages = answer.TotalPages,
+                PageData = mapper.Map<IEnumerable<Customer>>(answer.PageData),
+                TotalRecords = answer.TotalRecords
+            };
+        }
     }
 }

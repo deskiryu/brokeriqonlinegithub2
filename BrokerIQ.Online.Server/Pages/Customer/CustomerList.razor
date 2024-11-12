@@ -23,7 +23,6 @@
 }
 else
 {
-
     <div class="card ">
         <div class="card-header">Notifications</div>
         <div class="card-body">
@@ -46,7 +45,7 @@ else
         <div class="card-body">
 
             <div class="row">
-                @if (User.IsAdmin)
+                @if (User is not null && User.IsAdmin)
                 {
                     <div class="col-12">
                         <MudSelect T="int"
@@ -54,7 +53,7 @@ else
                                    Placeholder="Select"
                                    Clearable="true"
                                    @bind-Value="BrokerId"
-                                   SelectedValuesChanged="@AutoCompleteClickBroker"
+                                   SelectedValuesChanged="@RefreshListFromFilterValues"
                                    AdornmentColor="Color.Primary">
                             <MudSelectItem Value="0">Select</MudSelectItem>
                             @foreach (var item in @Brokers)
@@ -65,7 +64,7 @@ else
                     </div>
                 }
 
-                @if (!User.IsAdmin && HasFilter)
+                @if ((User is not null && !User.IsAdmin) && HasFilter)
                 {
                     <div class="col-lg-8">
                         <MudSelect T="int"
@@ -99,20 +98,29 @@ else
 
             <div class="row">
                 <div class="col-lg-4">
-                    <label>Filter the list below by name</label>
-                    <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" />
+                    @* <label>Filter the list below by name</label> *@
+                    @* <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" /> *@
+                    <MudTextField @bind-Value="SearchTerm" Label="Company or Individual Name" Placeholder="Type name or business name"
+                                  Immediate="true" OnKeyUp="RefreshListFromFilterValues" />
                 </div>
                 <div class="col-lg-4 control_wrapper">
-                    <MudAutocomplete T="string"
+                    <MudAutocomplete T="Online.Models.Customer"
                                      Label="Go direct to client"
                                      Placeholder="Start typing name, email or telephone ..."
                                      AdornmentColor="Color.Primary"
-                                     TextChanged="@AutoCompleteClick"
-                                     SearchFunc="@OnFilter">
-                    </MudAutocomplete>
+                                     SearchFunc="@SearchCustomer"
+                                     ToStringFunc="@(c => c?.Name)"
+                                     ValueChanged="@OnCustomerSelected" />
+                    @*<MudAutocomplete T="string"
+                                         Label="Go direct to client"
+                                         Placeholder="Start typing name, email or telephone ..."
+                                         AdornmentColor="Color.Primary"
+                                         TextChanged="@AutoCompleteClick"
+                                         SearchFunc="@OnFilter">
+                        </MudAutocomplete>*@
                 </div>
 
-                @if (User.IsAdmin || HasFilter)
+                @if ((User is not null && User.IsAdmin) || HasFilter)
                 {
                     <div class="col-lg-4">
                         <MudSelect T="int"
@@ -130,7 +138,7 @@ else
                 }
             </div>
 
-            @if (User.IsAdmin || HasFilter)
+            @if ((User is not null && User.IsAdmin) || HasFilter)
             {
                 <div class="row">
                     <div class="col-lg-4">
@@ -190,16 +198,16 @@ else
                 {
                     <div class="row mb-2">
                         <div class="col-12">
-                            <MudSelect T="int?"
+                            <MudSelect T="int"
                                        Label="Client Profiling *"
-                                       Placeholder="Select"
                                        Clearable="true"
                                        @bind-Value="ProfilingOption"
                                        SelectedValuesChanged="@RefreshListFromFilterValues"
                                        AdornmentColor="Color.Primary">
+                                <MudSelectItem Value="int.MaxValue">Select</MudSelectItem>
                                 @{
                                     var names = Enum.GetNames(typeof(ProfilingOptionEnum));
-                                    @for (int? i = 0; i <= names.Length; i++)
+                                    @for (int i = 0; i <= names.Length; i++)
                                     {
                                         ProfilingOptionEnum looped = (ProfilingOptionEnum)i;
                                         <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
@@ -219,156 +227,149 @@ else
         </div>
     </div>
     <div>
-
         <div class="card">
             <div class="card-header">Clients</div>
             <div class="card-body">
-                <MudTable Items="@FilteredCustomers"
-                          Hover="true"
-                          SortLabel="Sort By"
-                          MultiSelection="true"
-                          Dense="true"
-                          @bind-SelectedItems="SelectedCustomers">
-                    <HeaderContent>
-                        @if (api.Value.ShowClientPictureColumn)
-                        {
-                            <MudTh></MudTh>
-                        }
-                        @if (!User.IsAdmin)
-                        {
-                            <MudTh Style="text-align:center">
-                                @*<MudIconButton Class="@(AssignVisibilityClass())"
-                                    Icon="@Icons.Material.Filled.GroupAdd"
-                                    Size="Size.Small"
-                                    Title="Assign"
-                                    Variant="Variant.Filled"
-                                    Color="Color.Primary"
-                                    Style="@($"color:{Colors.Shades.Black}")" />*@
-                            </MudTh>
-                        }
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.LastName)">Last Name</MudTableSortLabel></MudTh>
-                        @if (api.Value.ShowClientPhoneColumn)
-                        {
-                            <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>
-                        }
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.EmailAddress)">Email Address</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.DateOfBirth)">Date Of Birth</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.CustomerCategory.GetDisplayName())">Category</MudTableSortLabel></MudTh>
-                        @if (User.IsAdmin)
-                        {
-                            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.AppVersion)">App</MudTableSortLabel></MudTh>
-                            <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>
-                        }
-                        <MudTh>Verified</MudTh>
-                        <MudTh>
-                            @if (CanImport || SelectedCustomers.Any())
+                @if (User is not null)
+                {
+                    <MudTable T="Online.Models.Customer"
+                              Hover="true"
+                              SortLabel="Sort By"
+                              MultiSelection="true"
+                              Dense="true"
+                              @bind-SelectedItems="SelectedCustomers"
+                              ServerData="GetCustomersPage"
+                              LoadingProgressColor="Color.Primary"
+                              @ref="CustomerTable">
+                        <HeaderContent>
+                            @if (api.Value.ShowClientPictureColumn)
                             {
-                                <MudMenu Icon="@Icons.Material.Filled.MoreVert"
-                                         Size="Size.Small"
-                                         AriaLabel="Bulk actions"
-                                         Color="Color.Dark">
-                                    @if (CanImport)
-                                    {
-                                        <MudMenuItem OnClick="ShowImportDialog">Import</MudMenuItem>
-                                    }
-                                    @if (SelectedCustomers.Any())
-                                    {
-                                        @if (!User.IsAdmin && !User.IsBrokerStaff)
-                                        {
-                                            <MudMenuItem OnClick="AssignToStaff">Assign</MudMenuItem>
-                                        }
-                                        <MudMenuItem OnClick="SendInvite">Invite</MudMenuItem>
-                                    }
-                                </MudMenu>
+                                <MudTh></MudTh>
                             }
-                        </MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        @if (api.Value.ShowClientPictureColumn)
-                        {
-                            <MudTd Style="text-align:center">
-                                @if (!string.IsNullOrWhiteSpace(context.PPAsImage))
-                                {
-                                    @if (context.HasNeeds)
-                                    {
-                                        <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
-                                            <MudAvatar><img src="@context.PPAsImage" style="width:30px;" /></MudAvatar>
-                                        </MudBadge>
-                                    }
-                                    else
-                                    {
-                                        <MudAvatar><img src="@context.PPAsImage" style="width:30px;" /></MudAvatar>
-                                    }
-                                }
-                                else
-                                {
-                                    @if (context.HasNeeds)
-                                    {
-                                        <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
-                                            <MudAvatar Color="Color.Secondary">@context.FirstName.ToUpper().First()@context.LastName.ToUpper().First()</MudAvatar>
-                                        </MudBadge>
-                                    }
-                                    else
-                                    {
-                                        <MudAvatar Color="Color.Secondary">@context.FirstName.ToUpper().First()@context.LastName.ToUpper().First()</MudAvatar>
-                                    }
-                                }
-                            </MudTd>
-                        }
-                        @if (!User.IsAdmin)
-                        {
+                            @if (!User.IsAdmin)
+                            {
+                                <MudTh Style="text-align:center"></MudTh>
+                            }
+                            <MudTh><MudTableSortLabel SortLabel="1" T="Online.Models.Customer">First Name</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortLabel="2" T="Online.Models.Customer">Last Name</MudTableSortLabel></MudTh>
+                            @if (api.Value.ShowClientPhoneColumn)
+                            {
+                                <MudTh><MudTableSortLabel Enabled="@false" SortLabel="9" T="Online.Models.Customer">Telephone Number</MudTableSortLabel></MudTh>
+                            }
+                            <MudTh><MudTableSortLabel SortLabel="6" T="Online.Models.Customer">Email Address</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortLabel="3" T="Online.Models.Customer">Date Of Birth</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortLabel="7" T="Online.Models.Customer">Category</MudTableSortLabel></MudTh>
+                            @if (User is not null && User.IsAdmin)
+                            {
+                                <MudTh><MudTableSortLabel SortLabel="10" T="Online.Models.Customer">App</MudTableSortLabel></MudTh>
+                                <MudTh><MudTableSortLabel SortLabel="11" T="Online.Models.Customer">WL</MudTableSortLabel></MudTh>
+                            }
+                            <MudTh>Verified</MudTh>
                             <MudTh>
-                                <MudAvatarGroup Max="4" Spacing="2" MaxSize="Size.Small" MaxColor="Color.Secondary">
-                                    @foreach (var staff in context.CustomerAssignments)
-                                    {
-                                        <MudAvatar Size="Size.Small" Style="@($"background:{@EmployeeColour[staff.Id]};")">@staff.FirstName.ToUpper().First()@staff.LastName.ToUpper().First()</MudAvatar>
-                                    }
-                                </MudAvatarGroup>
+                                @if (CanImport || SelectedCustomers.Any())
+                                {
+                                    <MudMenu Icon="@Icons.Material.Filled.MoreVert"
+                                             Size="Size.Small"
+                                             AriaLabel="Bulk actions"
+                                             Color="Color.Dark">
+                                        @if (CanImport)
+                                        {
+                                            <MudMenuItem OnClick="ShowImportDialog">Import</MudMenuItem>
+                                        }
+                                        @if (SelectedCustomers.Any())
+                                        {
+                                            @if (User is not null && !User.IsAdmin && !User.IsBrokerStaff)
+                                            {
+                                                <MudMenuItem OnClick="AssignToStaff">Assign</MudMenuItem>
+                                            }
+                                            <MudMenuItem OnClick="SendInvite">Invite</MudMenuItem>
+                                        }
+                                    </MudMenu>
+                                }
                             </MudTh>
-                        }
-                        <MudTd DataLabel="First name">@context.FirstName</MudTd>
-                        <MudTd DataLabel="Last name">@context.LastName</MudTd>
-                        @if (api.Value.ShowClientPhoneColumn)
-                        {
-                            <MudTd DataLabel="Telephone">@context.TelephoneNumber</MudTd>
-                        }
-                        <MudTd DataLabel="Email">@context.EmailAddress</MudTd>
-                        <MudTd DataLabel="Date Of Birth">@context.DateOfBirth.ToBiqDateString()</MudTd>
-                        <MudTd DataLabel="Category">
-                            <MudMenu Dense="true">
-                                <ActivatorContent>
-                                    <MudButton style="text-transform: none;" Variant="Variant.Text" Size="Size.Small" EndIcon="@Icons.Material.Filled.ArrowDropDown">@GetCategoryDisplayName(context)</MudButton>
-                                </ActivatorContent>
-                                <ChildContent>
-                                    @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
+                        </HeaderContent>
+                        <RowTemplate>
+                            @if (api.Value.ShowClientPictureColumn)
+                            {
+                                <MudTd Style="text-align:center">
+                                    @if (!string.IsNullOrWhiteSpace(context.PPAsImage))
                                     {
-                                        CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
-                                        int id = (int)looped;
-                                        <MudMenuItem OnClick="@(e => OnCategoryClick(context.Id, (int)looped))">@looped.GetDisplayName()</MudMenuItem>
+                                        @if (context.HasNeeds)
+                                        {
+                                            <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
+                                                <MudAvatar><img src="@context.PPAsImage" style="width:30px;" /></MudAvatar>
+                                            </MudBadge>
+                                        }
+                                        else
+                                        {
+                                            <MudAvatar><img src="@context.PPAsImage" style="width:30px;" /></MudAvatar>
+                                        }
                                     }
-                                </ChildContent>
-                            </MudMenu>
-                        </MudTd>
-                        @if (User.IsAdmin)
-                        {
-                            <MudTd DataLabel="App">@context.AppVersion</MudTd>
-                            <MudTd DataLabel="WL"><MudCheckBox @bind-Checked="@context.IsWhiteLabel" Disabled="true"></MudCheckBox></MudTd>
-                        }
-                        <MudTd Style="text-align:center" DataLabel="Verified"><MudCheckBox @bind-Checked="@context.EmailConfirmed" Disabled="true"></MudCheckBox></MudTd>
-                        <MudTd DataLabel="">
-                            <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Filled" Size="Size.Small"
-                                           Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" Link="@($"clientdetail/{@context.Id}")"></MudIconButton>
-                            @* <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientdetail/{@context.Id}")" >
-                                <i class="fas fa-info-circle"></i>
-                                </MudButton> *@
-                        </MudTd>
-
-                    </RowTemplate>
-                    <PagerContent>
-                        <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
-                    </PagerContent>
-                </MudTable>
+                                    else
+                                    {
+                                        @if (context.HasNeeds)
+                                        {
+                                            <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
+                                                <MudAvatar Color="Color.Secondary">@context.FirstName.ToUpper().First()@context.LastName.ToUpper().First()</MudAvatar>
+                                            </MudBadge>
+                                        }
+                                        else
+                                        {
+                                            <MudAvatar Color="Color.Secondary">@context.FirstName.ToUpper().First()@context.LastName.ToUpper().First()</MudAvatar>
+                                        }
+                                    }
+                                </MudTd>
+                            }
+                            @if (!User.IsAdmin)
+                            {
+                                <MudTh>
+                                    <MudAvatarGroup Max="4" Spacing="2" MaxSize="Size.Small" MaxColor="Color.Secondary">
+                                        @foreach (var staff in context.CustomerAssignments)
+                                        {
+                                            <MudAvatar Size="Size.Small" Style="@($"background:{@EmployeeColour[staff.Id]};")">@staff.FirstName.ToUpper().First()@staff.LastName.ToUpper().First()</MudAvatar>
+                                        }
+                                    </MudAvatarGroup>
+                                </MudTh>
+                            }
+                            <MudTd DataLabel="First name">@context.FirstName</MudTd>
+                            <MudTd DataLabel="Last name">@context.LastName</MudTd>
+                            @if (api.Value.ShowClientPhoneColumn)
+                            {
+                                <MudTd DataLabel="Telephone">@context.TelephoneNumber</MudTd>
+                            }
+                            <MudTd DataLabel="Email">@context.EmailAddress</MudTd>
+                            <MudTd DataLabel="Date Of Birth">@context.DateOfBirth.ToBiqDateString()</MudTd>
+                            <MudTd DataLabel="Category">
+                                <MudMenu Dense="true">
+                                    <ActivatorContent>
+                                        <MudButton style="text-transform: none;" Variant="Variant.Text" Size="Size.Small" EndIcon="@Icons.Material.Filled.ArrowDropDown">@GetCategoryDisplayName(context)</MudButton>
+                                    </ActivatorContent>
+                                    <ChildContent>
+                                        @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
+                                        {
+                                            CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
+                                            int id = (int)looped;
+                                            <MudMenuItem OnClick="@(e => OnCategoryClick(context.Id, (int)looped))">@looped.GetDisplayName()</MudMenuItem>
+                                        }
+                                    </ChildContent>
+                                </MudMenu>
+                            </MudTd>
+                            @if (User.IsAdmin)
+                            {
+                                <MudTd DataLabel="App">@context.AppVersion</MudTd>
+                                <MudTd DataLabel="WL"><MudCheckBox @bind-Checked="@context.IsWhiteLabel" Disabled="true"></MudCheckBox></MudTd>
+                            }
+                            <MudTd Style="text-align:center" DataLabel="Verified"><MudCheckBox @bind-Checked="@context.EmailConfirmed" Disabled="true"></MudCheckBox></MudTd>
+                            <MudTd DataLabel="">
+                                <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Filled" Size="Size.Small"
+                                               Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" Link="@($"clientdetail/{@context.Id}")"></MudIconButton>
+                            </MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager />
+                        </PagerContent>
+                    </MudTable>
+                }
             </div>
         </div>
     </div>

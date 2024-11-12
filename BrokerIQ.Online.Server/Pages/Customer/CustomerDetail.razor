@@ -410,6 +410,7 @@ else if (!Saved)
                                              Placeholder="Type part of the template prompt"ı
                                              @bind-Value="SelectedTemplateMessage"
                                              AdornmentColor="Color.Primary"
+                                             MaxItems="50"
                                              SearchFunc="@OnTemplateFilter"a
                                              ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)">
                             </MudAutocomplete>
