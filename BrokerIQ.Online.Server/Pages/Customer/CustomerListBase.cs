@@ -69,10 +69,6 @@ namespace BrokerIQ.Online.Pages
         public int CustomerCategory { get; set; }
         public int AgeRange { get; set; }
 
-        public bool FixedHeader { get; set; }
-        public bool FixedFooter { get; set; }
-        public string ScrollHeight { get => "500px"; }
-
         protected int ProfilingOption { get; set; } = int.MaxValue;
 
         protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
@@ -98,8 +94,6 @@ namespace BrokerIQ.Online.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            FixedHeader = true;
-            FixedFooter=true;
             try
             {
                 SelectFilled = false;
