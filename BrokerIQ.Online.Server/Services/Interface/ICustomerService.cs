@@ -51,7 +51,5 @@ namespace BrokerIQ.Online.Services.Interface
         Task<PagedResponse<Customer>> GetPagedCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0,
             int filterAgeRange = 0, bool nonAppUsersOnly = false, ProfilingOptionEnum? profilingOption = null, SortOrderEnum sortOrder = SortOrderEnum.Id, SortByEnum sortBy = SortByEnum.Descending,
             string partialName = null, bool profilePictures = false, int pageNumber = 1, int pageSize = 10);
-
-        Task<PagedResponse<Customer>> GetPagedFilteredCustomers(CustomerFilter filter);
     }
 }
