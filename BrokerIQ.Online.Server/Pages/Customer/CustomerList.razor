@@ -111,13 +111,6 @@ else
                                      SearchFunc="@SearchCustomer"
                                      ToStringFunc="@(c => c?.Name)"
                                      ValueChanged="@OnCustomerSelected" />
-                    @*<MudAutocomplete T="string"
-                                         Label="Go direct to client"
-                                         Placeholder="Start typing name, email or telephone ..."
-                                         AdornmentColor="Color.Primary"
-                                         TextChanged="@AutoCompleteClick"
-                                         SearchFunc="@OnFilter">
-                        </MudAutocomplete>*@
                 </div>
 
                 @if ((User is not null && User.IsAdmin) || HasFilter)

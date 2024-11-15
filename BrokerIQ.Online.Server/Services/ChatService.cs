@@ -253,7 +253,6 @@ namespace BrokerIQ.Online.Services
                 BrokerId = brokerId,
                 CustomerId = customerId,
                 Message = message,
-                BrokerSource = true,
                 NoNotification = false,
                 HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
                 ToBeSentOn = toBeSentOn
@@ -263,7 +262,7 @@ namespace BrokerIQ.Online.Services
             return answer != null && answer.Id > 0;
         }
 
-        public async Task<bool> SendDraftWithDoc(string message, int customerId, ChatDocument chatDocument, DateTime toBeSentOn, bool NoNotification = false)
+        public async Task<bool> CreateDraftWithDocs(string message, int customerId, IEnumerable<ChatDocument> chatDocuments, DateTime toBeSentOn, bool NoNotification = false)
         {
             var user = await this.accountService.GetUser();
             this.requestProviderService.Token = user?.Token;
@@ -273,20 +272,70 @@ namespace BrokerIQ.Online.Services
                 BrokerId = brokerId,
                 CustomerId = customerId,
                 Message = message,
-                BrokerSource = true,
                 NoNotification = NoNotification,
                 HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
-                ToBeSentOn = toBeSentOn,
-                ChatDocument = new CreateChatDocumentDto
-                {
-                    File = chatDocument.File,
-                    FileName = chatDocument.FileName,
-                    SupportingDocumentType = chatDocument.SupportingDocumentType,
-                }
+                ToBeSentOn = toBeSentOn
             };
 
+            var draftDocuments = new List<CreateChatDocumentDto>();
+
+            foreach (var document in chatDocuments)
+            {
+                var draftDocument = new CreateChatDocumentDto
+                {
+                    File = document.File,
+                    FileName = document.FileName,
+                    SupportingDocumentType = document.SupportingDocumentType
+                };
+
+                draftDocuments.Add(draftDocument);
+            }
+            createChatMessage.ChatDocuments = draftDocuments;
+
             var answer = await requestProviderService.Post<CreateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft", createChatMessage);
+
             return answer != null && answer.Id > 0;
+        }
+
+        public async Task<bool> UpdateDraftWithDocs(ChatDraftMessage draft)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var updateChatMessage = new UpdateChatDraftMessageDto
+            {
+                Id = draft.Id,
+                Message = draft.Message,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(draft.Message) && draft.Message.Contains("<--") && draft.Message.Contains("-->"),
+                ToBeSentOn = draft.ToBeSentOn.Value
+            };
+
+            var draftDocuments = new List<ChatDocumentDto>();
+
+            foreach (var document in draft.ChatDocuments)
+            {
+                var draftDocument = new ChatDocumentDto
+                {
+                    File = document.File,
+                    FileName = document.FileName,
+                    SupportingDocumentType = document.SupportingDocumentType
+                };
+
+                draftDocuments.Add(draftDocument);
+            }
+            updateChatMessage.ChatDocuments = draftDocuments;
+
+            var answer = await requestProviderService.Put<UpdateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft/{draft.Id}", updateChatMessage);
+
+            return answer != null && answer.Id > 0;
+        }
+
+        public async Task<bool> DeleteDraft(ChatDraftMessage message)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await requestProviderService.Delete($"{ChatUrl}/draft/{message.Id}");
         }
     }
 }

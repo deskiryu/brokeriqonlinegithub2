@@ -28,8 +28,13 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<Chat> GetPaged(int customerId, int brokerId, int pageNumber = 1, int pageSize = 25);
 
+
         Task<bool> SendDraft(string message, int customerId, DateTime toBeSentOn);
 
-        Task<bool> SendDraftWithDoc(string message, int customerId, ChatDocument chatDocument, DateTime toBeSentOn, bool NoNotification = false);
+        Task<bool> CreateDraftWithDocs(string message, int customerId, IEnumerable<ChatDocument> chatDocuments, DateTime toBeSentOn, bool NoNotification = false);
+
+        Task<bool> UpdateDraftWithDocs(ChatDraftMessage draft);
+
+        Task<bool> DeleteDraft(ChatDraftMessage draft);
     }
 }

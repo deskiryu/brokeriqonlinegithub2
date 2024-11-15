@@ -316,7 +316,6 @@ else if (!Saved)
                                         <i class="fas fa-trash"></i>
                                     </MudButton>
                                 </MudTd>
-
                             </RowTemplate>
                             <PagerContent>
                                 <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
@@ -407,11 +406,11 @@ else if (!Saved)
                         <div class="col-sm-6 control_wrapper mb-5">
                             <MudAutocomplete T="BrokerIQ.Dto.Models.BrokerDefinedMessageDto"
                                              Label="Select Message Template"
-                                             Placeholder="Type part of the template prompt"ı
+                                             Placeholder="Type part of the template prompt" ı
                                              @bind-Value="SelectedTemplateMessage"
                                              AdornmentColor="Color.Primary"
                                              MaxItems="50"
-                                             SearchFunc="@OnTemplateFilter"a
+                                             SearchFunc="@OnTemplateFilter" a
                                              ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)"
                                              @ref="TemplateAutoComplete">
                             </MudAutocomplete>
@@ -440,32 +439,29 @@ else if (!Saved)
                             </div>
                         </div>
 
-                        <div class="">
-                            <div class="card">
-                                <div class="card-body">
-
-                                    @if (LoadedChatFiles.Any())
-                                    {
-                                        <MudTable Items="@LoadedChatFiles" Hover="true" SortLabel="Sort By" Class="">
-                                            <RowTemplate>
-                                                <MudTd>@context.Item1.Name</MudTd>
-                                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument(context.Item1.Name))" class="btn btn-link">Delete</MudButton></MudTd>
-                                            </RowTemplate>
-                                        </MudTable>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6 mt-1">
-                            <div class="card">
-                                <div class="card-body">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())" class="btn btn-primary mb-2">
-                                        New Chat Message
-                                    </MudButton>
-                                </div>
-                            </div>
-                        </div>
+                        @if (LoadedChatFiles.Any())
+                        {
+                            <MudPaper Class="my-1">
+                                <MudTable Items="@LoadedChatFiles" Hover="true" SortLabel="Sort By" Class="">
+                                    <RowTemplate>
+                                        <MudTd>@context.Item1.Name</MudTd>
+                                        <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument(context.Item1.Name))" class="btn btn-link">Delete</MudButton></MudTd>
+                                    </RowTemplate>
+                                </MudTable>
+                            </MudPaper>
+                        }
+                        <MudPaper Class="my-1">
+                            <MudStack Spacing="16" Row="true" Class="p-1">
+                                <MudButtonGroup Color="Color.Primary" Variant="Variant.Text">
+                                    <MudButton Style="@ChatButtonStyle" OnClick="ChatButtonClicked">Chat</MudButton>
+                                    <MudButton Style="@ScheduledChatButtonStyle" OnClick="ScheduledChatButtonClicked">Scheduled</MudButton>
+                                </MudButtonGroup>
+                                <MudSpacer />
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())">
+                                    New Chat Message
+                                </MudButton>
+                            </MudStack>
+                        </MudPaper>
                     }
                     else
                     {
@@ -492,116 +488,201 @@ else if (!Saved)
                         </div>
                     }
 
-                    <div class="col-sm-12 mt-1">
-                        <div class="card">
-                            <div class="card-body">
-                                @if (Chat != null && Chat.Messages.Any())
+                    @if (!ShowScheduledChat)
+                    {
+                        <MudPaper Class="my-1 py-1">
+                            @if (Chat != null && Chat.Messages.Any())
+                            {
+                                @if (User.IsAdmin)
                                 {
-                                    @if (User.IsAdmin)
+                                    @if (Chat.BrokerId > 0)
                                     {
-                                        @if (Chat.BrokerId > 0)
-                                        {
-                                            <div class="row col-sm-12">
-                                                @{
-                                                    var message = $"Chat is with - {@Brokers.First(x => x.Id == Chat.BrokerId)?.Name}";
-                                                    <p>@message</p>
-                                                }
-                                            </div>
-                                        }
+                                        <div class="row col-sm-12">
+                                            @{
+                                                var message = $"Chat is with - {@Brokers.First(x => x.Id == Chat.BrokerId)?.Name}";
+                                                <p>@message</p>
+                                            }
+                                        </div>
                                     }
-                                    <div class="row col-sm-12">
-                                        @foreach (var message in Chat.Messages.OrderByDescending(x => x.Id))
-                                        {
-                                            var advancedClass = $"col-sm-10 mb-1 {message.Style}";
-                                            <MudCard Class="@advancedClass">
-                                                <MudCardHeader>
-                                                    <CardHeaderContent>
-                                                        @if (message.FormattedLinkMessage != null && message.FormattedLinkMessage.Count == 3)
-                                                        {
-                                                            @message.FormattedLinkMessage[0]
-                                                            <MudLink @onclick="f => ViewLink(message.FormattedLinkMessage[1])" Color="Color.Tertiary">
-                                                                @message.FormattedLinkMessage[1]
-                                                            </MudLink>
-                                                            @message.FormattedLinkMessage[2]
-                                                        }
-                                                        else
-                                                        {
-                                                            @message.Message
-                                                        }
-                                                    </CardHeaderContent>
-                                                </MudCardHeader>
-                                                <MudCardContent>
-                                                    @if (message.ChatDocumentId > 0)
+                                }
+                                <div class="row col-sm-12">
+                                    @foreach (var message in Chat.Messages.OrderByDescending(x => x.Id))
+                                    {
+                                        var advancedClass = $"col-sm-10 mb-1 {message.Style}";
+                                        <MudCard Class="@advancedClass">
+                                            <MudCardHeader>
+                                                <CardHeaderContent>
+                                                    @if (message.FormattedLinkMessage != null && message.FormattedLinkMessage.Count == 3)
                                                     {
-                                                        <div>
-                                                            @if (message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.JPEG || message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.PNG)
-                                                            {
-                                                                <img src="@message.ChatDocument.ChatDocAsImage" style="width:300px;" @onclick="f => ViewDocumentUpload(message.ChatDocument)" />
-                                                            }
-                                                            else
-                                                            {
-                                                                <MudText>Pdf Attachment- @message.ChatDocument.FileName</MudText>
-                                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(message.ChatDocument)">
-                                                                    <i class="fas fa-eye"></i>
-                                                                </MudButton>
-                                                            }
-
-                                                        </div>
-
-                                                    }
-                                                    @if (message.IsVideo && !string.IsNullOrEmpty(message.VideoUrl))
-                                                    {
-                                                        <div>
-                                                            <video id="movie" width="350" height="262" controls preload>
-                                                                <source src='@message.VideoUrl#t=0.1'>
-                                                            </video>
-
-                                                        </div>
-
-                                                    }
-
-                                                    @if (message.IsAudio && !string.IsNullOrEmpty(message.AudioUrl))
-                                                    {
-                                                        <div>
-                                                            <audio controls>
-                                                                <source src='@message.AudioUrl#t=0.1' type="audio/wav">
-                                                                <!-- HERE THE CODE FOR THE ALTERNATIVE PLAYER (FLASH) WILL BE! -->
-                                                            </audio>
-
-                                                        </div>
-
-                                                    }
-
-                                                    @if (message.BrokerSource)
-                                                    {
-                                                        var combined = $"Sent from us at {@message.SentTime.ToBiqDateTimeString()}";
-                                                        <MudText Typo="Typo.body2">@combined</MudText>
-                                                        @if (message.IsRead)
-                                                        {
-                                                            <MudIconButton Icon="@Icons.Material.Outlined.Check" Color="Color.Tertiary" />
-                                                        }
+                                                        @message.FormattedLinkMessage[0]
+                                                        <MudLink @onclick="f => ViewLink(message.FormattedLinkMessage[1])" Color="Color.Tertiary">
+                                                            @message.FormattedLinkMessage[1]
+                                                        </MudLink>
+                                                        @message.FormattedLinkMessage[2]
                                                     }
                                                     else
                                                     {
-                                                        var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToBiqDateTimeString()}";
-                                                        <MudText Typo="Typo.body2">@combined</MudText>
+                                                        @message.Message
                                                     }
-                                                </MudCardContent>
-                                            </MudCard>
-                                        }
-                                        @if (!AllChatMessagesLoaded)
-                                        {
-                                            <MudCard Class="col-sm-12 mb-1">
-                                                <MudCardContent>
-                                                    <MudButton FullWidth="true" OnClick="LoadMoreChatMessages">Load More</MudButton>
-                                                </MudCardContent>
-                                            </MudCard>
-                                        }
-                                    </div>
+                                                </CardHeaderContent>
+                                            </MudCardHeader>
+                                            <MudCardContent>
+                                                @if (message.ChatDocumentId > 0)
+                                                {
+                                                    <div>
+                                                        @if (message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.JPEG || message.ChatDocument.SupportingDocumentType == DocumentTypeEnum.PNG)
+                                                        {
+                                                            <img src="@message.ChatDocument.ChatDocAsImage" style="width:300px;" @onclick="f => ViewDocumentUpload(message.ChatDocument)" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <MudText>Pdf Attachment- @message.ChatDocument.FileName</MudText>
+                                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(message.ChatDocument)">
+                                                                <i class="fas fa-eye"></i>
+                                                            </MudButton>
+                                                        }
+
+                                                    </div>
+
+                                                }
+                                                @if (message.IsVideo && !string.IsNullOrEmpty(message.VideoUrl))
+                                                {
+                                                    <div>
+                                                        <video id="movie" width="350" height="262" controls preload>
+                                                            <source src='@message.VideoUrl#t=0.1'>
+                                                        </video>
+
+                                                    </div>
+
+                                                }
+
+                                                @if (message.IsAudio && !string.IsNullOrEmpty(message.AudioUrl))
+                                                {
+                                                    <div>
+                                                        <audio controls>
+                                                            <source src='@message.AudioUrl#t=0.1' type="audio/wav">
+                                                            <!-- HERE THE CODE FOR THE ALTERNATIVE PLAYER (FLASH) WILL BE! -->
+                                                        </audio>
+
+                                                    </div>
+
+                                                }
+
+                                                @if (message.BrokerSource)
+                                                {
+                                                    var combined = $"Sent from us at {@message.SentTime.ToBiqDateTimeString()}";
+                                                    <MudText Typo="Typo.body2">@combined</MudText>
+                                                    @if (message.IsRead)
+                                                    {
+                                                        <MudIconButton Icon="@Icons.Material.Outlined.Check" Color="Color.Tertiary" />
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    var combined = $"Sent from {@Customer.Name} at {@message.SentTime.ToBiqDateTimeString()}";
+                                                    <MudText Typo="Typo.body2">@combined</MudText>
+                                                }
+                                            </MudCardContent>
+                                        </MudCard>
+                                    }
+                                    @if (!AllChatMessagesLoaded)
+                                    {
+                                        <MudCard Class="col-sm-12 mb-1">
+                                            <MudCardContent>
+                                                <MudButton FullWidth="true" OnClick="LoadMoreChatMessages">Load More</MudButton>
+                                            </MudCardContent>
+                                        </MudCard>
+                                    }
+                                </div>
+                            }
+                        </MudPaper>
+                    }
+                    else
+                    {
+                        <MudPaper Class="my-1 py-1">
+                            @if (Chat != null && Chat.Messages.Any())
+                            {
+                                @if (User.IsAdmin)
+                                {
+                                    @if (Chat.BrokerId > 0)
+                                    {
+                                        <div class="row col-sm-12">
+                                            @{
+                                                var message = $"Chat is with - {@Brokers.First(x => x.Id == Chat.BrokerId)?.Name}";
+                                                <p>@message</p>
+                                            }
+                                        </div>
+                                    }
                                 }
-                            </div>
-                        </div>
-                    </div>
+
+                                @foreach (var message in Chat.DraftMessages.OrderByDescending(x => x.ToBeSentOn))
+                                {
+                                    <MudCard Outlined="true" Class="m-1">
+                                        <MudCardContent>
+                                            <MudStack>
+                                                <MudStack Row="true" AlignItems="AlignItems.Center">
+                                                    <MudText Typo="Typo.body2" HtmlTag="strong">@($"Will be sent on {message.ToBeSentOn.Value.ToBiqDateTimeString()}")</MudText>
+                                                    <MudSpacer />
+                                                    <MudMenu Icon="@Icons.Material.Filled.MoreVert"
+                                                             Color="Color.Dark"
+                                                             AriaLabel="Open draft menu">
+                                                        <MudMenuItem OnClick="@(() => EditDraftMessage(message))">Edit</MudMenuItem>
+                                                        <MudMenuItem OnClick="@(() => DeleteDraftMessage(message))">Delete</MudMenuItem>
+                                                    </MudMenu>
+                                                </MudStack>
+                                                <MudText>
+                                                    @if (message.FormattedLinkMessage != null && message.FormattedLinkMessage.Count == 3)
+                                                    {
+                                                        @message.FormattedLinkMessage[0]
+                                                        <MudLink @onclick="f => ViewLink(message.FormattedLinkMessage[1])" Color="Color.Tertiary">
+                                                            @message.FormattedLinkMessage[1]
+                                                        </MudLink>
+                                                        @message.FormattedLinkMessage[2]
+                                                    }
+                                                    else
+                                                    {
+                                                        @message.Message
+                                                    }
+                                                </MudText>
+
+                                                @foreach(var document in message.ChatDocuments)
+                                                {
+                                                    @if (document.SupportingDocumentType == DocumentTypeEnum.JPEG || document.SupportingDocumentType == DocumentTypeEnum.PNG)
+                                                    {
+                                                        <img src="@document.ChatDocAsImage" style="width:300px;" @onclick="f => ViewDocumentUpload(document)" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <MudStack Row="true">
+                                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => ViewDocumentUpload(document)">
+                                                                <i class="fas fa-eye"></i>
+                                                            </MudButton>
+                                                            <MudText>Pdf Attachment- @document.FileName</MudText>
+                                                        </MudStack>
+                                                    }
+                                                }
+
+                                                @if (message.IsVideo && !string.IsNullOrEmpty(message.VideoUrl))
+                                                {
+                                                    <video id="movie" width="350" height="262" controls preload="auto">
+                                                        <source src='@message.VideoUrl#t=0.1'>
+                                                    </video>
+                                                }
+
+                                                @if (message.IsAudio && !string.IsNullOrEmpty(message.AudioUrl))
+                                                {
+                                                    <audio controls>
+                                                        <source src='@message.AudioUrl#t=0.1' type="audio/wav">
+                                                        <!-- HERE THE CODE FOR THE ALTERNATIVE PLAYER (FLASH) WILL BE! -->
+                                                    </audio>
+                                                }
+                                            </MudStack>
+                                        </MudCardContent>
+                                    </MudCard>
+                                }
+                            }
+                        </MudPaper>
+                    }
                 </div>
             </ChildContent>
         </MudTabPanel>
@@ -616,8 +697,7 @@ else if (!Saved)
                 <ChildContent>
                     <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Connection" OnCustomerConnectionChange="@(async () => await OnCustomerConnectionChange())" IsAlreadyConnected="true" />
                 </ChildContent>
-            </MudTabPanel>
-        }
+            </MudTabPanel>}
 
         @if (Customer.MenuPlans != null && Customer.MenuPlans.Any())
         {
@@ -630,8 +710,7 @@ else if (!Saved)
                     <ChildContent>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId={menuplan.Id}")" class="btn btn-primary mb-2">
                             Add New Insurance
-                        </MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/{menuplan.Id}/{Customer.Id}")" class="btn btn-primary table-btn mb-2">
+                        </MudButton> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"menuplanedit/{menuplan.Id}/{Customer.Id}")" class="btn btn-primary table-btn mb-2">
                             Edit this Menu Plan
                         </MudButton>
                         <table id="table-menuplan" class="table  col-sm-12 table-striped ">
@@ -674,12 +753,10 @@ else if (!Saved)
                         </table>
                     </ChildContent>
                 </MudTabPanel>
-            }
-        }
+            }       }
     </MudTabs>
 }
 else
 {
-    <div class="alert @StatusClass">@Message</div>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-1">Back to client overview</MudButton>
+    <div class="alert @StatusClass">@Message</div> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-1">Back to client overview</MudButton>
 }

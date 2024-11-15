@@ -56,16 +56,19 @@
                     <br />
                     <MudText>No file(s) attached</MudText>
                 }
-                <div class="row">
-                    <div class="col-sm-6 mt-auto">
-                        <MudDatePicker Clearable="true" Placeholder="Deliver message on" @bind-Date="@model.DeliveryDate"
-                                       MinDate="DateTime.Today" MaxDate="DateTime.Today.AddDays(7)"/>
+                @if (AllowScheduledMessage)
+                {
+                    <div class="row">
+                        <div class="col-sm-6 mt-auto">
+                            <MudDatePicker Clearable="AllowNullDateValues" Placeholder="Deliver message on" @bind-Date="@model.DeliveryDate"
+                                           MinDate="DateTime.Today" />
+                        </div>
+                        <div class="col-sm-6 mt-auto">
+                            <MudTimePicker Clearable="AllowNullDateValues" Placeholder="Deliver message at" @bind-Time="@model.DeliveryTime"
+                                           MinuteSelectionStep="5" AmPm="false" clear />
+                        </div>
                     </div>
-                    <div class="col-sm-6 mt-auto">
-                        <MudTimePicker Clearable="true" Placeholder="Deliver message at" @bind-Time="@model.DeliveryTime"
-                                       MinuteSelectionStep="5" AmPm="false"/>
-                    </div>
-                </div>
+                }
             </div>
         </MudContainer>
     </DialogContent>
@@ -92,6 +95,12 @@
 
     [Parameter] public string PrePopulatedMessage { get; set; }
 
+    [Parameter] public bool AllowScheduledMessage { get; set; }
+
+    [Parameter] public DateTime? MessageSendDate { get; set; }
+
+    [Parameter] public TimeSpan? MessageSendTime { get; set; }
+
     private List<(string, MemoryStream)> FileNameAndStreams { get; set; }
 
     public bool OverSized { get; set; }
@@ -101,15 +110,23 @@
     MudForm form;
     MessageSendModel model;
 
-    bool DetailsAreInvalid => string.IsNullOrWhiteSpace(model.MessageToSend) ||
-        (model.DeliveryDate.HasValue && !model.DeliveryTime.HasValue) || (!model.DeliveryDate.HasValue && model.DeliveryTime.HasValue);
+    bool DetailsAreInvalid => (string.IsNullOrWhiteSpace(model.MessageToSend) ||
+        (model.DeliveryDate.HasValue && !model.DeliveryTime.HasValue) ||
+        (!model.DeliveryDate.HasValue && model.DeliveryTime.HasValue)) ||
+        (model.DeliveryDate.HasValue && model.DeliveryTime.HasValue && model.DeliveryDate.Value.Add(model.DeliveryTime.Value) <= DateTime.UtcNow.AddMinutes(5));
+
+    public bool AllowNullDateValues { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        model = new MessageSendModel();
-        model.HasEmbeddedUrl = false;
-        model.HideLinkButton = false;
+        model = new MessageSendModel()
+        {
+            HasEmbeddedUrl = false,
+            HideLinkButton = false,
+            DeliveryDate = MessageSendDate,
+            DeliveryTime = MessageSendTime
+        };
 
         if (!string.IsNullOrEmpty(Oversize) && Oversize.Contains("true"))
         {
@@ -151,6 +168,8 @@
 
             model.MessageToSend = PrePopulatedMessage;
         }
+
+        AllowNullDateValues = MessageSendDate is null && MessageSendTime is null;
     }
 
     public void SendMessage()
@@ -210,9 +229,9 @@
 
         public bool HideLinkButton { get; set; }
 
-        public DateTime? DeliveryDate;
+        public DateTime? DeliveryDate { get; set; } = new Nullable<DateTime>();
 
-        public TimeSpan? DeliveryTime;
+        public TimeSpan? DeliveryTime { get; set; } = new Nullable<TimeSpan>();
 
         public bool IsDelayedMessage => DeliveryDate.HasValue && DeliveryTime.HasValue;
 
