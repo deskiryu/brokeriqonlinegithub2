@@ -24,7 +24,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor;
-using static MudBlazor.Icons;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -183,6 +182,8 @@ namespace BrokerIQ.Online.Pages
         private System.Threading.Timer timer;
         private System.Threading.Timer timerUploads;
 
+        public MudAutocomplete<BrokerDefinedMessageDto> TemplateAutoComplete { get; set; }
+
         protected MudDatePicker NoteFilterFrom { get; set; }
 
         protected MudDatePicker NoteFilterTo { get; set; }
@@ -214,6 +215,7 @@ namespace BrokerIQ.Online.Pages
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
         protected MudTabs Tabs;
+
         protected int MyMaxAllowedFiles { get; set; }
 
         protected string CalendlyLoginUri { get; private set; }
@@ -229,6 +231,14 @@ namespace BrokerIQ.Online.Pages
         protected int ChatPageSize { get; set; } = 25;
 
         protected bool AllChatMessagesLoaded { get; set; }
+
+        protected bool AllDraftChatMessagesLoaded { get; set; }
+
+        protected bool ShowScheduledChat { get; set; } = false;
+
+        protected string ChatButtonStyle => ShowScheduledChat ? string.Empty : $"color:{Colors.Shades.Black};";
+
+        protected string ScheduledChatButtonStyle => ShowScheduledChat ? $"color:{Colors.Shades.Black};" : string.Empty;
 
         protected override async Task OnInitializedAsync()
         {
@@ -414,7 +424,7 @@ namespace BrokerIQ.Online.Pages
             {
                 if (tmpSelectedIds.Contains(document.Id)) SelectedItemsCustomerDocuments.Add(document);
             }
-            
+
             await InvokeAsync(StateHasChanged);
         }
 
@@ -774,7 +784,6 @@ namespace BrokerIQ.Online.Pages
                             }
                             else
                             {
-
                                 sdoc.FileName = fileName;
                                 memoryStream = new MemoryStream(file.Item2);
                             }
@@ -792,72 +801,113 @@ namespace BrokerIQ.Online.Pages
                 templateFileAttached = false;
             }
 
+            dialogParams.Add("AllowScheduledMessage", true);
             dialogParams.Add("PrePopulatedMessage", messageToshow);
             var dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
 
             var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams, dialogOptions).Result;
-            if (!result.Canceled)
+            if (result.Canceled) return;
+
+            var message = (MessageSendDialog.MessageSendModel)result.Data;
+
+            try
             {
-                var message = result.Data.ToString();
-
-                try
+                if (message.IsDelayedMessage)
                 {
-                    if (!string.IsNullOrEmpty(message))
+                    succeeded = await CreateDraftMessage(defaultAttachment, filenames, memoryStreams, message);
+                }
+                else
+                {
+                    if (templateFileAttached)
                     {
-                        if (templateFileAttached)
+                        succeeded = (await ChatService.SendWithDoc(message.MessageToSend, Customer.Id, sdoc));
+                    }
+                    else if (filesAttached)
+                    {
+                        if (filenames.Count == memoryStreams.Count)
                         {
-                            succeeded = (await ChatService.SendWithDoc(message, Customer.Id, sdoc));
-                        }
-                        else if (filesAttached)
-                        {
-                            if (filenames.Count == memoryStreams.Count)
+                            for (int i = 0; i < memoryStreams.Count; i++)
                             {
-                                for (int i = 0; i < memoryStreams.Count; i++)
+                                var noNotification = i > 0;
+                                var file = new ChatDocument
                                 {
-                                    var noNotification = i > 0;
-                                    var file = new ChatDocument
-                                    {
-                                        FileName = filenames[i],
-                                        File = memoryStreams[i].ToArray(),
-                                        SupportingDocumentType = DocumentTypeEnum.PDF
-                                    };
-                                    succeeded = (await ChatService.SendWithDoc(noNotification ? string.Empty : message, Customer.Id, file, noNotification));
-                                }
+                                    FileName = filenames[i],
+                                    File = memoryStreams[i].ToArray(),
+                                    SupportingDocumentType = DocumentTypeEnum.PDF
+                                };
+                                succeeded = await ChatService.SendWithDoc(message.MessageToSend, Customer.Id, sdoc, noNotification);
                             }
-
-                        }
-                        else
-                        {
-                            succeeded = (await ChatService.Send(message, Customer.Id));
                         }
                     }
-                }
-                catch
-                {
-                    succeeded = false;
-                }
-                finally
-                {
-                    ClearLoadedChatDocuments();
-                    SpinnerVisible = "display:none";
-                    StateHasChanged();
+                    else
+                    {
+                        succeeded = await ChatService.Send(message.MessageToSend, Customer.Id);
+                    }
                 }
             }
-            else
+            catch
             {
-                return;
+                succeeded = false;
             }
-
+            finally
+            {
+                ClearLoadedChatDocuments();
+                SpinnerVisible = "display:none";
+                StateHasChanged();
+            }
 
             if (succeeded)
             {
-                await RefreshChatWithDialogMessage(succeeded, "Message sent successfully");
+                await RefreshChatWithMessage(succeeded, message.IsDelayedMessage ? "Scheduled message created" : "Message sent successfully");
+                await TemplateAutoComplete.Clear();
                 UploadSectionClass = DEFAULT_UPLOAD_CLASS;
             }
             else
             {
-                await RefreshChatWithDialogMessage(succeeded, "Something went wrong sending the message.Please try again.");
+                await RefreshChatWithMessage(succeeded, message.IsDelayedMessage ? "Unable to create scheduled message" : "Something went wrong sending the message.Please try again.");
             }
+        }
+
+        private async Task<bool> CreateDraftMessage(ChatDocument defaultAttachment, List<string> filenames, List<MemoryStream> memoryStreams, MessageSendDialog.MessageSendModel message)
+        {
+            List<ChatDocument> draftDocuments = BuildDraftDocuments(defaultAttachment, filenames, memoryStreams);
+
+            var succeeded = draftDocuments.Any() ? await ChatService.CreateDraftWithDocs(message.MessageToSend, Customer.Id, draftDocuments, message.ToBeSentOn.Value) :
+            (await ChatService.SendDraft(message.MessageToSend, Customer.Id, message.ToBeSentOn.Value));
+
+            return succeeded;
+        }
+
+        private static List<ChatDocument> BuildDraftDocuments(ChatDocument defaultAttachment, List<string> filenames, List<MemoryStream> memoryStreams)
+        {
+            var draftDocuments = new List<ChatDocument>();
+
+            if (defaultAttachment != null)
+            {
+                var draftDocument = new ChatDocument()
+                {
+                    FileName = defaultAttachment.FileName,
+                    File = defaultAttachment.File
+                };
+                draftDocuments.Add(draftDocument);
+            }
+
+            if (filenames.Count == memoryStreams.Count)
+            {
+                for (int i = 0; i < memoryStreams.Count; i++)
+                {
+                    var file = new ChatDocument
+                    {
+                        FileName = filenames[i],
+                        File = memoryStreams[i].ToArray(),
+                        SupportingDocumentType = DocumentTypeEnum.PDF
+                    };
+
+                    draftDocuments.Add(file);
+                }
+            }
+
+            return draftDocuments;
         }
 
         /// <summary>
@@ -882,17 +932,18 @@ namespace BrokerIQ.Online.Pages
         /// </summary>
         /// <param name="success">Success of prior API call</param>
         /// <param name="message">Message to be displayed in dialog</param>
-        private async Task RefreshChatWithDialogMessage(bool success, string message)
+        private async Task RefreshChatWithMessage(bool success, string message)
         {
             if (success)
             {
                 LastChatPageLoaded = 0;
                 Chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
                 StateHasChanged();
+
+                Snackbar.Add(message, Severity.Success);
             }
-            var responseParams = new DialogParameters();
-            responseParams.Add("Message", message);
-            await DialogService.Show<AlertDialog>("Information", responseParams).Result;
+
+            Snackbar.Add(message, Severity.Error);
         }
 
         protected async Task DeleteSelectedDocumentUpload()
@@ -1238,7 +1289,7 @@ namespace BrokerIQ.Online.Pages
             var zipName = $"{Customer.Name}-{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
             using (MemoryStream ms = new MemoryStream())
             {
-                //required: using System.IO.Compression;  
+                //required: using System.IO.Compression;
                 using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
                 {
                     foreach (var file in SelectedItemsCustomerDocuments)
@@ -1429,6 +1480,88 @@ namespace BrokerIQ.Online.Pages
         protected async Task<IEnumerable<BrokerDefinedMessageDto>> OnTemplateFilter(string value)
         {
             return MergedMessages.Where(mm => mm.Prompt.ToLower().Contains(value.ToLower())).ToArray();
+        }
+
+        protected void ChatButtonClicked()
+        {
+            ShowScheduledChat = false;
+        }
+
+        protected void ScheduledChatButtonClicked()
+        {
+            ShowScheduledChat = true;
+        }
+
+        protected async Task EditDraftMessage(ChatDraftMessage draft)
+        {
+            var dialogParams = new DialogParameters()
+            {
+                { "PrePopulatedMessage", draft.Message},
+                { "AllowScheduledMessage", true }
+            };
+
+            var filenames = new List<string>();
+            var streams = new List<MemoryStream>();
+
+            if (draft.ChatDocuments.Any())
+            {
+                for (int i = 0; i < draft.ChatDocuments.Count(); i++)
+                {
+                    var document = draft.ChatDocuments.ElementAt(i);
+                    filenames.Add(document.FileName);
+                    streams.Add(new MemoryStream(document.File));
+                }
+
+                dialogParams.Add("FileNames", filenames);
+                dialogParams.Add("MemoryStreams", streams);
+            }
+
+            if (draft.ToBeSentOn is not null)
+            {
+                dialogParams.Add("MessageSendDate", draft.ToBeSentOn.Value.Date);
+                dialogParams.Add("MessageSendTime", draft.ToBeSentOn.Value.TimeOfDay);
+            }
+
+            var dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+
+            var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams, dialogOptions).Result;
+
+            if (result.Canceled) return;
+
+            var message = (MessageSendDialog.MessageSendModel)result.Data;
+
+            draft.Message = message.MessageToSend;
+            draft.ToBeSentOn = message.ToBeSentOn;
+            draft.ChatDocuments = BuildDraftDocuments(null, filenames, streams);
+
+            if (await UpdateDraftMessage(draft))
+            {
+                await RefreshChatWithMessage(true, "Draft update successfully");
+
+                UploadSectionClass = DEFAULT_UPLOAD_CLASS;
+            }
+            else
+            {
+                await RefreshChatWithMessage(false, "Something went wrong updating the draft. Please try again.");
+            }
+        }
+
+        private async Task<bool> UpdateDraftMessage(ChatDraftMessage draft)
+        {
+            var succeeded = await ChatService.UpdateDraftWithDocs(draft);
+
+            return succeeded;
+        }
+
+        protected async void DeleteDraftMessage(ChatDraftMessage message)
+        {
+            if (await ChatService.DeleteDraft(message))
+            {
+                Chat.DraftMessages.Remove(message);
+                StateHasChanged();
+
+                Snackbar.Add("Draft message was deleted", Severity.Success);
+            }
         }
     }
 }

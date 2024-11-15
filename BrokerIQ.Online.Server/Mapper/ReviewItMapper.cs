@@ -873,6 +873,10 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(p => p.AudioUrl, opt => opt.MapFrom(r => r.AudioUrl))
                 .ForMember(p => p.HasEmbeddedUrl, opt => opt.MapFrom(r => r.HasEmbeddedUrl))
                 .ForMember(p => p.BrokerSource, opt => opt.MapFrom(r => r.BrokerSource));
+
+            CreateMap<ChatDraftMessage, ChatDraftMessageDto>().ReverseMap();
+
+            CreateMap<ChatDocument, ChatDocumentDto>().ReverseMap();
         }
 
         private void AzureStorageMapper()

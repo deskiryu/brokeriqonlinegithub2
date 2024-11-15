@@ -9,5 +9,6 @@ namespace BrokerIQ.Online.Models
         public int CustomerId { get; set; }
         public virtual ICollection<ChatMessage> Messages { get; set; }
         public bool MoreMessagesAvailable { get; set; }
+        public virtual ICollection<ChatDraftMessage> DraftMessages { get; set; }
     }
 }
