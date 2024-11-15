@@ -302,7 +302,7 @@ namespace BrokerIQ.Online.Services
             });
         }
 
-        public async Task<PagedResponse<Customer>> GetPagedFilteredCustomers(CustomerFilter filter)
+        private async Task<PagedResponse<Customer>> GetPagedFilteredCustomers(CustomerFilter filter)
         {
             var user = await this.accountService.GetUser();
             requestProviderService.Token = user?.Token;
@@ -328,7 +328,22 @@ namespace BrokerIQ.Online.Services
             var usePaging = filter.PageNumber is not null && filter.PageSize is not null;
             var url = this.customerUrl;
 
-            url += $"/brokerpaged/{filter.BrokerId}";
+            
+            if (user.IsBroker || user.IsBrokerStaff)
+            {
+                url += $"/brokerpaged/{filter.BrokerId}";
+            }
+            else if (user.IsAdmin)
+            {
+                if (filter.BrokerId > 0)
+                {
+                    url += "/brokerpaged/" + $"{filter.BrokerId}";
+                }
+                else
+                {
+                    url += "/adminpaged";
+                }
+            }
             url += $"?profilePictures={filter.ProfilePictures}";
             if (usePaging) url += $"&pagenumber={filter.PageNumber}&pageSize={filter.PageSize}";
 
