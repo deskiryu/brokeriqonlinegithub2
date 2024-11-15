@@ -279,9 +279,24 @@ namespace BrokerIQ.Online.Services
             });
         }
 
-        public async Task<PagedResponse<Customer>> GetPagedCustomers(int brokerId = 0, int assignedToId = 0, int filterRecent = 0, int filterPeriod = 0, int filterCategory = 0,
-            int filterAgeRange = 0, bool nonAppUsersOnly = false, ProfilingOptionEnum? profilingOption = null, SortOrderEnum sortOrder = SortOrderEnum.Id, SortByEnum sortBy = SortByEnum.Descending,
-            string partialName = null, bool profilePictures = false, int pageNumber = 1, int pageSize = 10)
+        public async Task<PagedResponse<Customer>> GetPagedCustomers(
+            int brokerId,
+            int assignedToId,
+            int filterRecent,
+            int filterPeriod,
+            int filterCategory,
+            int filterAgeRange, 
+            bool nonAppUsersOnly, 
+            SortOrderEnum sortOrder, 
+            SortByEnum sortBy,
+            string partialName, bool profilePictures,
+            int pageNumber,
+            int pageSize,
+            int lastMaxId,
+            int lastMinId,
+            PagingDirectionEnum pagingDirectionEnum = PagingDirectionEnum.FirstPage,
+            ProfilingOptionEnum? profilingOption = null
+            )
         {
             return await GetPagedFilteredCustomers(new CustomerFilter()
             {
@@ -298,7 +313,10 @@ namespace BrokerIQ.Online.Services
                 SortOrder = sortOrder,
                 SortBy = sortBy,
                 PageNumber = pageNumber,
-                PageSize = pageSize
+                PageSize = pageSize,
+                LastMaxId = lastMaxId,
+                LastMinId = lastMinId,
+                PagingDirectionEnum = pagingDirectionEnum
             });
         }
 
@@ -325,7 +343,6 @@ namespace BrokerIQ.Online.Services
                 NonAppUsersOnly = filter.NonAppUsersOnly
             };
 
-            var usePaging = filter.PageNumber is not null && filter.PageSize is not null;
             var url = this.customerUrl;
 
             
@@ -345,7 +362,7 @@ namespace BrokerIQ.Online.Services
                 }
             }
             url += $"?profilePictures={filter.ProfilePictures}";
-            if (usePaging) url += $"&pagenumber={filter.PageNumber}&pageSize={filter.PageSize}";
+            url += $"&pagenumber={filter.PageNumber}&pageSize={filter.PageSize}&lastMaxId={filter.LastMaxId}&lastMinId={filter.LastMinId}&PagingDirectionEnum={filter.PagingDirectionEnum}";
 
             var answer = await requestProviderService.Post<SearchOptionDto, PagedResponse<CustomerDto>>(url, searchOption);
 

@@ -10,6 +10,7 @@ using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using static MudBlazor.CategoryTypes;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -83,6 +84,10 @@ namespace BrokerIQ.Online.Pages
 
         protected bool showNonAppUsersOnly;
 
+        public int LastMaxId { get; set; }
+        public int LastMinId { get; set; }
+        public PagingDirectionEnum PagingDirectionEnum { get; set; }
+
         protected async void ShowNonAppUsersOnly()
         {
             showNonAppUsersOnly = !showNonAppUsersOnly;
@@ -94,6 +99,10 @@ namespace BrokerIQ.Online.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            LastMinId = 0;
+            LastMaxId = 0;
+            PagingDirectionEnum = PagingDirectionEnum.FirstPage;
+            
             try
             {
                 SelectFilled = false;
@@ -424,14 +433,37 @@ namespace BrokerIQ.Online.Pages
             ProfilingOptionEnum? profilingOption = null;
             if (ProfilingOption != int.MaxValue) profilingOption = (ProfilingOptionEnum)ProfilingOption;
 
-            var pagedResponse = await CustomerService.GetPagedCustomers(brokerId: BrokerId, assignedToId: AssignedToId, filterRecent: FilterRecent,
-                filterPeriod: FilterPeriod, filterCategory: CustomerCategory, filterAgeRange: AgeRange, nonAppUsersOnly: showNonAppUsersOnly,
-                profilingOption: profilingOption, sortOrder: (SortOrderEnum)sortOrder, sortBy: (SortByEnum)sortBy,
-                partialName: SearchTerm, profilePictures: true, pageNumber: state.Page, pageSize: state.PageSize);
+            var pagedResponse = await CustomerService.GetPagedCustomers(
+                brokerId: BrokerId, 
+                assignedToId: AssignedToId, 
+                filterRecent: FilterRecent,
+                filterPeriod: FilterPeriod, 
+                filterCategory: CustomerCategory, 
+                filterAgeRange: AgeRange, 
+                nonAppUsersOnly: showNonAppUsersOnly,
+                profilingOption: profilingOption, 
+                sortOrder: (SortOrderEnum)sortOrder, 
+                sortBy: (SortByEnum)sortBy,
+                partialName: SearchTerm, 
+                profilePictures: true, 
+                pageNumber: state.Page, 
+                pageSize: state.PageSize,
+                lastMaxId: LastMaxId,
+                lastMinId: LastMinId,
+                pagingDirectionEnum: PagingDirectionEnum
+                );
 
             Customers = pagedResponse.PageData.ToList();
 
+            LastMaxId = Customers.Select(x => x.Id).Max();
+            LastMinId = Customers.Select(x => x.Id).Max();
+
             return new TableData<Customer>() { TotalItems = pagedResponse.TotalRecords, Items = pagedResponse.PageData };
+        }
+
+        protected void PageChanged(int i)
+        {
+
         }
     }
 }
