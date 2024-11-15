@@ -10,7 +10,6 @@ using BrokerIQ.Online.Server.Shared;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using static MudBlazor.CategoryTypes;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -84,9 +83,10 @@ namespace BrokerIQ.Online.Pages
 
         protected bool showNonAppUsersOnly;
 
-        public int LastMaxId { get; set; }
-        public int LastMinId { get; set; }
-        public PagingDirectionEnum PagingDirectionEnum { get; set; }
+        private int LastMaxId { get; set; }
+        private int LastMinId { get; set; }
+        private int CurrentPage { get; set; }
+        private int TotalPages { get; set; }
 
         protected async void ShowNonAppUsersOnly()
         {
@@ -101,7 +101,8 @@ namespace BrokerIQ.Online.Pages
         {
             LastMinId = 0;
             LastMaxId = 0;
-            PagingDirectionEnum = PagingDirectionEnum.FirstPage;
+            CurrentPage = 1;
+            TotalPages = 1;
             
             try
             {
@@ -433,6 +434,25 @@ namespace BrokerIQ.Online.Pages
             ProfilingOptionEnum? profilingOption = null;
             if (ProfilingOption != int.MaxValue) profilingOption = (ProfilingOptionEnum)ProfilingOption;
 
+            var pagingDirectionEnum = PagingDirectionEnum.FirstPage;
+            if (state.Page == 0)
+            {
+                pagingDirectionEnum = PagingDirectionEnum.FirstPage;
+            }
+            else if (state.Page == CurrentPage + 1)
+            {
+                pagingDirectionEnum = PagingDirectionEnum.GoingForward;
+            }
+            else if (state.Page == CurrentPage - 1)
+            {
+                pagingDirectionEnum = PagingDirectionEnum.GoingBackward;
+            }
+            else if(state.Page == TotalPages-1)
+            {
+                pagingDirectionEnum = PagingDirectionEnum.LastPage;
+            }
+
+
             var pagedResponse = await CustomerService.GetPagedCustomers(
                 brokerId: BrokerId, 
                 assignedToId: AssignedToId, 
@@ -450,20 +470,17 @@ namespace BrokerIQ.Online.Pages
                 pageSize: state.PageSize,
                 lastMaxId: LastMaxId,
                 lastMinId: LastMinId,
-                pagingDirectionEnum: PagingDirectionEnum
+                pagingDirectionEnum: pagingDirectionEnum
                 );
 
             Customers = pagedResponse.PageData.ToList();
 
             LastMaxId = Customers.Select(x => x.Id).Max();
-            LastMinId = Customers.Select(x => x.Id).Max();
+            LastMinId = Customers.Select(x => x.Id).Min();
+            CurrentPage = pagedResponse.CurrentPage;
+            TotalPages = pagedResponse.TotalPages;
 
             return new TableData<Customer>() { TotalItems = pagedResponse.TotalRecords, Items = pagedResponse.PageData };
-        }
-
-        protected void PageChanged(int i)
-        {
-
         }
     }
 }
