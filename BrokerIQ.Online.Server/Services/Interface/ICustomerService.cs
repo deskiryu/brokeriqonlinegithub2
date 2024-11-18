@@ -26,6 +26,8 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<int> GetCustomerCount(int brokerId = 0);
 
+        Task<int> GetCustomerAppUserCount(int brokerId = 0);
+
         Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory);
 
         Task<bool> SetCustomerNeeds(int customerid, bool hasNeeds);
