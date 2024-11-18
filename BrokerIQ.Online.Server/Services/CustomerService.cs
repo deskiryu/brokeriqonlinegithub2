@@ -110,6 +110,14 @@ namespace BrokerIQ.Online.Services
             return answer;
         }
 
+        public async Task<int> GetCustomerAppUserCount(int brokerId = 0)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var answer = await this.requestProviderService.Get<int>(this.customerUrl + $"/appusercount", brokerId);
+            return answer;
+        }
+
         public async Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory)
         {
             var user = await this.accountService.GetUser();
