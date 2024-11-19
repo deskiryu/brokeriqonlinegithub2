@@ -3,6 +3,7 @@
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Dto;
 @using BrokerIQ.Dto.Enum
+@using BrokerIQ.Dto.Models;
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Extensions
 @using BlazorDateRangePicker
@@ -24,6 +25,29 @@
 
             <DataAnnotationsValidator />
             <ValidationSummary />
+
+            @if (WealthTypes is not null)
+            {
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Wealth</label>
+                    <div class="col-sm-8">
+                        <MudSelect T="int?"
+                                   Margin="Margin.Dense"
+                                   Dense="true"
+                                   Placeholder="None chosen"
+                                   Clearable="true"
+                                   @bind-Value="@Customer.WealthTypeId">
+                            @{
+                                foreach (var item in WealthTypes)
+                                {
+                                    var looped = item;
+                                    <MudSelectItem Value=@((int?)looped.Id)>@looped.Name</MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
+                    </div>
+                </div>
+            }
 
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">First Name</label>
