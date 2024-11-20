@@ -67,6 +67,7 @@ namespace BrokerIQ.Online.Pages
 
         public string BrokerName { get; set; }
         public int CustomerCount { get; set; }
+        public int CustomerAppUserCount { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -254,6 +255,7 @@ namespace BrokerIQ.Online.Pages
 
                 BrokerName = (await BrokerService.GetBroker(_brokerId)).Name;
                 CustomerCount = await CustomerService.GetCustomerCount(_brokerId);
+                CustomerAppUserCount = await CustomerService.GetCustomerAppUserCount(_brokerId);
 
                 var invitesSentAndConverted = await ChartDataService.GetInvitesSentAndConvertedSequence(_brokerId);
 

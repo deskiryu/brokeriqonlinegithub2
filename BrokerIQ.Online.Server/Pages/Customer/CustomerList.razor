@@ -111,13 +111,6 @@ else
                                      SearchFunc="@SearchCustomer"
                                      ToStringFunc="@(c => c?.Name)"
                                      ValueChanged="@OnCustomerSelected" />
-                    @*<MudAutocomplete T="string"
-                                         Label="Go direct to client"
-                                         Placeholder="Start typing name, email or telephone ..."
-                                         AdornmentColor="Color.Primary"
-                                         TextChanged="@AutoCompleteClick"
-                                         SearchFunc="@OnFilter">
-                        </MudAutocomplete>*@
                 </div>
 
                 @if ((User is not null && User.IsAdmin) || HasFilter)
@@ -237,6 +230,9 @@ else
                               SortLabel="Sort By"
                               MultiSelection="true"
                               Dense="true"
+                              FixedHeader="@this.api.Value.FixedHeader"
+                              FixedFooter="@this.api.Value.FixedFooter"
+                              Height="@(this.api.Value.FixedHeader || this.api.Value.FixedFooter ? this.api.Value.ScrollHeight:"")"
                               @bind-SelectedItems="SelectedCustomers"
                               ServerData="GetCustomersPage"
                               LoadingProgressColor="Color.Primary"
@@ -366,7 +362,7 @@ else
                             </MudTd>
                         </RowTemplate>
                         <PagerContent>
-                            <MudTablePager />
+                            <MudTablePager/>
                         </PagerContent>
                     </MudTable>
                 }

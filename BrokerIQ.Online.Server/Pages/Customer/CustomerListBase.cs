@@ -83,6 +83,11 @@ namespace BrokerIQ.Online.Pages
 
         protected bool showNonAppUsersOnly;
 
+        private int LastMaxId { get; set; }
+        private int LastMinId { get; set; }
+        private int CurrentPage { get; set; }
+        private int TotalPages { get; set; }
+
         protected async void ShowNonAppUsersOnly()
         {
             showNonAppUsersOnly = !showNonAppUsersOnly;
@@ -94,6 +99,11 @@ namespace BrokerIQ.Online.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            LastMinId = 0;
+            LastMaxId = 0;
+            CurrentPage = 1;
+            TotalPages = 1;
+            
             try
             {
                 SelectFilled = false;
@@ -424,12 +434,51 @@ namespace BrokerIQ.Online.Pages
             ProfilingOptionEnum? profilingOption = null;
             if (ProfilingOption != int.MaxValue) profilingOption = (ProfilingOptionEnum)ProfilingOption;
 
-            var pagedResponse = await CustomerService.GetPagedCustomers(brokerId: BrokerId, assignedToId: AssignedToId, filterRecent: FilterRecent,
-                filterPeriod: FilterPeriod, filterCategory: CustomerCategory, filterAgeRange: AgeRange, nonAppUsersOnly: showNonAppUsersOnly,
-                profilingOption: profilingOption, sortOrder: (SortOrderEnum)sortOrder, sortBy: (SortByEnum)sortBy,
-                partialName: SearchTerm, profilePictures: true, pageNumber: state.Page, pageSize: state.PageSize);
+            var pagingDirectionEnum = PagingDirectionEnum.FirstPage;
+            if (state.Page == 0)
+            {
+                pagingDirectionEnum = PagingDirectionEnum.FirstPage;
+            }
+            else if (state.Page == CurrentPage + 1)
+            {
+                pagingDirectionEnum = PagingDirectionEnum.GoingForward;
+            }
+            else if (state.Page == CurrentPage - 1)
+            {
+                pagingDirectionEnum = PagingDirectionEnum.GoingBackward;
+            }
+            else if(state.Page == TotalPages-1)
+            {
+                pagingDirectionEnum = PagingDirectionEnum.LastPage;
+            }
+
+
+            var pagedResponse = await CustomerService.GetPagedCustomers(
+                brokerId: BrokerId, 
+                assignedToId: AssignedToId, 
+                filterRecent: FilterRecent,
+                filterPeriod: FilterPeriod, 
+                filterCategory: CustomerCategory, 
+                filterAgeRange: AgeRange, 
+                nonAppUsersOnly: showNonAppUsersOnly,
+                profilingOption: profilingOption, 
+                sortOrder: (SortOrderEnum)sortOrder, 
+                sortBy: (SortByEnum)sortBy,
+                partialName: SearchTerm, 
+                profilePictures: true, 
+                pageNumber: state.Page, 
+                pageSize: state.PageSize,
+                lastMaxId: LastMaxId,
+                lastMinId: LastMinId,
+                pagingDirectionEnum: pagingDirectionEnum
+                );
 
             Customers = pagedResponse.PageData.ToList();
+
+            LastMaxId = Customers.Select(x => x.Id).Max();
+            LastMinId = Customers.Select(x => x.Id).Min();
+            CurrentPage = pagedResponse.CurrentPage;
+            TotalPages = pagedResponse.TotalPages;
 
             return new TableData<Customer>() { TotalItems = pagedResponse.TotalRecords, Items = pagedResponse.PageData };
         }
