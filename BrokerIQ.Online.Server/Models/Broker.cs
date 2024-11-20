@@ -122,5 +122,7 @@ namespace BrokerIQ.Online.Models
         public bool ProvidesMortgageServices => BrokerServices.Any(s => s.ServiceId == (int)ServicesEnum.Mortgage);
 
         public bool ProvidesPensionServices => BrokerServices.Any(s => s.ServiceId == (int)ServicesEnum.Pension);
+
+        public bool IsDemoBroker { get; set; }
     }
 }
