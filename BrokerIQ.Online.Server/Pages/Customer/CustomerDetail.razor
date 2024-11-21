@@ -225,7 +225,7 @@ else if (!Saved)
             </MudTabPanel>
         }
 
-        @if (Broker != null && Broker.ProvidesPensionServices)
+        @if (api.Value.ShowWealth && Broker != null && Broker.ProvidesPensionServices)
         {
             <MudTabPanel>
                 <TabContent>
@@ -645,7 +645,7 @@ else if (!Saved)
                                                     }
                                                 </MudText>
 
-                                                @foreach(var document in message.ChatDocuments)
+                                                @foreach (var document in message.ChatDocuments)
                                                 {
                                                     @if (document.SupportingDocumentType == DocumentTypeEnum.JPEG || document.SupportingDocumentType == DocumentTypeEnum.PNG)
                                                     {
@@ -753,7 +753,7 @@ else if (!Saved)
                         </table>
                     </ChildContent>
                 </MudTabPanel>
-            }       }
+            }   }
     </MudTabs>
 }
 else
