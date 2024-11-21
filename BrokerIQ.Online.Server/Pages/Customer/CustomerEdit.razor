@@ -26,7 +26,7 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
 
-            @if (WealthTypes is not null)
+            @if (api.Value.ShowWealth && WealthTypes is not null)
             {
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Wealth</label>

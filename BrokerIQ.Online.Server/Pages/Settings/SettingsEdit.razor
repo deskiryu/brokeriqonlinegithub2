@@ -63,15 +63,18 @@
             </MudTabPanel>
         }
 
-        <MudTabPanel>
-            <TabContent>
-                <MudText Typo="Typo.subtitle2" Class="mr-1">WEALTH TYPES</MudText>
-                @*<TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 2)" />*@
-            </TabContent>
-            <ChildContent>
-                <WealthTypeTable Broker="@Broker" User="@User" />
-            </ChildContent>
-        </MudTabPanel>
+        @if (api.Value.ShowWealth)
+        {
+            <MudTabPanel>
+                <TabContent>
+                    <MudText Typo="Typo.subtitle2" Class="mr-1">WEALTH TYPES</MudText>
+                    @*<TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 2)" />*@
+                </TabContent>
+                <ChildContent>
+                    <WealthTypeTable Broker="@Broker" User="@User" />
+                </ChildContent>
+            </MudTabPanel>
+        }
 
         <MudTabPanel>
             <TabContent>
