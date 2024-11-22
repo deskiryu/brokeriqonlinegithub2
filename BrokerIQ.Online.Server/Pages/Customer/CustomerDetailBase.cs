@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using BrokerIQ.Dto;
 using BrokerIQ.Dto.CreateDto;
 using BrokerIQ.Dto.Enum;
@@ -94,6 +95,9 @@ namespace BrokerIQ.Online.Pages
         public ISnackbar Snackbar { get; set; }
 
         [Inject]
+        public IMapper mapper { get; set; }
+
+        [Inject]
         protected IJSRuntime js { get; set; }
 
         [Parameter]
@@ -170,9 +174,9 @@ namespace BrokerIQ.Online.Pages
 
         public Dictionary<int, int> RequestedDocuments = new Dictionary<int, int>();
 
-        public List<BrokerDefinedMessageDto> MergedMessages = new();
+        public List<BrokerDefinedMessage> MergedMessages = new();
 
-        public BrokerDefinedMessageDto SelectedTemplateMessage { get; set; }
+        public BrokerDefinedMessage SelectedTemplateMessage { get; set; }
 
         public string SelectedTemplateMessagePreview { get; set; }
 
@@ -193,7 +197,7 @@ namespace BrokerIQ.Online.Pages
         private System.Threading.Timer timer;
         private System.Threading.Timer timerUploads;
 
-        public MudAutocomplete<BrokerDefinedMessageDto> TemplateAutoComplete { get; set; }
+        public MudAutocomplete<BrokerDefinedMessage> TemplateAutoComplete { get; set; }
 
         protected MudDatePicker NoteFilterFrom { get; set; }
 
@@ -718,43 +722,40 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task CheckTemplateMessage()
+        protected async Task<bool> CheckTemplateMessage()
         {
+            bool readyToGo = true;
             if (SelectedTemplateMessage != null)
             {
-                if (SelectedTemplateMessage.Message.Contains("INSERT_DATE"))
+                if (SelectedTemplateMessagePreview.Contains("INSERT_DATE") || SelectedTemplateMessagePreview.Contains("INSERT_TIME"))
                 {
                     var dialogParams = new DialogParameters
                     {
-                        { "Message", "Template requires a DATE to be inserted into message. Please select one from the date picker." }
+                        { "Message", "Template requires a the date and/or time to be inserted into message. Please select one from the date picker." }
                     };
-                    var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
-                    return;
+                    readyToGo = false;
+                    await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
                 }
-
-                if (SelectedTemplateMessage.Message.Contains("INSERT_TIME"))
-                {
-                    var dialogParams = new DialogParameters
-                    {
-                        { "Message", "Template requires a TIME to be inserted into message. Please select one from the date picker." }
-                    };
-                    var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
-                    return;
-                }
+                SelectedTemplateMessage.ConvertedMessage = SelectedTemplateMessagePreview;
             }
+            return readyToGo;
         }
+
         protected async Task NewChat()
         {
             bool succeeded = false;
 
-            //Add template if any exists
-            await CheckTemplateMessage();
+            if(!await CheckTemplateMessage())
+            {
+                return;
+            }
+
             string messageToshow = "";
             ChatDocument defaultAttachment = null;
 
             if (SelectedTemplateMessage != null)
             {
-                messageToshow = SelectedTemplateMessage.Message;
+                messageToshow = SelectedTemplateMessage.ConvertedMessage;
 
                 try
                 {
@@ -1191,8 +1192,8 @@ namespace BrokerIQ.Online.Pages
 
         private async Task PopulateBrokerDefinedMessages()
         {
-            MergedMessages = new List<BrokerDefinedMessageDto>();
-            var templates = await BrokerDefinedMessageService.GetAllForCurrentBroker();
+            MergedMessages = new List<BrokerDefinedMessage>();
+            var templates = mapper.Map<List<BrokerDefinedMessage>>( await BrokerDefinedMessageService.GetAllForCurrentBroker());
 
             foreach (var template in templates)
             {
@@ -1502,7 +1503,7 @@ namespace BrokerIQ.Online.Pages
             return chat;
         }
 
-        protected async Task<IEnumerable<BrokerDefinedMessageDto>> OnTemplateFilter(string value)
+        protected async Task<IEnumerable<BrokerDefinedMessage>> OnTemplateFilter(string value)
         {
             return MergedMessages.Where(mm => mm.Prompt.ToLower().Contains(value.ToLower())).ToArray();
         }
@@ -1510,7 +1511,11 @@ namespace BrokerIQ.Online.Pages
         protected void OnComboValueChanged(string itemResponse)
         {
             if (!string.IsNullOrEmpty(itemResponse))
-            {
+            {                    
+                SelectedTemplateTimeReplacement = null;
+                SelectedTemplateDateReplacement = null;
+                SelectedTemplateMessagePreview = string.Empty;
+
                 SelectedTemplateMessage = MergedMessages.FirstOrDefault(mm => mm.Prompt.ToLower().Contains(itemResponse.ToLower()));
                 if(SelectedTemplateMessage != null)
                 {
@@ -1519,6 +1524,7 @@ namespace BrokerIQ.Online.Pages
                     ShowInsertTime = SelectedTemplateMessage.Message.Contains("INSERT_TIME");
                     ShowTemplatePdf = !string.IsNullOrEmpty(SelectedTemplateMessage.FileName);
                     TemplatePdfName = !string.IsNullOrEmpty(SelectedTemplateMessage.FileName) ? SelectedTemplateMessage.FileName : "";
+
                 }
             }
         }
