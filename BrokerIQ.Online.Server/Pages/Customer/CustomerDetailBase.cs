@@ -1482,6 +1482,11 @@ namespace BrokerIQ.Online.Pages
             return MergedMessages.Where(mm => mm.Prompt.ToLower().Contains(value.ToLower())).ToArray();
         }
 
+        protected void OnComboValueChanged(string itemResponse)
+        {
+            SelectedTemplateMessage = MergedMessages.FirstOrDefault(mm => mm.Prompt.ToLower().Contains(itemResponse.ToLower()));
+        }
+
         protected void ChatButtonClicked()
         {
             ShowScheduledChat = false;

@@ -407,9 +407,12 @@ else if (!Saved)
                             <MudAutocomplete T="BrokerIQ.Dto.Models.BrokerDefinedMessageDto"
                                              Label="Select Message Template"
                                              Placeholder="Type part of the template prompt" ı
-                                             @bind-Value="SelectedTemplateMessage"
+
                                              AdornmentColor="Color.Primary"
                                              MaxItems="50"
+                                             CoerceText="true"
+                                                                                 TextChanged="@OnComboValueChanged"
+                                             Clearable="true"
                                              SearchFunc="@OnTemplateFilter" a
                                              ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)"
                                              @ref="TemplateAutoComplete">
