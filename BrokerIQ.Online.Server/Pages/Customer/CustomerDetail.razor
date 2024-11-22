@@ -414,7 +414,6 @@ else if (!Saved)
                                                          AdornmentColor="Color.Primary"
                                                          MaxItems="50"
                                                          TextChanged="@OnComboValueChanged"
-                                                         Clearable="true"
                                                          SearchFunc="@OnTemplateFilter" 
                                                          ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)"
                                                          @ref="TemplateAutoComplete">

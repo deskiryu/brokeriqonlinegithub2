@@ -894,6 +894,13 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        protected async Task ClearAutoComplete()
+        {
+            await TemplateAutoComplete.Clear();
+            SelectedTemplateDateReplacement = null;
+            SelectedTemplateTimeReplacement = null;
+        }
+
         private async Task<bool> CreateDraftMessage(ChatDocument defaultAttachment, List<string> filenames, List<MemoryStream> memoryStreams, MessageSendDialog.MessageSendModel message)
         {
             List<ChatDocument> draftDocuments = BuildDraftDocuments(defaultAttachment, filenames, memoryStreams);
