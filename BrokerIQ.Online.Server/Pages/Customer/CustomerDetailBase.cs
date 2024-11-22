@@ -1510,12 +1510,12 @@ namespace BrokerIQ.Online.Pages
 
         protected void OnComboValueChanged(string itemResponse)
         {
+            SelectedTemplateTimeReplacement = null;
+            SelectedTemplateDateReplacement = null;
+            SelectedTemplateMessagePreview = string.Empty;
+
             if (!string.IsNullOrEmpty(itemResponse))
             {                    
-                SelectedTemplateTimeReplacement = null;
-                SelectedTemplateDateReplacement = null;
-                SelectedTemplateMessagePreview = string.Empty;
-
                 SelectedTemplateMessage = MergedMessages.FirstOrDefault(mm => mm.Prompt.ToLower().Contains(itemResponse.ToLower()));
                 if(SelectedTemplateMessage != null)
                 {
