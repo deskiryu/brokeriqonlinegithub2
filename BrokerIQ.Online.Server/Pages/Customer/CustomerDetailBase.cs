@@ -173,6 +173,8 @@ namespace BrokerIQ.Online.Pages
 
         public BrokerDefinedMessageDto SelectedTemplateMessage { get; set; }
 
+        public string SelectedTemplateMessagePreview { get; set; }
+
         public DateTime? SelectedTemplateDateReplacement { get; set; }
 
         public TimeSpan? SelectedTemplateTimeReplacement { get; set; }
@@ -676,6 +678,7 @@ namespace BrokerIQ.Online.Pages
         {
             if (SelectedTemplateMessage != null)
             {
+
                 if (SelectedTemplateMessage.Message.Contains("INSERT_DATE"))
                 {
                     if (SelectedTemplateDateReplacement.HasValue)
@@ -1485,6 +1488,11 @@ namespace BrokerIQ.Online.Pages
         protected void OnComboValueChanged(string itemResponse)
         {
             SelectedTemplateMessage = MergedMessages.FirstOrDefault(mm => mm.Prompt.ToLower().Contains(itemResponse.ToLower()));
+            if(SelectedTemplateMessage != null)
+            {
+                SelectedTemplateMessagePreview = SelectedTemplateMessage.Message;
+            }
+
         }
 
         protected void ChatButtonClicked()

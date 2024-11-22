@@ -407,7 +407,7 @@ else if (!Saved)
                             <div class="card col-sm-5" style="display:inline-block;">
                                 <div class="card-body">
                                     <label class="card-title">Choose a pre formatted message (if required)</label>
-                                    <div class="col-sm-12 control_wrapper mb-5">
+                                    <div class="control_wrapper mb-5">
                                         <MudAutocomplete T="BrokerIQ.Dto.Models.BrokerDefinedMessageDto"
                                                          Label="Select Message Template"
                                                          Placeholder="Type part of the template prompt"
@@ -421,9 +421,11 @@ else if (!Saved)
                                                          @ref="TemplateAutoComplete">
                                         </MudAutocomplete>
                                     </div>
-                                    <div class ="row">
-                @*                         <MudTextField @bind-value="SelectedTemplateMessage"></MudTextField> *@
+
+                                    <div class="control_wrapper mb-5">
+                                    <MudTextField @bind-Value="SelectedTemplateMessagePreview" Lines="5" AutoGrow="true"></MudTextField>
                                     </div>
+
                                     <div class="row">
                                         <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
                                             <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
