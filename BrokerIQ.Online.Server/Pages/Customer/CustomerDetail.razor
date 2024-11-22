@@ -426,18 +426,26 @@ else if (!Saved)
                                     <MudTextField ShrinkLabel Label="Preview" @bind-Value="SelectedTemplateMessagePreview" Lines="3" AutoGrow="true" ReadOnly="true" Variant="Variant.Outlined"></MudTextField>
                                     </div>
 
+                                    @if(ShowTemplatePdf)
+                                    {
+                                        <div class="row">
+                                            <div class="col-sm-10">
+                                                <MudText Style="font-weight: bold;">AttachedPDF : @TemplatePdfName</MudText>
+                                            </div>
+                                        </div>
+                                    }
 
                                     @if(ShowInsertDate || ShowInsertTime)
                                     {
                                         <div class="row">
                                             @if(ShowInsertDate){
                                             <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                                                <MudDatePicker Visible="@ShowInsertDate" Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" @bind-Date="SelectedTemplateDateReplacement" />
+                                                <MudDatePicker Visible="@ShowInsertDate" Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template"  DateChanged="InsertDateToTemplateMessage"  />
                                             </div>                                               
                                             }
                                             @if(ShowInsertTime){
                                             <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                                                <MudTimePicker Visible="@ShowInsertTime" Label="Replace INSERT_TIME in template" MinuteSelectionStep="5" AmPm="false" @bind-Time="SelectedTemplateTimeReplacement" />
+                                                <MudTimePicker Visible="@ShowInsertTime" Label="Replace INSERT_TIME in template" MinuteSelectionStep="5" AmPm="false" TimeChanged="InsertTimeToTemplateMessage" />
                                             </div>                                     
                                             }
 

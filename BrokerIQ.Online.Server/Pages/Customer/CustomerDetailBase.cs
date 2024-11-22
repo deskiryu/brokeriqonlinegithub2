@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -182,6 +183,10 @@ namespace BrokerIQ.Online.Pages
         public DateTime? SelectedTemplateDateReplacement { get; set; }
 
         public TimeSpan? SelectedTemplateTimeReplacement { get; set; }
+
+        public bool ShowTemplatePdf { get; set; }
+
+        public string TemplatePdfName { get; set; }
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
@@ -678,26 +683,28 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task InsertTemplateMessage()
+        protected async Task InsertDateToTemplateMessage(DateTime? dateIn)
+        {
+            SelectedTemplateDateReplacement = dateIn;
+            UpdatePreviewWithTimes();
+        }
+
+        protected async Task InsertTimeToTemplateMessage(TimeSpan? timeIn)
+        {
+            SelectedTemplateTimeReplacement = timeIn;
+            UpdatePreviewWithTimes();
+        }
+
+        private void UpdatePreviewWithTimes()
         {
             if (SelectedTemplateMessage != null)
             {
-
+                SelectedTemplateMessagePreview = SelectedTemplateMessage.Message;
                 if (SelectedTemplateMessage.Message.Contains("INSERT_DATE"))
                 {
                     if (SelectedTemplateDateReplacement.HasValue)
                     {
-                        DateTime value = SelectedTemplateDateReplacement.Value;
-                        SelectedTemplateMessage.Message = SelectedTemplateMessage.Message.Replace("INSERT_DATE", value.ToBiqDateString());
-                    }
-                    else
-                    {
-                        var dialogParams = new DialogParameters
-                        {
-                            { "Message", "Template requires a DATE to be inserted into message. Please select one from the date picker." }
-                        };
-                        var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
-                        return;
+                        SelectedTemplateMessagePreview = SelectedTemplateMessagePreview.Replace("INSERT_DATE", SelectedTemplateDateReplacement.Value.ToBiqDateString());
                     }
                 }
 
@@ -705,74 +712,87 @@ namespace BrokerIQ.Online.Pages
                 {
                     if (SelectedTemplateTimeReplacement.HasValue)
                     {
-                        SelectedTemplateMessage.Message = SelectedTemplateMessage.Message.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
-                    }
-                    else
-                    {
-                        var dialogParams = new DialogParameters
-                        {
-                            { "Message", "Template requires a TIME to be inserted into message. Please select one from the date picker." }
-                        };
-                        var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
-                        return;
+                        SelectedTemplateMessagePreview = SelectedTemplateMessagePreview.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
                     }
                 }
+            }
+        }
+
+        protected async Task CheckTemplateMessage()
+        {
+            if (SelectedTemplateMessage != null)
+            {
+                if (SelectedTemplateMessage.Message.Contains("INSERT_DATE"))
+                {
+                    var dialogParams = new DialogParameters
+                    {
+                        { "Message", "Template requires a DATE to be inserted into message. Please select one from the date picker." }
+                    };
+                    var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+                    return;
+                }
+
+                if (SelectedTemplateMessage.Message.Contains("INSERT_TIME"))
+                {
+                    var dialogParams = new DialogParameters
+                    {
+                        { "Message", "Template requires a TIME to be inserted into message. Please select one from the date picker." }
+                    };
+                    var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
+                    return;
+                }
+            }
+        }
+        protected async Task NewChat()
+        {
+            bool succeeded = false;
+
+            //Add template if any exists
+            await CheckTemplateMessage();
+            string messageToshow = "";
+            ChatDocument defaultAttachment = null;
+
+            if (SelectedTemplateMessage != null)
+            {
+                messageToshow = SelectedTemplateMessage.Message;
 
                 try
                 {
-                    ChatDocument attachment = null;
 
                     if (!string.IsNullOrEmpty(SelectedTemplateMessage.FileName))
                     {
-                        attachment = new ChatDocument()
+                        defaultAttachment = new ChatDocument()
                         {
                             FileName = SelectedTemplateMessage.FileName,
                             File = SelectedTemplateMessage.File
                         };
                     }
 
-                    await NewChat(SelectedTemplateMessage.Message, attachment);
                 }
                 catch (Exception ex)
                 {
                     System.Console.WriteLine("InsertTemplateMessage: exception - " + ex.Message);
                 }
             }
-            else
-            {
-                var dialogParams = new DialogParameters
-                {
-                    { "Message", "Please select a template from the dropdown menu." }
-                };
-                var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
-                return;
-            }
-        }
 
-        protected async Task NewChat(string messageToshow = "", ChatDocument defaultAttachment = null)
-        {
-            bool succeeded = false;
-
-            var templateFileAttached = false;
             var filesAttached = false;
             var filenames = new List<string>();
             var memoryStreams = new List<MemoryStream>();
-
             var sdoc = new ChatDocument();
-
             var dialogParams = new DialogParameters();
 
             try
             {
                 if (defaultAttachment != null)
                 {
+                    filesAttached = true;
                     sdoc.FileName = defaultAttachment.FileName;
                     sdoc.File = defaultAttachment.File;
                     filenames.Add(sdoc.FileName);
                     memoryStreams.Add(new MemoryStream(sdoc.File));
-                    templateFileAttached = true;
                 }
-                else if (LoadedChatFiles.Any())
+
+                if (LoadedChatFiles.Any())
                 {
                     foreach (var file in LoadedChatFiles)
                     {
@@ -805,7 +825,7 @@ namespace BrokerIQ.Online.Pages
             }
             catch
             {
-                templateFileAttached = false;
+                filesAttached = false;
             }
 
             dialogParams.Add("AllowScheduledMessage", true);
@@ -825,11 +845,7 @@ namespace BrokerIQ.Online.Pages
                 }
                 else
                 {
-                    if (templateFileAttached)
-                    {
-                        succeeded = (await ChatService.SendWithDoc(message.MessageToSend, Customer.Id, sdoc));
-                    }
-                    else if (filesAttached)
+                    if (filesAttached)
                     {
                         if (filenames.Count == memoryStreams.Count)
                         {
@@ -842,7 +858,7 @@ namespace BrokerIQ.Online.Pages
                                     File = memoryStreams[i].ToArray(),
                                     SupportingDocumentType = DocumentTypeEnum.PDF
                                 };
-                                succeeded = await ChatService.SendWithDoc(message.MessageToSend, Customer.Id, sdoc, noNotification);
+                                succeeded = (await ChatService.SendWithDoc(noNotification ? string.Empty : message.MessageToSend, Customer.Id, file, noNotification));
                             }
                         }
                     }
@@ -868,6 +884,8 @@ namespace BrokerIQ.Online.Pages
                 await RefreshChatWithMessage(succeeded, message.IsDelayedMessage ? "Scheduled message created" : "Message sent successfully");
                 await TemplateAutoComplete.Clear();
                 UploadSectionClass = DEFAULT_UPLOAD_CLASS;
+                SelectedTemplateDateReplacement = null;
+                SelectedTemplateTimeReplacement = null;
             }
             else
             {
@@ -1074,7 +1092,7 @@ namespace BrokerIQ.Online.Pages
         {
             List<CreateDocumentsCheckDto> documentsRequiredList = new List<CreateDocumentsCheckDto>();
             bool requirementSet = false;
-            string requirementsString = String.Empty;
+            string requirementsString = string.Empty;
             foreach (var req in RequestedDocuments)
             {
                 if (req.Value > 0)
@@ -1491,14 +1509,18 @@ namespace BrokerIQ.Online.Pages
 
         protected void OnComboValueChanged(string itemResponse)
         {
-            SelectedTemplateMessage = MergedMessages.FirstOrDefault(mm => mm.Prompt.ToLower().Contains(itemResponse.ToLower()));
-            if(SelectedTemplateMessage != null)
+            if (!string.IsNullOrEmpty(itemResponse))
             {
-                SelectedTemplateMessagePreview = SelectedTemplateMessage.Message;
-                ShowInsertDate = SelectedTemplateMessage.Message.Contains("INSERT_DATE");
-                ShowInsertTime = SelectedTemplateMessage.Message.Contains("INSERT_TIME");
+                SelectedTemplateMessage = MergedMessages.FirstOrDefault(mm => mm.Prompt.ToLower().Contains(itemResponse.ToLower()));
+                if(SelectedTemplateMessage != null)
+                {
+                    SelectedTemplateMessagePreview = SelectedTemplateMessage.Message;
+                    ShowInsertDate = SelectedTemplateMessage.Message.Contains("INSERT_DATE");
+                    ShowInsertTime = SelectedTemplateMessage.Message.Contains("INSERT_TIME");
+                    ShowTemplatePdf = !string.IsNullOrEmpty(SelectedTemplateMessage.FileName);
+                    TemplatePdfName = !string.IsNullOrEmpty(SelectedTemplateMessage.FileName) ? SelectedTemplateMessage.FileName : "";
+                }
             }
-
         }
 
         protected void ChatButtonClicked()
