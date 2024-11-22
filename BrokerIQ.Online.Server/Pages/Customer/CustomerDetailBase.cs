@@ -175,6 +175,10 @@ namespace BrokerIQ.Online.Pages
 
         public string SelectedTemplateMessagePreview { get; set; }
 
+        public bool ShowInsertDate { get; set; }
+
+        public bool ShowInsertTime { get; set; }
+
         public DateTime? SelectedTemplateDateReplacement { get; set; }
 
         public TimeSpan? SelectedTemplateTimeReplacement { get; set; }
@@ -1491,6 +1495,8 @@ namespace BrokerIQ.Online.Pages
             if(SelectedTemplateMessage != null)
             {
                 SelectedTemplateMessagePreview = SelectedTemplateMessage.Message;
+                ShowInsertDate = SelectedTemplateMessage.Message.Contains("INSERT_DATE");
+                ShowInsertTime = SelectedTemplateMessage.Message.Contains("INSERT_TIME");
             }
 
         }
