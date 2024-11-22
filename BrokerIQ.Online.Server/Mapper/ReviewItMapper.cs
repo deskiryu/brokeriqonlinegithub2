@@ -39,6 +39,7 @@ namespace BrokerIQ.Online.Mapper
             CustomerAppointmentMapper();
             PensionMapper();
             PensionDocumentMapper();
+            BrokerDefinedMessageMapper();
         }
 
         private void CustomerMapper()
@@ -959,6 +960,11 @@ namespace BrokerIQ.Online.Mapper
         {
             CreateMap<PensionDocumentDto, PensionDocument>();
             CreateMap<PensionDocument, CreatePensionDocumentDto>();
+        }
+
+        private void BrokerDefinedMessageMapper()
+        {
+            CreateMap<BrokerDefinedMessageDto, BrokerDefinedMessage>();
         }
     }
 }
