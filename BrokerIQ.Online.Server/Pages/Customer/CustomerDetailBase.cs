@@ -731,7 +731,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     var dialogParams = new DialogParameters
                     {
-                        { "Message", "Template requires a the date and/or time to be inserted into message. Please select one from the date picker." }
+                        { "Message", "Template requires a the date and/or time to be inserted into message. Please select from the date and time pickers." }
                     };
                     readyToGo = false;
                     await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;

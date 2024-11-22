@@ -403,7 +403,7 @@ else if (!Saved)
                 <div @onclick="this.ClearUnReadChat">
                     @if (!User.IsAdmin)
                     {
-                        <div class="ml-1 row">
+                        <div class="row">
                             <div class="card col-sm-5" style="display:inline-block;">
                                 <div class="card-body">
                                     <label class="card-title">Choose a pre formatted message (if required)</label>
@@ -456,7 +456,7 @@ else if (!Saved)
                                 </div>
                             </div>
 
-                            <div class="card col-sm-4" style="display:inline-block;">
+                            <div class="card col-sm-5" style="display:inline-block;">
                                 <div class="card-body">
                                     <label class="card-title">Upload pdf files (if required)</label>
 
@@ -492,7 +492,7 @@ else if (!Saved)
                             </div>
                         </div>
 
-                        <MudPaper Class="my-1">
+                        <MudPaper Class="my-1 row">
                             <MudStack Spacing="16" Row="true" Class="p-1">
                                 <MudButtonGroup Color="Color.Primary" Variant="Variant.Text">
                                     <MudButton Style="@ChatButtonStyle" OnClick="ChatButtonClicked">Chat</MudButton>
@@ -530,7 +530,7 @@ else if (!Saved)
 
                     @if (!ShowScheduledChat)
                     {
-                        <MudPaper Class="my-1 py-1">
+                        <MudPaper Class="my-1 py-1 row">
                             @if (Chat != null && Chat.Messages.Any())
                             {
                                 @if (User.IsAdmin)
@@ -639,7 +639,7 @@ else if (!Saved)
                     }
                     else
                     {
-                        <MudPaper Class="my-1 py-1">
+                        <MudPaper Class="my-1 py-1 row">
                             @if (Chat != null && Chat.Messages.Any())
                             {
                                 @if (User.IsAdmin)
