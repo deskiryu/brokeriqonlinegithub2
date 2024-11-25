@@ -903,7 +903,7 @@ namespace BrokerIQ.Online.Pages
 
         private async Task<bool> CreateDraftMessage(ChatDocument defaultAttachment, List<string> filenames, List<MemoryStream> memoryStreams, MessageSendDialog.MessageSendModel message)
         {
-            List<ChatDocument> draftDocuments = BuildDraftDocuments(defaultAttachment, filenames, memoryStreams);
+            List<ChatDocument> draftDocuments = BuildDraftDocuments(filenames, memoryStreams);
 
             var succeeded = draftDocuments.Any() ? await ChatService.CreateDraftWithDocs(message.MessageToSend, Customer.Id, draftDocuments, message.ToBeSentOn.Value) :
             (await ChatService.SendDraft(message.MessageToSend, Customer.Id, message.ToBeSentOn.Value));
@@ -911,19 +911,9 @@ namespace BrokerIQ.Online.Pages
             return succeeded;
         }
 
-        private static List<ChatDocument> BuildDraftDocuments(ChatDocument defaultAttachment, List<string> filenames, List<MemoryStream> memoryStreams)
+        private static List<ChatDocument> BuildDraftDocuments(List<string> filenames, List<MemoryStream> memoryStreams)
         {
             var draftDocuments = new List<ChatDocument>();
-
-            if (defaultAttachment != null)
-            {
-                var draftDocument = new ChatDocument()
-                {
-                    FileName = defaultAttachment.FileName,
-                    File = defaultAttachment.File
-                };
-                draftDocuments.Add(draftDocument);
-            }
 
             if (filenames.Count == memoryStreams.Count)
             {
@@ -1586,7 +1576,7 @@ namespace BrokerIQ.Online.Pages
 
             draft.Message = message.MessageToSend;
             draft.ToBeSentOn = message.ToBeSentOn;
-            draft.ChatDocuments = BuildDraftDocuments(null, filenames, streams);
+            draft.ChatDocuments = BuildDraftDocuments(filenames, streams);
 
             if (await UpdateDraftMessage(draft))
             {
