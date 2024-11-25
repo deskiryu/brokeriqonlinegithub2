@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Import;
+using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Services.Interface;
@@ -34,6 +35,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         public IEmailService EmailService { get; set; }
 
         [Inject]
+        public IWealthTypeService WealthService { get; set; }
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -61,6 +65,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         protected CsvImportCustomerDto ImportDetails { get; set; }
 
+        protected WealthTypeDto WealthType { get; set; }
+
         protected bool HasConnection { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -68,6 +74,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             Occupation = await OccupationService.GetById(Customer.OccupationId);
 
             ImportDetails = await CustomerService.GetImportDetails(Customer.Id);
+
+            WealthType = (await WealthService.GetAllForBroker(Broker.Id)).FirstOrDefault(w => w.Id == Customer.WealthTypeId);
         }
 
         protected string GetNeedsContent()
