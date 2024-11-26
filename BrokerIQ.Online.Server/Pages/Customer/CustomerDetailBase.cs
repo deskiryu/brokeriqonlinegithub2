@@ -899,7 +899,13 @@ namespace BrokerIQ.Online.Pages
             await TemplateAutoComplete.Clear();
             SelectedTemplateDateReplacement = null;
             SelectedTemplateTimeReplacement = null;
-        }
+            ShowTemplatePdf = false;
+            TemplatePdfName = string.Empty;
+            SelectedTemplateMessage.FileName = string.Empty;
+            ShowInsertDate = false;
+            ShowInsertTime = false;
+
+    }
 
         private async Task<bool> CreateDraftMessage(ChatDocument defaultAttachment, List<string> filenames, List<MemoryStream> memoryStreams, MessageSendDialog.MessageSendModel message)
         {

@@ -417,7 +417,7 @@ else if (!Saved)
                                                          Label="Select Message Template"
                                                          Placeholder="Type part of the template prompt"
                                                          AdornmentColor="Color.Primary"
-                                                         MaxItems="50"
+                                                         MaxItems="1000"
                                                          TextChanged="@OnComboValueChanged"
                                                          SearchFunc="@OnTemplateFilter" 
                                                          ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)"
