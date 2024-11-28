@@ -78,6 +78,16 @@
 
         <MudTabPanel>
             <TabContent>
+                <MudText Typo="Typo.subtitle2" Class="mr-1">GOALS</MudText>
+                @*<TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 2)" />*@
+            </TabContent>
+            <ChildContent>
+                <GoalTable Broker="@Broker" User="@User" />
+            </ChildContent>
+        </MudTabPanel>
+
+        <MudTabPanel>
+            <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">NOTIFICATIONS</MudText>
                 <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.NotificationSettingsVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 3)" />
             </TabContent>
