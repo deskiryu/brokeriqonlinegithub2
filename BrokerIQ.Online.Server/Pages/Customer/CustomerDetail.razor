@@ -78,12 +78,9 @@ else if (!Saved)
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
                         Add New Insurance
                     </MudButton>
-                    @if (ShowGetQuote())
-                    {
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick=@(r => GetInsuranceQuote()) class="ml-2 mb-2">
-                            Get Quote
-                        </MudButton>
-                    }
+
+                    <QuoteButton Broker="Broker" Customer="Customer" PostQuoteFunction="(() => UpdateChat(true))" />
+
                     <table id="table-insurance" class="table  col-sm-12 table-striped ">
                         <thead>
                             <tr>
@@ -235,6 +232,9 @@ else if (!Saved)
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"pensionedit/0/{Customer.Id}")" class="mb-2">
                         Add New Wealth
                     </MudButton>
+
+                    <QuoteButton Broker="Broker" Customer="Customer" PostQuoteFunction="(() => UpdateChat(true))" />
+
                     <CustomerPensionTable User="@User" Brokers="@Brokers" Customer="@Customer" />
                 </ChildContent>
             </MudTabPanel>
@@ -408,9 +408,9 @@ else if (!Saved)
                                 <div class="card-body">
                                     <div class="row" style="margin-right:0px!important">
 
-                                    <label class="mt-2 col-sm-8 card-title">Choose a pre formatted message (if required)</label>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => ClearAutoComplete())" class="col-sm-4">Clear</MudButton>
-                                    
+                                        <label class="mt-2 col-sm-8 card-title">Choose a pre formatted message (if required)</label>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => ClearAutoComplete())" class="col-sm-4">Clear</MudButton>
+
                                     </div>
                                     <div class="control_wrapper mb-5">
                                         <MudAutocomplete T="BrokerIQ.Online.Models.BrokerDefinedMessage"
@@ -419,17 +419,17 @@ else if (!Saved)
                                                          AdornmentColor="Color.Primary"
                                                          MaxItems="1000"
                                                          TextChanged="@OnComboValueChanged"
-                                                         SearchFunc="@OnTemplateFilter" 
+                                                         SearchFunc="@OnTemplateFilter"
                                                          ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)"
                                                          @ref="TemplateAutoComplete">
                                         </MudAutocomplete>
                                     </div>
 
                                     <div class="control_wrapper mb-5">
-                                    <MudTextField ShrinkLabel Label="Preview" @bind-Value="SelectedTemplateMessagePreview" Lines="3" AutoGrow="true" ReadOnly="true" Variant="Variant.Outlined"></MudTextField>
+                                        <MudTextField ShrinkLabel Label="Preview" @bind-Value="SelectedTemplateMessagePreview" Lines="3" AutoGrow="true" ReadOnly="true" Variant="Variant.Outlined"></MudTextField>
                                     </div>
 
-                                    @if(ShowTemplatePdf)
+                                    @if (ShowTemplatePdf)
                                     {
                                         <div class="row">
                                             <div class="col-sm-10">
@@ -438,21 +438,23 @@ else if (!Saved)
                                         </div>
                                     }
 
-                                    @if(ShowInsertDate || ShowInsertTime)
+                                    @if (ShowInsertDate || ShowInsertTime)
                                     {
                                         <div class="row">
-                                            @if(ShowInsertDate){
-                                            <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                                                <MudDatePicker Visible="@ShowInsertDate" Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template"  DateChanged="InsertDateToTemplateMessage"  />
-                                            </div>                                               
+                                            @if (ShowInsertDate)
+                                            {
+                                                <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                                                    <MudDatePicker Visible="@ShowInsertDate" Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" DateChanged="InsertDateToTemplateMessage" />
+                                                </div>
                                             }
-                                            @if(ShowInsertTime){
-                                            <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                                                <MudTimePicker Visible="@ShowInsertTime" Label="Replace INSERT_TIME in template" MinuteSelectionStep="5" AmPm="false" TimeChanged="InsertTimeToTemplateMessage" />
-                                            </div>                                     
+                                            @if (ShowInsertTime)
+                                            {
+                                                <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
+                                                    <MudTimePicker Visible="@ShowInsertTime" Label="Replace INSERT_TIME in template" MinuteSelectionStep="5" AmPm="false" TimeChanged="InsertTimeToTemplateMessage" />
+                                                </div>
                                             }
 
-                                        </div>    
+                                        </div>
                                     }
 
 
@@ -487,9 +489,9 @@ else if (!Saved)
                                 <div class="card-body">
                                     <label class="card-title">Send chat now or schedule a chat message</label>
 
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())">
-                                    Send Chat Message
-                                </MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())">
+                                        Send Chat Message
+                                    </MudButton>
 
                                 </div>
                             </div>
@@ -796,7 +798,7 @@ else if (!Saved)
                         </table>
                     </ChildContent>
                 </MudTabPanel>
-            }   }
+            }       }
     </MudTabs>
 }
 else
