@@ -1,0 +1,35 @@
+@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+@using BrokerIQ.Online.Server.Components
+
+<div class="mb-2">
+    <MudButton StartIcon="@Icons.Material.Filled.PostAdd" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
+               OnClick=@(r => EditWealthType(new Dto.Models.WealthTypeDto()))>Add Wealth Type </MudButton>
+</div>
+<MudTable Items="@WealthTypes" Dense="true">
+    <NoRecordsContent>
+        <MudText>No wealth types have been defined.</MudText>
+    </NoRecordsContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small"
+                           OnClick=@(r => EditWealthType(context))>
+            </MudIconButton>
+        </MudTd>
+        <MudTd>
+            @{
+                var tooltip = context.IsInUse ? "Cannot delete, still in use" : "Delete";
+                <MudTooltip Text="@tooltip">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Disabled="@context.IsInUse"
+                                   OnClick=@(r => RemoveWealthType(context)) />
+                </MudTooltip>
+            }
+        </MudTd>
+    </RowTemplate>
+</MudTable>

@@ -42,11 +42,11 @@ namespace BrokerIQ.Online.Services
             var chat = mapper.Map<Chat>(ChatDto);
             if (this.api.IsYAHTheme)
             {
-                if (chat!=null && chat.Messages != null)
+                if (chat != null && chat.Messages != null)
                 {
                     chat.Messages = chat.Messages.Select(c => { c.YahTheme = true; return c; }).ToList();
                 }
-    
+
             }
             return chat;
         }
@@ -223,7 +223,7 @@ namespace BrokerIQ.Online.Services
                 BrokerId = brokerId,
                 CustomerId = customerId,
                 GetDocumentFileContents = true,
-                GetImageDocumentFileContents  =true,
+                GetImageDocumentFileContents = true,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 MarkAsRead = true
@@ -240,6 +240,102 @@ namespace BrokerIQ.Online.Services
             }
 
             return chat;
+        }
+
+        public async Task<bool> SendDraft(string message, int customerId, DateTime toBeSentOn)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var brokerId = user.MasterBrokerId;
+
+            var createChatMessage = new CreateChatDraftMessageDto
+            {
+                BrokerId = brokerId,
+                CustomerId = customerId,
+                Message = message,
+                NoNotification = false,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
+                ToBeSentOn = toBeSentOn
+            };
+
+            var answer = await requestProviderService.Post<CreateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft", createChatMessage);
+            return answer != null && answer.Id > 0;
+        }
+
+        public async Task<bool> CreateDraftWithDocs(string message, int customerId, IEnumerable<ChatDocument> chatDocuments, DateTime toBeSentOn, bool NoNotification = false)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var brokerId = user.MasterBrokerId;
+            var createChatMessage = new CreateChatDraftMessageDto
+            {
+                BrokerId = brokerId,
+                CustomerId = customerId,
+                Message = message,
+                NoNotification = NoNotification,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
+                ToBeSentOn = toBeSentOn
+            };
+
+            var draftDocuments = new List<CreateChatDocumentDto>();
+
+            foreach (var document in chatDocuments)
+            {
+                var draftDocument = new CreateChatDocumentDto
+                {
+                    File = document.File,
+                    FileName = document.FileName,
+                    SupportingDocumentType = document.SupportingDocumentType
+                };
+
+                draftDocuments.Add(draftDocument);
+            }
+            createChatMessage.ChatDocuments = draftDocuments;
+
+            var answer = await requestProviderService.Post<CreateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft", createChatMessage);
+
+            return answer != null && answer.Id > 0;
+        }
+
+        public async Task<bool> UpdateDraftWithDocs(ChatDraftMessage draft)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            var updateChatMessage = new UpdateChatDraftMessageDto
+            {
+                Id = draft.Id,
+                Message = draft.Message,
+                HasEmbeddedUrl = !string.IsNullOrEmpty(draft.Message) && draft.Message.Contains("<--") && draft.Message.Contains("-->"),
+                ToBeSentOn = draft.ToBeSentOn.Value
+            };
+
+            var draftDocuments = new List<ChatDocumentDto>();
+
+            foreach (var document in draft.ChatDocuments)
+            {
+                var draftDocument = new ChatDocumentDto
+                {
+                    File = document.File,
+                    FileName = document.FileName,
+                    SupportingDocumentType = document.SupportingDocumentType
+                };
+
+                draftDocuments.Add(draftDocument);
+            }
+            updateChatMessage.ChatDocuments = draftDocuments;
+
+            var answer = await requestProviderService.Put<UpdateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft/{draft.Id}", updateChatMessage);
+
+            return answer != null && answer.Id > 0;
+        }
+
+        public async Task<bool> DeleteDraft(ChatDraftMessage message)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await requestProviderService.Delete($"{ChatUrl}/draft/{message.Id}");
         }
     }
 }
