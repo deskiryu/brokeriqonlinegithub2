@@ -229,6 +229,8 @@ else if (!Saved)
                     <MudText Typo="Typo.subtitle2" Class="mr-1">WEALTH</MudText>
                 </TabContent>
                 <ChildContent>
+                    <CustomerGoalTable Broker="Broker" Customer="Customer"/>
+                    <br/>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"pensionedit/0/{Customer.Id}")" class="mb-2">
                         Add New Wealth
                     </MudButton>

@@ -43,7 +43,7 @@ namespace BrokerIQ.Online.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"CreateOrCreate: exception {ex.Message}");
+                Console.WriteLine($"Create: exception {ex.Message}");
             }
             return response;
         }
@@ -59,7 +59,7 @@ namespace BrokerIQ.Online.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"UpdateOrCreate: exception {ex.Message}");
+                Console.WriteLine($"Update: exception {ex.Message}");
             }
             return response;
         }
