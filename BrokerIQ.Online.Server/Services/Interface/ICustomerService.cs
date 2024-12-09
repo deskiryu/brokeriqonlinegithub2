@@ -26,6 +26,8 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<int> GetCustomerCount(int brokerId = 0);
 
+        Task<int> GetCustomerAppUserCount(int brokerId = 0);
+
         Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory);
 
         Task<bool> SetCustomerNeeds(int customerid, bool hasNeeds);
@@ -42,8 +44,27 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<bool> SendAppInvite(int customerId);
 
+        Task<bool> SendAppInvites(int[] customerIds);
+
         Task<IEnumerable<Customer>> Search(int brokerId, string value);
 
         Task<bool> Connect(int brokerId, int mainCustomerId, int connectedCustomerId);
+
+        Task<PagedResponse<Customer>> GetPagedCustomers(
+            int brokerId, 
+            int assignedToId, 
+            int filterRecent, 
+            int filterPeriod, 
+            int filterCategory,
+            int filterAgeRange, bool nonAppUsersOnly, 
+            SortOrderEnum sortOrder, 
+            SortByEnum sortBy,
+            string partialName, bool profilePictures, 
+            int pageNumber, 
+            int pageSize, 
+            int lastMaxId, 
+            int lastMinId, 
+            PagingDirectionEnum pagingDirectionEnum = PagingDirectionEnum.FirstPage,
+            ProfilingOptionEnum? profilingOption = null);
     }
 }

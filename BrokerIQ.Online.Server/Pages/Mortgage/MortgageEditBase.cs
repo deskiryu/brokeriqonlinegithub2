@@ -25,6 +25,7 @@ namespace BrokerIQ.Online.Pages
     using BrokerIQ.Online.Server.Shared;
     using BrokerIQ.Online.Server.Pages.Insurance.Components;
     using BrokerIQ.Online.Server.Pages.Mortgage.Components;
+    using BrokerIQ.Online.Services;
 
     public class MortgageEditBase : ComponentBase
     {
@@ -450,6 +451,7 @@ namespace BrokerIQ.Online.Pages
             LoadedFiles.Clear();
             StateHasChanged();
         }
+
         protected async Task UploadMortgageFile(string filename, byte[] dataBytes)
         {
             if (id == 0)
@@ -471,6 +473,7 @@ namespace BrokerIQ.Online.Pages
             bool succeeded = false;
             try
             {
+                await MortgageService.UpdateMortgage(Mortgage);
                 succeeded = await SupportingDocumentService.UploadMortgageFile(sdoc);
             }
             catch
@@ -658,7 +661,6 @@ namespace BrokerIQ.Online.Pages
             var messageToSend = $"Congratulation {customerName} on your new mortgage. Watch our celebration video.";
             return messageToSend;
         }
-
 
         private async Task SendMessageNotification(Customer customer, bool upload = false, bool mortgageVideo = false)
         {

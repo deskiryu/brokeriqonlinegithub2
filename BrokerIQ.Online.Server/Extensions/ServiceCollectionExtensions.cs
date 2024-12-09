@@ -59,6 +59,7 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<IDocumentVaultTypeService, DocumentVaultTypeService>();
             services.AddScoped<IPensionService, PensionService>();
             services.AddScoped<IPensionDocumentService, PensionDocumentService>();
+            services.AddScoped<IWealthTypeService, WealthTypeService>();
 
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();

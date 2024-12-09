@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
-using BrokerIQ.Online.Server.Extensions;
-using Microsoft.AspNetCore.Components;
-using BrokerIQ.Online.Models;
-using BrokerIQ.Online.Services.Interface;
-using BrokerIQ.Online.Server.Services.Interface;
+using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.AppSettings;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Services.Interface;
+using BrokerIQ.Online.Services.Interface;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 
 namespace BrokerIQ.Online.Pages
@@ -31,6 +32,9 @@ namespace BrokerIQ.Online.Pages
         public IOccupationService OccupationService { get; set; }
 
         [Inject]
+        public IWealthTypeService WealthTypeService { get; set; }
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -42,6 +46,8 @@ namespace BrokerIQ.Online.Pages
         public Customer Customer { get; set; }
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
+
+        public IEnumerable<WealthTypeDto> WealthTypes;
 
         public int SelectedCustomerCategory { get { return (int)Customer.CustomerCategory; } set { Customer.CustomerCategory = (CustomerCategoryEnum)value; } }
 
@@ -80,6 +86,8 @@ namespace BrokerIQ.Online.Pages
                 SelectedOccupation = await OccupationService.GetById(Customer.OccupationId);
 
                 var broker = await BrokerService.GetBroker(Customer.ChosenBrokerId);
+
+                WealthTypes = await WealthTypeService.GetAllForBroker(broker.Id);
 
                 if (broker.BrokerIdentifier.InsuranceOnly)
                 {

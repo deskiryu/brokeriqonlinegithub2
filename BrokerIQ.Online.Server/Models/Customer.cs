@@ -101,7 +101,7 @@ namespace BrokerIQ.Online.Models
 
         public bool Selected { get; set; }
 
-        public string Name => Salutation + ' ' + FirstName + ' ' + LastName;
+        public string Name => string.IsNullOrWhiteSpace(FirstName) && string.IsNullOrWhiteSpace(LastName) ? " -- No Names --" : $"{Salutation ?? string.Empty} {FirstName ?? string.Empty} {LastName ?? string.Empty}".Trim();
 
         public string MultiSelect => FirstName + LastName + EmailAddress + TelephoneNumber + DateOfBirth.ToString();
 
@@ -132,5 +132,7 @@ namespace BrokerIQ.Online.Models
         public int TargetCustomerId { get { return ConnectedToCustomerId ?? Id; } }
 
         public bool AppointmentRemindersAllowed { get; set; }
+
+        public int? WealthTypeId { get; set; }
     }
 }

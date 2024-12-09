@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using BrokerIQ.Dto.Dto.Import;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Import;
 using BrokerIQ.Dto.Models;
@@ -109,6 +110,14 @@ namespace BrokerIQ.Online.Services
             return answer;
         }
 
+        public async Task<int> GetCustomerAppUserCount(int brokerId = 0)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+            var answer = await this.requestProviderService.Get<int>(this.customerUrl + $"/appusercount", brokerId);
+            return answer;
+        }
+
         public async Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory)
         {
             var user = await this.accountService.GetUser();
@@ -208,6 +217,14 @@ namespace BrokerIQ.Online.Services
             return true;
         }
 
+        public async Task<IEnumerable<CustomerImportDto>> PreviewImportData(ImportRequest request)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<ImportRequest, IEnumerable<CustomerImportDto>>($"{this.customerUrl}/previewimportdata", request);
+        }
+
         public async Task<ImportResponse> Import(ImportRequest request)
         {
             var user = await this.accountService.GetUser();
@@ -240,6 +257,14 @@ namespace BrokerIQ.Online.Services
             return await this.requestProviderService.Post<int, bool>($"{this.customerUrl}/{customerId}/sendappinvite", customerId);
         }
 
+        public async Task<bool> SendAppInvites(int[] customerIds)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<int[], bool>($"{this.customerUrl}/sendappinvites", customerIds);
+        }
+
         public async Task<IEnumerable<Customer>> Search(int brokerId, string value)
         {
             var user = await this.accountService.GetUser();
@@ -256,10 +281,106 @@ namespace BrokerIQ.Online.Services
 
             return await requestProviderService.Post<ConnectCustomersRequest, bool>($"{customerUrl}/connect", new ConnectCustomersRequest()
             {
-                BrokerId= brokerId,
+                BrokerId = brokerId,
                 MainCustomerId = mainCustomerId,
                 ConnectedCustomerId = connectedCustomerId
             });
+        }
+
+        public async Task<PagedResponse<Customer>> GetPagedCustomers(
+            int brokerId,
+            int assignedToId,
+            int filterRecent,
+            int filterPeriod,
+            int filterCategory,
+            int filterAgeRange, 
+            bool nonAppUsersOnly, 
+            SortOrderEnum sortOrder, 
+            SortByEnum sortBy,
+            string partialName, bool profilePictures,
+            int pageNumber,
+            int pageSize,
+            int lastMaxId,
+            int lastMinId,
+            PagingDirectionEnum pagingDirectionEnum = PagingDirectionEnum.FirstPage,
+            ProfilingOptionEnum? profilingOption = null
+            )
+        {
+            return await GetPagedFilteredCustomers(new CustomerFilter()
+            {
+                BrokerId = brokerId,
+                AssignedToId = assignedToId,
+                Recent = filterRecent,
+                Period = filterPeriod,
+                Category = filterCategory,
+                AgeRange = filterAgeRange,
+                ProfilePictures = profilePictures,
+                NonAppUsersOnly = nonAppUsersOnly,
+                ProfilingOption = profilingOption,
+                PartialName = partialName,
+                SortOrder = sortOrder,
+                SortBy = sortBy,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                LastMaxId = lastMaxId,
+                LastMinId = lastMinId,
+                PagingDirectionEnum = pagingDirectionEnum
+            });
+        }
+
+        private async Task<PagedResponse<Customer>> GetPagedFilteredCustomers(CustomerFilter filter)
+        {
+            var user = await this.accountService.GetUser();
+            requestProviderService.Token = user?.Token;
+
+            var option = (RecentEnum)filter.Recent;
+            var ts = ((RecentPeriodEnum)filter.Period).TransformToTS();
+            var searchOption = new SearchOptionDto
+            {
+                InsuranceEndingSoon = option == RecentEnum.RecentInsurance,
+                MortgagePromotionEndingSoon = option == RecentEnum.RecentMortgage,
+                InsuranceRecentPeriod = ts,
+                MortgagePromotionRecentPeriod = ts,
+                CustomerCategory = (CustomerCategoryEnum)filter.Category,
+                AgeRange = (AgeRangeEnum)filter.AgeRange,
+                ProfilingOption = filter.ProfilingOption,
+                PartialName = filter.PartialName,
+                SortOrder = filter.SortOrder,
+                SortBy = filter.SortBy,
+                AssignedToId = filter.AssignedToId,
+                NonAppUsersOnly = filter.NonAppUsersOnly
+            };
+
+            var url = this.customerUrl;
+
+            
+            if (user.IsBroker || user.IsBrokerStaff)
+            {
+                url += $"/brokerpaged/{filter.BrokerId}";
+            }
+            else if (user.IsAdmin)
+            {
+                if (filter.BrokerId > 0)
+                {
+                    url += "/brokerpaged/" + $"{filter.BrokerId}";
+                }
+                else
+                {
+                    url += "/adminpaged";
+                }
+            }
+            url += $"?profilePictures={filter.ProfilePictures}";
+            url += $"&pagenumber={filter.PageNumber}&pageSize={filter.PageSize}&lastMaxId={filter.LastMaxId}&lastMinId={filter.LastMinId}&PagingDirectionEnum={filter.PagingDirectionEnum}";
+
+            var answer = await requestProviderService.Post<SearchOptionDto, PagedResponse<CustomerDto>>(url, searchOption);
+
+            return new PagedResponse<Customer>()
+            {
+                CurrentPage = answer.CurrentPage,
+                TotalPages = answer.TotalPages,
+                PageData = mapper.Map<IEnumerable<Customer>>(answer.PageData),
+                TotalRecords = answer.TotalRecords
+            };
         }
     }
 }

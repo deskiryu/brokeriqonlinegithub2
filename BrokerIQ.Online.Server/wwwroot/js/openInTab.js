@@ -7,6 +7,12 @@ function openInTabJpeg(base64EncodedPDF, jpeg) {
     openInTabBase(base64EncodedPDF, true);
 }
 
+function openInTabText(html) {
+    var tab = window.open('about:blank', '_blank');
+    tab.document.write(html); // where 'html' is a variable containing your HTML
+    tab.document.close(); // to finish loading the page
+}
+
 function openInTabBase(base64EncodedPDF, jpeg) {
 
     var base64str = base64EncodedPDF;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace BrokerIQ.Online.Models
 {
@@ -10,5 +8,7 @@ namespace BrokerIQ.Online.Models
         public int BrokerId { get; set; }
         public int CustomerId { get; set; }
         public virtual ICollection<ChatMessage> Messages { get; set; }
+        public bool MoreMessagesAvailable { get; set; }
+        public virtual ICollection<ChatDraftMessage> DraftMessages { get; set; }
     }
 }

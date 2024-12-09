@@ -37,7 +37,6 @@ else
                 <div class="col-sm-3 mt-1">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendChatMessageToSelected())">Send chat message to selected clients</MudButton>
                 </div>
-
             </div>
         </div>
     </div>
@@ -47,7 +46,7 @@ else
         <div class="card-body">
 
             <div class="row">
-                @if (User.IsAdmin)
+                @if (User is not null && User.IsAdmin)
                 {
                     <div class="col-12">
                         <MudSelect T="int"
@@ -101,7 +100,7 @@ else
             <div class="row">
                 <div class="col-lg-4">
                     <label>Filter the list below by name</label>
-                    <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name" class="filter_customerBroker" />
+                    <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" />
                 </div>
                 <div class="col-lg-4 control_wrapper">
                     <MudAutocomplete T="string"
@@ -229,6 +228,9 @@ else
                           SortLabel="Sort By"
                           MultiSelection="true"
                           Dense="true"
+                        FixedHeader="@this.api.Value.FixedHeader"
+                        FixedFooter="@this.api.Value.FixedFooter"
+                        Height="@(this.api.Value.FixedHeader || this.api.Value.FixedFooter ? this.api.Value.ScrollHeight:"")"
                           @bind-SelectedItems="SelectedCustomers">
                     <HeaderContent>
                         @if (api.Value.ShowClientPictureColumn)
@@ -238,14 +240,13 @@ else
                         @if (!User.IsAdmin)
                         {
                             <MudTh Style="text-align:center">
-                                <MudIconButton Class="@(AssignVisibilityClass())"
-                                               Icon="@Icons.Material.Filled.GroupAdd"
-                                               Size="Size.Small"
-                                               Title="Assign"
-                                               Variant="Variant.Filled"
-                                               Color="Color.Primary"
-                                               Style="@($"color:{Colors.Shades.Black}")"
-                                               OnClick="AssignToStaff" />
+                                @*<MudIconButton Class="@(AssignVisibilityClass())"
+                                    Icon="@Icons.Material.Filled.GroupAdd"
+                                    Size="Size.Small"
+                                    Title="Assign"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Primary"
+                                    Style="@($"color:{Colors.Shades.Black}")" />*@
                             </MudTh>
                         }
                         <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.FirstName)">First Name</MudTableSortLabel></MudTh>
@@ -264,17 +265,25 @@ else
                         }
                         <MudTh>Verified</MudTh>
                         <MudTh>
-                            @if (CanImport)
+                            @if (CanImport || SelectedCustomers.Any())
                             {
-
-                                <MudIconButton Icon="@Icons.Material.Filled.Upload"
-                                               Size="Size.Small"
-                                               Variant="Variant.Filled"
-                                               Color="Color.Primary"
-                                               Title="Import"
-                                               Style="@($"color:{Colors.Shades.Black}")"
-                                               OnClick="ShowImportDialog" />
-
+                                <MudMenu Icon="@Icons.Material.Filled.MoreVert"
+                                         Size="Size.Small"
+                                         AriaLabel="Bulk actions"
+                                         Color="Color.Dark">
+                                    @if (CanImport)
+                                    {
+                                        <MudMenuItem OnClick="ShowImportDialog">Import</MudMenuItem>
+                                    }
+                                    @if (SelectedCustomers.Any())
+                                    {
+                                        @if (!User.IsAdmin && !User.IsBrokerStaff)
+                                        {
+                                            <MudMenuItem OnClick="AssignToStaff">Assign</MudMenuItem>
+                                        }
+                                        <MudMenuItem OnClick="SendInvite">Invite</MudMenuItem>
+                                    }
+                                </MudMenu>
                             }
                         </MudTh>
                     </HeaderContent>
