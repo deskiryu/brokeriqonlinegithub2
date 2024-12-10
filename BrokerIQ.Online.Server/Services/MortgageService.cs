@@ -91,5 +91,13 @@ namespace BrokerIQ.Online.Services
             var answer = await this.requestProviderService.Post<CreateMortgageDto, MortgageDto>(this.MortgageUrl, mapped);
             return this.mapper.Map<Mortgage>(answer);
         }
+
+        public async Task<MortgageFromDocumentDto> GetFromFile(DocumentDto dto)
+        {
+            var user = await this.accountService.GetUser();
+            this.requestProviderService.Token = user?.Token;
+
+            return await this.requestProviderService.Post<DocumentDto, MortgageFromDocumentDto>($"{this.MortgageUrl}/getfromdocument", dto);
+        }
     }
 }
