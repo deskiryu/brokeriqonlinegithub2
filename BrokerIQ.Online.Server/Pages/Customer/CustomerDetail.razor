@@ -222,7 +222,7 @@ else if (!Saved)
             </MudTabPanel>
         }
 
-        @if (api.Value.ShowWealth && Broker != null && Broker.ProvidesPensionServices)
+        @if (Broker != null && Broker.ProvidesPensionServices)
         {
             <MudTabPanel>
                 <TabContent>
