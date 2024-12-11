@@ -29,7 +29,7 @@
 		<PackageReference Include="MudBlazor" Version="6.11.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
-		<PackageReference Include="BrokerIQ.Dto" Version="1.2.52" />
+		<PackageReference Include="BrokerIQ.Dto" Version="1.2.55" />
 		<PackageReference Include="System.Text.Json" Version="8.0.5" />
 	</ItemGroup>
 	<ItemGroup>

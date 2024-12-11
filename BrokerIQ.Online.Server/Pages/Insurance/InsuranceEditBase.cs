@@ -175,7 +175,7 @@ namespace BrokerIQ.Online.Pages
                 BrokerListId = brokerId;
                 try
                 {
-                    Broker = await BrokerService.GetBroker(brokerId);
+                    Broker = await BrokerService.GetBroker(brokerId, eagerload:true);
                     if (!IsAdmin)
                     {
                         MyMaxAllowedFiles = Broker.ProvidesBusinessInsuranceServices ? MyMaxAllowedFiles * 2 : MyMaxAllowedFiles;

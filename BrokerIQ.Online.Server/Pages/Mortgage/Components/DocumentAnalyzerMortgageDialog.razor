@@ -1,0 +1,45 @@
+<MudDialog>
+    <DialogContent>
+        <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave"
+            style="@UploadStyle">
+            <MudPaper Class="pa-3 ma-2 drag-drop-zone">
+                <InputFile OnChange="FillFileContents" Class="drag-drop-input" accept="application/pdf" />
+                <MudText Typo="Typo.subtitle1">Drag and drop pdf file or click to browse</MudText>
+            </MudPaper>
+        </div>
+        <MudPaper Class="pa-3 ma-2">
+            <MudText> Current file : @UploadedFile?.Name </MudText>
+        </MudPaper>
+        <MudSimpleTable Dense="true" FixedHeader="true" Style="@($"height:200px; {KeyTableStyle}")">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody> @foreach (var item in ExtractedValues)
+                {
+                    <tr>
+                        <td> @item.Key </td>
+                        <td> @item.Value </td>
+                    </tr>
+                } </tbody>
+        </MudSimpleTable>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Disabled="@IsProcessing">Cancel</MudButton>
+        <MudButton OnClick="AnalyzeDocument" Variant="Variant.Filled" Color="Color.Primary"
+            Style="@($"color:{Colors.Shades.Black}; {AnalyzeButtonStyle}")" Disabled="@AnalyzerDisabled"> @if (IsProcessing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Analyzing ...</MudText>
+            }
+            else
+            {
+                <MudText>Analyze Document</MudText>
+            }
+        </MudButton>
+        <MudButton OnClick="FillDetails" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; {FillButtonStyle}")">
+            Fill Details </MudButton>
+    </DialogActions>
+</MudDialog>
