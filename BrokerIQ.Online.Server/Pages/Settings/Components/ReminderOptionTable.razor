@@ -1,6 +1,9 @@
-@using BrokerIQ.Dto.Enum @using BrokerIQ.Online.Server.Extensions <div class="mb-2">
+@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+
+<div class="mb-2">
     <MudButton StartIcon="@Icons.Material.Filled.AddAlert" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
-        OnClick=@(r=> EditReminderOption(new Dto.Dto.ReminderOptionDto()))>Add reminder </MudButton>
+               OnClick=@(r=> EditReminderOption(new Dto.Dto.ReminderOptionDto()))>Add reminder </MudButton>
 </div>
 <MudTable Items="@ReminderOptions" Dense="true">
     <NoRecordsContent>
@@ -21,10 +24,11 @@
         <MudTd>@((MarkupString)FormatOptionForDisplay(context.MessageContent))</MudTd>
         <MudTd>
             <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small"
-                OnClick=@(r=> EditReminderOption(context))>
+                           OnClick=@(r=> EditReminderOption(context))>
             </MudIconButton>
         </MudTd>
-        <MudTd> @{
+        <MudTd>
+            @{
                 if (context.NotificationPeriod != TimeSpan.Zero)
                 {
                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r=>
