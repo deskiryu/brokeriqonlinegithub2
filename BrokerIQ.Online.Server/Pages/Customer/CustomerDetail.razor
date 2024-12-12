@@ -222,13 +222,15 @@ else if (!Saved)
             </MudTabPanel>
         }
 
-        @if (api.Value.ShowWealth && Broker != null && Broker.ProvidesPensionServices)
+        @if (Broker != null && Broker.ProvidesPensionServices)
         {
             <MudTabPanel>
                 <TabContent>
                     <MudText Typo="Typo.subtitle2" Class="mr-1">WEALTH</MudText>
                 </TabContent>
                 <ChildContent>
+                    <CustomerGoalTable Broker="Broker" Customer="Customer"/>
+                    <br/>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"pensionedit/0/{Customer.Id}")" class="mb-2">
                         Add New Wealth
                     </MudButton>

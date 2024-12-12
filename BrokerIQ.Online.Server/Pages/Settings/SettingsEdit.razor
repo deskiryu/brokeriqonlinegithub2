@@ -63,7 +63,7 @@
             </MudTabPanel>
         }
 
-        @if (api.Value.ShowWealth)
+        @if (Broker.ProvidesPensionServices)
         {
             <MudTabPanel>
                 <TabContent>
@@ -72,6 +72,16 @@
                 </TabContent>
                 <ChildContent>
                     <WealthTypeTable Broker="@Broker" User="@User" />
+                </ChildContent>
+            </MudTabPanel>
+
+            <MudTabPanel>
+                <TabContent>
+                    <MudText Typo="Typo.subtitle2" Class="mr-1">GOALS</MudText>
+                    @*<TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 2)" />*@
+                </TabContent>
+                <ChildContent>
+                    <GoalTable Broker="@Broker" User="@User" />
                 </ChildContent>
             </MudTabPanel>
         }
