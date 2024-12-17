@@ -1,0 +1,26 @@
+@using BrokerIQ.Dto.Models
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form">
+            <MudSelect T="GoalDto"
+                       @bind-Value="SelectedGoal"
+                       Label="Select Goal"
+                       Dense="true"
+                       Required="true">
+                @foreach (var goal in Goals)
+                {
+                    <MudSelectItem Value="goal">@goal.Description</MudSelectItem>
+                }
+            </MudSelect>
+            <MudTextField Class="@AdditionalInfoClass" Lines="3" @bind-Value="CustomerGoal.AdditionalInfo" Label="Description" RequiredError="Description cannot be empty"/>
+            <MudDatePicker Label="Start Date" @bind-Date="StartDate" Required="true" />
+            <MudDatePicker Label="Next Review Date" @bind-Date="NextReviewDate" Required="true" />
+            <MudDatePicker Label="End Date" @bind-Date="EndDate" Required="true" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>

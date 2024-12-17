@@ -10,7 +10,7 @@ using MudBlazor;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
-    public partial class WealthTypeTable : ComponentBase
+    public partial class GoalTable : ComponentBase
     {
         [Inject]
         private IDialogService DialogService { get; set; }
@@ -19,7 +19,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         private ISnackbar Snackbar { get; set; }
 
         [Inject]
-        public IWealthTypeService WealthTypeService { get; set; }
+        public IGoalService GoalService { get; set; }
 
         [Parameter]
         public User User { get; set; }
@@ -28,18 +28,18 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         public Online.Models.Broker Broker { get; set; }
 
-        private ICollection<WealthTypeDto> WealthTypes { get; set; }
+        private ICollection<GoalDto> Goals { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            WealthTypes = new List<WealthTypeDto>(await WealthTypeService.GetAllForBroker(Broker.Id));
+            Goals = new List<GoalDto>(await GoalService.GetAllForBroker(Broker.Id));
         }
 
-        private async Task RemoveWealthType(WealthTypeDto wealthType)
+        private async Task RemoveGoal(GoalDto Goal)
         {
             var parameters = new DialogParameters
             {
-                { "ContentText", "Do you really want to delete this Wealth type? This process cannot be undone." },
+                { "ContentText", "Do you really want to delete this goal? This process cannot be undone." },
                 { "ButtonText", "Delete" },
                 { "Color", Color.Error }
             };
@@ -48,54 +48,56 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             var result = await DialogService.Show<ConfirmationDialog>("Delete", parameters, dialogOptions).Result;
 
-            if (!result.Canceled)
+            if (!result.Cancelled)
             {
-                await WealthTypeService.Delete(wealthType);
+                await GoalService.Delete(Goal);
             }
 
-            await ReloadWealthTypes();
+            await ReloadGoals();
         }
 
-        private async Task ReloadWealthTypes()
+        private async Task ReloadGoals()
         {
-            WealthTypes = new List<WealthTypeDto>(await WealthTypeService.GetAllForBroker(Broker.Id));
+            Goals = new List<GoalDto>(await GoalService.GetAllForBroker(Broker.Id));
 
             StateHasChanged();
         }
 
-        private async Task EditWealthType(WealthTypeDto wealthType)
+        private async Task EditGoal(GoalDto Goal)
         {
-            var operation = wealthType.Id == 0 ? "Create" : "Edit";
-            var title = $"{operation} {wealthType.Name} wealth type";
+            var operation = Goal.Id == 0 ? "Create" : "Edit";
+            var title = $"{operation} {Goal.Description}";
             var parameters = new DialogParameters
             {
-                { "WealthType", wealthType }
+                { "Goal", Goal }
             };
 
             var options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
 
-            var result = await DialogService.Show<WealthTypeDialog>(title, parameters, options).Result;
+            var result = await DialogService.Show<GoalDialog>(title, parameters, options).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
-                WealthTypeDto updated = result.Data as WealthTypeDto;
+                GoalDto updated = result.Data as GoalDto;
 
                 var wasSuccessfull = false;
-                if (wealthType.Id == 0)
+                if (Goal.Id == 0)
                 {
-                    wasSuccessfull = await WealthTypeService.Create(new CreateWealthTypeDto()
+                    wasSuccessfull = await GoalService.Create(new CreateGoalDto()
                     {
                         BrokerId = updated.BrokerId,
-                        Name = updated.Name
+                        Description = updated.Description,
+                        RequiresAdditionalInfo =updated.RequiresAdditionalInfo
                     });
                 }
                 else
                 {
-                    wasSuccessfull = await WealthTypeService.Update(new UpdateWealthTypeDto()
+                    wasSuccessfull = await GoalService.Update(new UpdateGoalDto()
                     {
                         Id = updated.Id,
                         BrokerId = updated.BrokerId,
-                        Name = updated.Name
+                        Description = updated.Description,
+                        RequiresAdditionalInfo = updated.RequiresAdditionalInfo
                     });
                 }
 
@@ -110,7 +112,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 // } 
             }
 
-            await ReloadWealthTypes();
+            await ReloadGoals();
         }
     }
 }

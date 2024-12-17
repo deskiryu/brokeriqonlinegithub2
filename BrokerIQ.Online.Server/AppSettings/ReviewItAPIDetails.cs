@@ -22,15 +22,11 @@
 
         public bool ShowClientPhoneColumn { get; set; }
 
-        public bool CanLoadInsuranceFromFile { get; set; }
-
         public bool CalendlyAvailable { get; set; }
 
         public bool ShowConnectToCustomer { get; set; }
 
         public bool IsYAHTheme { get; set; }
-
-        public bool ShowWealth { get; set; }
 
         public bool FixedHeader { get; set; }
 
