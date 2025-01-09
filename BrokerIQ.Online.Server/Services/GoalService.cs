@@ -10,11 +10,12 @@ using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services
 {
-    public class GoalService : BrokerIQService, IGoalService
+    public class GoalService : BIQService, IGoalService
     {
         private const string API_CONTROLLER = "Goal";
 
-        public GoalService(IAccountService accountService, IRequestProviderService requestProviderService) : base(accountService, requestProviderService)
+        public GoalService(IAccountService accountService, IRequestProviderService requestProviderService, CookieService cookieService)
+            : base(accountService, requestProviderService, cookieService)
         {
         }
 
@@ -22,7 +23,7 @@ namespace BrokerIQ.Online.Services
         {
             try
             {
-                return await requestProviderService.Get<IEnumerable<GoalDto>>($"{API_CONTROLLER}?brokerid={brokerId}");
+                return await _requestProviderService.Get<IEnumerable<GoalDto>>($"{API_CONTROLLER}?brokerid={brokerId}");
             }
             catch (Exception ex)
             {
@@ -39,7 +40,7 @@ namespace BrokerIQ.Online.Services
             bool response = false;
             try
             {
-                response = await requestProviderService.Post<CreateGoalDto, bool>(API_CONTROLLER, Goal);
+                response = await _requestProviderService.Post<CreateGoalDto, bool>(API_CONTROLLER, Goal);
             }
             catch (Exception ex)
             {
@@ -55,7 +56,7 @@ namespace BrokerIQ.Online.Services
             bool response = false;
             try
             {
-                response = await requestProviderService.Put<UpdateGoalDto, bool>(API_CONTROLLER, Goal);
+                response = await _requestProviderService.Put<UpdateGoalDto, bool>(API_CONTROLLER, Goal);
             }
             catch (Exception ex)
             {
@@ -68,7 +69,7 @@ namespace BrokerIQ.Online.Services
         {
             try
             {
-                return await requestProviderService.Delete(API_CONTROLLER, Goal.Id);
+                return await _requestProviderService.Delete(API_CONTROLLER, Goal.Id);
             }
             catch (Exception ex)
             {

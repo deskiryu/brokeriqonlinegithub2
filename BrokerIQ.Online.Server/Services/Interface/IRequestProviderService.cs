@@ -1,17 +1,22 @@
-﻿namespace BrokerIQ.Online.Services.Abstract
-{
-    using System;
-    using System.IO;
-    using System.Threading.Tasks;
-    using BrokerIQ.Online.Server.Services.Base;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Models.Account;
+using BrokerIQ.Online.Server.Services.Base;
 
+namespace BrokerIQ.Online.Services.Abstract
+{
     public interface IRequestProviderService
     {
         Task<bool> Post<T>(string url, T data);
 
         Task<TReturn> Post<T, TReturn>(string url, T data);
-        Task<TReturn> FirstFactorPost<T, TReturn>(string url, T data);
-        Task<TReturn> SecondFactorPost<T, TReturn>(string url, T data);
+
+        Task<LoginResponseDto> FirstFactorPost(string url, Login data);
+
+        Task<LoginResponseDto> SecondFactorPost(string url, Login data);
+
         void DisposeClient();
 
         Task<TReturn> Post<T, TReturn>(string url, MemoryStream data, string mediaType);

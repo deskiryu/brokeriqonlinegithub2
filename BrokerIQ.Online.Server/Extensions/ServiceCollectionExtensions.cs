@@ -66,6 +66,7 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
             services.AddScoped<MessageCountState>();
+            services.AddScoped<CookieService>();
 
             return services;
         }

@@ -9,13 +9,14 @@ using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services
 {
-    public class BrokerDefinedMessageService : BrokerIQService, IBrokerDefinedMessageService
+    public class BrokerDefinedMessageService : BIQService, IBrokerDefinedMessageService
     {
         private const string API_CONTROLLER = "BrokerDefinedMessage";
 
         private readonly IMapper mapper;
 
-        public BrokerDefinedMessageService(IMapper mapper, IRequestProviderService requestProviderService, IAccountService accountService) : base(accountService, requestProviderService)
+        public BrokerDefinedMessageService(IAccountService accountService, IRequestProviderService requestProviderService, CookieService cookieService, IMapper mapper)
+            : base(accountService, requestProviderService, cookieService)
         {
             this.mapper = mapper;
         }
@@ -26,7 +27,7 @@ namespace BrokerIQ.Online.Services
 
             try
             {
-                var messages = await requestProviderService.Get<IEnumerable<BrokerDefinedMessageDto>>($"{API_CONTROLLER}/{brokerId}");
+                var messages = await _requestProviderService.Get<IEnumerable<BrokerDefinedMessageDto>>($"{API_CONTROLLER}/{brokerId}");
 
                 return mapper.Map<IEnumerable<BrokerDefinedMessageDto>>(messages);
             }
@@ -44,7 +45,7 @@ namespace BrokerIQ.Online.Services
 
             try
             {
-                var response = await requestProviderService.Post<CreateBrokerDefinedMessageDto, BrokerDefinedMessageDto>(API_CONTROLLER, message);
+                var response = await _requestProviderService.Post<CreateBrokerDefinedMessageDto, BrokerDefinedMessageDto>(API_CONTROLLER, message);
 
                 return response.Id > 0;
             }
@@ -62,7 +63,7 @@ namespace BrokerIQ.Online.Services
 
             try
             {
-                var response = await requestProviderService.Put<BrokerDefinedMessageDto, BrokerDefinedMessageDto>(API_CONTROLLER, message);
+                var response = await _requestProviderService.Put<BrokerDefinedMessageDto, BrokerDefinedMessageDto>(API_CONTROLLER, message);
 
                 return response.Id > 0;
             }
@@ -78,7 +79,7 @@ namespace BrokerIQ.Online.Services
         {
             try
             {
-                return await requestProviderService.Delete($"{API_CONTROLLER}?brokerId={message.BrokerId}&id={message.Id}");
+                return await _requestProviderService.Delete($"{API_CONTROLLER}?brokerId={message.BrokerId}&id={message.Id}");
             }
             catch (Exception ex)
             {

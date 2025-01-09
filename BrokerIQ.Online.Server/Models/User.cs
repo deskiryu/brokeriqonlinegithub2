@@ -1,3 +1,5 @@
+using System;
+
 namespace BrokerIQ.Online.Models
 {
     public class User
@@ -7,6 +9,7 @@ namespace BrokerIQ.Online.Models
         public string LastName { get; set; }
         public string Username { get; set; }
         public string Token { get; set; }
+        public DateTime TokenExpirationDate { get; set; }
         public bool IsDeleting { get; set; }
         public bool IsBroker { get; set; }
         public bool IsCustomer { get; set; }

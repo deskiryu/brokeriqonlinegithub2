@@ -10,11 +10,12 @@ using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services
 {
-    public class WealthTypeService : BrokerIQService, IWealthTypeService
+    public class WealthTypeService : BIQService, IWealthTypeService
     {
         private const string API_CONTROLLER = "WealthType";
 
-        public WealthTypeService(IAccountService accountService, IRequestProviderService requestProviderService) : base(accountService, requestProviderService)
+        public WealthTypeService(IAccountService accountService, IRequestProviderService requestProviderService, CookieService cookieService)
+            : base(accountService, requestProviderService, cookieService)
         {
         }
 
@@ -22,7 +23,7 @@ namespace BrokerIQ.Online.Services
         {
             try
             {
-                return await requestProviderService.Get<IEnumerable<WealthTypeDto>>($"{API_CONTROLLER}?brokerid={brokerId}");
+                return await _requestProviderService.Get<IEnumerable<WealthTypeDto>>($"{API_CONTROLLER}?brokerid={brokerId}");
             }
             catch (Exception ex)
             {
@@ -39,7 +40,7 @@ namespace BrokerIQ.Online.Services
             bool response = false;
             try
             {
-                response = await requestProviderService.Post<CreateWealthTypeDto, bool>(API_CONTROLLER, wealthType);
+                response = await _requestProviderService.Post<CreateWealthTypeDto, bool>(API_CONTROLLER, wealthType);
             }
             catch (Exception ex)
             {
@@ -55,7 +56,7 @@ namespace BrokerIQ.Online.Services
             bool response = false;
             try
             {
-                response = await requestProviderService.Put<UpdateWealthTypeDto, bool>(API_CONTROLLER, wealthType);
+                response = await _requestProviderService.Put<UpdateWealthTypeDto, bool>(API_CONTROLLER, wealthType);
             }
             catch (Exception ex)
             {
@@ -68,7 +69,7 @@ namespace BrokerIQ.Online.Services
         {
             try
             {
-                return await requestProviderService.Delete(API_CONTROLLER, wealthType.Id);
+                return await _requestProviderService.Delete(API_CONTROLLER, wealthType.Id);
             }
             catch (Exception ex)
             {
