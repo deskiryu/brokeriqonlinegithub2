@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.AppSettings;
 using BrokerIQ.Online.Models.Account;
+using BrokerIQ.Online.Server.Data;
 using BrokerIQ.Online.Server.Services.Base;
 using BrokerIQ.Online.Services.Abstract;
 using Microsoft.Extensions.Options;
@@ -208,7 +209,7 @@ namespace BrokerIQ.Online.Services.Concrete
 
             await CheckAuthCookies(httpClient);
 
-            var token = await _cookieService.GetCookieAsync(CookieService.ACCESS_TOKEN_KEY);
+            var token = await _cookieService.GetCookieAsync(ApplicationKeys.ACCESS_TOKEN_KEY);
 
             if (!string.IsNullOrEmpty(token))
             {
@@ -220,12 +221,12 @@ namespace BrokerIQ.Online.Services.Concrete
 
         private async Task CheckAuthCookies(HttpClient httpClient)
         {
-            var expirationValue = await _cookieService.GetCookieAsync(CookieService.ACCESS_EXPIRATION_KEY);
+            var expirationValue = await _cookieService.GetCookieAsync(ApplicationKeys.ACCESS_EXPIRATION_KEY);
             var wasParsed = DateTime.TryParse(WebUtility.UrlDecode(expirationValue), out DateTime expiration);
 
             if (wasParsed && expiration <= DateTime.UtcNow)
             {
-                var refreshToken = WebUtility.UrlDecode(await _cookieService.GetCookieAsync(CookieService.REFRESH_TOKEN_KEY));
+                var refreshToken = WebUtility.UrlDecode(await _cookieService.GetCookieAsync(ApplicationKeys.REFRESH_TOKEN_KEY));
 
                 var content = new StringContent($"\"{refreshToken}\"");
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -233,9 +234,9 @@ namespace BrokerIQ.Online.Services.Concrete
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    await _cookieService.DeleteCookieAsync(CookieService.ACCESS_TOKEN_KEY);
-                    await _cookieService.DeleteCookieAsync(CookieService.ACCESS_EXPIRATION_KEY);
-                    await _cookieService.DeleteCookieAsync(CookieService.REFRESH_TOKEN_KEY);
+                    await _cookieService.DeleteCookieAsync(ApplicationKeys.ACCESS_TOKEN_KEY);
+                    await _cookieService.DeleteCookieAsync(ApplicationKeys.ACCESS_EXPIRATION_KEY);
+                    await _cookieService.DeleteCookieAsync(ApplicationKeys.REFRESH_TOKEN_KEY);
                     return;
                 }
 
@@ -247,9 +248,9 @@ namespace BrokerIQ.Online.Services.Concrete
 
         private async Task SetAccessTokens(LoginResponseDto dto)
         {
-            await _cookieService.SetCookieAsync(CookieService.ACCESS_TOKEN_KEY, dto.Token, 15);
-            await _cookieService.SetCookieAsync(CookieService.ACCESS_EXPIRATION_KEY, dto.TokenExpirationDate.ToString("s"), 15);
-            await _cookieService.SetCookieAsync(CookieService.REFRESH_TOKEN_KEY, dto.RefreshToken, 15);
+            await _cookieService.SetCookieAsync(ApplicationKeys.ACCESS_TOKEN_KEY, dto.Token, 15);
+            await _cookieService.SetCookieAsync(ApplicationKeys.ACCESS_EXPIRATION_KEY, dto.TokenExpirationDate.ToString("s"), 15);
+            await _cookieService.SetCookieAsync(ApplicationKeys.REFRESH_TOKEN_KEY, dto.RefreshToken, 15);
         }
 
         private T ConsumeResponse<T>(HttpResponseMessage hrm)

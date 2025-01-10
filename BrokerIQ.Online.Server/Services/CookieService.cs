@@ -3,10 +3,6 @@ using System.Threading.Tasks;
 
 public class CookieService
 {
-    public const string ACCESS_TOKEN_KEY = "accessToken";
-    public const string ACCESS_EXPIRATION_KEY = "accessExpiration";
-    public const string REFRESH_TOKEN_KEY = "refreshToken";
-
     private readonly IJSRuntime _jsRuntime;
 
     public CookieService(IJSRuntime jsRuntime)

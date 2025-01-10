@@ -14,6 +14,15 @@ namespace BrokerIQ.Online.Server.Helper
                 if (_loggedIn != value)
                 {
                     _loggedIn = value;
+
+                    if (!_loggedIn)
+                    {
+                        IsAdmin = false;
+                        IsBroker = false;
+                        IsMinorAdmin = false;
+                        FullName = string.Empty;
+                    }
+
                     NotifyStateChanged();
                 }
             }
