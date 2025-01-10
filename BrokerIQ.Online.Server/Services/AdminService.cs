@@ -1,48 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.Request;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services
 {
-    using System.Net.Http;
-    using System.Text.Json;
-    using Abstract;
-    using AppSettings;
-    using AutoMapper;
-    using Dto.Models;
-    using Interface;
-    using Mapper;
-    using Microsoft.Extensions.Options;
-    using Models;
-    using BrokerIQ.Dto.Request;
-
     public class AdminService : IAdminService
     {
         private readonly string AdminAuthUrl = "AdminAuth";
-        private readonly IRequestProviderService requestProviderService;
-        private readonly IMapper mapper;
-        private readonly IAccountService accountService;
 
-        public AdminService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService)
+        private readonly IRequestProviderService requestProviderService;
+
+        public AdminService(IRequestProviderService requestProviderService)
         {
-            this.mapper = mapper;
             this.requestProviderService = requestProviderService;
-            this.accountService = accountService;
         }
         public async Task<BoolResponseDto> VerifyAdmin()
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var urlToGo = "AdminAuth/verifyadmin";
+            var urlToGo = $"{AdminAuthUrl}/verifyadmin";
             return await this.requestProviderService.Post<BoolResponseDto>(urlToGo);
         }
 
         public async Task<BoolResponseDto> VerifyMinorAdmin()
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var urlToGo = "AdminAuth/verifyminoradmin";
+            var urlToGo = $"{AdminAuthUrl}/verifyminoradmin";
             return await this.requestProviderService.Post<BoolResponseDto>(urlToGo);
         }
     }

@@ -15,8 +15,8 @@ namespace BrokerIQ.Online.Services
 
         private readonly IMapper mapper;
 
-        public BrokerDefinedMessageService(IAccountService accountService, IRequestProviderService requestProviderService, CookieService cookieService, IMapper mapper)
-            : base(accountService, requestProviderService, cookieService)
+        public BrokerDefinedMessageService(IAccountService accountService, IRequestProviderService requestProviderService, IMapper mapper)
+            : base(accountService, requestProviderService)
         {
             this.mapper = mapper;
         }

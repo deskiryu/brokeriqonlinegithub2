@@ -17,8 +17,8 @@ namespace BrokerIQ.Online.Server.Services
 
         private readonly IMapper _mapper;
 
-        public AssignmentService(IAccountService accountService, IRequestProviderService requestProviderService, CookieService cookieService, IMapper mapper)
-            : base(accountService, requestProviderService, cookieService)
+        public AssignmentService(IAccountService accountService, IRequestProviderService requestProviderService, IMapper mapper)
+            : base(accountService, requestProviderService)
         {
             _mapper = mapper;
         }

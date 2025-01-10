@@ -3,18 +3,13 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
-using AutoMapper;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.AppSettings;
-using BrokerIQ.Online.Data;
-using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Models.Account;
 using BrokerIQ.Online.Server.Services.Base;
 using BrokerIQ.Online.Services.Abstract;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace BrokerIQ.Online.Services.Concrete
@@ -30,15 +25,11 @@ namespace BrokerIQ.Online.Services.Concrete
         HttpClient _rememberhttpClient;
 
         private readonly CookieService _cookieService;
-        private readonly IMapper _mapper;
 
-        public string Token { get; set; }
-
-        public RequestProviderService(IOptions<ReviewItAPIDetails> api, CookieService cookieService, IMapper mapper)
+        public RequestProviderService(IOptions<ReviewItAPIDetails> api, CookieService cookieService)
         {
             this.api = api.Value;
             this._cookieService = cookieService;
-            this._mapper = mapper;
         }
 
         public async Task<bool> Post<T>(string url, T data)

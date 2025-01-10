@@ -14,8 +14,8 @@ namespace BrokerIQ.Online.Services
     {
         private const string API_CONTROLLER = "Goal";
 
-        public GoalService(IAccountService accountService, IRequestProviderService requestProviderService, CookieService cookieService)
-            : base(accountService, requestProviderService, cookieService)
+        public GoalService(IAccountService accountService, IRequestProviderService requestProviderService)
+            : base(accountService, requestProviderService)
         {
         }
 

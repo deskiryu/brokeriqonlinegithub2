@@ -14,8 +14,8 @@ namespace BrokerIQ.Online.Services
     {
         private const string API_CONTROLLER = "WealthType";
 
-        public WealthTypeService(IAccountService accountService, IRequestProviderService requestProviderService, CookieService cookieService)
-            : base(accountService, requestProviderService, cookieService)
+        public WealthTypeService(IAccountService accountService, IRequestProviderService requestProviderService)
+            : base(accountService, requestProviderService)
         {
         }
 

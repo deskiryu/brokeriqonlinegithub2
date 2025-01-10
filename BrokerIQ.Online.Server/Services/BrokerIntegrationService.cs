@@ -15,8 +15,8 @@ public class BrokerIntegrationService : BIQService, IBrokerIntegrationService
 {
     private readonly string API_CONTROLLER = "BrokerIntegration";
 
-    public BrokerIntegrationService(IAccountService accountService, IRequestProviderService requestProviderService, CookieService cookieService)
-            : base(accountService, requestProviderService, cookieService)
+    public BrokerIntegrationService(IAccountService accountService, IRequestProviderService requestProviderService)
+            : base(accountService, requestProviderService)
     {
     }
 
