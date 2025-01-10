@@ -3,20 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
-
-using BrokerIQ.Dto.Models;
-using BrokerIQ.Online.Server.Shared;
-using BrokerIQ.Online.Server.AppSettings;
-
 using MudBlazor;
-using BrokerIQ.Online.Server.Extensions;
-using BrokerIQ.Online.Services.Interface;
-using Microsoft.VisualBasic.FileIO;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -24,6 +20,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
     {
         [Inject]
         public IDialogService DialogService { get; set; }
+
+        [Inject]
+        private ISnackbar Snackbar { get; set; }
+
+        [Inject]
+        public IBrokerDefinedMessageService BrokerDefinedMessageService { get; set; }
 
         [Inject]
         public IAlertService AlertService { get; set; }
@@ -86,7 +88,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private bool HideLink { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             fileUploadSettings = this.FileUploadSettingsOption.Value;
 
@@ -155,8 +157,46 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                     }
                 }
 
-                MudDialog.Close(DialogResult.Ok(Template));
+                if (await SaveDefinedMessage())
+                {
+                    MudDialog.Close(DialogResult.Ok(true));
+                }
             }
+        }
+
+        private async Task<bool> SaveDefinedMessage()
+        {
+            bool wasSuccessfull;
+
+            if (Template.Id == 0)
+            {
+                var newTemplate = new CreateBrokerDefinedMessageDto()
+                {
+                    BrokerId = Template.BrokerId,
+                    Prompt = Template.Prompt,
+                    Message = Template.Message,
+                    FileName = Template.FileName,
+                    File = Template.File,
+                    WelcomeChat = Template.WelcomeChat
+                };
+
+                wasSuccessfull = await BrokerDefinedMessageService.Create(newTemplate);
+            }
+            else
+            {
+                wasSuccessfull = await BrokerDefinedMessageService.Update(Template);
+            }
+
+            if (wasSuccessfull)
+            {
+                Snackbar.Add("Defined message saved successfully", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("Unable to save defined message. Please try again.", Severity.Error);
+            }
+
+            return wasSuccessfull;
         }
 
         void Cancel() => MudDialog.Cancel();
@@ -190,7 +230,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             IsCurrentFileToBeRemoved = true;
         }
 
-        async Task FillTemplate()
+        void FillTemplate()
         {
             Template.Prompt = MESSAGE_PROMPTS[SelectedStarterTemplate];
             Template.Message = MESSAGE_TEMPLATES[SelectedStarterTemplate];
