@@ -1,9 +1,9 @@
-﻿using BrokerIQ.Dto.Model.Statistics;
-using BrokerIQ.Online.Services.Abstract;
-using BrokerIQ.Online.Services.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.Model.Statistics;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services
 {
@@ -11,12 +11,10 @@ namespace BrokerIQ.Online.Services
     {
         private readonly string statsUrl = "Statistics";
         private readonly IRequestProviderService requestProviderService;
-        private readonly IAccountService accountService;
 
-        public ChartDataService(IRequestProviderService requestProviderService, IAccountService accountService)
+        public ChartDataService(IRequestProviderService requestProviderService)
         {
             this.requestProviderService = requestProviderService;
-            this.accountService = accountService;
         }
 
         public async Task<AppConversionDto> GetInvitesSentAndConverted(int brokerId)
@@ -38,13 +36,12 @@ namespace BrokerIQ.Online.Services
             };
             return response;
 #else
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var url = this.statsUrl + $"/{brokerId}";
             var answer = await this.requestProviderService.Get<AppConversionDto>(url);
             return (answer);
 #endif
         }
+
         public async Task<List<(DateTime, int, int, int, int, int)>> GetInvitesSentAndConvertedSequence(int brokerId)
         {
 #if FALSE
@@ -64,8 +61,6 @@ namespace BrokerIQ.Online.Services
             };
             return response;
 #else
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var url = this.statsUrl + $"/sequence/{brokerId}?sequenceType=1&noelements=10";
             var answer = await this.requestProviderService.Get<AppConversionSequenceDto>(url);
             var response = new List<(DateTime, int, int, int, int, int)>
@@ -146,8 +141,6 @@ namespace BrokerIQ.Online.Services
 
         public async Task<List<(string, int)>> GetTotalLogins(int brokerId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var url = this.statsUrl + $"/logins/{brokerId}?noelements=5";
             var answer = await this.requestProviderService.Get<AppLoginsDto>(url);
             var response = new List<(string, int)>

@@ -15,30 +15,25 @@ using Microsoft.Extensions.Options;
 
 namespace BrokerIQ.Online.Services
 {
-    public class ChatService : IChatService
+    public class ChatService : BIQService, IChatService
     {
         private readonly string ChatUrl = "Chat";
-        private readonly IRequestProviderService requestProviderService;
         private readonly IMapper mapper;
-        private readonly IAccountService accountService;
         private readonly ReviewItAPIDetails api;
 
         public ChatService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService, IOptions<ReviewItAPIDetails> api)
+            :base(accountService, requestProviderService)
         {
             this.mapper = mapper;
-            this.requestProviderService = requestProviderService;
-            this.accountService = accountService;
             this.api = api.Value;
         }
 
         public async Task<Chat> Get(int customerId, int brokerId = 0)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var localBrokerId = brokerId > 0 ? brokerId : user.MasterBrokerId;
+            var localBrokerId = brokerId > 0 ? brokerId : await GetCurrentBrokerId();
             string newUrl = this.ChatUrl + $"/{customerId}/{localBrokerId}?markAsReadByBroker=true";
 
-            var ChatDto = await requestProviderService.Get<ChatDto>(newUrl);
+            var ChatDto = await _requestProviderService.Get<ChatDto>(newUrl);
             var chat = mapper.Map<Chat>(ChatDto);
             if (this.api.IsYAHTheme)
             {
@@ -53,9 +48,8 @@ namespace BrokerIQ.Online.Services
 
         public async Task<bool> Send(string message, int customerId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var brokerId = user.MasterBrokerId;
+            var brokerId = await GetCurrentBrokerId();
+
             var createChatMessage = new CreateChatMessageDto
             {
                 BrokerId = brokerId,
@@ -66,15 +60,14 @@ namespace BrokerIQ.Online.Services
                 HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->")
             };
 
-            var answer = await requestProviderService.Post<CreateChatMessageDto, ChatMessageDto>(this.ChatUrl, createChatMessage);
+            var answer = await _requestProviderService.Post<CreateChatMessageDto, ChatMessageDto>(this.ChatUrl, createChatMessage);
             return answer != null && answer.Id > 0;
         }
 
         public async Task<bool> SendWithDoc(string message, int customerId, ChatDocument chatDocument, bool NoNotification = false)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var brokerId = user.MasterBrokerId;
+            var brokerId = await GetCurrentBrokerId();
+
             var createChatMessage = new CreateChatMessageDto
             {
                 BrokerId = brokerId,
@@ -91,25 +84,21 @@ namespace BrokerIQ.Online.Services
                 }
             };
 
-            var answer = await requestProviderService.Post<CreateChatMessageDto, ChatMessageDto>(this.ChatUrl, createChatMessage);
+            var answer = await _requestProviderService.Post<CreateChatMessageDto, ChatMessageDto>(this.ChatUrl, createChatMessage);
             return answer != null && answer.Id > 0;
         }
 
         public async Task<ApiResponse<int>> GetUnRead(int customerId, int brokerId = 0)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var localBrokerId = brokerId > 0 ? brokerId : user.MasterBrokerId;
+            var localBrokerId = brokerId > 0 ? brokerId : await GetCurrentBrokerId();
             string newUrl = this.ChatUrl + $"/UnreadByBroker/{customerId}/{localBrokerId}";
 
-            var count = await this.requestProviderService.GetResponse<int>(newUrl);
+            var count = await this._requestProviderService.GetResponse<int>(newUrl);
             return count;
         }
 
         public async Task<bool> SendMultiple(string message, List<int> listCustomerId, int brokerId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var createChatMessage = new CreateChatMessageDto
             {
                 BrokerId = brokerId,
@@ -120,14 +109,12 @@ namespace BrokerIQ.Online.Services
                 HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->")
             };
 
-            var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
+            var answer = await _requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
             return answer;
         }
 
         public async Task<bool> SendMultipleWithDoc(string message, List<int> listCustomerId, int brokerId, ChatDocument chatDocument)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var createChatMessage = new CreateChatMessageDto
             {
                 BrokerId = brokerId,
@@ -143,14 +130,12 @@ namespace BrokerIQ.Online.Services
                 }
             };
 
-            var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
+            var answer = await _requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
             return answer;
         }
 
         public async Task<bool> SendMultipleAppLink(List<int> listCustomerId, int brokerId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var createChatMessage = new CreateChatMessageDto
             {
                 BrokerId = brokerId,
@@ -159,18 +144,14 @@ namespace BrokerIQ.Online.Services
                 NoNotification = false,
             };
 
-            var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multipleAppLink", createChatMessage);
+            var answer = await _requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multipleAppLink", createChatMessage);
             return answer;
         }
 
         public async Task<bool> SendMultipleVideoLink(string message, List<int> listCustomerId, int brokerId, string videoUrl, string VideoThumbnailData)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             var result = Regex.Replace(VideoThumbnailData, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
             byte[] bytes = Convert.FromBase64String(result);
-
 
             var createChatMessage = new CreateChatMessageDto
             {
@@ -185,15 +166,12 @@ namespace BrokerIQ.Online.Services
                 HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
             };
 
-            var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
+            var answer = await _requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
             return answer;
         }
 
         public async Task<bool> SendMultipleAudioLink(string message, List<int> listCustomerId, int brokerId, string audioUrl)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             var createChatMessage = new CreateChatMessageDto
             {
                 Message = message,
@@ -207,18 +185,16 @@ namespace BrokerIQ.Online.Services
                 HasEmbeddedUrl = !string.IsNullOrEmpty(message) && message.Contains("<--") && message.Contains("-->"),
             };
 
-            var answer = await requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
+            var answer = await _requestProviderService.Post<CreateChatMessageDto, bool>(this.ChatUrl + "/multiple", createChatMessage);
             return answer;
         }
 
         public async Task<Chat> GetPaged(int customerId, int brokerId, int pageNumber = 1, int pageSize = 25)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var localBrokerId = brokerId > 0 ? brokerId : user.MasterBrokerId;
+            var localBrokerId = brokerId > 0 ? brokerId : await GetCurrentBrokerId();
 
             string newUrl = this.ChatUrl + $"/pagedchat";
-            var ChatDto = await requestProviderService.Post<GetChatRequestDto, ChatDto>(newUrl, new GetChatRequestDto()
+            var ChatDto = await _requestProviderService.Post<GetChatRequestDto, ChatDto>(newUrl, new GetChatRequestDto()
             {
                 BrokerId = brokerId,
                 CustomerId = customerId,
@@ -244,9 +220,7 @@ namespace BrokerIQ.Online.Services
 
         public async Task<bool> SendDraft(string message, int customerId, DateTime toBeSentOn)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var brokerId = user.MasterBrokerId;
+            var brokerId = await GetCurrentBrokerId();
 
             var createChatMessage = new CreateChatDraftMessageDto
             {
@@ -258,15 +232,13 @@ namespace BrokerIQ.Online.Services
                 ToBeSentOn = toBeSentOn
             };
 
-            var answer = await requestProviderService.Post<CreateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft", createChatMessage);
+            var answer = await _requestProviderService.Post<CreateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft", createChatMessage);
             return answer != null && answer.Id > 0;
         }
 
         public async Task<bool> CreateDraftWithDocs(string message, int customerId, IEnumerable<ChatDocument> chatDocuments, DateTime toBeSentOn, bool NoNotification = false)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var brokerId = user.MasterBrokerId;
+            var brokerId = await GetCurrentBrokerId();
             var createChatMessage = new CreateChatDraftMessageDto
             {
                 BrokerId = brokerId,
@@ -292,16 +264,13 @@ namespace BrokerIQ.Online.Services
             }
             createChatMessage.ChatDocuments = draftDocuments;
 
-            var answer = await requestProviderService.Post<CreateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft", createChatMessage);
+            var answer = await _requestProviderService.Post<CreateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft", createChatMessage);
 
             return answer != null && answer.Id > 0;
         }
 
         public async Task<bool> UpdateDraftWithDocs(ChatDraftMessage draft)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             var updateChatMessage = new UpdateChatDraftMessageDto
             {
                 Id = draft.Id,
@@ -325,17 +294,14 @@ namespace BrokerIQ.Online.Services
             }
             updateChatMessage.ChatDocuments = draftDocuments;
 
-            var answer = await requestProviderService.Put<UpdateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft/{draft.Id}", updateChatMessage);
+            var answer = await _requestProviderService.Put<UpdateChatDraftMessageDto, ChatDraftMessageDto>($"{ChatUrl}/draft/{draft.Id}", updateChatMessage);
 
             return answer != null && answer.Id > 0;
         }
 
         public async Task<bool> DeleteDraft(ChatDraftMessage message)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
-            return await requestProviderService.Delete($"{ChatUrl}/draft/{message.Id}");
+            return await _requestProviderService.Delete($"{ChatUrl}/draft/{message.Id}");
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BrokerIQ.Online.Services.Abstract;
 using AutoMapper;
 using BrokerIQ.Dto.Models;
-using BrokerIQ.Online.Services.Interface;
-using BrokerIQ.Online.Models;
 using BrokerIQ.Dto.Request;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services
 {
@@ -14,37 +14,29 @@ namespace BrokerIQ.Online.Services
         private readonly string BrokerUrl = "Broker";
         private readonly IRequestProviderService requestProviderService;
         private readonly IMapper mapper;
-        private readonly IAccountService accountService;
 
-        public BrokerService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService)
+        public BrokerService(IRequestProviderService requestProviderService, IMapper mapper)
         {
             this.mapper = mapper;
             this.requestProviderService = requestProviderService;
-            this.accountService = accountService;
         }
 
         public async Task<Broker> GetBroker(int id, bool eagerload = false)
         {
             if (id == 0) return null;
 
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var answer = await this.requestProviderService.Get<BrokerDto>(this.BrokerUrl, id, eagerload);
             return this.mapper.Map<Broker>(answer);
         }
 
         public async Task<IEnumerable<Broker>> GetBrokers()
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var answer = await this.requestProviderService.Get<IEnumerable<BrokerDto>>(this.BrokerUrl);
             return this.mapper.Map<IEnumerable<Broker>>(answer);
         }
 
         public async Task<IEnumerable<Broker>> GetBrokersByList(IEnumerable<int> ids)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var url = this.BrokerUrl + "/list?";
             foreach (var id in ids)
             {
@@ -57,8 +49,6 @@ namespace BrokerIQ.Online.Services
 
         public async Task<Broker> UpdateBroker(Broker broker)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var mapped = mapper.Map<UpdateBrokerDto>(broker);
             var answer = await this.requestProviderService.Put<UpdateBrokerDto, BrokerDto>(this.BrokerUrl, mapped);
             return this.mapper.Map<Broker>(answer);
@@ -66,8 +56,6 @@ namespace BrokerIQ.Online.Services
 
         public async Task<Broker> AddBroker(Broker ins)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var mapped = mapper.Map<CreateBrokerDto>(ins);
             var answer = await this.requestProviderService.Post<CreateBrokerDto, BrokerDto>(this.BrokerUrl, mapped);
             return this.mapper.Map<Broker>(answer);
@@ -75,24 +63,17 @@ namespace BrokerIQ.Online.Services
 
         public async Task<bool> DeleteBroker(int id)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             return await this.requestProviderService.Delete(this.BrokerUrl, id);
         }
 
         public async Task<BoolResponseDto> VerifyBroker(int id)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var urlToGo = this.BrokerUrl + $"/verifybroker/{id}";
             return await this.requestProviderService.Post<BoolResponseDto>(urlToGo);
         }
 
         public async Task<bool> ToggleService(int brokerId, int serviceId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             var urlToGo = this.BrokerUrl + $"/{brokerId}/toggleservice/{serviceId}";
 
             return await this.requestProviderService.Post<bool>(urlToGo);
