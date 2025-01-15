@@ -22,18 +22,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         [Parameter]
         public string EmailAddress { get; set; }
 
-        // MudForm form;
-
-        // async Task Submit()
-        // {
-        //     await form.Validate();
-
-        //     if (form.IsValid)
-        //     {
-        //         MudDialog.Close(DialogResult.Ok(Goal));
-        //     }
-        // }
-
         public UpdatePassword MyUpdatePassword { get; set; }
 
         protected bool isShowOld;
