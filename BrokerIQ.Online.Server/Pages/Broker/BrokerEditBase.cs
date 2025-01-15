@@ -15,7 +15,6 @@ using BrokerIQ.Online.Services.Interface;
 using MudBlazor;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Dto.Enum;
-using BrokerIQ.Online.Models.Account;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -52,25 +51,11 @@ namespace BrokerIQ.Online.Pages
 
         public Broker Broker { get; set; }
 
-        public UpdatePassword MyUpdatePassword { get; set; }
-
         protected string Message = string.Empty;
 
         protected string StatusClass = string.Empty;
 
         protected bool Saved;
-
-        protected bool isShowOld;
-        protected InputType PasswordInputOld = InputType.Password;
-        protected string PasswordInputIconOld = Icons.Material.Filled.VisibilityOff;
-
-        protected bool isShowNew;
-        protected InputType PasswordInputNew = InputType.Password;
-        protected string PasswordInputIconNew = Icons.Material.Filled.VisibilityOff;
-
-        protected bool isShowNewConfirm;
-        protected InputType PasswordInputNewConfirm = InputType.Password;
-        protected string PasswordInputIconNewConfirm = Icons.Material.Filled.VisibilityOff;
 
         public string IdentifierTabLabel
         {
@@ -106,7 +91,6 @@ namespace BrokerIQ.Online.Pages
                     Broker = await BrokerService.GetBroker(id, true);
                     Broker.Subscriptions = (await BrokerSubscriptionService.GetAllForBroker(id)).ToList();
                 }
-                MyUpdatePassword = new UpdatePassword();
             }
             catch
             {
@@ -331,58 +315,6 @@ namespace BrokerIQ.Online.Pages
                 }
                 NavigationManager.NavigateTo($"/brokerlist");
             }
-        }
-
-        protected void HandleInvalidPasswordChange()
-        {
-            StatusClass = "alert-danger";
-            Message = "There are some validation errors. Please try again.";
-        }
-
-        protected async Task HandleValidPasswordChange()
-        {
-
-            StatusClass = "alert-success";
-            Message = "Password updated successfully.";
-            var dto = new UpdatePasswordDto()
-            {
-                EmailAddress = Broker.EmailAddress,
-                OldPassword = MyUpdatePassword.ExistingPassword,
-                NewPassword = MyUpdatePassword.NewPassword
-            };
-
-            try
-            {
-                await AccountService.ChangePassword(dto);
-            }
-            catch
-            {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong updating the Password. Please try again.";
-
-            }
-            finally
-            {
-                Saved = true;
-            }
-        }
-
-        protected void ShowPasswordOld()
-        {
-            if (isShowOld) { isShowOld = false; PasswordInputIconOld = Icons.Material.Filled.VisibilityOff; PasswordInputOld = InputType.Password; }
-            else { isShowOld = true; PasswordInputIconOld = Icons.Material.Filled.Visibility; PasswordInputOld = InputType.Text; }
-        }
-
-        protected void ShowPasswordNew()
-        {
-            if (isShowNew) { isShowNew = false; PasswordInputIconNew = Icons.Material.Filled.VisibilityOff; PasswordInputNew = InputType.Password; }
-            else { isShowNew = true; PasswordInputIconNew = Icons.Material.Filled.Visibility; PasswordInputNew = InputType.Text; }
-        }
-
-        protected void ShowPasswordNewConfirm()
-        {
-            if (isShowNewConfirm) { isShowNewConfirm = false; PasswordInputIconNewConfirm = Icons.Material.Filled.VisibilityOff; PasswordInputNewConfirm = InputType.Password; }
-            else { isShowNewConfirm = true; PasswordInputIconNewConfirm = Icons.Material.Filled.Visibility; PasswordInputNewConfirm = InputType.Text; }
         }
     }
 }

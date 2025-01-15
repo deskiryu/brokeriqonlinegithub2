@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using MudBlazor;
 using BrokerIQ.Online.Services.Interface;
+using BrokerIQ.Online.Models.Account;
+using BrokerIQ.Dto.Models;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -96,6 +98,20 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsBrokerStaff { get; set; }
 
+        public UpdatePassword MyUpdatePassword { get; set; }
+
+        protected bool isShowOld;
+        protected InputType PasswordInputOld = InputType.Password;
+        protected string PasswordInputIconOld = Icons.Material.Filled.VisibilityOff;
+
+        protected bool isShowNew;
+        protected InputType PasswordInputNew = InputType.Password;
+        protected string PasswordInputIconNew = Icons.Material.Filled.VisibilityOff;
+
+        protected bool isShowNewConfirm;
+        protected InputType PasswordInputNewConfirm = InputType.Password;
+        protected string PasswordInputIconNewConfirm = Icons.Material.Filled.VisibilityOff;        
+
         protected override async Task OnInitializedAsync()
         {
             tutorialVideos = TutorialVideosOption.Value;
@@ -133,6 +149,7 @@ namespace BrokerIQ.Online.Pages
                         Broker = await BrokerService.GetBroker(User.MasterBrokerId, eagerload: true);
                     }
                 }
+                MyUpdatePassword = new UpdatePassword();
             }
             catch
             {
@@ -322,6 +339,7 @@ namespace BrokerIQ.Online.Pages
 
             return Broker.BrokerIdentifier.HasAppointments;
         }
+
 
     }
 }
