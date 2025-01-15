@@ -15,6 +15,7 @@
         Task<bool> IsLoggedIn();
         Task Logout();
         Task<bool> RequestNewPassword(string emailAddress);
+        Task<bool> ChangePassword(UpdatePasswordDto updatePassword);
         Task<BrokerDto> Register(CreateBrokerDto model);
         Task<BrokerStaffDto> RegisterStaff(CreateBrokerStaffDto model);
         Task<IList<User>> GetAll();

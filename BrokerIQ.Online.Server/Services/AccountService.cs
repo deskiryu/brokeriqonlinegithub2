@@ -87,6 +87,14 @@ namespace BrokerIQ.Online.Services
             return resetPassword.PasswordChanged;
         }
 
+        public async Task<bool> ChangePassword(UpdatePasswordDto updatePassword)
+        {
+            string newUrl = "Auth/ChangePassword";
+
+            var resetPassword = await _requestProviderService.Post<UpdatePasswordDto, PasswordDto>(newUrl, updatePassword);
+            return resetPassword.PasswordChanged;
+        }   
+
         public async Task Logout()
         {
             var token = await _cookieService.GetCookieAsync(ApplicationKeys.REFRESH_TOKEN_KEY);
