@@ -23,8 +23,6 @@ namespace BrokerIQ.Online.Services.Concrete
 
         protected string VideoConvertUrl => $"{this.api.VideoConvertUrl}";
 
-        HttpClient _rememberhttpClient;
-
         private readonly CookieService _cookieService;
 
         public RequestProviderService(IOptions<ReviewItAPIDetails> api, CookieService cookieService)
@@ -58,44 +56,35 @@ namespace BrokerIQ.Online.Services.Concrete
         public async Task<LoginResponseDto> FirstFactorPost(string url, Login data)
         {
             HttpClient httpClient = await CreateHttpClient();
-            _rememberhttpClient = httpClient;
 
             var content = new StringContent(JsonConvert.SerializeObject(data));
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-            HttpResponseMessage response = await _rememberhttpClient.PostAsync($"{this.BaseUrl}/{url}", content);
+            HttpResponseMessage response = await httpClient.PostAsync($"{this.BaseUrl}/{url}", content);
 
             var dto = ConsumeResponse<LoginResponseDto>(response);
 
-            if (!dto.RequiresTwoFactor) {
+            if (response.IsSuccessStatusCode && !dto.RequiresTwoFactor) {
                 await SetAccessTokens(dto);
             }
-
-            DisposeClient();
 
             return dto;
         }
 
         public async Task<LoginResponseDto> SecondFactorPost(string url, Login data)
         {
+            HttpClient httpClient = await CreateHttpClient();
+
             var content = new StringContent(JsonConvert.SerializeObject(data));
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-            HttpResponseMessage response = await _rememberhttpClient.PostAsync($"{this.BaseUrl}/{url}", content);
+            HttpResponseMessage response = await httpClient.PostAsync($"{this.BaseUrl}/{url}", content);
 
             var dto = ConsumeResponse<LoginResponseDto>(response);
 
             await SetAccessTokens(dto);
 
-            DisposeClient();
-
             return (dto);
-        }
-
-        public void DisposeClient()
-        {
-            _rememberhttpClient?.Dispose();
-            _rememberhttpClient = null;
         }
 
         public async Task<TReturn> Post<T, TReturn>(string url, MemoryStream data, string mediaType)
@@ -221,6 +210,9 @@ namespace BrokerIQ.Online.Services.Concrete
 
         private async Task CheckAuthCookies(HttpClient httpClient)
         {
+            var token = await _cookieService.GetCookieAsync(ApplicationKeys.ACCESS_TOKEN_KEY);
+            if (string.IsNullOrWhiteSpace(token)) return;
+
             var expirationValue = await _cookieService.GetCookieAsync(ApplicationKeys.ACCESS_EXPIRATION_KEY);
             var wasParsed = DateTime.TryParse(WebUtility.UrlDecode(expirationValue), out DateTime expiration);
 

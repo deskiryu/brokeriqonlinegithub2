@@ -17,8 +17,6 @@ namespace BrokerIQ.Online.Services.Abstract
 
         Task<LoginResponseDto> SecondFactorPost(string url, Login data);
 
-        void DisposeClient();
-
         Task<TReturn> Post<T, TReturn>(string url, MemoryStream data, string mediaType);
 
         Task<TReturn> Post<TReturn>(string url);
