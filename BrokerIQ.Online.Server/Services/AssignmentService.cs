@@ -11,23 +11,21 @@ using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Server.Services
 {
-    public class AssignmentService : BrokerIQService, IAssignmentService
+    public class AssignmentService : BIQService, IAssignmentService
     {
         private const string _assignmentUrl = "CustomerAssignment";
 
         private readonly IMapper _mapper;
 
-        public AssignmentService(IAccountService accountService, IRequestProviderService requestProviderService, IMapper mapper) :
-            base(accountService, requestProviderService)
+        public AssignmentService(IAccountService accountService, IRequestProviderService requestProviderService, IMapper mapper)
+            : base(accountService, requestProviderService)
         {
             _mapper = mapper;
         }
 
         public async Task<IEnumerable<Customer>> GetForEmployee(int employeeId)
         {
-            var user = await accountService.GetUser();
-            requestProviderService.Token = user?.Token;
-            var answer = await requestProviderService.Get<IEnumerable<CustomerDto>>($"{_assignmentUrl}?employeeid={employeeId}");
+            var answer = await _requestProviderService.Get<IEnumerable<CustomerDto>>($"{_assignmentUrl}?employeeid={employeeId}");
             var mapped = _mapper.Map<IEnumerable<Customer>>(answer);
 
             return mapped;
@@ -35,12 +33,9 @@ namespace BrokerIQ.Online.Server.Services
 
         public async Task<IEnumerable<Customer>> Assign(BrokerStaff staff, IEnumerable<int> customerIds)
         {
-            var user = await accountService.GetUser();
-            requestProviderService.Token = user?.Token;
-
             var dto = new CustomerAssignmentDto() { EmployeeId = staff.Id, CustomerIds = customerIds };
 
-            var answer = await requestProviderService.Post<CustomerAssignmentDto, IEnumerable<CustomerDto>>($"{_assignmentUrl}/assign", dto);
+            var answer = await _requestProviderService.Post<CustomerAssignmentDto, IEnumerable<CustomerDto>>($"{_assignmentUrl}/assign", dto);
             var mapped = _mapper.Map<IEnumerable<Customer>>(answer);
 
             return mapped;
@@ -48,12 +43,9 @@ namespace BrokerIQ.Online.Server.Services
 
         public async Task<IEnumerable<Customer>> Unassign(BrokerStaff staff, IEnumerable<int> customerIds)
         {
-            var user = await accountService.GetUser();
-            requestProviderService.Token = user?.Token;
-
             var dto = new CustomerAssignmentDto() { EmployeeId = staff.Id, CustomerIds = customerIds };
 
-            var answer = await requestProviderService.Post<CustomerAssignmentDto, IEnumerable<CustomerDto>>($"{_assignmentUrl}/unassign", dto);
+            var answer = await _requestProviderService.Post<CustomerAssignmentDto, IEnumerable<CustomerDto>>($"{_assignmentUrl}/unassign", dto);
             var mapped = _mapper.Map<IEnumerable<Customer>>(answer);
 
             return mapped;

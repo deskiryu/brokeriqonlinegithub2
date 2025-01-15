@@ -1,10 +1,15 @@
+using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Models.Account;
+using BrokerIQ.Online.Server.Data;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Interface;
 
@@ -12,76 +17,65 @@ namespace BrokerIQ.Online.Services
 {
     public class AccountService : IAccountService
     {
-        private IRequestProviderService _requestProviderService;
-        private ILocalStorageService _localStorageService;
+        private readonly IRequestProviderService _requestProviderService;
+        private readonly ILocalStorageService _localStorageService;
+        private readonly ISessionStorageService _sessionStorageService;
+        private readonly CookieService _cookieService;
         private readonly IMapper _mapper;
-        private string _userKey = "user";
-
-        private string _audioRecordingKey = "audioRecording";
 
         private User _user;
 
         public AccountService(
             IRequestProviderService httpService,
             ILocalStorageService localStorageService,
+            CookieService cookieService,
             IMapper mapper
         )
         {
             _requestProviderService = httpService;
             _localStorageService = localStorageService;
+            _cookieService = cookieService;
             _mapper = mapper;
         }
 
         public async Task<User> GetUser()
         {
-            _user = await _localStorageService.GetItem<User>(_userKey);
+            _user = await _localStorageService.GetItemAsync<User>(ApplicationKeys.USER_KEY);
             return _user;
         }
 
-        public async Task<string> GetAudioRecordingAsbase64()
-        {
-            return (await _localStorageService.GetItem<string>(_audioRecordingKey));
-        }
-
-
         public async Task Initialize()
         {
-            _user = await _localStorageService.GetItem<User>(_userKey);
+            _user = await _localStorageService.GetItemAsync<User>(ApplicationKeys.USER_KEY);
         }
 
         public async Task<LoginResponseDto> Login(Login model)
         {
-            var loginDto = _mapper.Map<LoginDto>(model);
+            var response = await _requestProviderService.FirstFactorPost("Auth/SignIn", model);
 
-            var response = await _requestProviderService.FirstFactorPost<Login, LoginResponseDto>("Auth/SignIn", model);
             _user = _mapper.Map<User>(response);
-            await _localStorageService.SetItem(_userKey, _user);
-            if (_user.RequiresTwoFactor == false)
-            {
-                _requestProviderService.DisposeClient();
-            }
-            return response;
+            await _localStorageService.SetItemAsync(ApplicationKeys.USER_KEY, _user);
 
+            return response;
         }
 
         public async Task<LoginResponseDto> LoginTwoFactor(Login model)
         {
-            var loginDto = _mapper.Map<LoginDto>(model);
-            var response = await _requestProviderService.SecondFactorPost<Login, LoginResponseDto>("Auth/SignInTwofactor", model);
+            var response = await _requestProviderService.SecondFactorPost("Auth/SignInTwofactor", model);
+
             _user = _mapper.Map<User>(response);
-            await _localStorageService.SetItem(_userKey, _user);
+            await _localStorageService.SetItemAsync(ApplicationKeys.USER_KEY, _user);
+
             return response;
         }
 
         public async Task<bool> IsLoggedIn()
         {
-            var user = await GetUser();
-            var loggedin = false;
-            if (user != null && !string.IsNullOrEmpty(user.Id) && !string.IsNullOrEmpty(user.Token))
-            {
-                loggedin = true;
-            }
-            return loggedin;
+            var token = await _cookieService.GetCookieAsync(ApplicationKeys.ACCESS_TOKEN_KEY);
+            var expirationValue = await _cookieService.GetCookieAsync(ApplicationKeys.ACCESS_EXPIRATION_KEY);
+            var wasParsed = DateTime.TryParse(WebUtility.UrlDecode(expirationValue), out DateTime expiration);
+
+            return wasParsed && expiration > DateTime.UtcNow && !string.IsNullOrWhiteSpace(token);
         }
 
         public async Task<bool> RequestNewPassword(string emailAddress)
@@ -103,8 +97,17 @@ namespace BrokerIQ.Online.Services
 
         public async Task Logout()
         {
+            var token = await _cookieService.GetCookieAsync(ApplicationKeys.REFRESH_TOKEN_KEY);
+
+            await _requestProviderService.Delete($"auth/revoke?token={WebUtility.UrlEncode(token)}");
+
+            await _cookieService.DeleteCookieAsync(ApplicationKeys.ACCESS_TOKEN_KEY);
+            await _cookieService.DeleteCookieAsync(ApplicationKeys.ACCESS_EXPIRATION_KEY);
+            await _cookieService.DeleteCookieAsync(ApplicationKeys.REFRESH_TOKEN_KEY);
+
             _user = null;
-            await _localStorageService.SetItem(_userKey, new User());
+
+            await _localStorageService.RemoveItemAsync(ApplicationKeys.USER_KEY);
         }
 
         public async Task<BrokerDto> Register(CreateBrokerDto model)
@@ -143,7 +146,7 @@ namespace BrokerIQ.Online.Services
                 _user.FirstName = model.FirstName;
                 _user.LastName = model.LastName;
                 _user.Username = model.Username;
-                await _localStorageService.SetItem(_userKey, _user);
+                await _localStorageService.SetItemAsync(ApplicationKeys.USER_KEY, _user);
             }
         }
 
@@ -165,6 +168,5 @@ namespace BrokerIQ.Online.Services
         {
             return await _requestProviderService.Post<bool>($"BrokerAuth/resend?EmailAddress={brokerEmail}");
         }
-
     }
 }

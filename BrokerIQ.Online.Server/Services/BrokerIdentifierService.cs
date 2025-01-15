@@ -14,19 +14,15 @@ namespace BrokerIQ.Online.Services
         private readonly string BrokerIdentifierUrl = "BrokerIdentifier";
         private readonly IRequestProviderService requestProviderService;
         private readonly IMapper mapper;
-        private readonly IAccountService accountService;
 
-        public BrokerIdentifierService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService)
+        public BrokerIdentifierService(IRequestProviderService requestProviderService, IMapper mapper)
         {
             this.mapper = mapper;
             this.requestProviderService = requestProviderService;
-            this.accountService = accountService;
         }
 
         public async Task<BrokerIdentifier> UpdateBrokerIdentifier(BrokerIdentifier brokerIdentifier)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var mapped = mapper.Map<UpdateBrokerIdentifierDto>(brokerIdentifier);
             var answer = await this.requestProviderService.Put<UpdateBrokerIdentifierDto, BrokerIdentifierDto>(this.BrokerIdentifierUrl, mapped);
             return this.mapper.Map<BrokerIdentifier>(answer);
@@ -34,23 +30,17 @@ namespace BrokerIQ.Online.Services
 
         public async Task<BrokerIdentifier> AddBrokerIdentifier(CreateBrokerIdentifierDto brokerIdentifier)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var answer = await this.requestProviderService.Post<CreateBrokerIdentifierDto, BrokerIdentifierDto>(this.BrokerIdentifierUrl, brokerIdentifier);
             return this.mapper.Map<BrokerIdentifier>(answer);
         }
 
         public async Task<bool> DeleteBrokerIdentifier(int id)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             return await this.requestProviderService.Delete(this.BrokerIdentifierUrl + $"/{id}");
         }
 
         public async Task<BrokerIdentifier> GetDefaultBrokerIdentifier()
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var answer = await this.requestProviderService.Get<BrokerIdentifierDto>(this.BrokerIdentifierUrl+"/GetDefault");
             return this.mapper.Map<BrokerIdentifier>(answer);
         }

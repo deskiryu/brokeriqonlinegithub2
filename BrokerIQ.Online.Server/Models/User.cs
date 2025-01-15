@@ -6,7 +6,6 @@ namespace BrokerIQ.Online.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
-        public string Token { get; set; }
         public bool IsDeleting { get; set; }
         public bool IsBroker { get; set; }
         public bool IsCustomer { get; set; }

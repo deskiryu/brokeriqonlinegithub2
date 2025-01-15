@@ -1,30 +1,29 @@
+using System.Threading.Tasks;
+using Blazored.SessionStorage;
+using BrokerIQ.Online.Server.Data;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Services.Interface;
+
 namespace BrokerIQ.Online.Services
 {
-    using System.Threading.Tasks;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Online.Services.Interface;
-
     public class AudioRecordingService : IAudioRecordingService
     {
-        private ILocalStorageService _localStorageService;
+        private ISessionStorageService _sessionStorageService;
 
-        private string _audioRecordingKey = "audiorecording";
-
-        public AudioRecordingService(
-            ILocalStorageService localStorageService
-        ) {
-            _localStorageService = localStorageService;
+        public AudioRecordingService(ISessionStorageService sessionStorageService)
+        {
+            _sessionStorageService = sessionStorageService;
         }
 
         public async Task<string> GetAudioRecordingAsBase64()
         {
-            var returned = (await _localStorageService.GetItem<Wav>(_audioRecordingKey));
+            var returned = (await _sessionStorageService.GetItemAsync<Wav>(ApplicationKeys.RECORDING_KEY));
             return returned.Data;
-        } 
+        }
 
         public async Task Delete()
         {
-            await _localStorageService.DeleteItem(_audioRecordingKey);
+            await _sessionStorageService.RemoveItemAsync(ApplicationKeys.RECORDING_KEY);
         }
     }
 }
