@@ -6,26 +6,30 @@
 @inject IDialogService DialogService
 @inject LoggedInAppState AppState
 @inject IOptions<ReviewItAPIDetails> api
+@inject IJSRuntime jsRuntime
 
-<div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
-    <NavMenu />
-</div>
+<MudAlert Severity="Severity.Normal" CloseIconClicked="(() => CookieAlertClosed())" Style="@CookieBannerStyle" ShowCloseIcon="true">We use cookies to improve your experience on our website.</MudAlert>
 
-<div class="@(api.Value.IsYAHTheme? "main main-yah" : "main")">
-    <div class="top-row px-4" style="background-color:black">
-        <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Class="mr-2" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
-        @if (AppState.LoggedIn)
-        {
-            <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@AppState.FullName</MudText>
-        }
+<div style="display:flex;">
+    <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
+        <NavMenu />
     </div>
 
-    <div class="content px-4">
-        <Alert />
-        @Body
+    <div class="@(api.Value.IsYAHTheme? "main main-yah" : "main")">
+        <div class="top-row px-4" style="background-color:black">
+            <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Class="mr-2" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
+            @if (AppState.LoggedIn)
+            {
+                <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@AppState.FullName</MudText>
+            }
+        </div>
+
+        <div class="content px-4">
+            <Alert />
+            @Body
+        </div>
     </div>
 </div>
-
 <MudDialogProvider />
 <MudSnackbarProvider />
 @if (api.Value.IsYAHTheme)
@@ -37,10 +41,11 @@ else
     <MudThemeProvider Theme="MyCustomTheme2" />
 }
 
-
-
-
 @code{
+    private const string COOKIE_ALERT = "cookieAlert";
+
+    public string CookieBannerStyle { get; set; }
+
     MudTheme MyCustomTheme2 = new MudTheme()
     {
         Palette = new Palette()
@@ -85,9 +90,15 @@ else
             DrawerWidthRight = "300px"
         }
     };
-    protected override void OnInitialized()
+
+    protected override async Task OnInitializedAsync()
     {
         AppState.OnChange += AppStateChangeHandler;
+
+        var value = await jsRuntime.InvokeAsync<string>("localStorage.getItem", COOKIE_ALERT);
+        bool.TryParse(value, out bool hasBeenClosed);
+
+        CookieBannerStyle = hasBeenClosed ? "display : none" : string.Empty;
     }
 
     private void AppStateChangeHandler()
@@ -98,5 +109,14 @@ else
     private void OpenDialog()
     {
         DialogService.Show<VersionDialog>("About BrokerIQ");
+    }
+
+    private async Task CookieAlertClosed()
+    {
+        await jsRuntime.InvokeVoidAsync("localStorage.setItem", COOKIE_ALERT, "true");
+
+        CookieBannerStyle = "display : none";
+
+        StateHasChanged();
     }
 }
