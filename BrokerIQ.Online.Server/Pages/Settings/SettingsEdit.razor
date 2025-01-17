@@ -353,6 +353,19 @@
                 </ChildContent>
             </MudTabPanel>
         }
+
+        @if (User != null && !User.IsAdmin && !User.IsMinorAdmin)
+        {
+            var MyEmailAddress = IsBrokerStaff ? BrokerStaff.EmailAddress : Broker.EmailAddress;
+            <MudTabPanel Text="Password">
+                <TabContent>
+                    <MudText Typo="Typo.subtitle2" Class="mr-1">PASSWORD</MudText>
+                </TabContent>
+                <ChildContent>
+                    <ChangePassword EmailAddress="@MyEmailAddress"/>
+                </ChildContent>
+            </MudTabPanel>
+        }        
     </MudTabs>
 }
 @code {
