@@ -13,24 +13,24 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var pension in Pensions)
+        @foreach (var wealth in Wealths)
         {
             var currentDate = DateTime.UtcNow;
 
             var rowClass = String.Empty;
 
             <tr class="@rowClass">
-                <td>@pension.ProviderName</td>
-                <td>@pension.PolicyNumber</td>
-                <td>£@pension.CustomerMonthlyContribution</td>
-                <td>£@pension.CurrentPensionAmount</td>
+                <td>@wealth.ProviderName</td>
+                <td>@wealth.PolicyNumber</td>
+                <td>£@wealth.CustomerMonthlyContribution</td>
+                <td>£@wealth.CurrentWealthAmount</td>
 
                 @if (User.IsAdmin)
                 {
                     <td>@Brokers.First(x => x.Id == Customer.ChosenBrokerId)?.Name</td>
                 }
                 <td>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"pensionedit/{pension.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"wealthedit/{wealth.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
                         <i class="fas fa-edit"></i>
                     </MudButton>
                 </td>

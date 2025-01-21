@@ -33,5 +33,7 @@
         public bool FixedFooter { get; set; }
 
         public string ScrollHeight { get; set; }
+
+        public bool ShowWealth { get; set; }
     }
 }
