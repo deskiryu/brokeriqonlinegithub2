@@ -205,10 +205,10 @@
                 @if (Broker is not null && Broker.Subscriptions is not null)
                 {
                     @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s =>
-              s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
-              s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
-              s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
-              IsCreatingWhiteLabel))
+                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
+                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
+                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
+                        IsCreatingWhiteLabel))
                     {
                         <MudTabPanel Text="Identifier">
                             <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
@@ -610,10 +610,15 @@
 
             @if (CurrentUser.IsAdmin)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mt-1" @onclick="DeleteBroker">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mt-1" @onclick="RevokeAccessTokens">
+                    Revoke Access Tokens
+                </MudButton>
+
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteBroker">
                     Delete Broker
                 </MudButton>
             }
+
             @if ((CurrentUser.IsAdmin || CurrentUser.IsMinorAdmin))
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="ResendEmailBroker">
