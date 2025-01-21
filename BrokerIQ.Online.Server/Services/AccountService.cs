@@ -168,5 +168,12 @@ namespace BrokerIQ.Online.Services
         {
             return await _requestProviderService.Post<bool>($"BrokerAuth/resend?EmailAddress={brokerEmail}");
         }
+
+        public async Task<bool> RevokeUserAccess(string userEmail)
+        {
+            var urlToGo = $"auth/revoketokens/{userEmail}";
+
+            return  await this._requestProviderService.Delete(urlToGo);
+        }
     }
 }
