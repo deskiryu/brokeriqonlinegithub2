@@ -1,10 +1,13 @@
-﻿<table class="table col-sm-12 table-striped ">
+﻿@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+ 
+<table class="table col-sm-12 table-striped ">
     <thead>
         <tr>
             <th>Provider</th>
             <th>Policy</th>
-            <th>Monthly Contribution</th>
-            <th>Current Amount</th>
+            <th>Product Type</th>
+            <th>Investment Date</th>
             @if (User.IsAdmin)
             {
                 <th>Broker</th>
@@ -13,7 +16,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var wealth in Wealths)
+        @foreach (var wealth in WealthRecords)
         {
             var currentDate = DateTime.UtcNow;
 
@@ -22,8 +25,8 @@
             <tr class="@rowClass">
                 <td>@wealth.ProviderName</td>
                 <td>@wealth.PolicyNumber</td>
-                <td>£@wealth.CustomerMonthlyContribution</td>
-                <td>£@wealth.CurrentWealthAmount</td>
+                <td>@(((WealthProductType)wealth.WealthProductType).GetDisplayName())</td>
+                <td>@(wealth.AmountInvestedOn.HasValue ? wealth.AmountInvestedOn.Value.ToBiqDateString() : string.Empty)</td>
 
                 @if (User.IsAdmin)
                 {

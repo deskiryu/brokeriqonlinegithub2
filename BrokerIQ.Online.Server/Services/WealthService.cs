@@ -24,9 +24,9 @@ namespace BrokerIQ.Online.Services
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<Wealth>> GetForCustomer(int id)
+        public async Task<IEnumerable<Wealth>> GetForCustomer(int id, int brokerId)
         {
-            var answer = await this._requestProviderService.Get<IEnumerable<WealthDto>>($"{this.WealthUrl}/customer/{id}/{GetCurrentBrokerId()}");
+            var answer = await this._requestProviderService.Get<IEnumerable<WealthDto>>($"{this.WealthUrl}/customer/{id}/{brokerId}");
             return this.mapper.Map<IEnumerable<Wealth>>(answer);
         }
 

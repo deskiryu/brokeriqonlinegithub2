@@ -40,7 +40,6 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
 
-
             <div class="row">
                 <div class="col-xs-12 col-sm-8">
                     <div class="form-group row">
@@ -49,6 +48,26 @@
                         <div class="col-sm-5">
                             <InputText class="form-control" @bind-Value="@Wealth.ProviderName" placeholder="Enter provider"></InputText>
                             <ValidationMessage class="offset-sm-3" For="@(() => Wealth.ProviderName)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Product Type</label>
+
+                        <div class="col-sm-5">
+                            <MudSelect T="int"
+                                       Margin="Margin.Dense"
+                                       Dense="true"
+                                       @bind-Value="@Wealth.WealthProductType">
+                                @{
+                                    var values = Enum.GetValues(typeof(WealthProductType)).Cast<WealthProductType>();
+                                    foreach (var item in values)
+                                    {
+                                        WealthProductType looped = item;
+                                        <MudSelectItem Value=@((int)looped)>@looped.GetDisplayName()</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
                         </div>
                     </div>
 
@@ -69,20 +88,10 @@
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Current Wealth Amount</label>
-
-                        <MudItem class="col">
-                            <MudTextField @bind-Value="@Wealth.CurrentWealthAmount" HelperText="Enter an amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
-                            <ValidationMessage class="offset-sm-3" For="@(() => Wealth.CurrentWealthAmount)" />
-                        </MudItem>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Estimated Amount At Retirement</label>
+                        <label class="col-sm-3 col-form-label">Amount Invested On</label>
 
                         <div class="col-sm-5">
-                            <MudTextField @bind-Value="@Wealth.EstimatedAmountAtRetirement" HelperText="Enter an amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
-                            <ValidationMessage class="offset-sm-3" For="@(() => Wealth.EstimatedAmountAtRetirement)" />
+                            <MudDatePicker @bind-Date="@Wealth.AmountInvestedOn" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))" />
                         </div>
                     </div>
 

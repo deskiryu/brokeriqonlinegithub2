@@ -237,7 +237,7 @@ else if (!Saved)
 
                     <QuoteButton Broker="Broker" Customer="Customer" PostQuoteFunction="(() => UpdateChat(true))" />
 
-                    <CustomerWealthTable User="@User" Brokers="@Brokers" Customer="@Customer" />
+                    <CustomerWealthTable User="@User" Brokers="@Brokers" Customer="@Customer" BrokerId="@Broker.Id"/>
                 </ChildContent>
             </MudTabPanel>
         }

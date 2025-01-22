@@ -18,19 +18,22 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         public Online.Models.Customer Customer { get; set; }
 
         [Parameter]
+        public int BrokerId { get; set; }
+
+        [Parameter]
         public IEnumerable<Online.Models.Broker> Brokers { get; set; }
 
         [Parameter]
-        public IEnumerable<Online.Models.Wealth> Wealths { get; set; }
+        public IEnumerable<Online.Models.Wealth> WealthRecords { get; set; }
 
         public CustomerWealthTable()
         {
-            Wealths = Array.Empty<Online.Models.Wealth>();
+            WealthRecords = Array.Empty<Online.Models.Wealth>();
         }
 
         protected override async Task OnInitializedAsync()
         {
-            Wealths = await WealthService.GetForCustomer(Customer.Id);
+            WealthRecords = await WealthService.GetForCustomer(Customer.Id, BrokerId);
         }
     }
 }

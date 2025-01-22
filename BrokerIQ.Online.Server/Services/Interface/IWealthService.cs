@@ -6,7 +6,7 @@ namespace BrokerIQ.Online.Services.Interface
 {
     public interface IWealthService
     {
-        Task<IEnumerable<Wealth>> GetForCustomer(int id);
+        Task<IEnumerable<Wealth>> GetForCustomer(int id, int brokerId);
 
         Task<Wealth> Get(int id);
 
