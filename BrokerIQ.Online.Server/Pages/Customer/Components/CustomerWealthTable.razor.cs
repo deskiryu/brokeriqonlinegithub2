@@ -33,7 +33,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         protected override async Task OnInitializedAsync()
         {
-            WealthRecords = await WealthService.GetForCustomer(Customer.Id, BrokerId);
+            WealthRecords = await WealthService.GetForCustomer(Customer.Id);
         }
     }
 }
