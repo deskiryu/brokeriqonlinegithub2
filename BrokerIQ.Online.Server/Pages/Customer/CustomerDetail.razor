@@ -222,7 +222,7 @@ else if (!Saved)
             </MudTabPanel>
         }
 
-        @if (Broker != null && Broker.ProvidesPensionServices)
+        @if (Broker != null && Broker.ProvidesWealthServices)
         {
             <MudTabPanel>
                 <TabContent>
@@ -231,13 +231,13 @@ else if (!Saved)
                 <ChildContent>
                     <CustomerGoalTable Broker="Broker" Customer="Customer"/>
                     <br/>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"pensionedit/0/{Customer.Id}")" class="mb-2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"wealthedit/0/{Customer.Id}")" class="mb-2">
                         Add New Wealth
                     </MudButton>
 
                     <QuoteButton Broker="Broker" Customer="Customer" PostQuoteFunction="(() => UpdateChat(true))" />
 
-                    <CustomerPensionTable User="@User" Brokers="@Brokers" Customer="@Customer" />
+                    <CustomerWealthTable User="@User" Brokers="@Brokers" Customer="@Customer" BrokerId="@Broker.Id"/>
                 </ChildContent>
             </MudTabPanel>
         }

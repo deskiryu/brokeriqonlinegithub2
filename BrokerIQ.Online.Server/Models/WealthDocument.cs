@@ -4,12 +4,12 @@ using BrokerIQ.Dto.Enum;
 
 namespace BrokerIQ.Online.Models
 {
-    public class PensionDocument
+    public class WealthDocument
     {
         [Key]
         public Guid Id { get; set; }
 
-        public int PensionId { get; set; }
+        public int WealthId { get; set; }
 
         public DocumentTypeEnum SupportingDocumentType { get; set; }
 
