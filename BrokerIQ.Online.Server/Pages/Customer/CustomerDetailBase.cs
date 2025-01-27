@@ -251,9 +251,9 @@ namespace BrokerIQ.Online.Pages
 
         protected bool ShowScheduledChat { get; set; } = false;
 
-        protected string ChatButtonStyle => ShowScheduledChat ? string.Empty : $"color:{Colors.Shades.Black};";
+        protected string ChatButtonStyle => ShowScheduledChat ?  $"color:{Colors.Shades.Black};" : string.Empty;
 
-        protected string ScheduledChatButtonStyle => ShowScheduledChat ? $"color:{Colors.Shades.Black};" : string.Empty;
+        protected string ScheduledChatButtonStyle => ShowScheduledChat ? string.Empty : $"color:{Colors.Shades.Black};";
 
         protected override async Task OnInitializedAsync()
         {
