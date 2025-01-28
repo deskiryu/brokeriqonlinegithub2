@@ -255,6 +255,10 @@ namespace BrokerIQ.Online.Pages
 
         protected string ScheduledChatButtonStyle => ShowScheduledChat ? $"color:{Colors.Shades.Black};" : string.Empty;
 
+        public bool IsZippingFiles { get; set; }
+
+        public bool DisableSelectedFilesButton  => !SelectedItemsCustomerDocuments.Any() || IsZippingFiles;
+
         protected override async Task OnInitializedAsync()
         {
             tutorialVideos = TutorialVideosOption.Value;
@@ -1315,6 +1319,9 @@ namespace BrokerIQ.Online.Pages
 
         private async Task SaveZipFile()
         {
+            IsZippingFiles = true;
+            await Task.Delay(250);
+
             var zipName = $"{Customer.Name}-{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
             using (MemoryStream ms = new MemoryStream())
             {
@@ -1333,6 +1340,8 @@ namespace BrokerIQ.Online.Pages
                 }
                 await Extensions.SaveAs(js, zipName, ms.ToArray());
             }
+
+            IsZippingFiles = false;
         }
 
         protected async Task ViewDocumentUpload(CustomerDocument doc)
