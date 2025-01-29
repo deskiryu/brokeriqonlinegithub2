@@ -181,6 +181,7 @@
                     {
                         await file.OpenReadStream(this.fileUploadSettings.MaxFileSize).CopyToAsync(memoryStream);
 
+                        sdoc.SupportingDocumentType = DocumentTypeEnum.PDF;
                         sdoc.FileName = fileName;
                         sdoc.File = memoryStream.ToArray();
 
@@ -199,21 +200,21 @@
         var dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
 
         var result = await DialogService.Show<MessageSendDialog>("Send Chat", dialogParams, dialogOptions).Result;
-        if (!result.Cancelled)
+        if (!result.Canceled)
         {
-            var message = result.Data.ToString();
+            var messageModel = result.Data as MessageSendDialog.MessageSendModel;
 
             try
             {
-                if (!string.IsNullOrEmpty(message))
+                if (!string.IsNullOrEmpty(messageModel.MessageToSend))
                 {
                     if (fileAttached)
                     {
-                        succeeded = (await ChatService.SendMultipleWithDoc(message, CustomerIds, BrokerID, sdoc));
+                        succeeded = (await ChatService.SendMultipleWithDoc(messageModel.MessageToSend, CustomerIds, BrokerID, sdoc));
                     }
                     else
                     {
-                        succeeded = (await ChatService.SendMultiple(message, CustomerIds, BrokerID));
+                        succeeded = (await ChatService.SendMultiple(messageModel.MessageToSend, CustomerIds, BrokerID));
                     }
                 }
             }
@@ -235,6 +236,7 @@
 
         return;
     }
+
     protected async Task SendAppLinks()
     {
         bool succeeded = false;
