@@ -229,15 +229,15 @@ else if (!Saved)
                     <MudText Typo="Typo.subtitle2" Class="mr-1">WEALTH</MudText>
                 </TabContent>
                 <ChildContent>
-                    <CustomerGoalTable Broker="Broker" Customer="Customer"/>
-                    <br/>
+                    <CustomerGoalTable Broker="Broker" Customer="Customer" />
+                    <br />
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"wealthedit/0/{Customer.Id}")" class="mb-2">
                         Add New Wealth
                     </MudButton>
 
                     <QuoteButton Broker="Broker" Customer="Customer" PostQuoteFunction="(() => UpdateChat(true))" />
 
-                    <CustomerWealthTable User="@User" Brokers="@Brokers" Customer="@Customer" BrokerId="@Broker.Id"/>
+                    <CustomerWealthTable User="@User" Brokers="@Brokers" Customer="@Customer" BrokerId="@Broker.Id" />
                 </ChildContent>
             </MudTabPanel>
         }
@@ -285,13 +285,19 @@ else if (!Saved)
                                 <h6 style="padding-bottom: 5px">Client Documents Uploaded</h6>
                             </div>
                             <div class="col-sm-8" style="margin-top: -14px">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()"
+                                           Disabled="DisableSelectedFilesButton">
+                                    <MudText>Download Selected</MudText>
+                                </MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()"
+                                           Disabled="DisableSelectedFilesButton">
+                                    <MudText>Delete Selected</MudText>
+                                </MudButton>
 
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => SaveSelectedDocumentUpload()">
-                                    Download Selected
-                                </MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => DeleteSelectedDocumentUpload()">
-                                    Delete Selected
-                                </MudButton>
+                                <MudOverlay Visible="IsZippingFiles" DarkBackground="true" AutoClose="false">
+                                    <MudText Typo="Typo.h6" Align="Align.Center" Style="@($"color:{Colors.Shades.White};")">Preparing your download, please wait...</MudText>
+                                    <MudText Typo="Typo.body1" Align="Align.Center" Style="@($"color:{Colors.Shades.White};")">This may take some time, it depends on quantity and size of files.</MudText>
+                                </MudOverlay>
                             </div>
                         </div>
                         <MudTable Items="@CustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
@@ -299,12 +305,12 @@ else if (!Saved)
                                 <MudTh>Document</MudTh>
                                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.CreatedDate)">Date</MudTableSortLabel></MudTh>
                                 <MudTh>Type</MudTh>
-                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.FileName)">Name</MudTableSortLabel></MudTh>
+                                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.FileName)">Description</MudTableSortLabel></MudTh>
                                 <MudTh></MudTh>
                             </HeaderContent>
                             <RowTemplate>
-                                <MudTd DataLabel="Document">@DocumentTypeValues.FirstOrDefault(t => t.Id == context.DocuVaultType).Name</MudTd>
-                                <MudTd DataLabel="Email">@context.CreatedDate.ToBiqDateTimeString()</MudTd>
+                                <MudTd DataLabel="Document">@DocumentTypeValues.FirstOrDefault(t => t.Id == context.DocuVaultType)?.Name</MudTd>
+                                <MudTd DataLabel="Date">@context.CreatedDate.ToBiqDateTimeString()</MudTd>
                                 <MudTd DataLabel="Type">@context.TypeDesc</MudTd>
                                 <MudTd DataLabel="Description">@context.Description</MudTd>
                                 <MudTd>
