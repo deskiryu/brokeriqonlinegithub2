@@ -126,7 +126,8 @@ namespace BrokerIQ.Online.Services
                 ChatDocument = new CreateChatDocumentDto
                 {
                     File = chatDocument.File,
-                    FileName = chatDocument.FileName
+                    FileName = chatDocument.FileName,
+                    SupportingDocumentType = chatDocument.SupportingDocumentType
                 }
             };
 
