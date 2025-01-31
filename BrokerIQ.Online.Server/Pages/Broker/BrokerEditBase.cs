@@ -44,6 +44,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IDialogService DialogService { get; set; }
 
+        [Inject]
+        public ISnackbar Snackbar { get; set; }
+
         [Parameter]
         public string BrokerId { get; set; }
 
@@ -314,6 +317,24 @@ namespace BrokerIQ.Online.Pages
                     await DialogService.Show<AlertDialog>("Information", responseParams).Result;
                 }
                 NavigationManager.NavigateTo($"/brokerlist");
+            }
+        }
+
+        protected async Task RevokeAccessTokens()
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"Ae you sure you want to revoke the broker access tokens?");
+
+            var result = await DialogService.Show<ConfirmCancelDialog>("Confirm", dialogParams).Result;
+
+            if (!result.Canceled)
+            {
+                var revoked = await AccountService.RevokeUserAccess(Broker.EmailAddress);
+
+                var message = revoked ? "Broker access tokens were revoked." : "Unable to revoke tokens.";
+                var severity = revoked ? Severity.Success : Severity.Error;
+
+                Snackbar.Add(message, severity);
             }
         }
     }

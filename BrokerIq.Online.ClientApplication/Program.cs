@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using BrokerIQ.Online.AppSettings;
 using BrokerIQ.Online.Server.AppSettings;
@@ -23,6 +24,8 @@ namespace BrokerIQ.Online.Server
             builder.Services.AddMudBlazorDialog();
 
             builder.Services.AddBlazoredSessionStorage();
+
+            builder.Services.AddBlazoredLocalStorage();
 
             builder.Services.Configure<ReviewItAPIDetails>(builder.Configuration.GetSection(typeof(ReviewItAPIDetails).Name));
             builder.Services.Configure<FileUploadSettings>(builder.Configuration.GetSection(typeof(FileUploadSettings).Name));

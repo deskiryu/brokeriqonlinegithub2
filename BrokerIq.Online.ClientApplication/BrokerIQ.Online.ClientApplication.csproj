@@ -48,6 +48,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
 		
+		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -72,7 +73,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\favicon-alert.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

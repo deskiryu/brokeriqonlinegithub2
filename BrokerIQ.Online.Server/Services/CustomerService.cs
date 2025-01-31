@@ -54,7 +54,7 @@ namespace BrokerIQ.Online.Services
         public async Task<Customer> GetCustomer(int id)
         {
             var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
+
             var url = this.customerUrl;
             var brokerId = 0;
             if (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff)
@@ -68,7 +68,7 @@ namespace BrokerIQ.Online.Services
         public async Task<IEnumerable<Customer>> GetCustomersByList(IEnumerable<int> ids)
         {
             var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
+
             if (user.IsAdmin)
             {
                 var url = this.customerUrl + "/list?";
@@ -87,8 +87,6 @@ namespace BrokerIQ.Online.Services
 
         public async Task<Customer> UpdateCustomer(Customer customer)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var updateCustomerDto = mapper.Map<UpdateCustomerDto>(customer);
             var answer = await this.requestProviderService.Put<UpdateCustomerDto, CustomerDto>(this.customerUrl, updateCustomerDto);
             return this.mapper.Map<Customer>(answer);
@@ -96,32 +94,24 @@ namespace BrokerIQ.Online.Services
 
         public async Task<bool> DeleteCustomer(int id)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var answer = await this.requestProviderService.Delete(this.customerUrl, id);
             return answer;
         }
 
         public async Task<int> GetCustomerCount(int brokerId = 0)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var answer = await this.requestProviderService.Get<int>(this.customerUrl + $"/count", brokerId);
             return answer;
         }
 
         public async Task<int> GetCustomerAppUserCount(int brokerId = 0)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var answer = await this.requestProviderService.Get<int>(this.customerUrl + $"/appusercount", brokerId);
             return answer;
         }
 
         public async Task<CustomerCategoryEnum> SetCustomerCategory(int customerid, CustomerCategoryEnum customerCategory)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var patchDoc = new JsonPatchDocument<Customer>();
             patchDoc.Replace(x => (int)x.CustomerCategory, (int)customerCategory);
 
@@ -132,7 +122,6 @@ namespace BrokerIQ.Online.Services
         public async Task<IEnumerable<Customer>> GetFilteredCustomers(CustomerFilter filter)
         {
             var user = await this.accountService.GetUser();
-            requestProviderService.Token = user?.Token;
 
             var option = (RecentEnum)filter.Recent;
             var ts = ((RecentPeriodEnum)filter.Period).TransformToTS();
@@ -173,8 +162,6 @@ namespace BrokerIQ.Online.Services
 
         public async Task<bool> SetCustomerNeeds(int customerid, bool hasNeeds)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var patchDoc = new JsonPatchDocument<Customer>();
             patchDoc.Replace(x => x.HasNeeds, hasNeeds);
 
@@ -184,9 +171,6 @@ namespace BrokerIQ.Online.Services
 
         public async Task<Customer> GetConnection(int id)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             var url = $"{this.customerUrl}/{id}/connection";
             var answer = await this.requestProviderService.Get<CustomerDto>(url);
 
@@ -195,9 +179,6 @@ namespace BrokerIQ.Online.Services
 
         public async Task Disconnect(int mainCustomerId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             var url = $"{this.customerUrl}/{mainCustomerId}/disconnect";
 
             await this.requestProviderService.Post<bool>(url);
@@ -207,9 +188,6 @@ namespace BrokerIQ.Online.Services
 
         public async Task<bool> SetProfilePicture(int customerId, byte[] picture)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             var postData = new ProfilePictureDto() { CustomerId = customerId, File = picture };
 
             await this.requestProviderService.Post<ProfilePictureDto, CustomerDto>($"{this.customerUrl}/profile_picture", postData);
@@ -219,66 +197,42 @@ namespace BrokerIQ.Online.Services
 
         public async Task<IEnumerable<CustomerImportDto>> PreviewImportData(ImportRequest request)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             return await this.requestProviderService.Post<ImportRequest, IEnumerable<CustomerImportDto>>($"{this.customerUrl}/previewimportdata", request);
         }
 
         public async Task<ImportResponse> Import(ImportRequest request)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             return await this.requestProviderService.Post<ImportRequest, ImportResponse>($"{this.customerUrl}/import", request);
         }
 
         public async Task<CsvImportCustomerDto> GetImportDetails(int customerId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             return await this.requestProviderService.Get<CsvImportCustomerDto>($"{this.customerUrl}/{customerId}/import");
         }
 
         public async Task<bool> UpdateImportDetails(CsvImportCustomerDto toUpdate)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             return await this.requestProviderService.Post<CsvImportCustomerDto, bool>($"{this.customerUrl}/{toUpdate.CustomerId}/import", toUpdate);
         }
 
         public async Task<bool> SendAppInvite(int customerId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             return await this.requestProviderService.Post<int, bool>($"{this.customerUrl}/{customerId}/sendappinvite", customerId);
         }
 
         public async Task<bool> SendAppInvites(int[] customerIds)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             return await this.requestProviderService.Post<int[], bool>($"{this.customerUrl}/sendappinvites", customerIds);
         }
 
         public async Task<IEnumerable<Customer>> Search(int brokerId, string value)
         {
-            var user = await this.accountService.GetUser();
-            requestProviderService.Token = user?.Token;
-
             var answer = await requestProviderService.Get<IEnumerable<CustomerDto>>($"{customerUrl}/broker/{brokerId}/search?value={value}");
             return mapper.Map<IEnumerable<Customer>>(answer);
         }
 
         public async Task<bool> Connect(int brokerId, int mainCustomerId, int connectedCustomerId)
         {
-            var user = await this.accountService.GetUser();
-            requestProviderService.Token = user?.Token;
-
             return await requestProviderService.Post<ConnectCustomersRequest, bool>($"{customerUrl}/connect", new ConnectCustomersRequest()
             {
                 BrokerId = brokerId,
@@ -331,7 +285,6 @@ namespace BrokerIQ.Online.Services
         private async Task<PagedResponse<Customer>> GetPagedFilteredCustomers(CustomerFilter filter)
         {
             var user = await this.accountService.GetUser();
-            requestProviderService.Token = user?.Token;
 
             var option = (RecentEnum)filter.Recent;
             var ts = ((RecentPeriodEnum)filter.Period).TransformToTS();

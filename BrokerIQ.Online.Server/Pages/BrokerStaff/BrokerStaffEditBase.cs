@@ -200,5 +200,23 @@ namespace BrokerIQ.Online.Pages
                 }
             }
         }
+
+        protected async Task RevokeAccessTokens()
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.Add("Message", $"Ae you sure you want to revoke the employee access tokens?");
+
+            var result = await DialogService.Show<ConfirmCancelDialog>("Confirm", dialogParams).Result;
+
+            if (!result.Canceled)
+            {
+                var revoked = await AccountService.RevokeUserAccess(_brokerStaff.EmailAddress);
+
+                var message = revoked ? "Broker access tokens were revoked." : "Unable to revoke tokens.";
+                var severity = revoked ? Severity.Success : Severity.Error;
+
+                Snackbar.Add(message, severity);
+            }
+        }
     }
 }

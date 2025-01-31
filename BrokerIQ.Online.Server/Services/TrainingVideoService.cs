@@ -1,35 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using AutoMapper;
+
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Server.Services
 {
-    using System.Threading.Tasks;
-
-    using AutoMapper;
-
-    using BrokerIQ.Dto.Models;
-    using BrokerIQ.Online.Server.Models;
-    using BrokerIQ.Online.Services.Abstract;
-    using BrokerIQ.Online.Services.Interface;
-
     public class TrainingVideoService : ITrainingVideoService
     {
         private readonly string videoUrl = "TrainingVideo";
         private readonly IRequestProviderService requestProviderService;
         private readonly IMapper mapper;
-        private readonly IAccountService accountService;
 
-        public TrainingVideoService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService)
+        public TrainingVideoService(IRequestProviderService requestProviderService, IMapper mapper)
         {
             this.mapper = mapper;
             this.requestProviderService = requestProviderService;
-            this.accountService = accountService;
         }
+
         public async Task<List<TrainingVideo>> GetVideos()
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             var answer = new List<AzureTrainingVideoDto>();
             try
             {
