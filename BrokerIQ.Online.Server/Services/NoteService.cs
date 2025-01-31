@@ -4,30 +4,26 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Services.Base;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Server.Services
 {
-    public class NoteService : INoteService
+    public class NoteService : BIQService, INoteService
     {
         private readonly string noteUrl = "note";
-        private readonly IRequestProviderService requestProviderService;
         private readonly IMapper mapper;
-        private readonly IAccountService accountService;
 
         public NoteService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService)
+            :base(accountService, requestProviderService)
         {
             this.mapper = mapper;
-            this.requestProviderService = requestProviderService;
-            this.accountService = accountService;
         }
 
         public async Task<Note> SaveNote(string message, DateTime? reminderDate, int customerId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var brokerId = user.MasterBrokerId;
+            var brokerId = await GetCurrentBrokerId();
 
             var note = new CreateNoteDto
             {
@@ -36,42 +32,34 @@ namespace BrokerIQ.Online.Server.Services
                 BrokerId = brokerId,
                 ReminderDate = reminderDate
             };
-            var answer = await this.requestProviderService.Post<CreateNoteDto, NoteDto>(this.noteUrl, note);
+            var answer = await this._requestProviderService.Post<CreateNoteDto, NoteDto>(this.noteUrl, note);
             return this.mapper.Map<Note>(answer);
         }
 
         public async Task<Note> UpdateNote(string message, DateTime? reminderDate, int id)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             var note = new UpdateNoteDto
             {
                 Id = id,
                 Message = message,
                 ReminderDate = reminderDate
             };
-            var answer = await this.requestProviderService.Put<UpdateNoteDto, NoteDto>(this.noteUrl, note);
+            var answer = await this._requestProviderService.Put<UpdateNoteDto, NoteDto>(this.noteUrl, note);
             return this.mapper.Map<Note>(answer);
         }
 
         public async Task<IEnumerable<Note>> GetNotesByBrokerId(int customerId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var brokerId = user.MasterBrokerId;
+            var brokerId = await GetCurrentBrokerId();
 
-            var answer = await this.requestProviderService.Get<IEnumerable<NoteDto>>(this.noteUrl + $"/brokerById?customerId={customerId}&brokerId={brokerId}");
+            var answer = await this._requestProviderService.Get<IEnumerable<NoteDto>>(this.noteUrl + $"/brokerById?customerId={customerId}&brokerId={brokerId}");
             return this.mapper.Map<IEnumerable<Note>>(answer);
         }
 
         public async Task<bool> Delete(int id)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
             var url = this.noteUrl + $"?id={id}";
-            return await this.requestProviderService.Delete(url);
+            return await this._requestProviderService.Delete(url);
         }
-
     }
 }

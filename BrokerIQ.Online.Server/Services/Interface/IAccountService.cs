@@ -1,12 +1,12 @@
-﻿namespace BrokerIQ.Online.Services.Interface
-{
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using BrokerIQ.Dto.Models;
-    using BrokerIQ.Dto.Response;
-    using BrokerIQ.Online.Models;
-    using BrokerIQ.Online.Models.Account;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using BrokerIQ.Dto.Models;
+using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Models.Account;
 
+namespace BrokerIQ.Online.Services.Interface
+{
     public interface IAccountService
     {
         Task<User> GetUser();
@@ -15,6 +15,7 @@
         Task<bool> IsLoggedIn();
         Task Logout();
         Task<bool> RequestNewPassword(string emailAddress);
+        Task<bool> ChangePassword(UpdatePasswordDto updatePassword);
         Task<BrokerDto> Register(CreateBrokerDto model);
         Task<BrokerStaffDto> RegisterStaff(CreateBrokerStaffDto model);
         Task<IList<User>> GetAll();
@@ -26,5 +27,6 @@
         Task<bool> ResendEmailBroker(string brokerEmail);
         Task<LoginResponseDto> LoginTwoFactor(Login model);
         Task<bool> ToggleTwoFactor(string emailAddress, bool enable);
+        Task<bool> RevokeUserAccess(string userEmail);
     }
 }

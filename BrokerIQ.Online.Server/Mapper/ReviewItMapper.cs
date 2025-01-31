@@ -601,7 +601,7 @@ namespace BrokerIQ.Online.Mapper
         private void LoginMapper()
         {
             CreateMap<Login, LoginDto>();
-            CreateMap<LoginResponseDto, User>().ForMember(d => d.Token, action => action.MapFrom(s => s.Token))
+            CreateMap<LoginResponseDto, User>()
             .ForMember(d => d.IsAdmin, action => action.MapFrom(s => s.IsAdmin))
             .ForMember(d => d.IsBroker, action => action.MapFrom(s => s.IsBroker))
             .ForMember(d => d.IsCustomer, action => action.MapFrom(s => s.IsCustomer))
