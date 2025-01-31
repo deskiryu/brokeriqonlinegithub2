@@ -37,8 +37,8 @@ namespace BrokerIQ.Online.Mapper
             BrokerReminderOptionsMapper();
             BrokerSubscriptionMapper();
             CustomerAppointmentMapper();
-            PensionMapper();
-            PensionDocumentMapper();
+            WealthMapper();
+            WealthDocumentMapper();
             BrokerDefinedMessageMapper();
         }
 
@@ -947,19 +947,19 @@ namespace BrokerIQ.Online.Mapper
             CreateMap<CustomerAppointment, CustomerAppointmentDto>().ReverseMap();
         }
 
-        private void PensionMapper()
+        private void WealthMapper()
         {
-            CreateMap<Pension, CreatePensionDto>();
+            CreateMap<Wealth, CreateWealthDto>();
 
-            CreateMap<Pension, PensionDto>().ReverseMap();
+            CreateMap<Wealth, WealthDto>().ReverseMap();
 
-            CreateMap<Pension, UpdatePensionDto>();
+            CreateMap<Wealth, UpdateWealthDto>();
         }
 
-        private void PensionDocumentMapper()
+        private void WealthDocumentMapper()
         {
-            CreateMap<PensionDocumentDto, PensionDocument>();
-            CreateMap<PensionDocument, CreatePensionDocumentDto>();
+            CreateMap<WealthDocumentDto, WealthDocument>();
+            CreateMap<WealthDocument, CreateWealthDocumentDto>();
         }
 
         private void BrokerDefinedMessageMapper()

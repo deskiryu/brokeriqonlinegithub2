@@ -87,6 +87,9 @@
 	  <Content Condition="'$(ExcludeConfigFilesFromBuildOutput)'!='true'" Update="wwwroot\appsettings.development.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>	  
+    <Content Update="wwwroot\js\cookieManager.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>	
 
 	<ItemGroup>
