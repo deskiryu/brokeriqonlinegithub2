@@ -58,7 +58,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             var parameters = new DialogParameters
             {
                 { "ContentText", $"Do you really want to connect to this customer?" },
-                { "AdditionalText", $"ALL THE DATA FOR {SelectedCustomer.FirstName} {SelectedCustomer.LastName} WILL BECOME UNAVAILABLE!" },
+                { "AdditionalText", $"ALL THE DATA FOR {SelectedCustomer.FirstName} {SelectedCustomer.LastName} WILL BECOME UNAVAILABLE! Please ensure any UPLOADS from this customer have been processed. They will dissapear after this connection is made." },
                 { "ButtonText", "Connect" },
                 { "Color", Color.Error }
             };
