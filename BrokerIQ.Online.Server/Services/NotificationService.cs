@@ -166,12 +166,14 @@ namespace BrokerIQ.Online.Server.Services
 
         public async Task ToggleNotificationReadStatus(int notificationId)
         {
-            await this._requestProviderService.Post<int>(this.notificationUrl + $"/{notificationId}/{GetCurrentBrokerId()}/toggleread");
+            var url = $"{this.notificationUrl}/{notificationId}/{await GetCurrentBrokerId()}/toggleread";
+            await this._requestProviderService.Post<int>(url);
         }
 
         public async Task MarkAllNotificationsAsRead()
         {
-            await this._requestProviderService.Post<int>(this.notificationUrl + $"/{GetCurrentBrokerId()}/markallread");
+            var url = $"{this.notificationUrl}/{await GetCurrentBrokerId()}/markallread";
+            await this._requestProviderService.Post<int>(url);
         }
     }
 }
