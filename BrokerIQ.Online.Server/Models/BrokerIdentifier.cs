@@ -128,5 +128,7 @@ namespace BrokerIQ.Online.Server.Models
         public bool StaffCanManageReminders { get; set; }
 
         public string MatchingCode { get; set; }
+
+        public bool UseFirebaseForIOS { get; set; }
     }
 }
