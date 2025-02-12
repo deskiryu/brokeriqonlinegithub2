@@ -251,9 +251,13 @@ namespace BrokerIQ.Online.Pages
 
         protected bool ShowScheduledChat { get; set; } = false;
 
-        protected string ChatButtonStyle => ShowScheduledChat ? string.Empty : $"color:{Colors.Shades.Black};";
+        protected string ChatButtonStyle => ShowScheduledChat ?  $"color:{Colors.Shades.Black};" : string.Empty;
 
-        protected string ScheduledChatButtonStyle => ShowScheduledChat ? $"color:{Colors.Shades.Black};" : string.Empty;
+        protected string ScheduledChatButtonStyle => ShowScheduledChat ? string.Empty : $"color:{Colors.Shades.Black};";
+
+        public bool IsZippingFiles { get; set; }
+
+        public bool DisableSelectedFilesButton  => !SelectedItemsCustomerDocuments.Any() || IsZippingFiles;
 
         protected override async Task OnInitializedAsync()
         {
@@ -285,7 +289,7 @@ namespace BrokerIQ.Online.Pages
 
                     await PopulateBrokerDefinedMessages();
 
-                    if (!Broker.ProvidesMortgageServices && !Broker.ProvidesPensionServices)
+                    if (!Broker.ProvidesMortgageServices && !Broker.ProvidesWealthServices)
                     {
                         CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
 
@@ -1315,6 +1319,9 @@ namespace BrokerIQ.Online.Pages
 
         private async Task SaveZipFile()
         {
+            IsZippingFiles = true;
+            await Task.Delay(250);
+
             var zipName = $"{Customer.Name}-{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip";
             using (MemoryStream ms = new MemoryStream())
             {
@@ -1333,6 +1340,8 @@ namespace BrokerIQ.Online.Pages
                 }
                 await Extensions.SaveAs(js, zipName, ms.ToArray());
             }
+
+            IsZippingFiles = false;
         }
 
         protected async Task ViewDocumentUpload(CustomerDocument doc)

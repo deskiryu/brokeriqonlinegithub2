@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BrokerIQ.Online.Models
 {
-    public class Pension
+    public class Wealth
     {
         [Key]
         public int Id { get; set; }
@@ -19,16 +19,10 @@ namespace BrokerIQ.Online.Models
         [StringLength(50, ErrorMessage = "Provider name is too long.")]
         public string ProviderName { get; set; }
 
-        [Required]
-        [Range(1, double.MaxValue, ErrorMessage = "Please enter the current pension amount")]
-        public decimal CurrentPensionAmount { get; set; }
+        public DateTime? AmountInvestedOn { get; set; }
 
         [Range(0.1, double.MaxValue, ErrorMessage = "Growth percent has to be greater than 0")]
         public decimal? YearToDateGrowthPercent { get; set; }
-
-        [Required]
-        [Range(1, double.MaxValue, ErrorMessage = "Please enter the estimated anount at retirement")]
-        public decimal EstimatedAmountAtRetirement { get; set; }
 
         [Required]
         [Range(40, 150, ErrorMessage = "Please enter the retirement age goal")]
@@ -47,7 +41,9 @@ namespace BrokerIQ.Online.Models
 
         public DateTime? NextReview { get; set; }
 
-        public virtual ICollection<PensionDocument> SupportingDocuments { get; set; }
+        public int WealthProductType { get; set; } = 1; 
+
+        public virtual ICollection<WealthDocument> SupportingDocuments { get; set; }
     }
 }
 

@@ -56,8 +56,8 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<ICalendlyService, CalendlyService>();
             services.AddScoped<ICustomerAppointmentService, CustomerAppointmentService>();
             services.AddScoped<IDocumentVaultTypeService, DocumentVaultTypeService>();
-            services.AddScoped<IPensionService, PensionService>();
-            services.AddScoped<IPensionDocumentService, PensionDocumentService>();
+            services.AddScoped<IWealthService, WealthService>();
+            services.AddScoped<IWealthDocumentService, WealthDocumentService>();
             services.AddScoped<IWealthTypeService, WealthTypeService>();
             services.AddScoped<IGoalService, GoalService>();
             services.AddScoped<ICustomerGoalService, CustomerGoalService>();

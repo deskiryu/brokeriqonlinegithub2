@@ -17,13 +17,13 @@ using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {
-    public class PensionEditBase : ComponentBase
+    public class WealthEditBase : ComponentBase
     {
         [Inject]
-        public IPensionService PensionService { get; set; }
+        public IWealthService WealthService { get; set; }
 
         [Inject]
-        public IPensionDocumentService SupportingDocumentService { get; set; }
+        public IWealthDocumentService SupportingDocumentService { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -56,7 +56,7 @@ namespace BrokerIQ.Online.Pages
 
         public string SpinnerVisible { get; set; }
 
-        public Pension Pension { get; set; }
+        public Wealth Wealth { get; set; }
 
         protected string Message = string.Empty;
 
@@ -78,26 +78,26 @@ namespace BrokerIQ.Online.Pages
         public int BrokerListId = 1;
 
         [Parameter]
-        public string PensionId { get; set; }
+        public string WealthId { get; set; }
 
         [Parameter]
         public string CustomerId { get; set; }
 
-        protected int pensionId;
+        protected int wealthId;
 
         protected int customerId;
 
         public bool SendNotification { get; set; } = true;
 
-        protected string FormId = "PensionForm";
+        protected string FormId = "WealthForm";
 
         protected string HoverClass;
 
-        public PensionEditBase()
+        public WealthEditBase()
         {
-            Pension = new Pension()
+            Wealth = new Wealth()
             {
-                SupportingDocuments = new List<PensionDocument>()
+                SupportingDocuments = new List<WealthDocument>()
             };
         }
 
@@ -114,7 +114,7 @@ namespace BrokerIQ.Online.Pages
             customerId = Int32.Parse(CustomerId);
             Customer = await CustomerService.GetCustomer(customerId);
 
-            pensionId = Int32.Parse(PensionId);
+            wealthId = Int32.Parse(WealthId);
 
             var user = await AccountService.GetUser();
             IsAdmin = user.IsAdmin;
@@ -152,15 +152,15 @@ namespace BrokerIQ.Online.Pages
 
             try
             {
-                if (pensionId > 0)
+                if (wealthId > 0)
                 {
-                    Pension = (await PensionService.Get(pensionId));
+                    Wealth = (await WealthService.Get(wealthId));
                 }
             }
             catch
             {
                 StatusClass = "alert-danger";
-                Message = "Something went wrong getting Pension details";
+                Message = "Something went wrong getting Wealth details";
                 Saved = true;
             }
 
@@ -174,22 +174,22 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task HandleValidSubmit()
         {
-            if (Pension.Id == 0)
+            if (Wealth.Id == 0)
             {
-                Pension.CustomerId = Customer.Id;
+                Wealth.CustomerId = Customer.Id;
 
                 var dialogParams = new DialogParameters();
                 if (Customer.EmailConfirmed && SendNotification == true)
                 {
-                    dialogParams.Add("Message", $"Pension will be added and a notification will be sent to {Customer.Name} about this new Pension.");
+                    dialogParams.Add("Message", $"Wealth will be added and a notification will be sent to {Customer.Name} about this new Wealth.");
                 }
                 else if (!Customer.EmailConfirmed)
                 {
-                    dialogParams.Add("Message", $"Pension will be added however a notification will be NOT be sent to {Customer.Name} about this new Pension as their email address is not confirmed");
+                    dialogParams.Add("Message", $"Wealth will be added however a notification will be NOT be sent to {Customer.Name} about this new Wealth as their email address is not confirmed");
                 }
                 else
                 {
-                    dialogParams.Add("Message", $"Pension will be added however a notification will be NOT be sent to {Customer.Name}.");
+                    dialogParams.Add("Message", $"Wealth will be added however a notification will be NOT be sent to {Customer.Name}.");
                 }
 
                 var fileNamesAndMemoryStreams = new List<(string, MemoryStream)>();
@@ -210,7 +210,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     dialogParams.Add("Filenames", fileNamesAndMemoryStreams.Select(x => x.Item1).ToList());
                     dialogParams.Add("MemoryStreams", fileNamesAndMemoryStreams.Select(x => x.Item2).ToList());
-                    var result = await DialogService.Show<FilesConfirmDialog>("Pension Add", dialogParams).Result;
+                    var result = await DialogService.Show<FilesConfirmDialog>("Wealth Add", dialogParams).Result;
                     agreed = !result.Canceled;
                     if (agreed)
                     {
@@ -222,7 +222,7 @@ namespace BrokerIQ.Online.Pages
                 }
                 else
                 {
-                    var result = await DialogService.Show<ConfirmCancelDialog>("Pension Add", dialogParams).Result;
+                    var result = await DialogService.Show<ConfirmCancelDialog>("Wealth Add", dialogParams).Result;
                     agreed = !result.Canceled;
                 }
 
@@ -230,12 +230,12 @@ namespace BrokerIQ.Online.Pages
                 {
                     try
                     {
-                        await PensionService.Add(Pension, IsAdmin ? this.BrokerListId : Customer.ChosenBrokerId, fileNamesAndBytes);
+                        await WealthService.Add(Wealth, IsAdmin ? this.BrokerListId : Customer.ChosenBrokerId, fileNamesAndBytes);
                     }
                     catch
                     {
                         StatusClass = "alert-danger";
-                        Message = "Something went wrong adding the new Pension. Please try again.";
+                        Message = "Something went wrong adding the new Wealth. Please try again.";
                         Saved = true;
                         return;
                     }
@@ -253,7 +253,7 @@ namespace BrokerIQ.Online.Pages
                     }
 
                     StatusClass = "alert-success";
-                    Message = "New Pension added successfully.";
+                    Message = "New Wealth added successfully.";
                     Saved = true;
                 }
             }
@@ -261,37 +261,37 @@ namespace BrokerIQ.Online.Pages
             {
                 try
                 {
-                    await PensionService.Update(Pension);
+                    await WealthService.Update(Wealth);
                 }
                 catch
                 {
                     StatusClass = "alert-danger";
-                    Message = "Something went wrong updating the Pension. Please try again.";
+                    Message = "Something went wrong updating the Wealth. Please try again.";
                     Saved = true;
                     return;
                 }
 
                 StatusClass = "alert-success";
-                Message = "Pension updated successfully.";
+                Message = "Wealth updated successfully.";
                 Saved = true;
             }
         }
 
-        protected async Task DeletePension()
+        protected async Task DeleteWealth()
         {
             var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", "Are you sure you want to delete this pension?");
+            dialogParams.Add("Message", "Are you sure you want to delete this wealth?");
             var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
             if (!result.Canceled)
             {
                 try
                 {
-                    await PensionService.Delete(Pension.Id);
+                    await WealthService.Delete(Wealth.Id);
                 }
                 catch
                 {
                     StatusClass = "alert-danger";
-                    Message = "Something went wrong deleting the Pension. Please try again.";
+                    Message = "Something went wrong deleting the Wealth. Please try again.";
                     Saved = true;
                     return;
                 }
@@ -307,9 +307,9 @@ namespace BrokerIQ.Online.Pages
             NavigationManager.NavigateTo($"/clientdetail/{CustomerId}");
         }
 
-        private string GetMessagePensionAdded(string customerName, string brokerName, string PensionName)
+        private string GetMessageWealthAdded(string customerName, string brokerName, string WealthName)
         {
-            var messageToSend = $"{customerName}, your broker {brokerName} has added a new {PensionName} Pension to your app.";
+            var messageToSend = $"{customerName}, your broker {brokerName} has added a new {WealthName} Wealth to your app.";
             return messageToSend;
         }
 
@@ -317,7 +317,7 @@ namespace BrokerIQ.Online.Pages
         {
             var brokerId = 0;
             var brokerName = "";
-            var PensionName = ""
+            var WealthName = ""
 ;
             if (IsAdmin)
             {
@@ -333,11 +333,11 @@ namespace BrokerIQ.Online.Pages
             var messageToSend = "";
             if (upload)
             {
-                messageToSend = GetMessageDocumentUploaded(customer.FirstName, brokerName, PensionName);
+                messageToSend = GetMessageDocumentUploaded(customer.FirstName, brokerName, WealthName);
             }
             else
             {
-                messageToSend = GetMessagePensionAdded(customer.FirstName, brokerName, PensionName);
+                messageToSend = GetMessageWealthAdded(customer.FirstName, brokerName, WealthName);
             }
 
             try
@@ -350,22 +350,22 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        private string GetMessageDocumentUploaded(string customerName, string brokerName, string PensionName)
+        private string GetMessageDocumentUploaded(string customerName, string brokerName, string WealthName)
         {
-            var messageToSend = $"{customerName}, your broker {brokerName} has added new Pension documents to your app.";
+            var messageToSend = $"{customerName}, your broker {brokerName} has added new Wealth documents to your app.";
             return messageToSend;
         }
 
-        protected async Task DeletePensionFile(Guid id)
+        protected async Task DeleteWealthFile(Guid id)
         {
             try
             {
                 var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", "Are you sure you want to delete this Pension document?");
+                dialogParams.Add("Message", "Are you sure you want to delete this Wealth document?");
                 var result = await DialogService.Show<ConfirmCancelDialog>("Warning", dialogParams).Result;
                 if (!result.Canceled)
                 {
-                    await SupportingDocumentService.DeletePensionFile(id);
+                    await SupportingDocumentService.DeleteWealthFile(id);
                     StatusClass = "alert-success";
                     Message = "Deleted successfully";
                     Saved = true;
@@ -375,7 +375,7 @@ namespace BrokerIQ.Online.Pages
             catch
             {
                 StatusClass = "alert-danger";
-                Message = "Something went wrong deleting the Pension file. Please try again.";
+                Message = "Something went wrong deleting the Wealth file. Please try again.";
                 Saved = false;
                 return;
             }
@@ -388,7 +388,7 @@ namespace BrokerIQ.Online.Pages
         protected async Task LoadFiles(InputFileChangeEventArgs e)
         {
             bool success = true;
-            var alreadyUploaded = Pension.SupportingDocuments.Count();
+            var alreadyUploaded = Wealth.SupportingDocuments.Count();
             var remainingFiles = fileUploadSettings.MaxAllowedFiles - alreadyUploaded;
             if (e.FileCount > remainingFiles)
             {
@@ -418,16 +418,16 @@ namespace BrokerIQ.Online.Pages
             }
             if (success)
             {
-                if (Pension.Id > 0)
+                if (Wealth.Id > 0)
                 {
                     await UploadFiles();
                 }
                 else
                 {
-                    Pension.SupportingDocuments.Clear();
+                    Wealth.SupportingDocuments.Clear();
                     foreach (var file in LoadedFiles)
                     {
-                        Pension.SupportingDocuments.Add(new PensionDocument
+                        Wealth.SupportingDocuments.Add(new WealthDocument
                         {
                             FileName = file.Item1.Name,
                             SupportingDocumentType = DocumentTypeEnum.PDF
@@ -490,7 +490,7 @@ namespace BrokerIQ.Online.Pages
                         {
                             if (fileNames.Count() > i)
                             {
-                                await UploadPensionFile(fileNames[i], memoryStreams[i].ToArray());
+                                await UploadWealthFile(fileNames[i], memoryStreams[i].ToArray());
                             }
                             LoadFileStatus = $"Finished loading {i + 1} of {memoryStreams.Count} : {fileNames[i]}";
                         }
@@ -510,19 +510,19 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        protected async Task UploadPensionFile(string filename, byte[] dataBytes)
+        protected async Task UploadWealthFile(string filename, byte[] dataBytes)
         {
-            if (pensionId == 0)
+            if (wealthId == 0)
             {
                 StatusClass = "alert-danger";
-                Message = "Save Pension details before uploading document";
+                Message = "Save Wealth details before uploading document";
                 Saved = true;
                 return;
             }
 
-            var sdoc = new PensionDocument()
+            var sdoc = new WealthDocument()
             {
-                PensionId = this.pensionId,
+                WealthId = this.wealthId,
                 FileName = filename,
                 SupportingDocumentType = DocumentTypeEnum.PDF,
                 File = dataBytes
@@ -531,8 +531,8 @@ namespace BrokerIQ.Online.Pages
             bool succeeded = false;
             try
             {
-                await PensionService.Update(Pension);
-                succeeded = await SupportingDocumentService.UploadPensionFile(sdoc);
+                await WealthService.Update(Wealth);
+                succeeded = await SupportingDocumentService.UploadWealthFile(sdoc);
             }
             catch
             {
@@ -547,7 +547,7 @@ namespace BrokerIQ.Online.Pages
             else
             {
                 StatusClass = "alert-danger";
-                Message = "Something went wrong adding the new Pension Document. Please try again.";
+                Message = "Something went wrong adding the new Wealth Document. Please try again.";
             }
 
             Saved = true;
