@@ -1,0 +1,42 @@
+@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+@using BrokerIQ.Online.Server.Components
+
+<div class="mb-2">
+    <MudButton StartIcon="@Icons.Material.Filled.PostAdd" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
+               OnClick=@(r => EditGoal(new Dto.Models.GoalDto()))>Add Goal </MudButton>
+</div>
+<MudTable Items="@Goals" Dense="true">
+    <NoRecordsContent>
+        <MudText>No goals have been defined.</MudText>
+    </NoRecordsContent>
+    <HeaderContent>
+        <MudTh>Description</MudTh>
+        <MudTh>Requires Info</MudTh>
+        <MudTh></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Description</MudTd>
+        <MudTd>
+            @if (context.RequiresAdditionalInfo)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.NoteAdd" Title="Requires information" />
+            }
+        </MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small"
+                           OnClick=@(r => EditGoal(context))>
+            </MudIconButton>
+        </MudTd>
+        <MudTd>
+            @{
+                var tooltip = context.IsInUse ? "Cannot delete, still in use" : "Delete";
+                <MudTooltip Text="@tooltip">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Disabled="@context.IsInUse"
+                                   OnClick=@(r => RemoveGoal(context)) />
+                </MudTooltip>
+            }
+        </MudTd>
+    </RowTemplate>
+</MudTable>

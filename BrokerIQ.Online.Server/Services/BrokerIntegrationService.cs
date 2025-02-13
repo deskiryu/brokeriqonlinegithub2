@@ -11,11 +11,12 @@ using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services;
 
-public class BrokerIntegrationService : BrokerIQService, IBrokerIntegrationService
+public class BrokerIntegrationService : BIQService, IBrokerIntegrationService
 {
     private readonly string API_CONTROLLER = "BrokerIntegration";
 
-    public BrokerIntegrationService(IAccountService accountService, IRequestProviderService requestProviderService) : base(accountService, requestProviderService)
+    public BrokerIntegrationService(IAccountService accountService, IRequestProviderService requestProviderService)
+            : base(accountService, requestProviderService)
     {
     }
 
@@ -25,7 +26,7 @@ public class BrokerIntegrationService : BrokerIQService, IBrokerIntegrationServi
 
         try
         {
-            var integrations = await requestProviderService.Get<IEnumerable<BrokerIntegrationDto>>($"{API_CONTROLLER}/broker/{brokerId}");
+            var integrations = await _requestProviderService.Get<IEnumerable<BrokerIntegrationDto>>($"{API_CONTROLLER}/broker/{brokerId}");
             return integrations;
         }
         catch (Exception ex)
@@ -42,7 +43,7 @@ public class BrokerIntegrationService : BrokerIQService, IBrokerIntegrationServi
 
         try
         {
-            var addedIntegration = await requestProviderService.Post<int, BrokerIntegrationDto>($"{API_CONTROLLER}/broker/{brokerId}", (int)integration);
+            var addedIntegration = await _requestProviderService.Post<int, BrokerIntegrationDto>($"{API_CONTROLLER}/broker/{brokerId}", (int)integration);
 
             if (addedIntegration != null) return true;
         }
@@ -60,7 +61,7 @@ public class BrokerIntegrationService : BrokerIQService, IBrokerIntegrationServi
 
         try
         {
-            return await requestProviderService.Delete($"{API_CONTROLLER}/broker/{brokerId}/integration/{(int)integration}");
+            return await _requestProviderService.Delete($"{API_CONTROLLER}/broker/{brokerId}/integration/{(int)integration}");
         }
         catch (Exception ex)
         {

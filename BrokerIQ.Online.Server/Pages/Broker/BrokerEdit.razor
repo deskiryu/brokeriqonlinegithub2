@@ -99,6 +99,13 @@
                                 </div>
 
                                 <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Is Demo Broker</label>
+                                    <div class="col-sm-8">
+                                        <MudCheckBox @bind-Checked="@Broker.IsDemoBroker" Style="margin-left: -15px" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Two Factor Type</label>
                                     <MudRadioGroup class="col-sm-4" @bind-SelectedOption="@Broker.TwoFactorType">
                                         <MudRadio Option="@TwoFactorEnum.Email">Email</MudRadio>
@@ -184,7 +191,7 @@
                 @if (Broker is not null && CurrentUser.IsAdmin)
                 {
                     <MudTabPanel Text="Services">
-                        <ServicesStack Broker="@Broker"/> 
+                        <ServicesStack Broker="@Broker" />
                     </MudTabPanel>
                 }
 
@@ -198,10 +205,10 @@
                 @if (Broker is not null && Broker.Subscriptions is not null)
                 {
                     @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s =>
-               s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
-               s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
-               s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
-               IsCreatingWhiteLabel))
+                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
+                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
+                        s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
+                        IsCreatingWhiteLabel))
                     {
                         <MudTabPanel Text="Identifier">
                             <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
@@ -593,6 +600,17 @@
                                     </div>
                                 </div>
 
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Use Firebase for iOS Notifications</label>
+                                            <div class="col-sm-2">
+                                                <MudCheckBox @bind-Checked="@Broker.BrokerIdentifier.UseFirebaseForIOS" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-lg-2 mt-1">Cancel</MudButton>
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Save</MudButton>
                             </EditForm>
@@ -603,10 +621,15 @@
 
             @if (CurrentUser.IsAdmin)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mt-1" @onclick="DeleteBroker">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn mt-1" @onclick="RevokeAccessTokens">
+                    Revoke Access Tokens
+                </MudButton>
+
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="btn btn-primary table-btn ml-lg-2 mt-1" @onclick="DeleteBroker">
                     Delete Broker
                 </MudButton>
             }
+
             @if ((CurrentUser.IsAdmin || CurrentUser.IsMinorAdmin))
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" class="ml-lg-2 mt-1" @onclick="ResendEmailBroker">

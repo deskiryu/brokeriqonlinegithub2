@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Components;
 
 namespace BrokerIQ.Online.Server.Pages.Customer.Components
 {
-    public partial class CustomerPensionTable : ComponentBase
+    public partial class CustomerWealthTable : ComponentBase
 	{
         [Inject]
-        public IPensionService PensionService { get; set; }
+        public IWealthService WealthService { get; set; }
 
         [Parameter]
         public Online.Models.User User { get; set; }
@@ -18,19 +18,22 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         public Online.Models.Customer Customer { get; set; }
 
         [Parameter]
+        public int BrokerId { get; set; }
+
+        [Parameter]
         public IEnumerable<Online.Models.Broker> Brokers { get; set; }
 
         [Parameter]
-        public IEnumerable<Online.Models.Pension> Pensions { get; set; }
+        public IEnumerable<Online.Models.Wealth> WealthRecords { get; set; }
 
-        public CustomerPensionTable()
+        public CustomerWealthTable()
         {
-            Pensions = Array.Empty<Online.Models.Pension>();
+            WealthRecords = Array.Empty<Online.Models.Wealth>();
         }
 
         protected override async Task OnInitializedAsync()
         {
-            Pensions = await PensionService.GetForCustomer(Customer.Id);
+            WealthRecords = await WealthService.GetForCustomer(Customer.Id);
         }
     }
 }

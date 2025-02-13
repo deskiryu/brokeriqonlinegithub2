@@ -19,5 +19,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<bool> DeleteMortgage(int id);
 
         Task<Mortgage> AddMortgage(Mortgage ins, List<(string, byte[])> documents);
+
+        Task<MortgageFromDocumentDto> GetFromFile(DocumentDto dto);
     }
 }

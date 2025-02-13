@@ -43,6 +43,8 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IBrokerService BrokerService { get; set; }
 
+        public Broker Broker { get; set; }
+
         public Customer Customer { get; set; }
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
@@ -85,11 +87,11 @@ namespace BrokerIQ.Online.Pages
 
                 SelectedOccupation = await OccupationService.GetById(Customer.OccupationId);
 
-                var broker = await BrokerService.GetBroker(Customer.ChosenBrokerId);
+                Broker = await BrokerService.GetBroker(Customer.ChosenBrokerId);
 
-                WealthTypes = await WealthTypeService.GetAllForBroker(broker.Id);
+                WealthTypes = await WealthTypeService.GetAllForBroker(Broker.Id);
 
-                if (broker.BrokerIdentifier.InsuranceOnly)
+                if (Broker.BrokerIdentifier.InsuranceOnly)
                 {
                     CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
                 }

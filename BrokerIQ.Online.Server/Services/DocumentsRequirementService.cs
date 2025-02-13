@@ -1,47 +1,38 @@
 ﻿using System.Collections.Generic;
-
 using System.Threading.Tasks;
-
 using AutoMapper;
-
 using BrokerIQ.Dto;
-using BrokerIQ.Online.Services.Abstract;
-
 using BrokerIQ.Dto.CreateDto;
-using BrokerIQ.Online.Services.Interface;
-
 using BrokerIQ.Online.Server.Models;
+using BrokerIQ.Online.Server.Services.Base;
+using BrokerIQ.Online.Services.Abstract;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services
 {
-    public class DocumentsRequirementService : IDocumentsRequirementService
+    public class DocumentsRequirementService : BIQService , IDocumentsRequirementService
     {
         private readonly string DocumentsRequirementUrl = "DocumentsRequirement";
-        private readonly IRequestProviderService requestProviderService;
-        private readonly IAccountService accountService;
         private readonly IMapper mapper;
 
         public DocumentsRequirementService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService)
+            :base(accountService, requestProviderService)
         {
             this.mapper = mapper;
-            this.requestProviderService = requestProviderService;
-            this.accountService = accountService;
         }
 
         public async Task<DocumentsRequirement> Get(int customerId)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var brokerId = user.MasterBrokerId;
-            var answer = await this.requestProviderService.Get<DocumentsRequirementDto>(this.DocumentsRequirementUrl + $"/{customerId}/{brokerId}");
+            var brokerId = await GetCurrentBrokerId();
+
+            var answer = await this._requestProviderService.Get<DocumentsRequirementDto>(this.DocumentsRequirementUrl + $"/{customerId}/{brokerId}");
             return this.mapper.Map<DocumentsRequirement>(answer);
         }
 
         public async Task<DocumentsRequirement> Create(int customerId, ICollection<CreateDocumentsCheckDto> documentChecks)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            var brokerId = user.MasterBrokerId;
+            var brokerId = await GetCurrentBrokerId();
+
             var createDocumentsRequirementDto = new CreateDocumentsRequirementDto
             {
                 BrokerId = brokerId,
@@ -49,30 +40,25 @@ namespace BrokerIQ.Online.Services
                 DocumentChecks = documentChecks
             };
 
-            var answer = await requestProviderService.Post<CreateDocumentsRequirementDto, DocumentsRequirementDto>(this.DocumentsRequirementUrl, createDocumentsRequirementDto);
+            var answer = await _requestProviderService.Post<CreateDocumentsRequirementDto, DocumentsRequirementDto>(this.DocumentsRequirementUrl, createDocumentsRequirementDto);
             return this.mapper.Map<DocumentsRequirement>(answer);
         }
 
         public async Task<DocumentsRequirement> Update(int documentRequirementId, IEnumerable<DocumentsCheckDto> documentChecks)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-
             var updateDocumentsRequirementDto = new UpdateDocumentsRequirementChecksDto
             {
                 DocumentsRequirementId = documentRequirementId,
                 DocumentChecks = documentChecks
             };
 
-            var answer = await requestProviderService.Post<UpdateDocumentsRequirementChecksDto, DocumentsRequirementDto>($"{this.DocumentsRequirementUrl}/{documentRequirementId}", updateDocumentsRequirementDto);
+            var answer = await _requestProviderService.Post<UpdateDocumentsRequirementChecksDto, DocumentsRequirementDto>($"{this.DocumentsRequirementUrl}/{documentRequirementId}", updateDocumentsRequirementDto);
             return this.mapper.Map<DocumentsRequirement>(answer);
         }
 
         public async Task<bool> Delete(int id)
         {
-            var user = await this.accountService.GetUser();
-            this.requestProviderService.Token = user?.Token;
-            return await this.requestProviderService.Delete(this.DocumentsRequirementUrl, id);
+            return await this._requestProviderService.Delete(this.DocumentsRequirementUrl, id);
         }
     }
 }

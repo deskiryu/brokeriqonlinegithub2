@@ -48,7 +48,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             var result = await DialogService.Show<ConfirmationDialog>("Delete", parameters, dialogOptions).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 await WealthTypeService.Delete(wealthType);
             }

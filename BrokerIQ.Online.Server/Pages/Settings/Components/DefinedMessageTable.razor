@@ -1,13 +1,12 @@
-@using BrokerIQ.Dto.Enum 
-@using BrokerIQ.Online.Server.Extensions 
+@using BrokerIQ.Online.Server.Extensions
 
 @inject IJSRuntime js
 
 <div class="mb-2 ml-1 row">
     <MudButton StartIcon="@Icons.Material.Filled.AddBox" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
-            Disabled="@MaxTemplatesReached"
-            OnClick=@(r=> EditDefinedMessage(new Dto.Models.BrokerDefinedMessageDto()))>
-        Add defined message 
+               Disabled="@MaxTemplatesReached"
+               OnClick=@(r=> EditDefinedMessage(new Dto.Models.BrokerDefinedMessageDto()))>
+        Add defined message
     </MudButton>
     <MudProgressLinear Color="Color.Error" Indeterminate="true" style="@SpinnerVisible" />
 </div>
@@ -52,7 +51,8 @@
                 }
             </MudTd>
             <MudTd>
-                @if (!string.IsNullOrWhiteSpace(context.FileName)){
+                @if (!string.IsNullOrWhiteSpace(context.FileName))
+                {
                     <MudIconButton Icon="@Icons.Material.Filled.FilePresent" Color="Color.Secondary" OnClick=@(r => PreviewAttachment(context.File))></MudIconButton>
                 }
             </MudTd>

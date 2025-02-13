@@ -22,20 +22,18 @@
 
         public bool ShowClientPhoneColumn { get; set; }
 
-        public bool CanLoadInsuranceFromFile { get; set; }
-
         public bool CalendlyAvailable { get; set; }
 
         public bool ShowConnectToCustomer { get; set; }
 
         public bool IsYAHTheme { get; set; }
 
-        public bool ShowWealth { get; set; }
-
         public bool FixedHeader { get; set; }
 
         public bool FixedFooter { get; set; }
 
         public string ScrollHeight { get; set; }
+
+        public bool ShowWealth { get; set; }
     }
 }
