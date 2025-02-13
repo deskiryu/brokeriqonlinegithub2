@@ -1,18 +1,13 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Components;
-
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Components;
 using BrokerIQ.Online.Services.Interface;
-
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using System;
-using AutoMapper.Configuration.Conventions;
-using System.Linq;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -111,39 +106,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             await ReloadDefinedMessages();
         }
 
-        private async Task SaveDefinedMessage(BrokerDefinedMessageDto template)
-        {
-            bool wasSuccessfull;
-
-            if (template.Id == 0)
-            {
-                var newTemplate = new CreateBrokerDefinedMessageDto()
-                {
-                    BrokerId = template.BrokerId,
-                    Prompt = template.Prompt,
-                    Message = template.Message,
-                    FileName = template.FileName,
-                    File = template.File,
-                    WelcomeChat = template.WelcomeChat
-                };
-
-                wasSuccessfull = await BrokerDefinedMessageService.Create(newTemplate);
-            }
-            else
-            {
-                wasSuccessfull = await BrokerDefinedMessageService.Update(template);
-            }
-
-            if (wasSuccessfull)
-            {
-                Snackbar.Add("Defined message saved successfully", Severity.Success);
-            }
-            else
-            {
-                Snackbar.Add("Unable to save defined message. Please try again.", Severity.Error);
-            }
-        }
-
         private async Task ReloadDefinedMessages()
         {
             await RefreshMessages();
@@ -170,10 +132,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             if (!result.Canceled)
             {
-                await SaveDefinedMessage(template);
+                await ReloadDefinedMessages();
             }
-
-            await ReloadDefinedMessages();
         }
 
         private string FormatTemplateForDisplay(string template)

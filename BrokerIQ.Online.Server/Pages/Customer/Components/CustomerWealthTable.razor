@@ -1,0 +1,43 @@
+﻿@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+ 
+<table class="table col-sm-12 table-striped ">
+    <thead>
+        <tr>
+            <th>Provider</th>
+            <th>Policy</th>
+            <th>Product Type</th>
+            <th>Investment Date</th>
+            @if (User.IsAdmin)
+            {
+                <th>Broker</th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var wealth in WealthRecords)
+        {
+            var currentDate = DateTime.UtcNow;
+
+            var rowClass = String.Empty;
+
+            <tr class="@rowClass">
+                <td>@wealth.ProviderName</td>
+                <td>@wealth.PolicyNumber</td>
+                <td>@(((WealthProductType)wealth.WealthProductType).GetDisplayName())</td>
+                <td>@(wealth.AmountInvestedOn.HasValue ? wealth.AmountInvestedOn.Value.ToBiqDateString() : string.Empty)</td>
+
+                @if (User.IsAdmin)
+                {
+                    <td>@Brokers.First(x => x.Id == Customer.ChosenBrokerId)?.Name</td>
+                }
+                <td>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"wealthedit/{wealth.Id}/{Customer.Id}")" class="btn btn-primary table-btn">
+                        <i class="fas fa-edit"></i>
+                    </MudButton>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

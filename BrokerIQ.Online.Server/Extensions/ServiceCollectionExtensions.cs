@@ -25,7 +25,6 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<IDocumentsRequirementService, DocumentsRequirementService>();
             services.AddScoped<IBrokerDefinedMessageService, BrokerDefinedMessageService>();
             services.AddScoped<IAlertService, AlertService>();
-            services.AddScoped<ILocalStorageService, LocalStorageService>();
             services.AddScoped<IVideoService, VideoService>();
             services.AddScoped<IAudioService, AudioService>();
             services.AddScoped<IAudioRecordingService, AudioRecordingService>();
@@ -57,13 +56,16 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<ICalendlyService, CalendlyService>();
             services.AddScoped<ICustomerAppointmentService, CustomerAppointmentService>();
             services.AddScoped<IDocumentVaultTypeService, DocumentVaultTypeService>();
-            services.AddScoped<IPensionService, PensionService>();
-            services.AddScoped<IPensionDocumentService, PensionDocumentService>();
+            services.AddScoped<IWealthService, WealthService>();
+            services.AddScoped<IWealthDocumentService, WealthDocumentService>();
             services.AddScoped<IWealthTypeService, WealthTypeService>();
+            services.AddScoped<IGoalService, GoalService>();
+            services.AddScoped<ICustomerGoalService, CustomerGoalService>();
 
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
             services.AddScoped<MessageCountState>();
+            services.AddScoped<CookieService>();
 
             return services;
         }

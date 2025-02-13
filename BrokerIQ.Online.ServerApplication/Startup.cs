@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
 using BrokerIQ.Online.Server.Extensions;
+using Microsoft.Extensions.Primitives;
 
 namespace BrokerIQ.Online.ServerApplication
 {
@@ -107,6 +108,14 @@ namespace BrokerIQ.Online.ServerApplication
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+
+                app.Use(async (context, next) =>
+                            {
+                                context.Response.Headers.Add("Content-Security-Policy", new StringValues("default-src 'self'; script-src 'self'; script-src 'https://code.jquery.com/'; script-src 'https://cdn.jsdelivr.net/'; script-src 'https://assets.calendly.com/'; style-src 'https://assets.calendly.com/'; script-src 'https://cdnjs.cloudflare.com/'; script-src 'https://cdn.jsdelivr.net/' style-src 'https://cdn.jsdelivr.net/'; script-src 'https://fonts.googleapis.com/'"));
+                                context.Response.Headers.Add("X-Content-Type-Options", new StringValues("nosniff"));
+                                context.Response.Headers.Add("X-XSS-Protection", new StringValues("1; mode=block"));
+                                await next();
+                            });
             }
 
             app.UseHttpsRedirection();
@@ -123,6 +132,7 @@ namespace BrokerIQ.Online.ServerApplication
                     name: "default",
                     pattern: "{controller}/{action}");
             });
+
         }
     }
 }

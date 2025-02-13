@@ -1,0 +1,39 @@
+﻿@using BrokerIQ.Dto.Models;
+@using BrokerIQ.Online.Server.Extensions
+
+<MudTable Items="CustomerGoals" Dense="true" Striped="true">
+    <HeaderContent>
+        <MudTh>Customer Goal</MudTh>
+        <MudTh>Start Date</MudTh>
+        <MudTh>Next Review Date</MudTh>
+        <MudTh>End Date</MudTh>
+        <MudTh></MudTh>
+        <MudTh>
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"
+                              Style="@($"color:{Colors.Shades.Black};")"
+                       OnClick=@(r => EditCustomerGoal(new CustomerGoalDto() {
+                                     StartDate = DateTime.UtcNow,
+                                     NextReviewDate = DateTime.UtcNow.AddYears(10),
+                                     EndDate = DateTime.UtcNow.AddYears(20),
+                                 })) />
+        </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@GoalDescriptionFor(context)</MudTd>
+        <MudTd>@context.StartDate.ToBiqDateString()</MudTd>
+        <MudTd>@context.NextReviewDate.ToBiqDateString()</MudTd>
+        <MudTd>@context.EndDate.ToBiqDateString()</MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small"
+                           OnClick=@(r => EditCustomerGoal(context))>
+            </MudIconButton>
+        </MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
+                           OnClick=@(r => RemoveCustomerGoal(context)) />
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText Typo="Typo.body2">Customer has no goals set</MudText>
+    </NoRecordsContent>
+</MudTable>
