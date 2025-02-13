@@ -81,17 +81,17 @@
                     </div>
 
                     <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Next Review</label>
-                        <div class="col-sm-5">
-                            <MudDatePicker @bind-Date="@Wealth.NextReview" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))" />
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Amount Invested On</label>
 
                         <div class="col-sm-5">
                             <MudDatePicker @bind-Date="@Wealth.AmountInvestedOn" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Next Review</label>
+                        <div class="col-sm-5">
+                            <MudDatePicker @bind-Date="@Wealth.NextReview" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))" />
                         </div>
                     </div>
 
