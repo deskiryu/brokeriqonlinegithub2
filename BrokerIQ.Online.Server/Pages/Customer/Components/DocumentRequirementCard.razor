@@ -1,0 +1,29 @@
+﻿@if (DocumentsRequirement != null)
+{
+    <h6 style="padding: 5px;">Client Documents Required</h6>
+
+    <MudTable Style="padding-bottom: 5px;" Items="@DocumentsRequirement.DocumentChecks">
+        <HeaderContent>
+            <MudTh>Document Type</MudTh>
+            <MudTh>Uploaded</MudTh>
+            <MudTh>Required</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Type">@DocumentTypeValues.FirstOrDefault(t => t.Id == context.DocuVaultType).Name</MudTd>
+            <MudTd DataLabel="Received">@context.TotalCount</MudTd>
+            <MudTd DataLabel="Required">@context.RequiredCount</MudTd>
+        </RowTemplate>
+    </MudTable>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center mt-1">Clear</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(() => EditDocumentRequirements())" class="btn btn-secondary text-center mr-1 mt-1">Edit</MudButton>
+}
+else
+{
+    <h6 style="padding: 5px;">Select Client Document Requirements</h6>
+
+    @foreach (var type in DocumentTypeValues)
+    {
+        <MudNumericField @bind-Value="@RequestedDocuments[type.Id]" Label="@type.Name" Variant="Variant.Text" Min="0" />
+    }
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await SubmitDocumentRequirements())" class="btn btn-secondary text-center">Submit Requirements</MudButton>
+}
