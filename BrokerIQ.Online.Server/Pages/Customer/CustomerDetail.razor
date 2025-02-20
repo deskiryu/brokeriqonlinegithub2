@@ -249,34 +249,22 @@ else if (!Saved)
             </TabContent>
             <ChildContent>
                 <div class="row" @onclick="this.ResetUploadsBadge">
-                    <div class="col-sm-4" style="@CurrentRequirementsHidden">
-                        @if (DocumentsRequirement != null)
+                    <div class="col-sm-4">
+                        @if (Connection != null)
                         {
-                            <h6 style="padding-bottom: 5px;">Client Documents Required</h6>
-                            <MudTable Style="padding-bottom: 5px;" Items="@DocumentsRequirement.DocumentChecks">
-                                <HeaderContent>
-                                    <MudTh>Document Type</MudTh>
-                                    <MudTh>Uploaded</MudTh>
-                                    <MudTh>Required</MudTh>
-                                </HeaderContent>
-                                <RowTemplate>
-                                    <MudTd DataLabel="Type">@DocumentTypeValues.FirstOrDefault(t => t.Id == context.DocuVaultType).Name</MudTd>
-                                    <MudTd DataLabel="Received">@context.TotalCount</MudTd>
-                                    <MudTd DataLabel="Required">@context.RequiredCount</MudTd>
-                                </RowTemplate>
-                            </MudTable>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await DeleteDocumentRequirements())" class="btn btn-secondary text-center mt-1">Clear</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(() => EditDocumentRequirements())" class="btn btn-secondary text-center mr-1 mt-1">Edit</MudButton>
+                            <MudTabs>
+                                <MudTabPanel Text="@Customer.Name">
+                                    <DocumentRequirementCard Broker="@Broker" Customer="@Customer" OnRequirementsChange="@(async () => await UpdateChat(true))" />
+                                </MudTabPanel>
+                                <MudTabPanel Text="@Connection.Name">
+                                    <DocumentRequirementCard Broker="@Broker" Customer="@Connection" OnRequirementsChange="@(async () => await UpdateChat(true))" />
+                                </MudTabPanel>
+                            </MudTabs>
                         }
-                    </div>
-
-                    <div class="col-sm-4" style="@EditRequirementsHidden">
-                        <h6 style="padding-bottom: 5px;">Select Client Document Requirements</h6>
-                        @foreach (var type in DocumentTypeValues)
+                        else
                         {
-                            <MudNumericField @bind-Value="@RequestedDocuments[type.Id]" Label="@type.Name" Variant="Variant.Text" Min="0" />
+                            <DocumentRequirementCard Broker="@Broker" Customer="@Customer" OnRequirementsChange="@(async () => await UpdateChat(true))" />
                         }
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}; float: right;")" @onclick="(async () => await SubmitDocumentRequirements())" class="btn btn-secondary text-center">Submit Requirements</MudButton>
                     </div>
 
                     <div class="col-sm-8 border-left">
@@ -302,6 +290,10 @@ else if (!Saved)
                         </div>
                         <MudTable Items="@CustomerDocuments" Hover="true" SortLabel="Sort By" MultiSelection="true" @bind-SelectedItems="SelectedItemsCustomerDocuments">
                             <HeaderContent>
+                                @if (Connection != null)
+                                {
+                                    <MudTh>Customer</MudTh>
+                                }
                                 <MudTh>Document</MudTh>
                                 <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.CustomerDocument, object>(x=>x.CreatedDate)">Date</MudTableSortLabel></MudTh>
                                 <MudTh>Type</MudTh>
@@ -309,6 +301,10 @@ else if (!Saved)
                                 <MudTh></MudTh>
                             </HeaderContent>
                             <RowTemplate>
+                                @if (Connection != null)
+                                {
+                                    <MudTd>@(context.CustomerId == Connection.Id ? Connection.Name : Customer.Name)</MudTd>
+                                }
                                 <MudTd DataLabel="Document">@DocumentTypeValues.FirstOrDefault(t => t.Id == context.DocuVaultType)?.Name</MudTd>
                                 <MudTd DataLabel="Date">@context.CreatedDate.ToBiqDateTimeString()</MudTd>
                                 <MudTd DataLabel="Type">@context.TypeDesc</MudTd>
