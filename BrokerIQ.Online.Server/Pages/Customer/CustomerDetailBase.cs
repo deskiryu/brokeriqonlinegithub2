@@ -1083,7 +1083,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     // display broker defined message
                     template.Message = template.Message
-                        .Replace("INSERT_CLIENT_NAME", Customer.FirstName)
+                        .Replace("INSERT_CLIENT_NAME", Connection != null ? $"{Customer.FirstName} and {Connection.FirstName}" : Customer.FirstName)
                         .Replace("INSERT_BROKER_NAME", $"{Broker?.BrokerFirstName} {Broker?.BrokerLastName}")
                         .Replace("INSERT_COMPANY_NAME", Broker?.Name);
                 }
