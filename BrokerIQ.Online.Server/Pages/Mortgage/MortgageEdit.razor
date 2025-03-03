@@ -33,7 +33,7 @@
 
         <h4 class="page-title">Add or edit mortgage</h4>
 
-        @if (Broker != null && Broker.Subscriptions != null && Broker.Subscriptions.Any(s => s.SubscriptionServiceId != (int)SubscriptionServiceEnum.AIReader) && Mortgage.Id == 0)
+        @if (Broker != null && Broker.Subscriptions != null && Broker.Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.AIReader) && Mortgage.Id == 0)
         {
             <MudPaper Class="pa-3 ma-2 col-sm-6" Outlined="true">
                 <MudButton Variant="Variant.Filled" FullWidth="true" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@OpenAnalyzerDialog">Fill Details From File ...</MudButton>
