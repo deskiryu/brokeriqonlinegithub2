@@ -7,6 +7,7 @@ using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Import;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
@@ -38,6 +39,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         public IWealthTypeService WealthService { get; set; }
 
         [Inject]
+        public ICustomerWarningService CustomerWarningService { get; set; }
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -67,6 +71,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 
         protected WealthTypeDto WealthType { get; set; }
 
+        protected IEnumerable<CustomerWarningDto> Warnings { get; set; }
+
         protected bool HasConnection { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -76,30 +82,23 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             ImportDetails = await CustomerService.GetImportDetails(Customer.Id);
 
             WealthType = (await WealthService.GetAllForBroker(Broker.Id)).FirstOrDefault(w => w.Id == Customer.WealthTypeId);
+
+            Warnings = await CustomerWarningService.GetForCustomer(Customer.Id);
         }
 
         protected string GetNeedsContent()
         {
             if (!Customer.HasNeeds) return string.Empty;
 
-            var currentDate = DateTime.UtcNow;
-
-            var hasIncomeProtection = Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Income && i.ExpiryDate > currentDate);
-            var hasLifeAndIllness = Customer.Insurances.Any(i => i.InsType == InsuranceEnum.Illness && i.ExpiryDate > currentDate);
-
-            if (Customer.Employment == EmploymentEnum.SelfEmployed)
+            var result = string.Empty;
+            foreach (var warning in Warnings)
             {
-                if (!hasIncomeProtection && !hasLifeAndIllness) return "Customer is self employed, but has neither Income Protection nor Life and Illness cover.";
-                if (!hasIncomeProtection) return "Customer is self employed, but does not have Income Protection cover.";
-                if (!hasLifeAndIllness) return "Customer is self employed, but does not have Life and Illness cover.";
+                if (!string.IsNullOrWhiteSpace(result)) result += "<BR>";
+
+                result += warning.WarningTypeId.GetDisplayName();
             }
 
-            if (Customer.Employment == EmploymentEnum.Employed)
-            {
-                return "Customer is employed, but does not have Life and Illness cover.";
-            }
-
-            return string.Empty;
+            return result;
         }
 
         protected async Task DeleteCustomer()
