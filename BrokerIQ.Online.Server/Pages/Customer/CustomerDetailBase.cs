@@ -1313,13 +1313,11 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        public async Task OnCustomerConnectionChange()
+        public async Task OnCustomerChange()
         {
             Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
 
             Connection = await CustomerService.GetConnection(Customer.Id);
-
-            Tabs.ActivatePanel(0);
 
             StateHasChanged();
         }

@@ -14,7 +14,7 @@
             @if (Customer.HasNeeds)
             {
                 <div class="col-12 mb-1">
-                    <MudAlert Severity="Severity.Warning" ContentAlignment="HorizontalAlignment.Center">@GetNeedsContent()</MudAlert>
+                    <MudAlert Severity="Severity.Warning" ContentAlignment="HorizontalAlignment.Center">@((MarkupString)GetNeedsContent())</MudAlert>
                 </div>
             }
             <div class="col-lg-2">

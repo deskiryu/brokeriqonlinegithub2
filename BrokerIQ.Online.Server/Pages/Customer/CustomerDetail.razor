@@ -63,7 +63,7 @@ else if (!Saved)
                         </div>
                     </div>
                 </div>
-                <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Customer" IsAlreadyConnected="@(Connection != null)" OnCustomerConnectionChange="@(async () => await OnCustomerConnectionChange())" />
+                <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Customer" IsAlreadyConnected="@(Connection != null)" OnCustomerConnectionChange="@(async () => await OnCustomerChange())" />
             </ChildContent>
         </MudTabPanel>
 
@@ -229,7 +229,7 @@ else if (!Saved)
                     <MudText Typo="Typo.subtitle2" Class="mr-1">WEALTH</MudText>
                 </TabContent>
                 <ChildContent>
-                    <CustomerGoalTable Broker="Broker" Customer="Customer" />
+                    <CustomerGoalTable Broker="Broker" Customer="Customer" OnGoalsChange="@(async () => await OnCustomerChange())"/>
                     <br />
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"wealthedit/0/{Customer.Id}")" class="mb-2">
                         Add New Wealth
@@ -744,7 +744,7 @@ else if (!Saved)
                     <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.ConnectionVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex==6)" />
                 </TabContent>
                 <ChildContent>
-                    <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Connection" OnCustomerConnectionChange="@(async () => await OnCustomerConnectionChange())" IsAlreadyConnected="true" />
+                    <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Connection" OnCustomerConnectionChange="@(async () => await OnCustomerChange())" IsAlreadyConnected="true" />
                 </ChildContent>
             </MudTabPanel>}
 

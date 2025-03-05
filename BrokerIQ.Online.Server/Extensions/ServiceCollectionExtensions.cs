@@ -61,6 +61,7 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<IWealthTypeService, WealthTypeService>();
             services.AddScoped<IGoalService, GoalService>();
             services.AddScoped<ICustomerGoalService, CustomerGoalService>();
+            services.AddScoped<ICustomerWarningService, CustomerWarningService>();
 
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();
