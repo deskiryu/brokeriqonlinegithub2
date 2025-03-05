@@ -1382,6 +1382,8 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task<IEnumerable<BrokerDefinedMessage>> OnTemplateFilter(string value)
         {
+            if (string.IsNullOrWhiteSpace(value)) return MergedMessages;
+
             return MergedMessages.Where(mm => mm.Prompt.ToLower().Contains(value.ToLower())).ToArray();
         }
 
@@ -1401,7 +1403,6 @@ namespace BrokerIQ.Online.Pages
                     ShowInsertTime = SelectedTemplateMessage.Message.Contains("INSERT_TIME");
                     ShowTemplatePdf = !string.IsNullOrEmpty(SelectedTemplateMessage.FileName);
                     TemplatePdfName = !string.IsNullOrEmpty(SelectedTemplateMessage.FileName) ? SelectedTemplateMessage.FileName : "";
-
                 }
             }
         }
