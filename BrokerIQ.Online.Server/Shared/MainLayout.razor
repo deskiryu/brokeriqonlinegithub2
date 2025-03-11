@@ -8,28 +8,6 @@
 @inject IOptions<ReviewItAPIDetails> api
 @inject IJSRuntime jsRuntime
 
-<MudAlert Severity="Severity.Normal" CloseIconClicked="(() => CookieAlertClosed())" Style="@CookieBannerStyle" ShowCloseIcon="true">We use cookies to improve your experience on our website.</MudAlert>
-
-<div style="display:flex;">
-    <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
-        <NavMenu />
-    </div>
-
-    <div class="@(api.Value.IsYAHTheme? "main main-yah" : "main")">
-        <div class="top-row px-4" style="background-color:black">
-            <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Class="mr-2" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
-            @if (AppState.LoggedIn)
-            {
-                <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@AppState.FullName</MudText>
-            }
-        </div>
-
-        <div class="content px-4">
-            <Alert />
-            @Body
-        </div>
-    </div>
-</div>
 <MudDialogProvider />
 <MudSnackbarProvider />
 @if (api.Value.IsYAHTheme)
@@ -41,10 +19,68 @@ else
     <MudThemeProvider Theme="MyCustomTheme2" />
 }
 
+<MudLayout>
+    <MudAppBar Elevation="1" Style="@(api.Value.IsYAHTheme ? "background-color:#2d2141;" : $"background-color:{Colors.Shades.Black};")">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        @if (api.Value.IsYAHTheme)
+        {
+            <img src="https://brokeriq.co.uk/wp-content/uploads/2024/07/yahLogo15239.png" alt="BrokerIQ" class="white-logo default-logo">
+        }
+        else
+        {
+            <img src="https://brokeriq.co.uk/wp-content/uploads/2022/05/iq-test-logo.png" alt="BrokerIQ" class="white-logo default-logo">
+        }
+        <MudSpacer />
+        <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@(AppState.LoggedIn ? AppState.FullName : string.Empty)</MudText>
+        <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
+            <NavMenu />
+        </div>
+    </MudDrawer>
+    <MudMainContent>
+        <MudAlert Severity="Severity.Normal" CloseIconClicked="(() => CookieAlertClosed())" Style="@CookieBannerStyle" ShowCloseIcon="true">We use cookies to improve your experience on our website.</MudAlert>
+        <div class="p-1">
+            <Alert />
+            @Body
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+
+@*<div style="display:flex;">
+        <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
+            <NavMenu />
+        </div>
+
+        <div class="@(api.Value.IsYAHTheme? "main main-yah" : "main")">
+            <div class="top-row px-4" style="background-color:black">
+                <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Class="mr-2" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
+                @if (AppState.LoggedIn)
+                {
+                    <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@AppState.FullName</MudText>
+                }
+            </div>
+
+            <div class="content px-4">
+                <Alert />
+                @Body
+            </div>
+        </div>
+    </div>*@
+
 @code{
     private const string COOKIE_ALERT = "cookieAlert";
 
     public string CookieBannerStyle { get; set; }
+
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
 
     MudTheme MyCustomTheme2 = new MudTheme()
     {
