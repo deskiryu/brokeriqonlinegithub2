@@ -62,6 +62,7 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<IGoalService, GoalService>();
             services.AddScoped<ICustomerGoalService, CustomerGoalService>();
             services.AddScoped<ICustomerWarningService, CustomerWarningService>();
+            services.AddScoped<IEmailMessageTemplateService, EmailMessageTemplateService>();
 
             services.AddAutoMapper(typeof(ReviewItMapper));
             services.AddScoped<LoggedInAppState>();

@@ -1,0 +1,22 @@
+@using BrokerIQ.Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+
+<MudTable Items="@EmailMessageTemplates" Dense="true">
+    <NoRecordsContent>
+        <MudText>No wealth types have been defined.</MudText>
+    </NoRecordsContent>
+    <HeaderContent>
+        <MudTh>Template</MudTh>
+        <MudTh>Message</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@(((EmailTemplate)context.EmailTemplateId).GetDisplayName())</MudTd>
+        <MudTd>@context.Message</MudTd>
+        <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small"
+                           OnClick=@(r => EditEmailMessageTemplate(context))>
+            </MudIconButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
