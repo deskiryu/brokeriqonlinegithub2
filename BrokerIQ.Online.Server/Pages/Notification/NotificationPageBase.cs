@@ -204,7 +204,6 @@ namespace BrokerIQ.Online.Pages
                         notif.BrokerName = foundBroker.Name;
                     }
                 }
-
             }
         }
 

@@ -229,7 +229,7 @@ else if (!Saved)
                     <MudText Typo="Typo.subtitle2" Class="mr-1">WEALTH</MudText>
                 </TabContent>
                 <ChildContent>
-                    <CustomerGoalTable Broker="Broker" Customer="Customer" OnGoalsChange="@(async () => await OnCustomerChange())"/>
+                    <CustomerGoalTable Broker="Broker" Customer="Customer" OnGoalsChange="@(async () => await OnCustomerChange())" />
                     <br />
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"wealthedit/0/{Customer.Id}")" class="mb-2">
                         Add New Wealth
@@ -472,7 +472,7 @@ else if (!Saved)
                                     <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave">
                                         <MudPaper class="drag-drop-zone">
                                             <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" style="height: 81px!important" accept="application/pdf" />
-                                            <MudText Typo="Typo.subtitle1">Click or drag pdf file to attach to chat</MudText>
+                                            <MudText>Click or Drag and drop pdf files here to attach</MudText>
                                         </MudPaper>
                                     </div>
                                     @if (LoadedChatFiles.Any())

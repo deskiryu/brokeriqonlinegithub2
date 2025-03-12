@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace BrokerIQ.Online.Models
 {
@@ -23,8 +22,6 @@ namespace BrokerIQ.Online.Models
         public bool IsVideo { get => !string.IsNullOrEmpty(VideoUrl); }
         public bool IsAudio { get => !string.IsNullOrEmpty(AudioUrl); }
 
-        public string NotificationType { get => IsAudio ? "Audio" : IsVideo ? "Video" : "Text"; }
-
-
+        public string NotificationType { get => IsAudio ? "Audio" : IsVideo ? "Video" : "Chat"; }
     }
 }
