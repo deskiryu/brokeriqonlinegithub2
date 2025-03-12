@@ -130,5 +130,7 @@ namespace BrokerIQ.Online.Server.Models
         public string MatchingCode { get; set; }
 
         public bool UseFirebaseForIOS { get; set; }
+
+        public string ReferAFriendText { get; set; }
     }
 }
