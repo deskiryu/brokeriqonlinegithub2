@@ -132,16 +132,6 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                         AdditionalInfo = updated.AdditionalInfo
                     });
                 }
-
-                // TODO : Re introduce these when a fix for the parsing error has been found
-                // if (wasSuccessfull)
-                // {
-                //     Snackbar.Add("Reminder option was removed.", Severity.Success);
-                // }
-                // else
-                // {
-                //     Snackbar.Add("Reminder options update failed. Please try again.", Severity.Error);
-                // } 
             }
 
             await LoadGoalData();

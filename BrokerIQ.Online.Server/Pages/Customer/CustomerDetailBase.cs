@@ -362,7 +362,8 @@ namespace BrokerIQ.Online.Pages
 
             if(Connection != null)
             {
-                documents.AddRange((await CustomerDocumentService.Get(Connection.Id)).Data);
+                var connectionDocuments = await CustomerDocumentService.Get(Connection.Id);
+                if (connectionDocuments.Data != null) documents.AddRange(connectionDocuments.Data);
             }
 
             return documents;
@@ -1371,6 +1372,8 @@ namespace BrokerIQ.Online.Pages
 
         private async Task<Chat> LoadChatMessages()
         {
+            if (Broker == null) return new Chat();
+
             var chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
 
             AllChatMessagesLoaded = !chat.MoreMessagesAvailable;
