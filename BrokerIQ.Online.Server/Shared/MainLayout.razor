@@ -36,7 +36,7 @@ else
         <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@(AppState.LoggedIn ? AppState.FullName : string.Empty)</MudText>
         <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true" >
         <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
             <NavMenu />
         </div>
