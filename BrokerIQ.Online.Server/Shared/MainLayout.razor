@@ -23,7 +23,7 @@ else
 
 <MudLayout>
     <MudAppBar Elevation="1" Style="@(api.Value.IsYAHTheme ? "background-color:#2d2141;" : $"background-color:{Colors.Shades.Black};")">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        
         @if (api.Value.IsYAHTheme)
         {
             <img src="https://brokeriq.co.uk/wp-content/uploads/2024/07/yahLogo15239.png" alt="BrokerIQ" class="white-logo default-logo">
@@ -36,11 +36,14 @@ else
         <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@(AppState.LoggedIn ? AppState.FullName : string.Empty)</MudText>
         <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true" >
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Mini" >
         <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
             <NavMenu />
         </div>
+        <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@_drawerClosed"/>
+        <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen"/>
     </MudDrawer>
+    
     <MudMainContent>
         <MudAlert Severity="Severity.Normal" CloseIconClicked="(() => CookieAlertClosed())" Style="@CookieBannerStyle" ShowCloseIcon="true">We use cookies to improve your experience on our website.</MudAlert>
 
@@ -57,10 +60,11 @@ else
     public string CookieBannerStyle { get; set; }
 
     bool _drawerOpen = true;
-
+    bool _drawerClosed = false;
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+        _drawerClosed = !_drawerOpen;
     }
 
     MudTheme MyCustomTheme2 = new MudTheme()
