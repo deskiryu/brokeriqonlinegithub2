@@ -29,6 +29,24 @@
     }
 }
 
+<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">
+        @if (api.Value.IsYAHTheme)
+        {
+            <img src="https://brokeriq.co.uk/wp-content/uploads/2024/07/yahLogo15239.png"
+                 width="" height="" alt="BrokerIQ" class="white-logo default-logo">
+        }
+        else
+        {
+            <img src="https://brokeriq.co.uk/wp-content/uploads/2022/05/iq-test-logo.png"
+                 width="" height="" alt="BrokerIQ" class="white-logo default-logo">
+        }
+    </a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
 
@@ -39,6 +57,8 @@
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </li>
+
+
 
             @if (!User.IsMinorAdmin)
             {
@@ -78,7 +98,7 @@
 
             <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-3 d-flex align-center" : "nav-item px-3 d-flex align-center")">
                 <NavLink class="nav-link" href="notifications">
-                    <span class="oi oi-phone" aria-hidden="true"></span> Tracking outbound
+                    <span class="oi oi-phone" aria-hidden="true"></span> Notifications
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowNotificationsTutorial" VideoUrl="@tutorialVideos.NotificationsVideoUrl" />
             </li>
@@ -104,7 +124,7 @@
                         ChangeIcon("_content/BrokerIQ.Online.Server/favicon.ico");
                         <MudBadge Content="@NewMessageCount" Overlap="true" Color="Color.Inherit" Dot="true">
                             <MudIcon Icon="@Icons.Material.Filled.Email" Style="color: #d7d7d7; margin-left:-3px" />
-                            &nbsp;&nbsp;Action stream&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;Reminders&nbsp;&nbsp;&nbsp;
                         </MudBadge>
                     }
                     else
@@ -112,7 +132,7 @@
                         ChangeIcon("_content/BrokerIQ.Online.Server/favicon-alert.ico");
                         <MudBadge Content="@NewMessageCount" Overlap="true" Color="Color.Error " Dot="false">
                             <MudIcon Icon="@Icons.Material.Filled.Email" Style="color: #d7d7d7; margin-left:-3px" />
-                            &nbsp;&nbsp;Action stream&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;Reminders&nbsp;&nbsp;&nbsp;
                         </MudBadge>
                     }
                 </NavLink>
@@ -158,7 +178,7 @@
                     <TutorialVideoIcon Visible="@ShowSettingsTutorial" VideoUrl="@tutorialVideos.SettingsVideoUrl" />
                 </li>
             }
-
+            
             @if (!User.IsAdmin && !User.IsMinorAdmin)
             {
                 <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-3 d-flex align-center" : "nav-item px-3 d-flex align-center")">
