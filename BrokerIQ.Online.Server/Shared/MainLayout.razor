@@ -40,8 +40,12 @@ else
         <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
             <NavMenu />
         </div>
-        <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@_drawerClosed"/>
-        <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen"/>
+ 
+<MudPaper Style="text-align: right;">
+          <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@_drawerClosed"/>
+</MudPaper>
+   <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen"/>
+
     </MudDrawer>
     
     <MudMainContent>
