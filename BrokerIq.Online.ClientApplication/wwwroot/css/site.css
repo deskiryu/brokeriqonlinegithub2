@@ -84,7 +84,6 @@ app {
 
 .sidebar .nav-item {
     font-size: 0.9rem;
-    padding-bottom: 0.5rem;
 }
 
 .sidebar .nav-item:first-of-type {
@@ -104,10 +103,10 @@ app {
     line-height: 3rem;
 }
 
-    .sidebar .nav-item a.active {
-        background-color: rgba(255, 255, 255, 0.0);
-        color: #ede574;
-    }
+.sidebar .nav-item a.active {
+    background-color: rgba(255, 255, 255, 0.0);
+    color: #ede574;
+}
 
 
 .sidebar .nav-item-yah a.active {
