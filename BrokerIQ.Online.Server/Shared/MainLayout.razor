@@ -41,10 +41,11 @@ else
             <NavMenu />
         </div>
  
-<MudPaper Style="text-align: right;">
-          <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@_drawerClosed"/>
+<MudPaper Style="text-align: right; background-color: #3c3c3c;">
+          <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@_drawerClosed"/>
+             <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen"/>
 </MudPaper>
-   <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen"/>
+
 
     </MudDrawer>
     
