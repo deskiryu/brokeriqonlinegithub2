@@ -219,12 +219,6 @@ namespace BrokerIQ.Online.Pages
 
         protected string HoverClass;
 
-        private int CurrentRequirementsId = 0;
-
-        protected string EditRequirementsHidden { get; set; } = string.Empty;
-
-        protected string CurrentRequirementsHidden { get; set; } = string.Empty;
-
         protected void OnDragEnter(DragEventArgs e) => HoverClass = "drag-file-hover";
 
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
@@ -304,8 +298,6 @@ namespace BrokerIQ.Online.Pages
                 {
                     Broker = await BrokerService.GetBroker(Customer.ChosenBrokerId, true);
                 }
-
-                await SetupDocumentRequirementSection();
             }
             catch
             {
@@ -365,36 +357,21 @@ namespace BrokerIQ.Online.Pages
 
         private async Task<IEnumerable<CustomerDocument>> GetCustomerDocuments()
         {
-            return (await CustomerDocumentService.Get(Customer.Id)).Data;
-        }
+            List<CustomerDocument> documents = new List<CustomerDocument>();
+            documents.AddRange((await CustomerDocumentService.Get(Customer.Id)).Data);
 
-        private async Task SetupDocumentRequirementSection()
-        {
-            DocumentTypeValues = await DocumentVaultTypeService.GetAllForBroker(Broker.Id);
-
-            DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
-            if (DocumentsRequirement != null)
+            if(Connection != null)
             {
-                CurrentRequirementsId = DocumentsRequirement.Id;
+                var connectionDocuments = await CustomerDocumentService.Get(Connection.Id);
+                if (connectionDocuments.Data != null) documents.AddRange(connectionDocuments.Data);
             }
 
-            foreach (var type in DocumentTypeValues)
-            {
-                RequestedDocuments.Add(type.Id, 0);
-            }
-
-            SetRequirementVisibility();
+            return documents;
         }
 
         private async Task SetUserCalendlyDetails()
         {
             CalendlyUser = await CustomerAppointmentService.GetUser();
-        }
-
-        private void SetRequirementVisibility()
-        {
-            EditRequirementsHidden = DocumentsRequirement == null ? string.Empty : "display:none;";
-            CurrentRequirementsHidden = DocumentsRequirement != null ? string.Empty : "display:none;";
         }
 
         protected async Task UpdateChat(bool firstTime = false)
@@ -431,7 +408,7 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            CustomerDocuments = response.Data;
+            CustomerDocuments = await GetCustomerDocuments();
             DocumentsRequirement = await DocumentsRequirementService.Get(Customer.Id);
 
             NewClientUploadsCount = CustomerDocuments.Count(d => d.CreatedDate > InitialLatestUploadDate);
@@ -1096,107 +1073,6 @@ namespace BrokerIQ.Online.Pages
             StateHasChanged();
         }
 
-        protected async Task SubmitDocumentRequirements()
-        {
-            List<CreateDocumentsCheckDto> documentsRequiredList = new List<CreateDocumentsCheckDto>();
-            bool requirementSet = false;
-            string requirementsString = string.Empty;
-            foreach (var req in RequestedDocuments)
-            {
-                if (req.Value > 0)
-                {
-                    CreateDocumentsCheckDto requirement = new CreateDocumentsCheckDto
-                    {
-                        DocuVaultType = req.Key,
-                        RequiredCount = req.Value
-                    };
-                    documentsRequiredList.Add(requirement);
-                    requirementSet = true;
-                    requirementsString += $"{DocumentTypeValues.FirstOrDefault(t => t.Id == req.Key).Name}: {req.Value}\n";
-                }
-            }
-
-            if (requirementSet)
-            {
-                var dialogParams = new DialogParameters
-                {
-                    { "Message", $"Are you sure you want to set the document requirements as the following?\n{requirementsString}" }
-                };
-                var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-                if (!result.Canceled)
-                {
-                    if (CurrentRequirementsId > 0)
-                    {
-                        var updatedChecks = new List<DocumentsCheckDto>();
-                        foreach (var check in documentsRequiredList)
-                        {
-                            updatedChecks.Add(new DocumentsCheckDto()
-                            {
-                                DocumentsRequirementId = CurrentRequirementsId,
-                                DocuVaultType = check.DocuVaultType,
-                                RequiredCount = check.RequiredCount,
-                            });
-                        }
-
-                        DocumentsRequirement = await DocumentsRequirementService.Update(CurrentRequirementsId, updatedChecks);
-                    }
-                    else
-                    {
-                        DocumentsRequirement = await DocumentsRequirementService.Create(Customer.Id, documentsRequiredList);
-                    }
-
-                    await UpdateChat(true);
-
-                    SetRequirementVisibility();
-
-                    StateHasChanged();
-                }
-            }
-            else
-            {
-                var dialogParams = new DialogParameters();
-                dialogParams.Add("Message", "No document requirements have been set.");
-                var result = await DialogService.Show<AlertDialog>("Warning", dialogParams).Result;
-            }
-        }
-
-        protected void EditDocumentRequirements()
-        {
-            foreach (var document in DocumentsRequirement.DocumentChecks)
-            {
-                RequestedDocuments[document.DocuVaultType] = document.RequiredCount;
-            }
-
-            CurrentRequirementsId = DocumentsRequirement.Id;
-            DocumentsRequirement = null;
-
-            SetRequirementVisibility();
-
-            StateHasChanged();
-        }
-
-        protected async Task DeleteDocumentRequirements()
-        {
-            var dialogParams = new DialogParameters();
-            dialogParams.Add("Message", $"Are you sure you want to delete the document requirements currently set?");
-            var result = await DialogService.Show<Server.Shared.ConfirmCancelDialog>("Warning", dialogParams).Result;
-            if (!result.Canceled)
-            {
-                await DocumentsRequirementService.Delete(DocumentsRequirement.Id);
-                DocumentsRequirement = null;
-                CurrentRequirementsId = 0;
-
-                // reset display
-                foreach (var key in RequestedDocuments.Keys.ToList())
-                {
-                    RequestedDocuments[key] = 0;
-                }
-
-                SetRequirementVisibility();
-                StateHasChanged();
-            }
-        }
-
         private async Task PopulateBrokerDefinedMessages()
         {
             MergedMessages = new List<BrokerDefinedMessage>();
@@ -1208,7 +1084,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     // display broker defined message
                     template.Message = template.Message
-                        .Replace("INSERT_CLIENT_NAME", Customer.FirstName)
+                        .Replace("INSERT_CLIENT_NAME", Connection != null ? $"{Customer.FirstName} and {Connection.FirstName}" : Customer.FirstName)
                         .Replace("INSERT_BROKER_NAME", $"{Broker?.BrokerFirstName} {Broker?.BrokerLastName}")
                         .Replace("INSERT_COMPANY_NAME", Broker?.Name);
                 }
@@ -1438,13 +1314,11 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
-        public async Task OnCustomerConnectionChange()
+        public async Task OnCustomerChange()
         {
             Customer = await CustomerService.GetCustomer(int.Parse(CustomerId));
 
             Connection = await CustomerService.GetConnection(Customer.Id);
-
-            Tabs.ActivatePanel(0);
 
             StateHasChanged();
         }
@@ -1498,6 +1372,8 @@ namespace BrokerIQ.Online.Pages
 
         private async Task<Chat> LoadChatMessages()
         {
+            if (Broker == null) return new Chat();
+
             var chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
 
             AllChatMessagesLoaded = !chat.MoreMessagesAvailable;
@@ -1507,6 +1383,8 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task<IEnumerable<BrokerDefinedMessage>> OnTemplateFilter(string value)
         {
+            if (string.IsNullOrWhiteSpace(value)) return MergedMessages;
+
             return MergedMessages.Where(mm => mm.Prompt.ToLower().Contains(value.ToLower())).ToArray();
         }
 
@@ -1526,7 +1404,6 @@ namespace BrokerIQ.Online.Pages
                     ShowInsertTime = SelectedTemplateMessage.Message.Contains("INSERT_TIME");
                     ShowTemplatePdf = !string.IsNullOrEmpty(SelectedTemplateMessage.FileName);
                     TemplatePdfName = !string.IsNullOrEmpty(SelectedTemplateMessage.FileName) ? SelectedTemplateMessage.FileName : "";
-
                 }
             }
         }

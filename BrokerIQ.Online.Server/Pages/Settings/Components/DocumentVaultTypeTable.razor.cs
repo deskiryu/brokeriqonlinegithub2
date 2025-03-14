@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Components;
-
-using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Models;
+using BrokerIQ.Dto.UpdateDto;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Components;
 using BrokerIQ.Online.Services.Interface;
-
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using BrokerIQ.Dto.UpdateDto;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -103,16 +99,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                         AdditionalDetail = updated.AdditionalDetail
                     });
                 }
-
-                // TODO : Re introduce these when a fix for the parsing error has been found
-                // if (wasSuccessfull)
-                // {
-                //     Snackbar.Add("Reminder option was removed.", Severity.Success);
-                // }
-                // else
-                // {
-                //     Snackbar.Add("Reminder options update failed. Please try again.", Severity.Error);
-                // } 
             }
 
             await ReloadDocumentVaultTypes();

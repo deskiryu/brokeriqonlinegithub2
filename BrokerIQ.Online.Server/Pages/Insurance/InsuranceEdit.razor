@@ -36,7 +36,7 @@
 
         <h4 class="page-title">Add or edit insurance</h4>
 
-        @if (Broker!=null && Broker.Subscriptions!=null && Broker.Subscriptions.Any(s => s.SubscriptionServiceId != (int)SubscriptionServiceEnum.AIReader) && Insurance.Id == 0)
+        @if (Broker != null && Broker.Subscriptions != null && Broker.Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.AIReader) && Insurance.Id == 0)
         {
             <MudPaper Class="pa-3 ma-2 col-sm-6" Outlined="true">
                 <MudButton Variant="Variant.Filled" FullWidth="true" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@OpenAnalyzerDialog">Fill Details From File ...</MudButton>
@@ -60,38 +60,38 @@
                             </div>
                         </div>
 
-                       <div class="form-group row">
+                        <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Consumer Insurance</label>
                             <div class="col-sm-5">
-                                 <InputSelect id="consumerInsurance" class="form-control" 
-                                 ValueExpression="@(()=>InsuranceType)" 
-                                  Value="@InsuranceType" 
-                                  ValueChanged="@((int value) => OnValueChanged(value))">
-                                    @if (ConsumerInsurances!=null && ConsumerInsurances.Any())
+                                <InputSelect id="consumerInsurance" class="form-control"
+                                             ValueExpression="@(()=>InsuranceType)"
+                                             Value="@InsuranceType"
+                                             ValueChanged="@((int value) => OnValueChanged(value))">
+                                    @if (ConsumerInsurances != null && ConsumerInsurances.Any())
                                     {
-                                        @foreach(var ci in ConsumerInsurances)
+                                        @foreach (var ci in ConsumerInsurances)
                                         {
-                                                <option value=@ci.Item1>@ci.Item2</option>
+                                            <option value=@ci.Item1>@ci.Item2</option>
                                         }
                                     }
                                 </InputSelect>
                                 <ValidationMessage class="offset-sm-3" For="@(() => InsuranceType)" />
                             </div>
                         </div>
-                        @if(Broker != null && Broker.ProvidesBusinessInsuranceServices)
+                        @if (Broker != null && Broker.ProvidesBusinessInsuranceServices)
                         {
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Or Business Insurance</label>
                                 <div class="col-sm-5">
-                                     <InputSelect id="businessInsurance" class="form-control"
-                                     ValueExpression="@(()=>InsuranceType)" 
-                                      Value="@InsuranceType" 
-                                      ValueChanged="@((int value) => OnValueChanged(value))">
-                                        @if (BusinessInsurances!=null && BusinessInsurances.Any())
+                                    <InputSelect id="businessInsurance" class="form-control"
+                                                 ValueExpression="@(()=>InsuranceType)"
+                                                 Value="@InsuranceType"
+                                                 ValueChanged="@((int value) => OnValueChanged(value))">
+                                        @if (BusinessInsurances != null && BusinessInsurances.Any())
                                         {
-                                            @foreach(var bi in BusinessInsurances)
+                                            @foreach (var bi in BusinessInsurances)
                                             {
-                                                    <option value=@bi.Item1>@bi.Item2</option>
+                                                <option value=@bi.Item1>@bi.Item2</option>
                                             }
                                         }
                                     </InputSelect>
@@ -111,7 +111,7 @@
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Cost PM and PY</label>
                             <div class="row col-sm-5">
-                                <MudItem class="col" >
+                                <MudItem class="col">
                                     <MudTextField @bind-Value="@Insurance.Cost" Clearable="true" HelperText="Enter a cost" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
                                     <ValidationMessage class="offset-sm-3" For="@(() => Insurance.Cost)" />
                                 </MudItem>
@@ -129,7 +129,7 @@
                                 <ValidationMessage class="offset-sm-3" For="@(() => Insurance.StartDate)" />
                             </div>
                             <div class="col-sm-2">
-                                <MudCheckBox @bind-Checked="@Insurance.ShowStartDate" Label="Show"/>
+                                <MudCheckBox @bind-Checked="@Insurance.ShowStartDate" Label="Show" />
                             </div>
                         </div>
 
@@ -140,7 +140,7 @@
                                 <ValidationMessage class="offset-sm-3" For="@(() => Insurance.ReviewDate)" />
                             </div>
                             <div class="col-sm-2">
-                                <MudCheckBox @bind-Checked="@Insurance.ShowReviewDate" Label="Show"/>
+                                <MudCheckBox @bind-Checked="@Insurance.ShowReviewDate" Label="Show" />
                             </div>
                         </div>
 
@@ -151,31 +151,32 @@
                                 <ValidationMessage class="offset-sm-3" For="@(() => Insurance.ExpiryDate)" />
                             </div>
                             <div class="col-sm-2">
-                                <MudCheckBox @bind-Checked="@Insurance.ShowExpiryDate" Label="Show"/>
+                                <MudCheckBox @bind-Checked="@Insurance.ShowExpiryDate" Label="Show" />
                             </div>
                         </div>
 
 
-                        @if(BrokerIQ.Dto.Extensions.Extensions.IsTermTypeInsurance(Insurance.InsType)){
+                        @if (BrokerIQ.Dto.Extensions.Extensions.IsTermTypeInsurance(Insurance.InsType))
+                        {
 
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Term Type</label>
-                            <div class="col-sm-5">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Term Type</label>
+                                <div class="col-sm-5">
 
-                                <InputSelect id="termtype" class="form-control" @bind-Value="@TermType">
-                                @{
-                                    var names = Enum.GetNames(typeof(TermTypeEnum));
-                                    for (int i = 0; i < names.Length; i++)
-                                    {
-                                        var looped = (TermTypeEnum)i;
-                                        <option value=@i>@looped.GetDisplayName()</option>
-                                    }
-                                }
-                                </InputSelect>
-                                <ValidationMessage class="offset-sm-3" For="@(() => TermType)" />
+                                    <InputSelect id="termtype" class="form-control" @bind-Value="@TermType">
+                                        @{
+                                            var names = Enum.GetNames(typeof(TermTypeEnum));
+                                            for (int i = 0; i < names.Length; i++)
+                                            {
+                                                var looped = (TermTypeEnum)i;
+                                                <option value=@i>@looped.GetDisplayName()</option>
+                                            }
+                                        }
+                                    </InputSelect>
+                                    <ValidationMessage class="offset-sm-3" For="@(() => TermType)" />
 
+                                </div>
                             </div>
-                        </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Term</label>
@@ -186,20 +187,20 @@
                                     </MudItem>
                                 </div>
                                 <div class="col-sm-2 mt-5">
-                                    <MudCheckBox @bind-Checked="@Insurance.ShowTermYears" Label="Show"/>
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowTermYears" Label="Show" />
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Benefit Amount</label>
                                 <div class="col-sm-5">
-                                    <MudItem class="col" >
+                                    <MudItem class="col">
                                         <MudTextField @bind-Value="@Insurance.TermAmount" HelperText="Enter a benefit amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
                                         <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.TermAmount)" />
                                     </MudItem>
                                 </div>
                                 <div class="col-sm-2 mt-5">
-                                    <MudCheckBox @bind-Checked="@Insurance.ShowTermAmount" Label="Show"/>
+                                    <MudCheckBox @bind-Checked="@Insurance.ShowTermAmount" Label="Show" />
                                 </div>
                             </div>
 
@@ -270,17 +271,18 @@
                             </div>
                         </div>
 
-                        @if(Insurance.Id == 0){
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Send Notification</label>
-                            <div class="col-sm-5">
-                                <MudCheckBox @bind-Checked="@SendNotification" Disabled="@(!Insurance.AvailableToClient)"/>
+                        @if (Insurance.Id == 0)
+                        {
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Send Notification</label>
+                                <div class="col-sm-5">
+                                    <MudCheckBox @bind-Checked="@SendNotification" Disabled="@(!Insurance.AvailableToClient)" />
+                                </div>
                             </div>
-                        </div>
                         }
-                        
+
                         @if (Broker != null && Broker.ProvidesBusinessInsuranceServices && BrokerIQ.Dto.Extensions.Extensions.IsBusinessInsurance(Insurance.InsType))
-                            {
+                        {
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Policy number</label>
                                 <div class="col-sm-5">
@@ -334,7 +336,7 @@
                                 <label class="col-sm-3 col-form-label">Jurisdiction</label>
                                 <div class="col-sm-5">
                                     <MudItem class="col">
-                                        <MudTextField @bind-Value="@Insurance.Jurisdiction" HelperText="Enter a jurisdiction" Format=""  />
+                                        <MudTextField @bind-Value="@Insurance.Jurisdiction" HelperText="Enter a jurisdiction" Format="" />
                                         <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.Jurisdiction)" />
                                     </MudItem>
                                 </div>
@@ -348,7 +350,7 @@
                                 <label class="col-sm-3 col-form-label">Territorial Limit</label>
                                 <div class="col-sm-5">
                                     <MudItem class="col">
-                                        <MudTextField @bind-Value="@Insurance.TerritorialLimit" HelperText="Enter a territorial limit" Format=""  />
+                                        <MudTextField @bind-Value="@Insurance.TerritorialLimit" HelperText="Enter a territorial limit" Format="" />
                                         <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Insurance.TerritorialLimit)" />
                                     </MudItem>
                                 </div>
@@ -366,9 +368,9 @@
                                     <InputSelect id="broker" class="form-control" @bind-Value="@BrokerListId">
 
                                         @foreach (var broker in @Brokers)
-                                                {
+                                        {
                                             <option value=@broker.Id>@broker.Name</option>
-                                                }
+                                        }
                                     </InputSelect>
                                     <ValidationMessage class="offset-sm-3" For="@(() => BrokerListId)" />
                                 </div>
@@ -381,9 +383,9 @@
         </EditForm>
 
     </section>
-    
 
-    <h4 class ="col-sm-4">Supporting Documents</h4>
+
+    <h4 class="col-sm-4">Supporting Documents</h4>
 
     @if (Insurance.SupportingDocuments != null)
     {
@@ -400,8 +402,8 @@
                                 <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteInsuranceFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
                             }
                             else
-                            {            
-                               <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteInsuranceFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
+                            {
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteInsuranceFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
                             }
                         </RowTemplate>
                     </MudTable>
@@ -414,12 +416,12 @@
         <div class="card">
             <div class="card-body">
                 <label class="card-title">Upload pdf files</label>
-                    <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
-                            <MudPaper class="drag-drop-zone">
-                                <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
-                                <MudText Typo="Typo.subtitle1">Drag and drop pdf files here or click to browse</MudText>
-                            </MudPaper>
-                    </div>
+                <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave">
+                    <MudPaper class="drag-drop-zone">
+                        <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
+                        <MudText>Click or Drag and drop pdf files here to attach</MudText>
+                    </MudPaper>
+                </div>
             </div>
         </div>
     </div>
@@ -431,7 +433,7 @@
         </div>
     </div>
 
-    <div > 
+    <div>
         @if (Insurance?.Id > 0)
         {
             <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteInsurance" Class="mr-8">Delete</MudButton>
@@ -439,7 +441,8 @@
 
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" Class="mr-1">Cancel</MudButton>
 
-        @if(Insurance?.Id > 0){
+        @if (Insurance?.Id > 0)
+        {
 
             <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" form="@FormId" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Class="mr-1">Save insurance</MudButton>
         }

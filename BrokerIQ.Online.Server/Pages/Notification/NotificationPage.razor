@@ -6,8 +6,7 @@
 @using BrokerIQ.Online.Pages
 @inject NavigationManager NavigationManager
 
-<h3>Notifications</h3>
-
+<h3>Tracking outbound</h3>
 
 @if (NotificationsSent == null)
 {
@@ -23,14 +22,14 @@ else
             <div class="row">
                 <div class="col-lg-4">
                     <MudSelect T="int"
-                                Label="Notification Type"
-                                Placeholder="Select"
-                                Clearable="true"
-                                @bind-Value="FilterType"
-                                SelectedValuesChanged="@RecentTypeSelect"
-                                AdornmentColor="Color.Primary">
+                               Label="Notification Type"
+                               Placeholder="Select"
+                               Clearable="true"
+                               @bind-Value="FilterType"
+                               SelectedValuesChanged="@RecentTypeSelect"
+                               AdornmentColor="Color.Primary">
                         <MudSelectItem Value="0">All</MudSelectItem>
-                        <MudSelectItem Value="1">Text</MudSelectItem>
+                        <MudSelectItem Value="1">Chat</MudSelectItem>
                         <MudSelectItem Value="2">Video</MudSelectItem>
                         <MudSelectItem Value="3">Audio</MudSelectItem>
                     </MudSelect>
@@ -75,7 +74,7 @@ else
 
     </div>
 
-    <MudTable Items="@NotificationsSentByType" Hover="true" SortLabel="Sort By" >
+    <MudTable Items="@NotificationsSentByType" Hover="true" SortLabel="Sort By">
         <HeaderContent>
             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Notification, object>(x=>x.NotificationType)">Type</MudTableSortLabel></MudTh>
             <MudTh Style="width:60%"><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Notification, object>(x=>x.Message)">Message</MudTableSortLabel></MudTh>
@@ -83,17 +82,17 @@ else
             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Notification, object>(x=>x.SentDate)">Sent Date</MudTableSortLabel></MudTh>
             @if (ShowBroker)
             {
-                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Notification, object>(x=>x.BrokerName)">Broker</MudTableSortLabel></MudTh>            
+                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Notification, object>(x=>x.BrokerName)">Broker</MudTableSortLabel></MudTh>
             }
             @if (ShowEmployee)
             {
-                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Notification, object>(x=>x.BrokerStaffName)">Employee</MudTableSortLabel></MudTh>            
+                <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Notification, object>(x=>x.BrokerStaffName)">Employee</MudTableSortLabel></MudTh>
             }
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Type">@context.NotificationType</MudTd>
             @{
-                if(context.IsVideo && !string.IsNullOrEmpty(context.VideoUrl))
+                if (context.IsVideo && !string.IsNullOrEmpty(context.VideoUrl))
                 {
                     <MudTd DataLabel="Message">
                         @context.Message
@@ -123,33 +122,29 @@ else
             @{
                 var customersAsName = string.Empty;
                 var customers = Customers.Where(x => context.Targets.Contains(x.Id)).Select(y => y.Name).ToList();
-                if(customers!=null && customers.Count() >= 1)
+                if (customers != null && customers.Count() >= 1)
                 {
-                  customersAsName = string.Join(", ", customers);                  
+                    customersAsName = string.Join(", ", customers);
                 }
 
 
                 <MudTd DataLabel="Last name">@customersAsName</MudTd>
-             }
+            }
             <MudTd DataLabel="Last name">@context.SentDate.ToBiqDateTimeString()</MudTd>
             @if (ShowBroker)
             {
-                <MudTd DataLabel="Telephone">@context.BrokerName</MudTd>           
+                <MudTd DataLabel="Telephone">@context.BrokerName</MudTd>
             }
             @if (ShowEmployee)
             {
-                <MudTd DataLabel="Email">@context.BrokerStaffName</MudTd>            
+                <MudTd DataLabel="Email">@context.BrokerStaffName</MudTd>
             }
         </RowTemplate>
         <PagerContent>
-            <MudTablePager  PageSizeOptions="new int[]{10, 25, 50, 100}" />
+            <MudTablePager PageSizeOptions="new int[]{10, 25, 50, 100}" />
         </PagerContent>
     </MudTable>
 }
-
-
-
-
 
 <style>
     .accordion-control-section {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Entities;
 using BrokerIQ.Dto.Models;
+using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Components;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
@@ -22,11 +23,17 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         [Inject]
         public ICustomerGoalService CustomerGoalService { get; set; }
 
+        [Inject]
+        public ICustomerService CustomerService { get; set; }
+
         [Parameter]
         public Online.Models.Broker Broker { get; set; }
 
         [Parameter]
         public Online.Models.Customer Customer { get; set; }
+
+        [Parameter]
+        public Action OnGoalsChange { get; set; }
 
         protected IEnumerable<GoalDto> Goals { get; set; } = Array.Empty<GoalDto>();
 
@@ -77,12 +84,14 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             }
 
             await LoadGoalData();
+
+            OnGoalsChange();
         }
 
         private async Task EditCustomerGoal(CustomerGoalDto customerGoal)
         {
             var operation = customerGoal.Id == 0 ? "Create" : "Edit";
-            var title = $"{operation} {customerGoal}";
+            var title = $"{operation} Customer Goal";
             var parameters = new DialogParameters
             {
                 { "CustomerGoal", customerGoal },
@@ -123,19 +132,11 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                         AdditionalInfo = updated.AdditionalInfo
                     });
                 }
-
-                // TODO : Re introduce these when a fix for the parsing error has been found
-                // if (wasSuccessfull)
-                // {
-                //     Snackbar.Add("Reminder option was removed.", Severity.Success);
-                // }
-                // else
-                // {
-                //     Snackbar.Add("Reminder options update failed. Please try again.", Severity.Error);
-                // } 
             }
 
             await LoadGoalData();
+
+            OnGoalsChange();
         }
     }
 }

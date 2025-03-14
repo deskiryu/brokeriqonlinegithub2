@@ -33,7 +33,7 @@
 
         <h4 class="page-title">Add or edit mortgage</h4>
 
-        @if (Broker != null && Broker.Subscriptions != null && Broker.Subscriptions.Any(s => s.SubscriptionServiceId != (int)SubscriptionServiceEnum.AIReader) && Mortgage.Id == 0)
+        @if (Broker != null && Broker.Subscriptions != null && Broker.Subscriptions.Any(s => s.SubscriptionServiceId == (int)SubscriptionServiceEnum.AIReader) && Mortgage.Id == 0)
         {
             <MudPaper Class="pa-3 ma-2 col-sm-6" Outlined="true">
                 <MudButton Variant="Variant.Filled" FullWidth="true" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@OpenAnalyzerDialog">Fill Details From File ...</MudButton>
@@ -62,14 +62,14 @@
                             <div class="col-sm-7">
 
                                 <InputSelect id="mortgage" class="form-control col-sm-7" @bind-Value="@MortgageType">
-                                        @{
+                                    @{
                                         var names = Enum.GetNames(typeof(MortgageEnum));
                                         @for (int i = 1; i <= names.Length; i++)
-                                            {
-                                                MortgageEnum looped = (MortgageEnum)i;
+                                        {
+                                            MortgageEnum looped = (MortgageEnum)i;
                                             <option value=@i>@looped.GetDisplayName()</option>
-                                            }
                                         }
+                                    }
 
                                 </InputSelect>
                                 <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => MortgageType)" />
@@ -83,14 +83,14 @@
 
                                 <InputSelect id="mortgageRate" class="form-control col-sm-7" @bind-Value="@MortgageRateType">
                                     @if (true)
-                                        {
-                                            var names = Enum.GetNames(typeof(MortgageRateEnum));
+                                    {
+                                        var names = Enum.GetNames(typeof(MortgageRateEnum));
                                         @for (int i = 1; i <= names.Length; i++)
-                                            {
-                                                MortgageRateEnum looped = (MortgageRateEnum)i;
+                                        {
+                                            MortgageRateEnum looped = (MortgageRateEnum)i;
                                             <option value=@i>@looped.GetDisplayName()</option>
-                                            }
                                         }
+                                    }
 
 
 
@@ -197,7 +197,7 @@
                             <label class="col-sm-4 col-form-label">Mortgage Number</label>
                             <div class="col-sm-7">
                                 <MudItem class="col-sm-4" xs="12" sm="6" md="4">
-                                    <MudTextField @bind-Value="@Mortgage.MortgageNumber" HelperText="Enter a mortgage number"  />
+                                    <MudTextField @bind-Value="@Mortgage.MortgageNumber" HelperText="Enter a mortgage number" />
                                     <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => Mortgage.MortgageNumber)" />
                                 </MudItem>
                             </div>
@@ -215,9 +215,9 @@
                                     <InputSelect id="broker" class="form-control col-sm-7" @bind-Value="@BrokerListId">
 
                                         @foreach (var broker in @Brokers)
-                                                {
+                                        {
                                             <option value=@broker.Id>@broker.Name</option>
-                                                }
+                                        }
                                     </InputSelect>
                                     <ValidationMessage class="offset-sm-3 col-sm-7" For="@(() => BrokerListId)" />
 
@@ -233,26 +233,27 @@
         </EditForm>
 
     </section>
-    
 
-        <h4 class ="col-sm-4 mt-5">Supporting Documents</h4>
 
-        @if (Mortgage.SupportingDocuments != null)
-        {
+    <h4 class="col-sm-4 mt-5">Supporting Documents</h4>
+
+    @if (Mortgage.SupportingDocuments != null)
+    {
         <div class="col-sm-6 mt-1">
             <div class="card">
                 <div class="card-body">
-                    <MudTable Items="@Mortgage.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="" >
+                    <MudTable Items="@Mortgage.SupportingDocuments" Hover="true" SortLabel="Sort By" Class="">
                         <RowTemplate>
-                        <MudTd>@context.FileName</MudTd>
-                        @if (Mortgage.Id > 0){
-                            <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => PreviewFile(context))" class="btn btn-link">View</MudButton></MudTd>
-                            <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DownloadFile(context))" class="btn btn-link">Download</MudButton></MudTd>
-                            <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteMortgageFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
+                            <MudTd>@context.FileName</MudTd>
+                            @if (Mortgage.Id > 0)
+                            {
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => PreviewFile(context))" class="btn btn-link">View</MudButton></MudTd>
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DownloadFile(context))" class="btn btn-link">Download</MudButton></MudTd>
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteMortgageFile(context.Id))" class="btn btn-link">Delete</MudButton></MudTd>
                             }
                             else
-                            {            
-                               <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteMortgageFile(context))" class="btn btn-link">Delete</MudButton></MudTd>
+                            {
+                                <MudTd> <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteMortgageFile(context))" class="btn btn-link">Delete</MudButton></MudTd>
                             }
                         </RowTemplate>
                     </MudTable>
@@ -261,28 +262,28 @@
             </div>
         </div>
 
-        }
+    }
     <div class="col-sm-6 mt-1">
         <div class="card">
             <div class="card-body">
                 <label class="card-title">Upload pdf files</label>
-                    <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
-                            <MudPaper class="drag-drop-zone">
-                                <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
-                                <MudText Typo="Typo.subtitle1">Drag and drop pdf files here or click to browse</MudText>
-                            </MudPaper>
-                    </div>
+                <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave">
+                    <MudPaper class="drag-drop-zone">
+                        <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
+                        <MudText>Click or Drag and drop pdf files here to attach</MudText>
+                    </MudPaper>
+                </div>
             </div>
         </div>
     </div>
 
-        <label type="text" class="form-control-plaintext col-sm-4">@LoadFileStatus</label>
-        <div class="col-sm">
-            <div class="spin-row spin-row-bg">
-                <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" style="@SpinnerVisible" />
-            </div>
+    <label type="text" class="form-control-plaintext col-sm-4">@LoadFileStatus</label>
+    <div class="col-sm">
+        <div class="spin-row spin-row-bg">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" style="@SpinnerVisible" />
         </div>
-       <div>
+    </div>
+    <div>
         @if (Mortgage == null || Mortgage.Id == 0)
         {
             <MudCheckBox @bind-Checked="@SendNotification" />
@@ -290,9 +291,9 @@
             <MudCheckBox @bind-Checked="@SendVideoNotification" Class="ml-1 mt-2" />
             <label>Send Video Notification</label>
         }
-       </div> 
+    </div>
 
-       <div>
+    <div>
         @if (Mortgage?.Id > 0)
         {
             <MudButton Variant="Variant.Filled" Color="Color.Error" Style="@($"color:{Colors.Shades.Black};")" OnClick="@DeleteMortgage" Class="mr-8">Delete</MudButton>
@@ -308,7 +309,7 @@
         {
             <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" form="@FormId" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")">Add mortgage</MudButton>
         }
-        </div>
+    </div>
 
 
 }
