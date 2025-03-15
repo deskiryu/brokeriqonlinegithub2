@@ -91,7 +91,8 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.NotificationTag, action => action.MapFrom(s => s.NotificationTag))
                 .ForMember(d => d.ConnectedToCustomerId, action => action.MapFrom(s => s.ConnectedToCustomerId))
                 .ForMember(d => d.AppointmentRemindersAllowed, action => action.MapFrom(s => !s.AppointmentReminderOptOut))
-                .ForMember(d => d.WealthTypeId, action => action.MapFrom(s => s.WealthTypeId));
+                .ForMember(d => d.WealthTypeId, action => action.MapFrom(s => s.WealthTypeId))
+                .ForMember(d => d.HasConnection, action => action.MapFrom(s => s.HasConnection));
 
             CreateMap<Customer, UpdateCustomerDto>()
                 .ForMember(d => d.Id, action => action.MapFrom(s => s.Id))

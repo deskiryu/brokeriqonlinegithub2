@@ -264,6 +264,7 @@ else
                             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>
                         }
                         <MudTh>Verified</MudTh>
+                        <MudTh></MudTh>
                         <MudTh>
                             @if (CanImport || SelectedCustomers.Any())
                             {
@@ -359,6 +360,7 @@ else
                             <MudTd DataLabel="WL"><MudCheckBox @bind-Checked="@context.IsWhiteLabel" Disabled="true"></MudCheckBox></MudTd>
                         }
                         <MudTd Style="text-align:center" DataLabel="Verified"><MudCheckBox @bind-Checked="@context.EmailConfirmed" Disabled="true"></MudCheckBox></MudTd>
+                        <MudTd>@if (context.HasConnection) { <MudIcon Icon="@Icons.Material.Filled.Link" />}</MudTd>
                         <MudTd DataLabel="">
                             <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Filled" Size="Size.Small"
                                            Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" Link="@($"clientdetail/{@context.Id}")"></MudIconButton>

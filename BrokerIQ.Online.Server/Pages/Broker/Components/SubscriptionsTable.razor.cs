@@ -69,15 +69,6 @@ namespace BrokerIQ.Online.Server.Pages.Broker.Components
                     EndDate = subscription.EndDate,
                 });
             }
-
-            //if (wasSuccessfull)
-            //{
-            //    Snackbar.Add("Susbscription was saved.", Severity.Success);
-            //}
-            //else
-            //{
-            //    Snackbar.Add("Subscription save failed. Please try again.", Severity.Error);
-            //}
         }
 
         private async Task ReloadSubscriptions()
