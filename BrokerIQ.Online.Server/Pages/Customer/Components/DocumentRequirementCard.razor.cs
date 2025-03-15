@@ -98,7 +98,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                 {
                     { "ContentText", $"Are you sure you want to set the document requirements as the following?" },
                     { "AdditionalText", requirementsString},
-                    { "ButtonText", "Confirm"}
+                    { "ButtonText", "Confirm"},
+                    { "Color", Color.Primary }
                 };
             var result = await DialogService.Show<ConfirmationDialog>("Warning", dialogParams).Result;
 
