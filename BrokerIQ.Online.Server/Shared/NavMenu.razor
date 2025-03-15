@@ -98,7 +98,7 @@
 
             <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-3 d-flex align-center" : "nav-item px-3 d-flex align-center")">
                 <NavLink class="nav-link" href="notifications">
-                    <span class="oi oi-phone" aria-hidden="true"></span> Notifications
+                    <span class="oi oi-phone" aria-hidden="true"></span> Tracking outbound
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowNotificationsTutorial" VideoUrl="@tutorialVideos.NotificationsVideoUrl" />
             </li>
@@ -124,7 +124,7 @@
                         ChangeIcon("_content/BrokerIQ.Online.Server/favicon.ico");
                         <MudBadge Content="@NewMessageCount" Overlap="true" Color="Color.Inherit" Dot="true">
                             <MudIcon Icon="@Icons.Material.Filled.Email" Style="color: #d7d7d7; margin-left:-3px" />
-                            &nbsp;&nbsp;Reminders&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;Action stream&nbsp;&nbsp;&nbsp;
                         </MudBadge>
                     }
                     else
@@ -132,7 +132,7 @@
                         ChangeIcon("_content/BrokerIQ.Online.Server/favicon-alert.ico");
                         <MudBadge Content="@NewMessageCount" Overlap="true" Color="Color.Error " Dot="false">
                             <MudIcon Icon="@Icons.Material.Filled.Email" Style="color: #d7d7d7; margin-left:-3px" />
-                            &nbsp;&nbsp;Reminders&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;Action stream&nbsp;&nbsp;&nbsp;
                         </MudBadge>
                     }
                 </NavLink>

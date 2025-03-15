@@ -362,10 +362,19 @@
                     <MudText Typo="Typo.subtitle2" Class="mr-1">PASSWORD</MudText>
                 </TabContent>
                 <ChildContent>
-                    <ChangePassword EmailAddress="@MyEmailAddress"/>
+                    <ChangePassword EmailAddress="@MyEmailAddress" />
                 </ChildContent>
             </MudTabPanel>
-        }        
+        }
+
+        <MudTabPanel Text="Email Message">
+            <TabContent>
+                <MudText Typo="Typo.subtitle2" Class="mr-1">EMAIL MESSAGE</MudText>
+            </TabContent>
+            <ChildContent>
+                <EmailMessageTemplateTable Broker="@Broker" User="@User" />
+            </ChildContent>
+        </MudTabPanel>
     </MudTabs>
 }
 @code {

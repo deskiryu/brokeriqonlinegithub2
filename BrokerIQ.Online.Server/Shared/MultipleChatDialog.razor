@@ -24,26 +24,26 @@
                     <div class="card">
                         <div class="card-body">
                             <label class="card-title">Upload pdf files</label>
-                            <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave" >
-                                    <MudPaper class="drag-drop-zone">
-                                        <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
-                                        <MudText Typo="Typo.subtitle1">Drag and drop pdf files here to attach to chat</MudText>
-                                    </MudPaper>
+                            <div class="@HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter" @ondragleave="OnDragLeave" @ondrop="OnDragLeave">
+                                <MudPaper class="drag-drop-zone justify-center">
+                                    <InputFile OnChange="LoadFiles" multiple Class="drag-drop-input" accept="application/pdf" />
+                                    <MudText>Click or Drag and drop pdf files here to attach</MudText>
+                                </MudPaper>
                             </div>
                             @if (LoadedChatFiles.Any())
                             {
                                 var filename = LoadedChatFiles[0].Name;
                                 <MudButton Variant="Variant.Filled" Color="Color.Error"
-                                    Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())"
-                                    class="btn btn-link">Remove @filename</MudButton>
-                            }
+                                           Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => DeleteChatDocument())"
+                                           class="btn btn-link">Remove @filename</MudButton>
+                                    }
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-body">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                                Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())"
-                                class="btn btn-primary mb-2">
+                                       Style="@($"color:{Colors.Shades.Black};")" @onclick="@(f => NewChat())"
+                                       class="btn btn-primary mb-2">
                                 Compose Chat Message
                             </MudButton>
                         </div>
@@ -66,7 +66,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
-            OnClick="Cancel">Cancel</MudButton>
+                   OnClick="Cancel">Cancel</MudButton>
     </DialogActions>
 </MudDialog>
 

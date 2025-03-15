@@ -134,5 +134,7 @@ namespace BrokerIQ.Online.Models
         public bool AppointmentRemindersAllowed { get; set; }
 
         public int? WealthTypeId { get; set; }
+
+        public bool HasConnection { get; set; }
     }
 }

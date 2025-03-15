@@ -47,12 +47,12 @@ namespace BrokerIQ.Online.Models
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (AmountInvestedOn.Value > DateTime.UtcNow)
+            if (AmountInvestedOn.HasValue && AmountInvestedOn.Value > DateTime.UtcNow)
             {
                 yield return new ValidationResult("Amount invested date must be in the past.", new[] { "AmountInvestedOn" });
             }
 
-            if (NextReview.Value <= DateTime.UtcNow)
+            if (NextReview.HasValue && NextReview.Value <= DateTime.UtcNow)
             {
                 yield return new ValidationResult("Next review date must be in the future.", new[] { "NextReview" });
             }

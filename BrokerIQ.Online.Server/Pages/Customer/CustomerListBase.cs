@@ -72,8 +72,9 @@ namespace BrokerIQ.Online.Pages
         protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
 
         //filter
-        protected List<Customer> FilteredCustomers => Customers.Where(i => !string.IsNullOrWhiteSpace(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower()) ||
-            !string.IsNullOrWhiteSpace(i.BusinessName) && i.BusinessName.ToLower().Contains(SearchTerm.ToLower())).ToList();
+        protected List<Customer> FilteredCustomers => Customers.Where(i => i.ConnectedToCustomerId == null &&
+            ((!string.IsNullOrWhiteSpace(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())) ||
+            (!string.IsNullOrWhiteSpace(i.BusinessName) && i.BusinessName.ToLower().Contains(SearchTerm.ToLower())))).ToList();
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
@@ -235,7 +236,8 @@ namespace BrokerIQ.Online.Pages
             var customer = Customers.FirstOrDefault(x => x.Name == args);
             if (customer != null)
             {
-                NavigationManager.NavigateTo($"clientdetail/{customer.Id}");
+                var id = customer.ConnectedToCustomerId.HasValue ? customer.ConnectedToCustomerId : customer.Id;
+                NavigationManager.NavigateTo($"clientdetail/{id}");
             }
         }
 
