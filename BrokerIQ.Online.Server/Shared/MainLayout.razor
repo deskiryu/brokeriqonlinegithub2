@@ -17,8 +17,7 @@
 else
 {
     <MudThemeProvider Theme="MyCustomTheme2" />
-}
-
+}Í
 
 <MudLayout>
     <MudAppBar Elevation="1" Style="@(api.Value.IsYAHTheme ? "background-color:#2d2141;" : $"background-color:{Colors.Shades.Black};")">
@@ -41,7 +40,7 @@ else
         </div>
 
         <MudPaper Style="text-align: right; background-color: #353c3b; ">
-            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@_drawerClosed" />
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@(!_drawerOpen)" />
             <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen" />
         </MudPaper>
 
@@ -60,14 +59,15 @@ else
 @code{
     private const string COOKIE_ALERT = "cookieAlert";
 
+    private const string DRAWER_STATE = "_drawerOut";
+
     public string CookieBannerStyle { get; set; }
 
     bool _drawerOpen = true;
-    bool _drawerClosed = false;
-    void DrawerToggle()
+    async void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
-        _drawerClosed = !_drawerOpen;
+        await jsRuntime.InvokeVoidAsync("localStorage.setItem", DRAWER_STATE, _drawerOpen.ToString());
     }
 
     MudTheme MyCustomTheme2 = new MudTheme()
@@ -91,7 +91,6 @@ else
             DrawerWidthRight = "300px"
         }
     };
-
 
     MudTheme MyCustomThemeYah = new MudTheme()
     {
@@ -123,6 +122,9 @@ else
         bool.TryParse(value, out bool hasBeenClosed);
 
         CookieBannerStyle = hasBeenClosed ? "display : none" : string.Empty;
+
+        value = await jsRuntime.InvokeAsync<string>("localStorage.getItem", DRAWER_STATE);
+        if (value != null) bool.TryParse(value, out _drawerOpen);
     }
 
     private void AppStateChangeHandler()
