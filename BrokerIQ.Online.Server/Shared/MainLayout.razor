@@ -20,10 +20,9 @@ else
 }
 
 
-
 <MudLayout>
     <MudAppBar Elevation="1" Style="@(api.Value.IsYAHTheme ? "background-color:#2d2141;" : $"background-color:{Colors.Shades.Black};")">
-        
+
         @if (api.Value.IsYAHTheme)
         {
             <img src="https://brokeriq.co.uk/wp-content/uploads/2024/07/yahLogo15239.png" alt="BrokerIQ" class="white-logo default-logo">
@@ -36,19 +35,18 @@ else
         <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@(AppState.LoggedIn ? AppState.FullName : string.Empty)</MudText>
         <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Mini" >
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Mini">
         <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
             <NavMenu />
         </div>
- 
-<MudPaper Style="text-align: right; background-color: #3c3c3c;">
-          <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@_drawerClosed"/>
-             <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen"/>
-</MudPaper>
 
+        <MudPaper Style="text-align: right; background-color: #353c3b; ">
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@_drawerClosed" />
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen" />
+        </MudPaper>
 
     </MudDrawer>
-    
+
     <MudMainContent>
         <MudAlert Severity="Severity.Normal" CloseIconClicked="(() => CookieAlertClosed())" Style="@CookieBannerStyle" ShowCloseIcon="true">We use cookies to improve your experience on our website.</MudAlert>
 
