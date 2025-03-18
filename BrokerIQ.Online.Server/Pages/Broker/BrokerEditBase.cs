@@ -24,6 +24,9 @@ namespace BrokerIQ.Online.Pages
         public IBrokerService BrokerService { get; set; }
 
         [Inject]
+        public IBrokerStaffService BrokerStaffService { get; set; }
+
+        [Inject]
         public IBrokerIdentifierService BrokerIdentifierService { get; set; }
 
         [Inject]
@@ -53,6 +56,8 @@ namespace BrokerIQ.Online.Pages
         public User CurrentUser { get; set; }
 
         public Broker Broker { get; set; }
+
+        public BrokerStaff BrokerStaff { get; set; }
 
         protected string Message = string.Empty;
 
@@ -93,6 +98,11 @@ namespace BrokerIQ.Online.Pages
                 {
                     Broker = await BrokerService.GetBroker(id, true);
                     Broker.Subscriptions = (await BrokerSubscriptionService.GetAllForBroker(id)).ToList();
+                }
+
+                if (CurrentUser.IsBrokerStaff || CurrentUser.IsAdminStaff)
+                {
+                    BrokerStaff = await BrokerStaffService.GetBrokerStaff(CurrentUser.StaffBrokerId.Value);
                 }
             }
             catch
@@ -263,18 +273,6 @@ namespace BrokerIQ.Online.Pages
                     await DialogService.Show<AlertDialog>("Information", responseParams).Result;
                 }
                 NavigationManager.NavigateTo($"/brokerlist");
-            }
-        }
-
-        protected async Task SetUseBrokerPhoneNumber()
-        {
-            if (!Broker.TwoFactorUseBrokerPhoneNumber)
-            {
-                Broker.TwoFactorPhoneNumber = Broker.TelephoneNumber.GetFormattedPhoneNumber();
-            }
-            else
-            {
-                Broker.TwoFactorPhoneNumber = "";
             }
         }
 
