@@ -39,9 +39,9 @@ else
             <NavMenu />
         </div>
 
-        <MudPaper Style="text-align: right; background-color: #353c3b; ">
-            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@(!_drawerOpen)"/>
-            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen"/>
+        <MudPaper Style="@(api.Value.IsYAHTheme ? "text-align: right; background-color:#2d2141;" : "text-align: right; background-color:#353c3b;")">
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@(!_drawerOpen)" />
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen" />
         </MudPaper>
     </MudDrawer>
 
