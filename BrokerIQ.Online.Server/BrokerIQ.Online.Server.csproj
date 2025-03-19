@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
@@ -6,7 +6,7 @@
         <OutputType>Library</OutputType>
         <StartupObject />
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <Version>1.4.0</Version>
+        <Version>1.4.4</Version>
         <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
     <ItemGroup>

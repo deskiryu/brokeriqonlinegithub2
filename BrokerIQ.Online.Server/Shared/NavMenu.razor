@@ -40,6 +40,8 @@
                 </NavLink>
             </li>
 
+
+
             @if (!User.IsMinorAdmin)
             {
                 <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
@@ -163,7 +165,7 @@
                     <TutorialVideoIcon Visible="@ShowSettingsTutorial" VideoUrl="@tutorialVideos.SettingsVideoUrl" />
                 </li>
             }
-
+            
             @if (!User.IsAdmin && !User.IsMinorAdmin)
             {
                 <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
