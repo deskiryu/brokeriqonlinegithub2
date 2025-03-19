@@ -34,7 +34,7 @@ else
         <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@(AppState.LoggedIn ? AppState.FullName : string.Empty)</MudText>
         <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Mini" Style="overflow-x:hidden">
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Mini" Style="@DrawerStyle">
         <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
             <NavMenu />
         </div>
@@ -62,10 +62,15 @@ else
 
     public string CookieBannerStyle { get; set; }
 
+    public string DrawerStyle { get; set; } = "overflow-x: hidden; width: 250px;";
+
     bool _drawerOpen = true;
     async void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+        var width = _drawerOpen ? 250 : 56;
+        DrawerStyle = $"overflow-x: hidden; width: {width}px;";
+
         await jsRuntime.InvokeVoidAsync("localStorage.setItem", DRAWER_STATE, _drawerOpen.ToString());
     }
 
@@ -117,13 +122,19 @@ else
     {
         AppState.OnChange += AppStateChangeHandler;
 
-        var value = await jsRuntime.InvokeAsync<string>("localStorage.getItem", COOKIE_ALERT);
+        var value = await jsRuntime.InvokeAsync<string>("localStorage.getItem", DRAWER_STATE);
+        Console.WriteLine($"Drawer State : {value ?? string.Empty}");
+        if (value != null)
+        {
+            bool.TryParse(value, out _drawerOpen);
+            _drawerOpen = !_drawerOpen;
+            DrawerToggle();
+        }
+
+        value = await jsRuntime.InvokeAsync<string>("localStorage.getItem", COOKIE_ALERT);
         bool.TryParse(value, out bool hasBeenClosed);
 
         CookieBannerStyle = hasBeenClosed ? "display : none" : string.Empty;
-
-        value = await jsRuntime.InvokeAsync<string>("localStorage.getItem", DRAWER_STATE);
-        if (value != null) bool.TryParse(value, out _drawerOpen);
     }
 
     private void AppStateChangeHandler()
@@ -144,4 +155,4 @@ else
 
         StateHasChanged();
     }
-}
+    }
