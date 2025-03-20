@@ -2,31 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
+
+using Microsoft.AspNetCore.Components;
+using BrokerIQ.Online.Models;
+using MudBlazor;
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Services.Interface;
+
+using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.AppSettings;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
+using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Server.Pages.Mortgage.Components;
 
 namespace BrokerIQ.Online.Pages
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using AutoMapper;
-
-    using Microsoft.AspNetCore.Components;
-    using Models;
-    using MudBlazor;
-    using BrokerIQ.Dto.Enum;
-    using Services.Interface;
-
-    using BrokerIQ.Online.Server.Extensions;
-    using Microsoft.JSInterop;
-    using BrokerIQ.Online.Server.AppSettings;
-    using Microsoft.Extensions.Options;
-    using Microsoft.AspNetCore.Components.Forms;
-    using Microsoft.AspNetCore.Components.Web;
-    using BrokerIQ.Online.Server.Shared;
-    using BrokerIQ.Online.Server.Pages.Insurance.Components;
-    using BrokerIQ.Online.Server.Pages.Mortgage.Components;
-    using BrokerIQ.Online.Services;
-
     public class MortgageEditBase : ComponentBase
     {
         private int id;
@@ -493,6 +487,12 @@ namespace BrokerIQ.Online.Pages
             }
 
             Saved = true;
+        }
+
+        public DateTimeOffset? StartDate
+        {
+            get { return GetDTtoDTO(Mortgage.StartDate); }
+            set => Mortgage.StartDate = SetDTtoDTO(value);
         }
 
         public DateTimeOffset? EndDate
