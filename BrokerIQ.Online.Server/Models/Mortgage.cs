@@ -29,7 +29,9 @@ namespace BrokerIQ.Online.Models
         [Required]
         public MortgageRateEnum MortgageRateType { get; set; }
 
-        [RequiredIf(nameof(ShowEndDate), true, ErrorMessage = "Please enter a mortgage end date")]
+        public DateTime? StartDate { get; set; }
+
+        [RequiredIf(nameof(EndDate), true, ErrorMessage = "Please enter a mortgage end date")]
         public DateTime? EndDate { get; set; }
 
         public DateTime LastNotificationCheck { get; set; }
@@ -81,6 +83,10 @@ namespace BrokerIQ.Online.Models
         public bool ShowMortgageNumber { get; set; }
 
         public string BrokerNotes { get; set; }
+
+        public decimal? LoanAmount { get; set; }
+
+        public int? TermInYears { get; set; }
 
         public virtual ICollection<MortgageDocument> SupportingDocuments { get; set; }
     }
