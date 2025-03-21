@@ -88,6 +88,12 @@ namespace BrokerIQ.Online.Models
 
         public int? TermInYears { get; set; }
 
+        public bool ShowStartDate { get; set; }
+
+        public bool ShowLoanAmount { get; set; }
+
+        public bool ShowTermInYears { get; set; }
+
         public virtual ICollection<MortgageDocument> SupportingDocuments { get; set; }
     }
 }

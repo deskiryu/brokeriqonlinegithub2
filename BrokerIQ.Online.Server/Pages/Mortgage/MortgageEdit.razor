@@ -111,6 +111,9 @@
             <DateRangePicker @bind-StartDate="StartDate" SingleDatePicker="true" class="form-control col-sm-7" Culture="@(System.Globalization.CultureInfo.GetCultureInfo("en-GB"))"></DateRangePicker>
             <ValidationMessage For="@(() => Mortgage.StartDate)" />
         </div>
+        <div class="col-sm-2">
+            <MudCheckBox @bind-Checked="@Mortgage.ShowStartDate" />
+        </div>
     </div>
 
     <div class="form-group row">
@@ -120,6 +123,9 @@
                 <MudTextField Type="int?" @bind-Value="@Mortgage.TermInYears" HelperText="Enter mortgage term" />
                 <ValidationMessage For="@(() => Mortgage.TermInYears)" />
             </MudItem>
+        </div>
+        <div class="col-sm-2">
+            <MudCheckBox @bind-Checked="@Mortgage.ShowTermInYears" />
         </div>
     </div>
 
@@ -178,6 +184,9 @@
                 <MudTextField @bind-Value="@Mortgage.LoanAmount" HelperText="Enter the loan amount" Format="F2" Adornment="Adornment.Start" AdornmentText="£" />
                 <ValidationMessage For="@(() => Mortgage.LoanAmount)" />
             </MudItem>
+        </div>
+        <div class="col-sm-2">
+            <MudCheckBox @bind-Checked="@Mortgage.ShowLoanAmount" />
         </div>
     </div>
 
