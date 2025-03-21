@@ -481,9 +481,13 @@ namespace BrokerIQ.Online.Mapper
                     return ir;
                 }))
                 .ForMember(d => d.MortgageNumber, action => action.MapFrom(s => s.MortgageNumber))
-                .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber));
-
-
+                .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber))
+                .ForMember(d => d.StartDate, action => action.MapFrom(s => s.StartDate))
+                .ForMember(d => d.ShowStartDate, action => action.MapFrom(s => s.ShowStartDate))
+                .ForMember(d => d.TermInYears, action => action.MapFrom(s => s.TermInYears))
+                .ForMember(d => d.ShowTermInYears, action => action.MapFrom(s => s.ShowTermInYears))
+                .ForMember(d => d.LoanAmount, action => action.MapFrom(s => s.LoanAmount))
+                .ForMember(d => d.ShowLoanAmount, action => action.MapFrom(s => s.ShowLoanAmount));
 
             CreateMap<Mortgage, CreateMortgageDto>()
                 .ForMember(d => d.BrokerId, action => action.MapFrom(s => s.BrokerId))
@@ -584,7 +588,13 @@ namespace BrokerIQ.Online.Mapper
                     return ir;
                 }))
                 .ForMember(d => d.MortgageNumber, action => action.MapFrom(s => s.MortgageNumber))
-                .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber));
+                .ForMember(d => d.ShowMortgageNumber, action => action.MapFrom(s => s.ShowMortgageNumber))
+                .ForMember(d => d.StartDate, action => action.MapFrom(s => s.StartDate))
+                .ForMember(d => d.ShowStartDate, action => action.MapFrom(s => s.ShowStartDate))
+                .ForMember(d => d.TermInYears, action => action.MapFrom(s => s.TermInYears))
+                .ForMember(d => d.ShowTermInYears, action => action.MapFrom(s => s.ShowTermInYears))
+                .ForMember(d => d.LoanAmount, action => action.MapFrom(s => s.LoanAmount))
+                .ForMember(d => d.ShowLoanAmount, action => action.MapFrom(s => s.ShowLoanAmount));
         }
 
         private void MortgageDocumentMapper()
@@ -707,16 +717,16 @@ namespace BrokerIQ.Online.Mapper
                 .ForMember(d => d.StaffTypeId, action => action.MapFrom(s => s.StaffTypeId))
                 .ForMember(d => d.IsAdminStaff, action => action.MapFrom(s => s.IsAdminStaff));
 
-                CreateMap<BrokerStaffDto, BrokerStaff>();
-                CreateMap<BrokerStaff, BrokerStaffDto>();
+            CreateMap<BrokerStaffDto, BrokerStaff>();
+            CreateMap<BrokerStaff, BrokerStaffDto>();
 
-                CreateMap<BrokerStaff, UpdateBrokerStaffDto>()
-                .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
-                .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
-                .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
-                .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName))
-                .ForMember(d => d.StaffTypeId, action => action.MapFrom(s => s.StaffTypeId))
-                .ForMember(d => d.IsAdminStaff, action => action.MapFrom(s => s.IsAdminStaff));
+            CreateMap<BrokerStaff, UpdateBrokerStaffDto>()
+            .ForMember(d => d.FirstName, action => action.MapFrom(s => s.FirstName))
+            .ForMember(d => d.TwoFactorPhoneNumber, action => action.MapFrom(s => s.TwoFactorPhoneNumber))
+            .ForMember(d => d.TwoFactorType, action => action.MapFrom(s => s.TwoFactorType))
+            .ForMember(d => d.LastName, action => action.MapFrom(s => s.LastName))
+            .ForMember(d => d.StaffTypeId, action => action.MapFrom(s => s.StaffTypeId))
+            .ForMember(d => d.IsAdminStaff, action => action.MapFrom(s => s.IsAdminStaff));
         }
 
         private void NotificationMapper()
