@@ -34,16 +34,18 @@ namespace BrokerIQ.Online.Services
 
         public async Task<bool> Update(UpdateEmailMessageTemplateDto EmailMessageTemplate)
         {
-            bool response = false;
             try
             {
-                response = await _requestProviderService.Put<UpdateEmailMessageTemplateDto, bool>(API_CONTROLLER, EmailMessageTemplate);
+                 await _requestProviderService.Put<UpdateEmailMessageTemplateDto, EmailMessageTemplateDto>(API_CONTROLLER, EmailMessageTemplate);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Update: exception {ex.Message}");
             }
-            return response;
+
+            return false;
         }
     }
 }

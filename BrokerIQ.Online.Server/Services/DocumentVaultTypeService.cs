@@ -15,7 +15,7 @@ namespace BrokerIQ.Online.Services
         private const string API_CONTROLLER = "DocumentVaultType";
 
         public DocumentVaultTypeService(IRequestProviderService requestProviderService, IAccountService accountService)
-                :base(accountService, requestProviderService)
+                : base(accountService, requestProviderService)
         {
         }
 
@@ -37,32 +37,36 @@ namespace BrokerIQ.Online.Services
         {
             vaultType.BrokerId = await GetCurrentBrokerId();
 
-            bool response = false;
             try
             {
-                response = await _requestProviderService.Post<CreateDocumentVaultTypeDto, bool>(API_CONTROLLER, vaultType);
+                await _requestProviderService.Post<CreateDocumentVaultTypeDto, DocumentVaultTypeDto>(API_CONTROLLER, vaultType);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"CreateOrCreate: exception {ex.Message}");
             }
-            return response;
+
+            return false;
         }
 
         public async Task<bool> Update(UpdateDocumentVaultTypeDto vaultType)
         {
             vaultType.BrokerId = await GetCurrentBrokerId();
 
-            bool response = false;
             try
             {
-                response = await _requestProviderService.Put<UpdateDocumentVaultTypeDto, bool>(API_CONTROLLER, vaultType);
+                await _requestProviderService.Put<UpdateDocumentVaultTypeDto, DocumentVaultTypeDto>(API_CONTROLLER, vaultType);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"UpdateOrCreate: exception {ex.Message}");
             }
-            return response;
+
+            return false;
         }
 
         public async Task<bool> Delete(DocumentVaultTypeDto vaultType)

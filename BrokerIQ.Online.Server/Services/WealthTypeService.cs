@@ -37,32 +37,36 @@ namespace BrokerIQ.Online.Services
         {
             wealthType.BrokerId = await GetCurrentBrokerId();
 
-            bool response = false;
             try
             {
-                response = await _requestProviderService.Post<CreateWealthTypeDto, bool>(API_CONTROLLER, wealthType);
+                await _requestProviderService.Post<CreateWealthTypeDto, WealthTypeDto>(API_CONTROLLER, wealthType);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"CreateOrCreate: exception {ex.Message}");
             }
-            return response;
+
+            return false;
         }
 
         public async Task<bool> Update(UpdateWealthTypeDto wealthType)
         {
             wealthType.BrokerId = await GetCurrentBrokerId();
 
-            bool response = false;
             try
             {
-                response = await _requestProviderService.Put<UpdateWealthTypeDto, bool>(API_CONTROLLER, wealthType);
+                await _requestProviderService.Put<UpdateWealthTypeDto, WealthTypeDto>(API_CONTROLLER, wealthType);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"UpdateOrCreate: exception {ex.Message}");
             }
-            return response;
+
+            return false;
         }
 
         public async Task<bool> Delete(WealthTypeDto wealthType)

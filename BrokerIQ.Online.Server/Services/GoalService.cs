@@ -37,32 +37,36 @@ namespace BrokerIQ.Online.Services
         {
             Goal.BrokerId = await GetCurrentBrokerId();
 
-            bool response = false;
             try
             {
-                response = await _requestProviderService.Post<CreateGoalDto, bool>(API_CONTROLLER, Goal);
+                 await _requestProviderService.Post<CreateGoalDto, GoalDto>(API_CONTROLLER, Goal);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Create: exception {ex.Message}");
             }
-            return response;
+
+            return false;
         }
 
         public async Task<bool> Update(UpdateGoalDto Goal)
         {
             Goal.BrokerId = await GetCurrentBrokerId();
 
-            bool response = false;
             try
             {
-                response = await _requestProviderService.Put<UpdateGoalDto, bool>(API_CONTROLLER, Goal);
+                 await _requestProviderService.Put<UpdateGoalDto, GoalDto>(API_CONTROLLER, Goal);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Update: exception {ex.Message}");
             }
-            return response;
+
+            return false;
         }
 
         public async Task<bool> Delete(GoalDto Goal)
