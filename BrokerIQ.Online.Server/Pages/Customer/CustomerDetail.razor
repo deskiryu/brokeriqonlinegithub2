@@ -27,13 +27,14 @@ else if (!Saved)
         <h3 class="page-title">@Customer.FirstName @Customer.LastName</h3>
         @if (CalendlyAccessIsAllowed)
         {
-            <MudButtonGroup Variant="Variant.Filled" Color="Color.Primary">
-                <MudIconButton Icon="@Icons.Material.Filled.EditCalendar" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup" />
+            <MudStack Row="true" AlignItems="AlignItems.Center">
+                <MudText Typo="Typo.body1">Calendly</MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup">Login</MudButton>
                 @if (IsConnectedToCalendly)
                 {
-                    <MudIconButton Icon="@Icons.Material.Filled.ExtensionOff" Color="Color.Error" OnClick="DisconnectFromCalendly" />
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DisconnectFromCalendly">Logout</MudButton>
                 }
-            </MudButtonGroup>
+            </MudStack>
         }
     </div>
 
