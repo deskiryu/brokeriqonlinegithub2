@@ -29,7 +29,7 @@
     }
 }
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+<div class="collapse">
     <ul class="nav flex-column">
 
         @if (IsLoggedIn)
@@ -239,10 +239,6 @@
 
     private User User { get; set; }
 
-    private bool collapseNavMenu = true;
-
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
     private int NewMessageCount;
 
     private bool NewMessageHide;
@@ -250,11 +246,6 @@
     private Broker Broker;
 
     private System.Threading.Timer _timer;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
 
     protected override async Task OnInitializedAsync()
     {
