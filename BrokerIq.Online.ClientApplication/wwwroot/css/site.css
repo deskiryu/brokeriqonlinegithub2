@@ -55,11 +55,24 @@ app {
 }
 
 .sidebar {
+    width: 250px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
     background-image: linear-gradient(to bottom right, #353c3b, #353c3b);
 }
 
 .sidebar-yah {
+    width: 250px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
     background-image: linear-gradient(to bottom right, #2d2141, #2d2141);
+}
+
+.sidebar .collapse, .sidebar-yah .collapse {
+    /* Never collapse the sidebar for wide screens */
+    display: block;
 }
 
 .sidebar .top-row {
@@ -191,13 +204,6 @@ app {
         flex-direction: row;
     }*/
 
-    .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-    }
-
     .main .top-row {
         position: sticky;
         top: 0;
@@ -210,11 +216,6 @@ app {
 
     .navbar-toggler {
         display: none;
-    }
-
-    .sidebar .collapse {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
     }
 
     #container {
