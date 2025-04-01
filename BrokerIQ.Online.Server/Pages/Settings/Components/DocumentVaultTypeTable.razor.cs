@@ -75,11 +75,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             var result = await DialogService.Show<DocumentVaultTypeDialog>(title, parameters, options).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 DocumentVaultTypeDto updated = result.Data as DocumentVaultTypeDto;
 
-                var wasSuccessfull = false;
+                bool wasSuccessfull;
+
                 if (vaultType.Id == 0)
                 {
                     wasSuccessfull = await DocumentVaultTypeService.Create(new CreateDocumentVaultTypeDto()
@@ -99,6 +100,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                         AdditionalDetail = updated.AdditionalDetail
                     });
                 }
+
+                var message = wasSuccessfull ? "Docuvault type was saved." : "Docuvault type save failed. Please try again.";
+                Snackbar.Add(message, wasSuccessfull ? Severity.Success : Severity.Error);
             }
 
             await ReloadDocumentVaultTypes();

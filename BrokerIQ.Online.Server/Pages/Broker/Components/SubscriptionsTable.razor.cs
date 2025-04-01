@@ -47,7 +47,7 @@ namespace BrokerIQ.Online.Server.Pages.Broker.Components
 
         private async Task SaveSubscription(BrokerSubscriptionDto subscription)
         {
-            var wasSuccessfull = false;
+            bool wasSuccessfull;
 
             if (subscription.BrokerId == 0)
             {
@@ -69,6 +69,9 @@ namespace BrokerIQ.Online.Server.Pages.Broker.Components
                     EndDate = subscription.EndDate,
                 });
             }
+
+            var message = wasSuccessfull ? "Susbscription was saved." : "Subscription save failed. Please try again.";
+            Snackbar.Add(message, wasSuccessfull ? Severity.Success : Severity.Error);
         }
 
         private async Task ReloadSubscriptions()

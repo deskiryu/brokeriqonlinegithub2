@@ -80,7 +80,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             {
                 WealthTypeDto updated = result.Data as WealthTypeDto;
 
-                var wasSuccessfull = false;
+                bool wasSuccessfull;
                 if (wealthType.Id == 0)
                 {
                     wasSuccessfull = await WealthTypeService.Create(new CreateWealthTypeDto()
@@ -98,6 +98,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                         Name = updated.Name
                     });
                 }
+
+                var message = wasSuccessfull ? "Wealth type was saved." : "Wealth type save failed. Please try again.";
+                Snackbar.Add(message, wasSuccessfull ? Severity.Success : Severity.Error);
             }
 
             await ReloadWealthTypes();
