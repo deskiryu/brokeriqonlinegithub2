@@ -671,7 +671,7 @@ else if (!Saved)
                                         <MudCardContent>
                                             <MudStack>
                                                 <MudStack Row="true" AlignItems="AlignItems.Center">
-                                                    <MudText Typo="Typo.body2" HtmlTag="strong">@($"Will be sent on {message.ToBeSentOn.Value.ToBiqDateTimeString()}")</MudText>
+                                                    <MudText Typo="Typo.body2" HtmlTag="strong">@($"Will be sent on {message.ToBeSentOn.Value.ToBiqDateTimeStringNoConversion()}")</MudText>
                                                     <MudSpacer />
                                                     <MudMenu Icon="@Icons.Material.Filled.MoreVert"
                                                              Color="Color.Dark"
