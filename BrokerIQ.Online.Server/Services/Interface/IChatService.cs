@@ -26,7 +26,7 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<bool> SendMultipleAudioLink(string message, List<int> listCustomerId, int brokerId, string audioUrl);
 
-        Task<Chat> GetPaged(int customerId, int brokerId, int pageNumber = 1, int pageSize = 25);
+        Task<Chat> GetPaged(int customerId, int brokerId, int pageNumber = 1, int pageSize = 25, bool markAsRead = true);
 
 
         Task<bool> SendDraft(string message, int customerId, DateTime toBeSentOn);

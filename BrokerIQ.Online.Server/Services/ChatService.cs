@@ -190,7 +190,7 @@ namespace BrokerIQ.Online.Services
             return answer;
         }
 
-        public async Task<Chat> GetPaged(int customerId, int brokerId, int pageNumber = 1, int pageSize = 25)
+        public async Task<Chat> GetPaged(int customerId, int brokerId, int pageNumber = 1, int pageSize = 25, bool markAsRead = true)
         {
             var localBrokerId = brokerId > 0 ? brokerId : await GetCurrentBrokerId();
 
@@ -203,7 +203,7 @@ namespace BrokerIQ.Online.Services
                 GetImageDocumentFileContents = true,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
-                MarkAsRead = true
+                MarkAsRead = markAsRead
             });
             var chat = mapper.Map<Chat>(ChatDto);
 
@@ -213,7 +213,6 @@ namespace BrokerIQ.Online.Services
                 {
                     chat.Messages = chat.Messages.Select(c => { c.YahTheme = true; return c; }).ToList();
                 }
-
             }
 
             return chat;

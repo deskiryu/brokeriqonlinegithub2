@@ -399,7 +399,7 @@ else if (!Saved)
             </ChildContent>
         </MudTabPanel>
 
-        <MudTabPanel BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@ChatBadgeDot' OnClick="@(f => ClearUnReadChat())">
+        <MudTabPanel BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@ChatBadgeDot' OnClick="@(f => ClearUnReadChat())" ID='"pn_chat"'>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">CHAT</MudText>
                 <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.ChatVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex==5)" />
