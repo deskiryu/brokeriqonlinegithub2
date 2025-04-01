@@ -105,24 +105,7 @@
                     <MudBadge Content="@NewMessageCount" Overlap="true" Color="@(NewMessageHide ? Color.Inherit : Color.Error)" Dot="@NewMessageHide" Origin="Origin.CenterCenter">
                         <span class="oi oi-envelope-closed" aria-hidden="true"></span>
                     </MudBadge>
-                    Referrals
-
-                    @*@if (NewMessageHide)
-                        {
-                            ChangeIcon("_content/BrokerIQ.Online.Server/favicon.ico");
-                            <MudBadge Content="@NewMessageCount" Overlap="true" Color="Color.Inherit" Dot="true">
-                                <MudIcon Icon="@Icons.Material.Filled.Email" Style="color: #d7d7d7; margin-left:-3px" />
-                                Action stream
-                            </MudBadge>
-                        }
-                        else
-                        {
-                            ChangeIcon("_content/BrokerIQ.Online.Server/favicon-alert.ico");
-                            <MudBadge Content="@NewMessageCount" Overlap="true" Color="Color.Error " Dot="false">
-                                <MudIcon Icon="@Icons.Material.Filled.Email" Style="color: #d7d7d7; margin-left:-3px" />
-                                Action stream
-                            </MudBadge>
-                        }*@
+                    Action stream
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowMessageListTutorial" VideoUrl="@tutorialVideos.MessageListVideoUrl" />
             </li>
