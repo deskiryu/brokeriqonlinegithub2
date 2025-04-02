@@ -10,5 +10,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<IEnumerable<EmailMessageTemplateDto>> GetAllForBroker(int brokerId);
 
         Task<bool> Update(UpdateEmailMessageTemplateDto EmailMessageTemplate);
+
+        Task<string> GetContentPreviewFor(EmailMessageTemplateDto emailMessageTemplate);
     }
 }

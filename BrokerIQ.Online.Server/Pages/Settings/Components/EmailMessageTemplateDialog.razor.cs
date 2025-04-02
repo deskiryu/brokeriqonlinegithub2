@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto;
+using BrokerIQ.Dto.Enum;
+using BrokerIQ.Online.Server.Extensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -29,5 +31,18 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         }
 
         void Cancel() => MudDialog.Cancel();
+
+        async void PreviewEmail()
+        {
+            var title = $"{((EmailTemplate)EmailMessageTemplate.EmailTemplateId).GetDisplayName()} Preview";
+            var parameters = new DialogParameters
+            {
+                { "EmailMessageTemplate", EmailMessageTemplate }
+            };
+
+            var options = new DialogOptions() { MaxWidth = MaxWidth.Small, FullWidth = true };
+
+            await DialogService.Show<EmailPreviewDialog>(title, parameters, options).Result;
+        }
     }
 }
