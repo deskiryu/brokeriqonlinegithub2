@@ -127,7 +127,7 @@
                             </div>
                         </div>
                         <div>
-                            @if (!CurrentUser.IsBrokerStaff)
+                            @if (CurrentUser.IsBroker || CurrentUser.IsAdminStaff)
                             {
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Update Broker</MudButton>
                             }
@@ -139,14 +139,14 @@
                     </EditForm>
                 </MudTabPanel>
 
-                @if (!CurrentUser.IsBrokerStaff && Broker is not null)
+                @if (CurrentUser.IsBroker && Broker is not null)
                 {
                     <MudTabPanel Text="@(CurrentUser.IsBroker ? "My Details" : "Broker Details")">
                         <BrokerDetails CurrentBroker="@Broker" />
                     </MudTabPanel>
                 }
 
-                @if (CurrentUser.IsBrokerStaff && BrokerStaff is not null)
+                @if (!CurrentUser.IsBroker && BrokerStaff is not null)
                 {
                     <MudTabPanel Text="My Details">
                         <BrokerStaffDetails CurrentStaff="@BrokerStaff" />
