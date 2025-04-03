@@ -47,5 +47,19 @@ namespace BrokerIQ.Online.Services
 
             return false;
         }
+
+        public async Task<string> GetContentPreviewFor(EmailMessageTemplateDto emailMessageTemplate)
+        {
+            try
+            {
+                return await _requestProviderService.Post<EmailMessageTemplateDto, string>($"{API_CONTROLLER}/preview", emailMessageTemplate);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Update: exception {ex.Message}");
+            }
+
+            return "Unable to get preview for email at the moment. Please try again in a bit.";
+        }
     }
 }
