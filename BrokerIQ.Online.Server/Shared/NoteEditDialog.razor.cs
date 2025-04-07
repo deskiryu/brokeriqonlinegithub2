@@ -55,8 +55,7 @@ namespace BrokerIQ.Online.Server.Shared
             {
                 if(ReminderDate.HasValue && ReminderTime.HasValue)
                 {
-                    combined = ReminderDate.Value;
-                    combined = combined.AddTicks(ReminderTime.Value.Ticks);
+                    combined = ReminderDate.Value.Add(ReminderTime.Value);
                 }
                 else
                 {

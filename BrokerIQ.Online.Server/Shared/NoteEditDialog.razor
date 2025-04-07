@@ -1,11 +1,13 @@
-﻿<MudDialog>
+﻿@using BrokerIQ.Online.Server.Components
+
+<MudDialog>
     <DialogContent>
         <MudTextField T="string" Label="Note" Required="true" RequiredError="Please fill in the note content" @bind-Value="Text" Lines="5" Immediate="true" />
         @if (ShowReminderControls)
         {
             <MudCheckBox T="bool" Label="Set note reminder" @bind-Checked="HasNoteReminder" />
             <MudDatePicker T="DateTime?" Label="Reminder Date" @bind-Date="ReminderDate" Disabled="DisableReminderDate" />
-            <MudTimePicker Label="Reminder Time" MinuteSelectionStep="5" AmPm="false" @bind-Time="ReminderTime" Disabled="DisableReminderDate"/>
+            <TimeOfDay @bind-Value="ReminderTime" Disabled="DisableReminderDate" />
             <MudSpacer />
         }
     </DialogContent>
