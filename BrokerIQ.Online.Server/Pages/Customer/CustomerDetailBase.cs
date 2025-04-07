@@ -356,7 +356,7 @@ namespace BrokerIQ.Online.Pages
         {
             if (Tabs is null) return false;
 
-            return  Tabs.ActivePanel.ID?.ToString() == "pn_chat";
+            return Tabs.ActivePanel.ID?.ToString() == "pn_chat";
         }
 
         private async Task<IEnumerable<CustomerDocument>> GetCustomerDocuments()
@@ -600,6 +600,8 @@ namespace BrokerIQ.Online.Pages
                 { "ReminderDateTime", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
             };
 
+            var dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+
             var result = await DialogService.Show<NoteEditDialog>("New Note", dialogParams).Result;
             if (!result.Canceled)
             {
@@ -682,7 +684,7 @@ namespace BrokerIQ.Online.Pages
             UpdatePreviewWithTimes();
         }
 
-        protected async Task InsertTimeToTemplateMessage(TimeSpan? timeIn)
+        protected void InsertTimeToTemplateMessage(TimeSpan? timeIn)
         {
             SelectedTemplateTimeReplacement = timeIn;
             UpdatePreviewWithTimes();
