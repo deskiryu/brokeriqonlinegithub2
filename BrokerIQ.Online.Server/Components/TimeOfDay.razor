@@ -1,5 +1,5 @@
 ﻿<div class="d-flex flex-row flex-grow-1 justify-center @VisibilityClass" >
-    <MudSelect T="string" @ref="ctlHour" Placeholder="Hour" Clearable="true" Dense="true" OuterClass="mx-1" Immediate="true" ValueChanged="@UpdateValue" Disabled="@Disabled">
+    <MudSelect T="string" @ref="ctlHour" Placeholder="Hour" Clearable="true" Dense="true" OuterClass="mx-1" Immediate="true" ValueChanged="@UpdateValue" Disabled="@Disabled" Value="HourAsString">
         <MudSelectItem Value="@("00")">00</MudSelectItem>
         <MudSelectItem Value="@("01")">01</MudSelectItem>
         <MudSelectItem Value="@("02")">02</MudSelectItem>
@@ -25,7 +25,7 @@
         <MudSelectItem Value="@("22")">22</MudSelectItem>
         <MudSelectItem Value="@("23")">23</MudSelectItem>
     </MudSelect>
-    <MudSelect T="string" @ref="ctlMinute" Placeholder="Minute" Clearable="true" Dense="true" OuterClass="mx-1" Immediate="true" ValueChanged="@UpdateValue" Disabled="@Disabled">
+    <MudSelect T="string" @ref="ctlMinute" Placeholder="Minute" Clearable="true" Dense="true" OuterClass="mx-1" Immediate="true" ValueChanged="@UpdateValue" Disabled="@Disabled" Value="MinuteAsString">
         <MudSelectItem Value="@("00")">00</MudSelectItem>
         <MudSelectItem Value="@("05")">05</MudSelectItem>
         <MudSelectItem Value="@("10")">10</MudSelectItem>

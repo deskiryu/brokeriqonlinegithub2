@@ -25,14 +25,25 @@ public partial class TimeOfDay : ComponentBase
     MudSelect<string> ctlHour;
     MudSelect<string> ctlMinute;
 
+    string HourAsString { get; set; }
+    string MinuteAsString { get; set; }
+
     protected string VisibilityClass => Visible ? string.Empty : "d-none";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        HourAsString = Value.Value.Hours.ToString("00") ;
+        MinuteAsString = Value.Value.Minutes.ToString("00");
+    }
 
     private async Task UpdateValue()
     {
-        var hour = ctlHour.Value;
-        var minute = ctlMinute.Value;
+        var hour = HourAsString = ctlHour.Value;
+        var minute = MinuteAsString = ctlMinute.Value;
 
-        if (string.IsNullOrWhiteSpace(hour) || string.IsNullOrWhiteSpace(minute)) Value = null;
+        if (string.IsNullOrWhiteSpace(HourAsString) || string.IsNullOrWhiteSpace(MinuteAsString)) Value = null;
 
         var parsed = TimeSpan.TryParse($"{hour}:{minute}", out TimeSpan parsedTime);
 
