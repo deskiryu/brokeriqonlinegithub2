@@ -6,25 +6,7 @@
 @inject IDialogService DialogService
 @inject LoggedInAppState AppState
 @inject IOptions<ReviewItAPIDetails> api
-
-<div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
-    <NavMenu />
-</div>
-
-<div class="@(api.Value.IsYAHTheme? "main main-yah" : "main")">
-    <div class="top-row px-4" style="background-color:black">
-        <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Class="mr-2" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
-        @if (AppState.LoggedIn)
-        {
-            <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@AppState.FullName</MudText>
-        }
-    </div>
-
-    <div class="content px-4">
-        <Alert />
-        @Body
-    </div>
-</div>
+@inject IJSRuntime jsRuntime
 
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -37,8 +19,60 @@ else
     <MudThemeProvider Theme="MyCustomTheme2" />
 }
 
+<MudLayout>
+    <MudAppBar Elevation="1" Style="@(api.Value.IsYAHTheme ? "background-color:#2d2141;" : $"background-color:{Colors.Shades.Black};")">
 
+        @if (api.Value.IsYAHTheme)
+        {
+            <img src="https://brokeriq.co.uk/wp-content/uploads/2024/07/yahLogo15239.png" alt="BrokerIQ" class="white-logo default-logo">
+        }
+        else
+        {
+            <img src="https://brokeriq.co.uk/wp-content/uploads/2022/05/iq-test-logo.png" alt="BrokerIQ" class="white-logo default-logo">
+        }
+        <MudSpacer />
+        <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@(AppState.LoggedIn ? AppState.FullName : string.Empty)</MudText>
+        <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Mini" Style="@DrawerStyle">
+        <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
+            <NavMenu />
+        </div>
 
+        <MudPaper Style="@(api.Value.IsYAHTheme ? "text-align: right; background-color:#2d2141;border-radius: 0 !important;" : "text-align: right; background-color:#353c3b;border-radius: 0 !important;")">
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@(!_drawerOpen)" />
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen" />
+        </MudPaper>
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudAlert Severity="Severity.Normal" CloseIconClicked="(() => CookieAlertClosed())" Style="@CookieBannerStyle" ShowCloseIcon="true">We use cookies to improve your experience on our website.</MudAlert>
+
+        <div class="p-1">
+            <Alert />
+            @Body
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+@code{
+    private const string COOKIE_ALERT = "cookieAlert";
+
+    private const string DRAWER_STATE = "_drawerOut";
+
+    public string CookieBannerStyle { get; set; }
+
+    public string DrawerStyle { get; set; } = "overflow-x: hidden; width: 250px;";
+
+    bool _drawerOpen = true;
+    async void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+        var width = _drawerOpen ? 250 : 56;
+        DrawerStyle = $"overflow-x: hidden; width: {width}px;";
+
+        await jsRuntime.InvokeVoidAsync("localStorage.setItem", DRAWER_STATE, _drawerOpen.ToString());
+    }
 
 @code {
     MudTheme MyCustomTheme2 = new MudTheme()
@@ -56,13 +90,12 @@ else
 
             },
 
-            LayoutProperties = new LayoutProperties()
-            {
-                DrawerWidthLeft = "260px",
-                DrawerWidthRight = "300px"
-            }
-        };
-
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidthLeft = "260px",
+            DrawerWidthRight = "300px"
+        }
+    };
 
     MudTheme MyCustomThemeYah = new MudTheme()
         {
@@ -88,6 +121,20 @@ else
     protected override void OnInitialized()
     {
         AppState.OnChange += AppStateChangeHandler;
+
+        var value = await jsRuntime.InvokeAsync<string>("localStorage.getItem", DRAWER_STATE);
+        Console.WriteLine($"Drawer State : {value ?? string.Empty}");
+        if (value != null)
+        {
+            bool.TryParse(value, out _drawerOpen);
+            _drawerOpen = !_drawerOpen;
+            DrawerToggle();
+        }
+
+        value = await jsRuntime.InvokeAsync<string>("localStorage.getItem", COOKIE_ALERT);
+        bool.TryParse(value, out bool hasBeenClosed);
+
+        CookieBannerStyle = hasBeenClosed ? "display : none" : string.Empty;
     }
 
     private void AppStateChangeHandler()
@@ -99,4 +146,13 @@ else
     {
         DialogService.Show<VersionDialog>("About BrokerIQ");
     }
-}
+
+    private async Task CookieAlertClosed()
+    {
+        await jsRuntime.InvokeVoidAsync("localStorage.setItem", COOKIE_ALERT, "true");
+
+        CookieBannerStyle = "display : none";
+
+        StateHasChanged();
+    }
+    }

@@ -34,37 +34,6 @@
                                         <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.Name)" />
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label">Broker First Name</label>
-
-                                    <div class="col-sm-8">
-                                        <InputText class="form-control col-sm-8" @bind-Value="Broker.BrokerFirstName" placeholder="Enter first name for this customer"></InputText>
-                                        <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.BrokerFirstName)" />
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label">Broker Last Name</label>
-
-                                    <div class="col-sm-8">
-                                        <InputText class="form-control col-sm-8" @bind-Value="Broker.BrokerLastName" placeholder="Enter last name for this customer"></InputText>
-                                        <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.BrokerLastName)" />
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label">Telephone Number</label>
-                                    <div class="col-sm-8">
-                                        <InputText class="form-control col-sm-8" @bind-Value="@Broker.TelephoneNumber" placeholder="Enter telephone for this Broker"></InputText>
-                                        <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.TelephoneNumber)" />
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label">Email Address</label>
-                                    <div class="col-sm-8">
-                                        <label type="text" readonly class="form-control-plaintext">@Broker.EmailAddress</label>
-                                    </div>
-                                </div>
 
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Address Line 1</label>
@@ -108,28 +77,6 @@
                                     </div>
                                 }
 
-                                <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label">Two Factor Type</label>
-                                    <MudRadioGroup class="col-sm-4" @bind-SelectedOption="@Broker.TwoFactorType">
-                                        <MudRadio Option="@TwoFactorEnum.Email">Email</MudRadio>
-                                        <MudRadio Option="@TwoFactorEnum.Sms">Mobile Phone</MudRadio>
-                                    </MudRadioGroup>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label">Two Factor SMS Phone Number</label>
-                                    <div class="col-sm-8">
-
-                                        <InputText @bind-Value="Broker.TwoFactorPhoneNumber" class="form-control col-sm-8" />
-                                        <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Broker.TwoFactorPhoneNumber)" />
-
-                                    </div>
-                                    <label class="col-sm-4 col-form-label">Use broker telephone</label>
-                                    <div class="col-sm-8">
-                                        <MudCheckBox @bind-Checked="@Broker.TwoFactorUseBrokerPhoneNumber" @onclick="async f => await SetUseBrokerPhoneNumber()" Style="margin-left: -15px" />
-                                    </div>
-                                </div>
-
                                 @if (CurrentUser.IsAdmin)
                                 {
                                     <div class="form-group row">
@@ -159,30 +106,31 @@
                                     </div>
                                 </div>
 
-
-                                <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label">Choose company logo </label>
-                                    <div class="col-sm-8">
-                                        <InputFile id="logofileinputbroker" OnChange="LoadFiles" accept="image/jpeg" hidden multiple />
-                                        <MudButton HtmlTag="label"
-                                                   Variant="Variant.Filled"
-                                                   Color="Color.Primary"
-                                                   Style="@($"color:{Colors.Shades.Black};")"
-                                                   StartIcon="@Icons.Filled.CloudUpload"
-                                                   for="logofileinputbroker">
-                                            Choose File
-                                        </MudButton>
-                                        <label style="font-size:x-small">Ratio 2.2:1 Ideally 220px x 100px</label>
-                                    </div>
-                                </div>
                                 @if (!CurrentUser.IsBrokerStaff)
                                 {
-
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label">Choose company logo </label>
+                                        <div class="col-sm-8">
+                                            <InputFile id="logofileinputbroker" OnChange="LoadFiles" accept="image/jpeg" hidden multiple />
+                                            <MudButton HtmlTag="label"
+                                                       Variant="Variant.Filled"
+                                                       Color="Color.Primary"
+                                                       Style="@($"color:{Colors.Shades.Black};")"
+                                                       StartIcon="@Icons.Filled.CloudUpload"
+                                                       for="logofileinputbroker">
+                                                Choose File
+                                            </MudButton>
+                                            <label style="font-size:x-small">Ratio 2.2:1 Ideally 220px x 100px</label>
+                                        </div>
+                                    </div>
                                 }
                             </div>
                         </div>
                         <div>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Update Broker</MudButton>
+                            @if (CurrentUser.IsBroker || CurrentUser.IsAdminStaff)
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Update Broker</MudButton>
+                            }
                             @if (CurrentUser.IsAdmin)
                             {
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link ml-lg-2 mt-1">Cancel</MudButton>
@@ -190,6 +138,20 @@
                         </div>
                     </EditForm>
                 </MudTabPanel>
+
+                @if (CurrentUser.IsBroker && Broker is not null)
+                {
+                    <MudTabPanel Text="@(CurrentUser.IsBroker ? "My Details" : "Broker Details")">
+                        <BrokerDetails CurrentBroker="@Broker" />
+                    </MudTabPanel>
+                }
+
+                @if (!CurrentUser.IsBroker && BrokerStaff is not null)
+                {
+                    <MudTabPanel Text="My Details">
+                        <BrokerStaffDetails CurrentStaff="@BrokerStaff" />
+                    </MudTabPanel>
+                }
 
                 @if (Broker is not null && CurrentUser.IsAdmin)
                 {
@@ -208,10 +170,10 @@
                 @if (Broker is not null && Broker.Subscriptions is not null)
                 {
                     @if (CurrentUser.IsAdmin && (Broker.Subscriptions.Any(s =>
-                       s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
-                       s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
-                       s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
-                       IsCreatingWhiteLabel))
+                          s.SubscriptionServiceId == (int)SubscriptionServiceEnum.WhiteLabel ||
+                          s.SubscriptionServiceId == (int)SubscriptionServiceEnum.YAH ||
+                          s.SubscriptionServiceId == (int)SubscriptionServiceEnum.BrokerIQ) ||
+                          IsCreatingWhiteLabel))
                     {
                         <MudTabPanel Text="Identifier">
                             <EditForm Model="@Broker.BrokerIdentifier" OnValidSubmit="@HandleValidSubmitIdentifier" OnInvalidSubmit="@HandleInvalidSubmitIdentifier">
@@ -494,7 +456,6 @@
                                                     <ValidationMessage class="offset-sm-3" For="@(() => Broker.BrokerIdentifier.ReferAFriendText)" />
                                                 </div>
                                             </div>
-
                                         }
                                     </div>
                                 </div>
@@ -509,6 +470,7 @@
                             </EditForm>
                         </MudTabPanel>
                     }
+
                     @if (CurrentUser.IsAdmin)
                     {
                         <MudTabPanel Text="Functionality">

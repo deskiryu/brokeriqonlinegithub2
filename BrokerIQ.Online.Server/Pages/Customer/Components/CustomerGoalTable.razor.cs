@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Entities;
 using BrokerIQ.Dto.Models;
-using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Components;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
@@ -14,6 +13,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
 {
     public partial class CustomerGoalTable
     {
+        [Inject]
+        private ISnackbar Snackbar { get; set; }
+
         [Inject]
         public IDialogService DialogService { get; set; }
 
@@ -106,7 +108,8 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             {
                 CustomerGoalDto updated = result.Data as CustomerGoalDto;
 
-                var wasSuccessfull = false;
+                bool wasSuccessfull;
+
                 if (customerGoal.Id == 0)
                 {
                     wasSuccessfull = await CustomerGoalService.Create(new CreateCustomerGoalDto()
@@ -132,6 +135,9 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
                         AdditionalInfo = updated.AdditionalInfo
                     });
                 }
+
+                var message = wasSuccessfull ? "Customer goal was saved." : "Customer goal save failed. Please try again.";
+                Snackbar.Add(message, wasSuccessfull ? Severity.Success : Severity.Error);
             }
 
             await LoadGoalData();
