@@ -43,32 +43,34 @@ namespace BrokerIQ.Online.Services
 
         public async Task<bool> Create(CreateBrokerSubscriptionDto subscription)
         {
-            bool response = false;
-
             try
             {
-                response = await requestProviderService.Post<CreateBrokerSubscriptionDto, bool>(API_CONTROLLER, subscription);
+                await requestProviderService.Post<CreateBrokerSubscriptionDto, BrokerSubscriptionDto>(API_CONTROLLER, subscription);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Create: exception {ex.Message}");
             }
-            return response;
+
+            return false;
         }
 
         public async Task<bool> Update(UpdateBrokerSubscriptionDto subscription)
         {
-            bool response = false;
-
             try
             {
-                response = await requestProviderService.Put<UpdateBrokerSubscriptionDto, bool>(API_CONTROLLER, subscription);
+                await requestProviderService.Put<UpdateBrokerSubscriptionDto, BrokerSubscriptionDto>(API_CONTROLLER, subscription);
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Update: exception {ex.Message}");
             }
-            return response;
+
+            return false;
         }
     }
 }

@@ -17,6 +17,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         private IDialogService DialogService { get; set; }
 
         [Inject]
+        private ISnackbar Snackbar { get; set; }
+
+        [Inject]
         public IEmailMessageTemplateService EmailMessageTemplateService { get; set; }
 
         [Parameter]
@@ -60,6 +63,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                     Id = updated.Id,
                     Message = updated.Message
                 });
+
+                var message = wasSuccessfull ? "Message template was saved." : "Message Template save failed. Please try again.";
+                Snackbar.Add(message, wasSuccessfull ? Severity.Success : Severity.Error);
             }
 
             await ReloadEmailMessageTemplates();

@@ -80,14 +80,15 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             {
                 GoalDto updated = result.Data as GoalDto;
 
-                var wasSuccessfull = false;
+                bool wasSuccessfull;
+
                 if (Goal.Id == 0)
                 {
                     wasSuccessfull = await GoalService.Create(new CreateGoalDto()
                     {
                         BrokerId = updated.BrokerId,
                         Description = updated.Description,
-                        RequiresAdditionalInfo =updated.RequiresAdditionalInfo
+                        RequiresAdditionalInfo = updated.RequiresAdditionalInfo
                     });
                 }
                 else
@@ -100,6 +101,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                         RequiresAdditionalInfo = updated.RequiresAdditionalInfo
                     });
                 }
+
+                var message = wasSuccessfull ? "Goal was saved." : "Goal save failed. Please try again.";
+                Snackbar.Add(message, wasSuccessfull ? Severity.Success : Severity.Error);
             }
 
             await ReloadGoals();

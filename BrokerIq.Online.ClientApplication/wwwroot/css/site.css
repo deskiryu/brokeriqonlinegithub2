@@ -55,11 +55,24 @@ app {
 }
 
 .sidebar {
+    width: 250px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
     background-image: linear-gradient(to bottom right, #353c3b, #353c3b);
 }
 
 .sidebar-yah {
+    width: 250px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
     background-image: linear-gradient(to bottom right, #2d2141, #2d2141);
+}
+
+.sidebar .collapse, .sidebar-yah .collapse {
+    /* Never collapse the sidebar for wide screens */
+    display: block;
 }
 
 .sidebar .top-row {
@@ -84,7 +97,6 @@ app {
 
 .sidebar .nav-item {
     font-size: 0.9rem;
-    padding-bottom: 0.5rem;
 }
 
 .sidebar .nav-item:first-of-type {
@@ -96,7 +108,7 @@ app {
 }
 
 .sidebar .nav-item a {
-    color: rgba(255, 255, 255, 0.9);
+    color: #ffffff;
     border-radius: 4px;
     height: 3rem;
     display: flex;
@@ -104,10 +116,10 @@ app {
     line-height: 3rem;
 }
 
-    .sidebar .nav-item a.active {
-        background-color: rgba(255, 255, 255, 0.0);
-        color: #ede574;
-    }
+.sidebar .nav-item a.active {
+    background-color: rgba(255, 255, 255, 0.0);
+    color: #ede574;
+}
 
 
 .sidebar .nav-item-yah a.active {
@@ -116,7 +128,7 @@ app {
 }
 
 .sidebar .nav-item a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #3c3c3c;
     color: white;
 }
 
@@ -125,7 +137,7 @@ app {
 }
 
 .navbar-toggler {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #3c3c3c;
 }
 
 .valid.modified:not([type=checkbox]) {
@@ -192,13 +204,6 @@ app {
         flex-direction: row;
     }*/
 
-    .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-    }
-
     .main .top-row {
         position: sticky;
         top: 0;
@@ -211,11 +216,6 @@ app {
 
     .navbar-toggler {
         display: none;
-    }
-
-    .sidebar .collapse {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
     }
 
     #container {
