@@ -74,21 +74,20 @@ else
         await jsRuntime.InvokeVoidAsync("localStorage.setItem", DRAWER_STATE, _drawerOpen.ToString());
     }
 
-@code {
     MudTheme MyCustomTheme2 = new MudTheme()
+    {
+        Palette = new Palette()
         {
-            Palette = new Palette()
-            {
-                Primary = Colors.Yellow.Default,
-                Secondary = Colors.Shades.Black,
-                Tertiary = Colors.Blue.Default,
+            Primary = Colors.Yellow.Default,
+            Secondary = Colors.Shades.Black,
+            Tertiary = Colors.Blue.Default,
 
-                AppbarBackground = Colors.Red.Default,
-                TextPrimary = Colors.Shades.Black,
-                TextSecondary = Colors.Shades.Black,
-                Background = Colors.Grey.Lighten4,
+            AppbarBackground = Colors.Red.Default,
+            TextPrimary = Colors.Shades.Black,
+            TextSecondary = Colors.Shades.Black,
+            Background = Colors.Grey.Lighten4,
 
-            },
+        },
 
         LayoutProperties = new LayoutProperties()
         {
@@ -98,27 +97,28 @@ else
     };
 
     MudTheme MyCustomThemeYah = new MudTheme()
+    {
+        Palette = new Palette()
         {
-            Palette = new Palette()
-            {
-                Primary = Colors.DeepPurple.Lighten4,
-                Secondary = Colors.Shades.Black,
-                Tertiary = Colors.Blue.Default,
+            Primary = Colors.DeepPurple.Lighten4,
+            Secondary = Colors.Shades.Black,
+            Tertiary = Colors.Blue.Default,
 
-                AppbarBackground = Colors.Red.Default,
-                TextPrimary = Colors.Shades.Black,
-                TextSecondary = Colors.Shades.Black,
-                Background = Colors.Grey.Lighten4,
+            AppbarBackground = Colors.Red.Default,
+            TextPrimary = Colors.Shades.Black,
+            TextSecondary = Colors.Shades.Black,
+            Background = Colors.Grey.Lighten4,
 
-            },
+        },
 
-            LayoutProperties = new LayoutProperties()
-            {
-                DrawerWidthLeft = "260px",
-                DrawerWidthRight = "300px"
-            }
-        };
-    protected override void OnInitialized()
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidthLeft = "260px",
+            DrawerWidthRight = "300px"
+        }
+    };
+
+    protected override async Task OnInitializedAsync()
     {
         AppState.OnChange += AppStateChangeHandler;
 
