@@ -139,10 +139,10 @@
 
             }
 
-            @if (!User.IsAdmin && !User.IsMinorAdmin)
+            @if (!User.IsMinorAdmin)
             {
                 <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
-                    <NavLink class="nav-link" href="settingsedit\0">
+                    <NavLink class="nav-link" href="settingsedit">
                         <span class="oi oi-cog" aria-hidden="true"></span> Settings
                     </NavLink>
                     <TutorialVideoIcon Visible="@ShowSettingsTutorial" VideoUrl="@tutorialVideos.SettingsVideoUrl" />

@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 using MudBlazor;
 using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Models.Account;
-using BrokerIQ.Dto.Models;
+using System.Linq;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -89,8 +89,7 @@ namespace BrokerIQ.Online.Pages
 
         public BrokerStaff BrokerStaff { get; set; }
 
-        [Parameter]
-        public string BrokerId { get; set; }
+        public List<Broker> Brokers { get; set; }
 
         public bool IsAdmin { get; set; }
 
@@ -110,7 +109,7 @@ namespace BrokerIQ.Online.Pages
 
         protected bool isShowNewConfirm;
         protected InputType PasswordInputNewConfirm = InputType.Password;
-        protected string PasswordInputIconNewConfirm = Icons.Material.Filled.VisibilityOff;        
+        protected string PasswordInputIconNewConfirm = Icons.Material.Filled.VisibilityOff;
 
         protected override async Task OnInitializedAsync()
         {
@@ -123,32 +122,10 @@ namespace BrokerIQ.Online.Pages
                 IsMinorAdmin = User.IsMinorAdmin;
                 IsBrokerStaff = User.IsBrokerStaff || User.IsAdminStaff;
 
-                if (IsAdmin || IsMinorAdmin)
-                {
-                    id = Int32.Parse(BrokerId);
-                    if (id > 0)
-                    {
-                        Broker = (await BrokerService.GetBroker(id));
-                    }
-                }
-                else
-                {
-                    if (IsBrokerStaff)
-                    {
-                        var brokerStaffId = 0;
-                        brokerStaffId = Int32.Parse(User.Id);
+                if(IsAdmin) Brokers = (await BrokerService.GetBrokers()).ToList();
 
-                        if (brokerStaffId > 0)
-                        {
-                            BrokerStaff = await BrokerStaffService.GetBrokerStaff(brokerStaffId);
-                        }
+                LoadBroker();
 
-                    }
-                    if (User.MasterBrokerId > 0)
-                    {
-                        Broker = await BrokerService.GetBroker(User.MasterBrokerId, eagerload: true);
-                    }
-                }
                 MyUpdatePassword = new UpdatePassword();
             }
             catch
@@ -157,6 +134,30 @@ namespace BrokerIQ.Online.Pages
             }
 
             fileUploadSettings = this.FileUploadSettingsOption.Value;
+        }
+
+        private async void LoadBroker(int brokerId = 0)
+        {
+            Broker = null; //to trigger the binding in the message control
+
+            if (IsAdmin && brokerId > 0)
+            {
+                Broker = await BrokerService.GetBroker(brokerId, eagerload: true);
+
+                StateHasChanged();
+
+                return;
+            }
+
+            if (IsBrokerStaff && int.TryParse(User.Id, out int brokerStaffId))
+            {
+                BrokerStaff = await BrokerStaffService.GetBrokerStaff(brokerStaffId);
+            }
+
+            if (User.MasterBrokerId > 0)
+            {
+                Broker = await BrokerService.GetBroker(User.MasterBrokerId, eagerload: true);
+            }
 
             StateHasChanged();
         }
@@ -328,7 +329,7 @@ namespace BrokerIQ.Online.Pages
 
             if (Broker.BrokerIdentifier is null || !Broker.BrokerIdentifier.IdentifierFound) return true;
 
-            return Broker.BrokerIdentifier.HasReminders ;
+            return Broker.BrokerIdentifier.HasReminders;
         }
 
         protected bool ShowAppointmentSection()
@@ -340,6 +341,9 @@ namespace BrokerIQ.Online.Pages
             return Broker.BrokerIdentifier.HasAppointments;
         }
 
-
+        public void OnBrokerChanged(int brokerId)
+        {
+            LoadBroker(brokerId);
+        }
     }
 }
