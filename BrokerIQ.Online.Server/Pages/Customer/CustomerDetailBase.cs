@@ -1335,7 +1335,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task ShowCalendlyPopup()
         {
-            if (CalendlyUser == null || string.IsNullOrWhiteSpace(CalendlyUser.AccessToken) || string.IsNullOrWhiteSpace(CalendlyUser.RefreshToken))
+            if (!IsLoggedIntoCalendly())
             {
                 // User has never logged in, or was unable to refresh token after expiration
                 NavigationManager.NavigateTo(CalendlyLoginUri);
@@ -1347,6 +1347,11 @@ namespace BrokerIQ.Online.Pages
             await js.InvokeVoidAsync("PassPageComponent", thisPage);
 
             await js.InvokeVoidAsync("showCalendlyPopup", CalendlyUser.SchedulingReference, Customer.Name, Customer.EmailAddress);
+        }
+
+        protected bool IsLoggedIntoCalendly()
+        {
+            return CalendlyUser != null && !string.IsNullOrWhiteSpace(CalendlyUser.AccessToken) && !string.IsNullOrWhiteSpace(CalendlyUser.RefreshToken);
         }
 
         [JSInvokable]
