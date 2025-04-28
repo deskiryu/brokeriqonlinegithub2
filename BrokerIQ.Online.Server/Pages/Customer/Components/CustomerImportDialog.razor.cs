@@ -389,12 +389,22 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             return new MarkupString(result);
         }
 
-        private async Task DownloadSampleFile()
+        private async Task PreviewSampleFile()
         {
             var sampleContent = GetSampleHeader();
             sampleContent += "<hr />";
             sampleContent += GetSampleContent();
             await Extensions.Extensions.PreviewFileText(JSRuntime, sampleContent);
+        }
+
+        private async Task DownloadSampleFile()
+        {
+            var sampleContent = GetSampleHeader();
+            sampleContent += "\n";
+            sampleContent += GetSampleContent();
+            sampleContent = sampleContent.Replace("<br/>", "\n");
+
+            await Extensions.Extensions.SaveAs(JSRuntime, "import_sample.csv", Encoding.Unicode.GetBytes(sampleContent));
         }
     }
 }

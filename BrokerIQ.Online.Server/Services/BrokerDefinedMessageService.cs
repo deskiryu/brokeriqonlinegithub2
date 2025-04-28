@@ -39,6 +39,22 @@ namespace BrokerIQ.Online.Services
             return Array.Empty<BrokerDefinedMessageDto>();
         }
 
+        public async Task<IEnumerable<BrokerDefinedMessageDto>> GetForBroker(int brokerId)
+        {
+            try
+            {
+                var messages = await _requestProviderService.Get<IEnumerable<BrokerDefinedMessageDto>>($"{API_CONTROLLER}/{brokerId}");
+
+                return mapper.Map<IEnumerable<BrokerDefinedMessageDto>>(messages);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Get: exception {ex.Message}");
+            }
+
+            return Array.Empty<BrokerDefinedMessageDto>();
+        }
+
         public async Task<bool> Create(CreateBrokerDefinedMessageDto message)
         {
             message.BrokerId = await GetCurrentBrokerId();
