@@ -2,46 +2,59 @@
 
 @inject IJSRuntime js
 
-<div class="mb-2 ml-1 row">
-    <MudButton StartIcon="@Icons.Material.Filled.AddBox" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
-               Disabled="@MaxTemplatesReached"
-               OnClick=@(r=> EditDefinedMessage(new Dto.Models.BrokerDefinedMessageDto()))>
-        Add defined message
-    </MudButton>
-    <MudProgressLinear Color="Color.Error" Indeterminate="true" style="@SpinnerVisible" />
-</div>
+@if (!User.IsAdmin)
+{
+    <div class="mb-2 ml-1 row">
+
+        <MudButton StartIcon="@Icons.Material.Filled.AddBox" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
+                   Disabled="@MaxTemplatesReached"
+                   OnClick=@(r => EditDefinedMessage(new Dto.Models.BrokerDefinedMessageDto()))>
+            Add defined message
+        </MudButton>
+        <MudProgressLinear Color="Color.Error" Indeterminate="true" style="@SpinnerVisible" />
+    </div>
+}
+
 <MudTable Items="@DefinedMessages" Dense="true" Hover>
     <NoRecordsContent>
         <MudText>No defined messages have been defined.</MudText>
     </NoRecordsContent>
     <HeaderContent>
-        <MudTh Style="padding:0px!important"></MudTh>
-        <MudTh Style="padding:0px!important"></MudTh>
+        @if (!User.IsAdmin)
+        {
+            <MudTh Style="padding:0px!important"></MudTh>
+            <MudTh Style="padding:0px!important"></MudTh>
+        }
         <MudTh>Prompt</MudTh>
         <MudTh>Message</MudTh>
         <MudTh>Welcome</MudTh>
         <MudTh>File</MudTh>
-        <MudTh></MudTh>
-        <MudTh></MudTh>
+        @if (!User.IsAdmin)
+        {
+            <MudTh></MudTh>
+            <MudTh></MudTh>
+        }
     </HeaderContent>
     <RowTemplate>
 
     </RowTemplate>
     <ChildRowContent>
-
         <MudTr>
-            <MudTd Style="padding:0px!important">
-                @if (context.SortOrder > 1)
-                {
-                    <MudIconButton Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary" OnClick=@(r => MoveUp(context))></MudIconButton>
-                }
-            </MudTd>
-            <MudTd Style="padding:0px!important">
-                @if (context.SortOrder < LastSortOrder)
-                {
-                    <MudIconButton Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary" OnClick=@(r => MoveDown(context))></MudIconButton>
-                }
-            </MudTd>
+            @if (!User.IsAdmin)
+            {
+                <MudTd Style="padding:0px!important">
+                    @if (context.SortOrder > 1)
+                    {
+                        <MudIconButton Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleUp" Color="Color.Secondary" OnClick=@(r => MoveUp(context))></MudIconButton>
+                    }
+                </MudTd>
+                <MudTd Style="padding:0px!important">
+                    @if (context.SortOrder < LastSortOrder)
+                    {
+                        <MudIconButton Style="padding:2px!important" Icon="@Icons.Material.Filled.ArrowCircleDown" Color="Color.Secondary" OnClick=@(r => MoveDown(context))></MudIconButton>
+                    }
+                </MudTd>
+            }
             <MudTd>@context.Prompt</MudTd>
             <MudTd> @((MarkupString)FormatTemplateForDisplay(context.Message))</MudTd>
             <MudTd>
@@ -56,12 +69,16 @@
                     <MudIconButton Icon="@Icons.Material.Filled.FilePresent" Color="Color.Secondary" OnClick=@(r => PreviewAttachment(context.File))></MudIconButton>
                 }
             </MudTd>
-            <MudTd>
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" OnClick=@(r => EditDefinedMessage(context))></MudIconButton>
-            </MudTd>
-            <MudTd>
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r => RemoveDefinedMessage(context)) />
-            </MudTd>
+            @if (!User.IsAdmin)
+            {
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" OnClick=@(r => EditDefinedMessage(context))></MudIconButton>
+                </MudTd>
+
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r => RemoveDefinedMessage(context)) />
+                </MudTd>
+            }
         </MudTr>
 
     </ChildRowContent>
