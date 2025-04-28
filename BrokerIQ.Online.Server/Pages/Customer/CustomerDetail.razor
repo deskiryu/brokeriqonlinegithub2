@@ -29,7 +29,7 @@ else if (!Saved)
         {
             <MudStack Row="true" AlignItems="AlignItems.Center">
                 <MudText Typo="Typo.body1">Calendly</MudText>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup">Login</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup">@(IsLoggedIntoCalendly() ? "New Appointment" : "Login")</MudButton>
                 @if (IsConnectedToCalendly)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DisconnectFromCalendly">Logout</MudButton>
