@@ -22,7 +22,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             await form.Validate();
 
-
             if (form.IsValid)
             {
                 MudDialog.Close(DialogResult.Ok(WealthType));

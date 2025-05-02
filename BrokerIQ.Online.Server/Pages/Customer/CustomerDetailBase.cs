@@ -356,7 +356,7 @@ namespace BrokerIQ.Online.Pages
         {
             if (Tabs is null) return false;
 
-            return  Tabs.ActivePanel.ID?.ToString() == "pn_chat";
+            return Tabs.ActivePanel.ID?.ToString() == "pn_chat";
         }
 
         private async Task<IEnumerable<CustomerDocument>> GetCustomerDocuments()
@@ -600,6 +600,8 @@ namespace BrokerIQ.Online.Pages
                 { "ReminderDateTime", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
             };
 
+            var dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+
             var result = await DialogService.Show<NoteEditDialog>("New Note", dialogParams).Result;
             if (!result.Canceled)
             {
@@ -682,7 +684,7 @@ namespace BrokerIQ.Online.Pages
             UpdatePreviewWithTimes();
         }
 
-        protected async Task InsertTimeToTemplateMessage(TimeSpan? timeIn)
+        protected void InsertTimeToTemplateMessage(TimeSpan? timeIn)
         {
             SelectedTemplateTimeReplacement = timeIn;
             UpdatePreviewWithTimes();
@@ -1333,7 +1335,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task ShowCalendlyPopup()
         {
-            if (CalendlyUser == null || string.IsNullOrWhiteSpace(CalendlyUser.AccessToken) || string.IsNullOrWhiteSpace(CalendlyUser.RefreshToken))
+            if (!IsLoggedIntoCalendly())
             {
                 // User has never logged in, or was unable to refresh token after expiration
                 NavigationManager.NavigateTo(CalendlyLoginUri);
@@ -1345,6 +1347,11 @@ namespace BrokerIQ.Online.Pages
             await js.InvokeVoidAsync("PassPageComponent", thisPage);
 
             await js.InvokeVoidAsync("showCalendlyPopup", CalendlyUser.SchedulingReference, Customer.Name, Customer.EmailAddress);
+        }
+
+        protected bool IsLoggedIntoCalendly()
+        {
+            return CalendlyUser != null && !string.IsNullOrWhiteSpace(CalendlyUser.AccessToken) && !string.IsNullOrWhiteSpace(CalendlyUser.RefreshToken);
         }
 
         [JSInvokable]
