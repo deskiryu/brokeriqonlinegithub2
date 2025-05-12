@@ -4,9 +4,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using BrokerIQ.Dto;
+using BrokerIQ.Dto.CreateDto;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
@@ -24,6 +25,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -243,13 +245,13 @@ namespace BrokerIQ.Online.Pages
 
         protected bool ShowScheduledChat { get; set; } = false;
 
-        protected string ChatButtonStyle => ShowScheduledChat ? $"color:{Colors.Shades.Black};" : string.Empty;
+        protected string ChatButtonStyle => ShowScheduledChat ?  $"color:{Colors.Shades.Black};" : string.Empty;
 
         protected string ScheduledChatButtonStyle => ShowScheduledChat ? string.Empty : $"color:{Colors.Shades.Black};";
 
         public bool IsZippingFiles { get; set; }
 
-        public bool DisableSelectedFilesButton => !SelectedItemsCustomerDocuments.Any() || IsZippingFiles;
+        public bool DisableSelectedFilesButton  => !SelectedItemsCustomerDocuments.Any() || IsZippingFiles;
 
         protected override async Task OnInitializedAsync()
         {
@@ -320,10 +322,11 @@ namespace BrokerIQ.Online.Pages
 
             if (!User.IsAdmin)
             {
-                await UpdateChat();
+                await UpdateChat(firstTime: true);
                 timer = new System.Threading.Timer(async _ =>  // async void
                 {
                     await UpdateChat();
+
                 }, null, 5000, 5000);
 
                 timerUploads = new System.Threading.Timer(async _ =>  // async void
@@ -352,19 +355,12 @@ namespace BrokerIQ.Online.Pages
             fileUploadSettings = this.FileUploadSettingsOption.Value;
         }
 
-        private bool IsInChatTab()
-        {
-            if (Tabs is null) return false;
-
-            return  Tabs.ActivePanel.ID?.ToString() == "pn_chat";
-        }
-
         private async Task<IEnumerable<CustomerDocument>> GetCustomerDocuments()
         {
             List<CustomerDocument> documents = new List<CustomerDocument>();
             documents.AddRange((await CustomerDocumentService.Get(Customer.Id)).Data);
 
-            if (Connection != null)
+            if(Connection != null)
             {
                 var connectionDocuments = await CustomerDocumentService.Get(Connection.Id);
                 if (connectionDocuments.Data != null) documents.AddRange(connectionDocuments.Data);
@@ -378,7 +374,7 @@ namespace BrokerIQ.Online.Pages
             CalendlyUser = await CustomerAppointmentService.GetUser();
         }
 
-        protected async Task UpdateChat(bool loadMessages = true)
+        protected async Task UpdateChat(bool firstTime = false)
         {
             var response = await ChatService.GetUnRead(Customer.Id);
 
@@ -387,20 +383,16 @@ namespace BrokerIQ.Online.Pages
                 Navigator.NavigateTo($"account/logout");
                 return;
             }
+            var unread = response.Data;
 
-            if (!IsInChatTab())
+            if (firstTime || LastUnReadChat + unread != LastUnReadChat)
             {
-                UnReadChat = response.Data;
+                UnReadChat += unread;
+                LastChatPageLoaded = 0; Chat = await LoadChatMessages();
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
                 ChatBadgeDot = UnReadChat == 0;
+                LastUnReadChat = unread;
             }
-
-            if (loadMessages || IsInChatTab())
-            {
-                LastChatPageLoaded = 0;
-                Chat = await LoadChatMessages();
-            }
-
             await InvokeAsync(StateHasChanged);
         }
 
@@ -734,7 +726,7 @@ namespace BrokerIQ.Online.Pages
         {
             bool succeeded = false;
 
-            if (!await CheckTemplateMessage())
+            if(!await CheckTemplateMessage())
             {
                 return;
             }
@@ -894,7 +886,7 @@ namespace BrokerIQ.Online.Pages
             ShowInsertDate = false;
             ShowInsertTime = false;
 
-        }
+    }
 
         private async Task<bool> CreateDraftMessage(ChatDocument defaultAttachment, List<string> filenames, List<MemoryStream> memoryStreams, MessageSendDialog.MessageSendModel message)
         {
@@ -1084,7 +1076,7 @@ namespace BrokerIQ.Online.Pages
         private async Task PopulateBrokerDefinedMessages()
         {
             MergedMessages = new List<BrokerDefinedMessage>();
-            var templates = mapper.Map<List<BrokerDefinedMessage>>(await BrokerDefinedMessageService.GetAllForCurrentBroker());
+            var templates = mapper.Map<List<BrokerDefinedMessage>>( await BrokerDefinedMessageService.GetAllForCurrentBroker());
 
             foreach (var template in templates)
             {
@@ -1382,7 +1374,7 @@ namespace BrokerIQ.Online.Pages
         {
             if (Broker == null) return new Chat();
 
-            var chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize, IsInChatTab());
+            var chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
 
             AllChatMessagesLoaded = !chat.MoreMessagesAvailable;
 
@@ -1403,9 +1395,9 @@ namespace BrokerIQ.Online.Pages
             SelectedTemplateMessagePreview = string.Empty;
 
             if (!string.IsNullOrEmpty(itemResponse))
-            {
+            {                    
                 SelectedTemplateMessage = MergedMessages.FirstOrDefault(mm => mm.Prompt.ToLower().Contains(itemResponse.ToLower()));
-                if (SelectedTemplateMessage != null)
+                if(SelectedTemplateMessage != null)
                 {
                     SelectedTemplateMessagePreview = SelectedTemplateMessage.Message;
                     ShowInsertDate = SelectedTemplateMessage.Message.Contains("INSERT_DATE");
