@@ -356,7 +356,7 @@ namespace BrokerIQ.Online.Pages
         {
             if (Tabs is null) return false;
 
-            return  Tabs.ActivePanel.ID?.ToString() == "pn_chat";
+            return Tabs.ActivePanel.ID?.ToString() == "pn_chat";
         }
 
         private async Task<IEnumerable<CustomerDocument>> GetCustomerDocuments()
@@ -388,17 +388,27 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            if (!IsInChatTab())
+            if (IsInChatTab())
+            {
+                if (loadMessages)
+                {
+                    if (LastChatPageLoaded == 0)
+                    {
+                        Chat = await LoadChatMessages();
+                    }
+                    else
+                    {
+                        var newMessages = await LoadNewMessages();
+
+                        Chat.Messages = newMessages.Concat(Chat.Messages).OrderByDescending(m => m.Id).ToList();
+                    }
+                }
+            }
+            else
             {
                 UnReadChat = response.Data;
                 ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
                 ChatBadgeDot = UnReadChat == 0;
-            }
-
-            if (loadMessages || IsInChatTab())
-            {
-                LastChatPageLoaded = 0;
-                Chat = await LoadChatMessages();
             }
 
             await InvokeAsync(StateHasChanged);
@@ -511,7 +521,8 @@ namespace BrokerIQ.Online.Pages
                     else
                     {
                         AlertService.Error("Notification sending failed");
-                    };
+                    }
+                    ;
                 }
             }
             else
@@ -600,6 +611,8 @@ namespace BrokerIQ.Online.Pages
                 { "ReminderDateTime", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
             };
 
+            var dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+
             var result = await DialogService.Show<NoteEditDialog>("New Note", dialogParams).Result;
             if (!result.Canceled)
             {
@@ -682,7 +695,7 @@ namespace BrokerIQ.Online.Pages
             UpdatePreviewWithTimes();
         }
 
-        protected async Task InsertTimeToTemplateMessage(TimeSpan? timeIn)
+        protected void InsertTimeToTemplateMessage(TimeSpan? timeIn)
         {
             SelectedTemplateTimeReplacement = timeIn;
             UpdatePreviewWithTimes();
@@ -1333,7 +1346,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task ShowCalendlyPopup()
         {
-            if (CalendlyUser == null || string.IsNullOrWhiteSpace(CalendlyUser.AccessToken) || string.IsNullOrWhiteSpace(CalendlyUser.RefreshToken))
+            if (!IsLoggedIntoCalendly())
             {
                 // User has never logged in, or was unable to refresh token after expiration
                 NavigationManager.NavigateTo(CalendlyLoginUri);
@@ -1345,6 +1358,11 @@ namespace BrokerIQ.Online.Pages
             await js.InvokeVoidAsync("PassPageComponent", thisPage);
 
             await js.InvokeVoidAsync("showCalendlyPopup", CalendlyUser.SchedulingReference, Customer.Name, Customer.EmailAddress);
+        }
+
+        protected bool IsLoggedIntoCalendly()
+        {
+            return CalendlyUser != null && !string.IsNullOrWhiteSpace(CalendlyUser.AccessToken) && !string.IsNullOrWhiteSpace(CalendlyUser.RefreshToken);
         }
 
         [JSInvokable]
@@ -1387,6 +1405,12 @@ namespace BrokerIQ.Online.Pages
             AllChatMessagesLoaded = !chat.MoreMessagesAvailable;
 
             return chat;
+        }
+
+        private async Task<IList<ChatMessage>> LoadNewMessages()
+        {
+            var MaxId = Chat.Messages.Max(m => m.Id);
+            return (await ChatService.GetPaged(Customer.Id, Broker.Id, 1, ChatPageSize, IsInChatTab())).Messages.Where(m => m.Id > MaxId).ToList();
         }
 
         protected async Task<IEnumerable<BrokerDefinedMessage>> OnTemplateFilter(string value)
