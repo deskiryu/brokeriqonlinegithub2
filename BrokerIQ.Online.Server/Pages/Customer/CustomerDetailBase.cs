@@ -390,25 +390,25 @@ namespace BrokerIQ.Online.Pages
 
             if (IsInChatTab())
             {
-                if (loadMessages)
+                if (loadMessages && LastChatPageLoaded > 0)
                 {
-                    if (LastChatPageLoaded == 0)
-                    {
-                        Chat = await LoadChatMessages();
-                    }
-                    else
-                    {
-                        var newMessages = await LoadNewMessages();
+                    var newMessages = await LoadNewMessages();
 
-                        Chat.Messages = newMessages.Concat(Chat.Messages).OrderByDescending(m => m.Id).ToList();
-                    }
+                    Chat.Messages = newMessages.Concat(Chat.Messages).OrderByDescending(m => m.Id).ToList();
                 }
             }
             else
             {
-                UnReadChat = response.Data;
-                ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
-                ChatBadgeDot = UnReadChat == 0;
+                if (loadMessages && LastChatPageLoaded == 0)
+                {
+                    Chat = await LoadChatMessages();
+                }
+                else
+                {
+                    UnReadChat = response.Data;
+                    ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
+                    ChatBadgeDot = UnReadChat == 0;
+                }
             }
 
             await InvokeAsync(StateHasChanged);
