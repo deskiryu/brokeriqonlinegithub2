@@ -198,8 +198,8 @@ else
                                        SelectedValuesChanged="@RefreshListFromFilterValues"
                                        AdornmentColor="Color.Primary">
                                 @{
-                                    var names = Enum.GetNames(typeof(ProfilingOptionEnum));
-                                    @for (int? i = 0; i <= names.Length; i++)
+                                    var enumCount = Enum.GetNames(typeof(ProfilingOptionEnum)).Length;
+                                    @for (int? i = 1; i <= enumCount; i++)
                                     {
                                         ProfilingOptionEnum looped = (ProfilingOptionEnum)i;
                                         <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
