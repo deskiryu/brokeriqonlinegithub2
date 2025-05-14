@@ -1,10 +1,10 @@
-
 @using BrokerIQ.Dto.Models
 @using BrokerIQ.Online.Services.Interface
 @inject IBlogService BlogService;
+@inject IJSRuntime JS;
 
 <MudPaper Class="p-4">
-    <MudText Typo="Typo.h5">Blog Entries</MudText>
+    <MudText Typo="Typo.h5">Blogs</MudText>
 
     @if (blogs == null)
     {
@@ -12,7 +12,7 @@
     }
     else
     {
-        <MudTable Items="blogs" Dense="true" Hover="true">
+        <MudTable Items="blogs" Dense="true" Hover="true" RowClick="OnRowClick">
             <HeaderContent>
                 <MudTh>Image</MudTh>
                 <MudTh>Title</MudTh>
@@ -21,17 +21,17 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd>
-                    <MudAvatar Image="@context.FeaturedImage" Size="Size.Medium" Alt="Image" />
+                    <img src="@context.FeaturedImage" />
                 </MudTd>
+                <MudTd>@context.HtmlTitle</MudTd>
                 <MudTd>
-                    <MudLink Href="@context.Url" Target="_blank">
-                        @context.HtmlTitle
-                    </MudLink>
+                    @((MarkupString)context.PostSummary)
                 </MudTd>
-                <MudTd>@context.PostSummary</MudTd>
+
                 <MudTd>@context.PublishDate.ToString("yyyy-MM-dd")</MudTd>
             </RowTemplate>
         </MudTable>
+
     }
 </MudPaper>
 
@@ -42,5 +42,15 @@
     {
         blogs = (await BlogService.GetAll()).ToList();
     }
+
+    private void OnRowClick(TableRowClickEventArgs<BlogDto> args)
+    {
+        var url = args.Item.Url;
+        if (!string.IsNullOrWhiteSpace(url))
+        {
+            // Opens in new tab
+            var encodedUrl = Uri.EscapeUriString(url);
+            _ = JS.InvokeVoidAsync("window.open", encodedUrl, "_blank");
+        }
+    }
 }
-    using BrokerIQ.Online.Services.Interface;
