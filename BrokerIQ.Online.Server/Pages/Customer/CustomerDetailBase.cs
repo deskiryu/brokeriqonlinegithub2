@@ -388,17 +388,27 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            if (!IsInChatTab())
+            if (IsInChatTab())
             {
-                UnReadChat = response.Data;
-                ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
-                ChatBadgeDot = UnReadChat == 0;
-            }
+                if (loadMessages && LastChatPageLoaded > 0)
+                {
+                    var newMessages = await LoadNewMessages();
 
-            if (loadMessages || IsInChatTab())
+                    Chat.Messages = newMessages.Concat(Chat.Messages).OrderByDescending(m => m.Id).ToList();
+                }
+            }
+            else
             {
-                LastChatPageLoaded = 0;
-                Chat = await LoadChatMessages();
+                if (loadMessages && LastChatPageLoaded == 0)
+                {
+                    Chat = await LoadChatMessages();
+                }
+                else
+                {
+                    UnReadChat = response.Data;
+                    ChatBadgeColour = UnReadChat > 0 ? MudBlazor.Color.Error : MudBlazor.Color.Transparent;
+                    ChatBadgeDot = UnReadChat == 0;
+                }
             }
 
             await InvokeAsync(StateHasChanged);
@@ -511,7 +521,8 @@ namespace BrokerIQ.Online.Pages
                     else
                     {
                         AlertService.Error("Notification sending failed");
-                    };
+                    }
+                    ;
                 }
             }
             else
@@ -1394,6 +1405,12 @@ namespace BrokerIQ.Online.Pages
             AllChatMessagesLoaded = !chat.MoreMessagesAvailable;
 
             return chat;
+        }
+
+        private async Task<IList<ChatMessage>> LoadNewMessages()
+        {
+            var MaxId = Chat.Messages.Max(m => m.Id);
+            return (await ChatService.GetPaged(Customer.Id, Broker.Id, 1, ChatPageSize, IsInChatTab())).Messages.Where(m => m.Id > MaxId).ToList();
         }
 
         protected async Task<IEnumerable<BrokerDefinedMessage>> OnTemplateFilter(string value)
