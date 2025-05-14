@@ -1,0 +1,46 @@
+
+@using BrokerIQ.Dto.Models
+@using BrokerIQ.Online.Services.Interface
+@inject IBlogService BlogService;
+
+<MudPaper Class="p-4">
+    <MudText Typo="Typo.h5">Blog Entries</MudText>
+
+    @if (blogs == null)
+    {
+        <MudProgressCircular Indeterminate Color="Color.Primary" />
+    }
+    else
+    {
+        <MudTable Items="blogs" Dense="true" Hover="true">
+            <HeaderContent>
+                <MudTh>Image</MudTh>
+                <MudTh>Title</MudTh>
+                <MudTh>Summary</MudTh>
+                <MudTh>Published</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>
+                    <MudAvatar Image="@context.FeaturedImage" Size="Size.Medium" Alt="Image" />
+                </MudTd>
+                <MudTd>
+                    <MudLink Href="@context.Url" Target="_blank">
+                        @context.HtmlTitle
+                    </MudLink>
+                </MudTd>
+                <MudTd>@context.PostSummary</MudTd>
+                <MudTd>@context.PublishDate.ToString("yyyy-MM-dd")</MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+</MudPaper>
+
+@code {
+    private List<BlogDto> blogs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        blogs = (await BlogService.GetAll()).ToList();
+    }
+}
+    using BrokerIQ.Online.Services.Interface;

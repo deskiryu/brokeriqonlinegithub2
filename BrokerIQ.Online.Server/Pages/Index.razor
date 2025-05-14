@@ -13,21 +13,21 @@
 {
     @if (BrokerStaff != null)
     {
-    <div>
-        <h3>Hello @BrokerStaff.FirstName @BrokerStaff.LastName</h3>
-        <h2>for  @Broker.Name </h2>
-    </div>
+        <div>
+            <h3>Hello @BrokerStaff.FirstName @BrokerStaff.LastName</h3>
+            <h2>for @Broker.Name </h2>
+        </div>
     }
     else
     {
         <h3>Hello, @Broker.Name</h3>
     }
 
-<div>
+    <div>
         <h3>Welcome to your new Digital Customer Engagement platform.</h3>
-</div>
-<p></p>
-<p></p>
+    </div>
+    <p></p>
+    <p></p>
     @if (_showBrokerMatchingCode)
     {
         <div>
@@ -37,24 +37,30 @@
     }
 
 
-<div class="form-group row">
-    <div class="col-sm-8">
-        @if (Broker.LogoImage != null && Broker.LogoImage.Length > 0)
-        {
-            <img src="data:image/bmp;base64, @(Convert.ToBase64String(Broker.LogoImage))" style="height:100px; width:220px" />
-        }
+    <div class="form-group row">
+        <div class="col-sm-8">
+            @if (Broker.LogoImage != null && Broker.LogoImage.Length > 0)
+            {
+                <img src="data:image/bmp;base64, @(Convert.ToBase64String(Broker.LogoImage))"
+                    style="height:100px; width:220px" />
+            }
+        </div>
     </div>
-</div>
 
 }
 else
 {
-<h3>Hello</h3>
+    <h3>Hello</h3>
 }
 
 
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
+    <MudText Typo="Typo.h4">Blog</MudText>
 
-@code{
+    <BrokerIQ.Online.Server.Components.BlogList />
+</MudContainer>
+
+@code {
     BrokerIQ.Online.Models.Broker Broker;
     BrokerIQ.Online.Models.BrokerStaff BrokerStaff;
     bool _showBrokerMatchingCode = false;
@@ -73,10 +79,11 @@ else
                     if (Broker != null)
                     {
 
-                        if (Broker != null && Broker.BrokerIdentifier != null && !string.IsNullOrEmpty(Broker.BrokerIdentifier.MatchingCode) && api.Value.IsYAHTheme)
+                        if (Broker != null && Broker.BrokerIdentifier != null && !string.IsNullOrEmpty(Broker.BrokerIdentifier.MatchingCode) &&
+                        api.Value.IsYAHTheme)
                         {
-                             _showBrokerMatchingCode = true;
-                            _brokerMatchingCode = Broker.BrokerIdentifier.MatchingCode;                           
+                            _showBrokerMatchingCode = true;
+                            _brokerMatchingCode = Broker.BrokerIdentifier.MatchingCode;
                         }
 
                     }
