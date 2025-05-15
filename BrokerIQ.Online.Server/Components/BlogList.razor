@@ -1,7 +1,10 @@
 @using BrokerIQ.Dto.Models
+@using BrokerIQ.Online.AppSettings
 @using BrokerIQ.Online.Services.Interface
+@using Microsoft.Extensions.Options
 @inject IBlogService BlogService;
 @inject IJSRuntime JS;
+@inject IOptions<ReviewItAPIDetails> api;
 
 <MudPaper Class="p-4">
     <MudText Typo="Typo.h5">Latest Updates</MudText>
@@ -40,7 +43,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        blogs = (await BlogService.GetAll()).ToList();
+        blogs = (await BlogService.GetAll()).Take(api.Value.MaxBlogEntries).OrderByDescending(x => x.PublishDate).ToList();
     }
-
 }

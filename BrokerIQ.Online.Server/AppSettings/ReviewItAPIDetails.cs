@@ -35,5 +35,7 @@
         public string ScrollHeight { get; set; }
 
         public bool ShowWealth { get; set; }
+
+        public int MaxBlogEntries { get; set; }        
     }
 }
