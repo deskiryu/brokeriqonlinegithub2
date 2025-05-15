@@ -1225,14 +1225,29 @@ namespace BrokerIQ.Online.Pages
                 //required: using System.IO.Compression;
                 using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
                 {
+                    var previousNames = new List<string>();
+                    
                     foreach (var file in SelectedItemsCustomerDocuments)
                     {
-                        var entry = zip.CreateEntry(file.FileName);
+                        var fileName = file.FileName;
+                        var nameIndex = 2;
+
+                        while (previousNames.Contains(fileName))
+                        {
+                            var name = file.FileName[..file.FileName.LastIndexOf(".")];
+                            var extension = file.FileName[file.FileName.LastIndexOf(".")..];
+
+                            fileName = $"{name}_{nameIndex++}{extension}";
+                        }
+
+                        var entry = zip.CreateEntry(fileName);
                         using (var fileStream = new MemoryStream(file.File))
                         using (var entryStream = entry.Open())
                         {
                             fileStream.CopyTo(entryStream);
                         }
+
+                        previousNames.Add(fileName);
                     }
                 }
                 await Extensions.SaveAs(js, zipName, ms.ToArray());
