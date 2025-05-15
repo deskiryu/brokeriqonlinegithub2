@@ -4,7 +4,7 @@
 @inject IJSRuntime JS;
 
 <MudPaper Class="p-4">
-    <MudText Typo="Typo.h5">Blogs</MudText>
+    <MudText Typo="Typo.h5">Latest Updates</MudText>
 
     @if (blogs == null)
     {
@@ -12,12 +12,12 @@
     }
     else
     {
-        <MudTable Items="blogs" Dense="true" Hover="true" RowClick="OnRowClick">
+        <MudTable Items="blogs" Dense="true" Hover="true">
             <HeaderContent>
-                <MudTh>Image</MudTh>
-                <MudTh>Title</MudTh>
-                <MudTh>Summary</MudTh>
-                <MudTh>Published</MudTh>
+                <MudTh style="width: 10%;">Image</MudTh>
+                <MudTh style="width: 20%;">Title</MudTh>
+                <MudTh style="width: 55%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Summary</MudTh>
+                <MudTh style="width: 15%;">Published</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd>
@@ -26,9 +26,9 @@
                 <MudTd>@context.HtmlTitle</MudTd>
                 <MudTd>
                     @((MarkupString)context.PostSummary)
+                    <MudLink Href="@($"{context.Url}")" Target="_blank" Color="Color.Tertiary">Read more</MudLink>
                 </MudTd>
-
-                <MudTd>@context.PublishDate.ToString("yyyy-MM-dd")</MudTd>
+                <MudTd>@context.PublishDate.ToString("MMMM d, yyyy h:mm:ss tt")</MudTd>
             </RowTemplate>
         </MudTable>
 
@@ -43,14 +43,4 @@
         blogs = (await BlogService.GetAll()).ToList();
     }
 
-    private void OnRowClick(TableRowClickEventArgs<BlogDto> args)
-    {
-        var url = args.Item.Url;
-        if (!string.IsNullOrWhiteSpace(url))
-        {
-            // Opens in new tab
-            var encodedUrl = Uri.EscapeUriString(url);
-            _ = JS.InvokeVoidAsync("window.open", encodedUrl, "_blank");
-        }
-    }
 }
