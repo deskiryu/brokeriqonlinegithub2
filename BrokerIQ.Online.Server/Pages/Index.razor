@@ -46,20 +46,21 @@
             }
         </div>
     </div>
-
+    <div class="form-group row">
+        @if (api.Value.ShowBlog)
+        {
+            <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="mt-4">
+                <BrokerIQ.Online.Server.Components.BlogList />
+            </MudContainer>
+        }
+    </div>
 }
 else
 {
     <h3>Hello</h3>
 }
 
-<div class="form-group row">
-    @if(api.Value.ShowBlog){
- <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="mt-4">
-    <BrokerIQ.Online.Server.Components.BlogList />
-</MudContainer>       
-    }
-</div>
+
 
 @code {
     BrokerIQ.Online.Models.Broker Broker;
