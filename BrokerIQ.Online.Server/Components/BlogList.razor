@@ -1,0 +1,48 @@
+@using BrokerIQ.Dto.Models
+@using BrokerIQ.Online.AppSettings
+@using BrokerIQ.Online.Services.Interface
+@using Microsoft.Extensions.Options
+@inject IBlogService BlogService;
+@inject IJSRuntime JS;
+@inject IOptions<ReviewItAPIDetails> api;
+
+<MudPaper Class="p-4">
+    <MudText Typo="Typo.h5">Latest Updates</MudText>
+
+    @if (blogs == null)
+    {
+        <MudProgressCircular Indeterminate Color="Color.Primary" />
+    }
+    else
+    {
+        <MudTable Items="blogs" Dense="true" Hover="true">
+            <HeaderContent>
+                <MudTh style="width: 10%;">Image</MudTh>
+                <MudTh style="width: 20%;">Title</MudTh>
+                <MudTh style="width: 55%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Summary</MudTh>
+                <MudTh style="width: 15%;">Published</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>
+                    <img src="@context.FeaturedImage" />
+                </MudTd>
+                <MudTd>@context.HtmlTitle</MudTd>
+                <MudTd>
+                    @((MarkupString)context.PostSummary)
+                    <MudLink Href="@($"{context.Url}")" Target="_blank" Color="Color.Tertiary">Read more</MudLink>
+                </MudTd>
+                <MudTd>@context.PublishDate.ToString("MMMM d, yyyy h:mm:ss tt")</MudTd>
+            </RowTemplate>
+        </MudTable>
+
+    }
+</MudPaper>
+
+@code {
+    private List<BlogDto> blogs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        blogs = (await BlogService.GetAll()).OrderByDescending(x => x.PublishDate).Take(api.Value.MaxBlogEntries).ToList();
+    }
+}
