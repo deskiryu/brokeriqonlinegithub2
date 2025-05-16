@@ -36,6 +36,8 @@
 
         public bool ShowWealth { get; set; }
 
-        public int MaxBlogEntries { get; set; }        
+        public int MaxBlogEntries { get; set; }
+
+        public bool ShowBlog { get; set; }
     }
 }

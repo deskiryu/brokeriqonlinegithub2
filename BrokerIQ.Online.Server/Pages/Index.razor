@@ -54,9 +54,11 @@ else
 }
 
 <div class="form-group row">
-<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="mt-4">
+    @if(api.Value.ShowBlog){
+ <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="mt-4">
     <BrokerIQ.Online.Server.Components.BlogList />
-</MudContainer>
+</MudContainer>       
+    }
 </div>
 
 @code {

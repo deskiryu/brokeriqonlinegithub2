@@ -43,6 +43,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        blogs = (await BlogService.GetAll()).Take(api.Value.MaxBlogEntries).OrderByDescending(x => x.PublishDate).ToList();
+        blogs = (await BlogService.GetAll()).OrderByDescending(x => x.PublishDate).Take(api.Value.MaxBlogEntries).ToList();
     }
 }
