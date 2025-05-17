@@ -8,6 +8,8 @@ namespace BrokerIQ.Online.Services.Interface
     {
         Task<IEnumerable<BrokerDefinedMessageDto>> GetAllForCurrentBroker();
 
+        Task<IEnumerable<BrokerDefinedMessageDto>> GetForBroker(int brokerId);
+
         Task<bool> Create(CreateBrokerDefinedMessageDto message);
 
         Task<bool> Update(BrokerDefinedMessageDto message);

@@ -25,7 +25,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         public User User { get; set; }
 
         [Parameter]
-
         public Online.Models.Broker Broker { get; set; }
 
         private ICollection<WealthTypeDto> WealthTypes { get; set; }
@@ -76,7 +75,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             var result = await DialogService.Show<WealthTypeDialog>(title, parameters, options).Result;
 
-            if (!result.Cancelled)
+            if (!result.Canceled)
             {
                 WealthTypeDto updated = result.Data as WealthTypeDto;
 
@@ -86,7 +85,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                     wasSuccessfull = await WealthTypeService.Create(new CreateWealthTypeDto()
                     {
                         BrokerId = updated.BrokerId,
-                        Name = updated.Name
+                        Name = updated.Name,
+                        IsHighNetWorth = updated.IsHighNetWorth
                     });
                 }
                 else
@@ -95,7 +95,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                     {
                         Id = updated.Id,
                         BrokerId = updated.BrokerId,
-                        Name = updated.Name
+                        Name = updated.Name,
+                        IsHighNetWorth = updated.IsHighNetWorth
                     });
                 }
 

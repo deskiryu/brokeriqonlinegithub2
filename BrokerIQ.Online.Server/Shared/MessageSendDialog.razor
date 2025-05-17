@@ -3,6 +3,7 @@
 
 @using BrokerIQ.Online.Server.Extensions
 @using BrokerIQ.Online.Services.Interface
+@using BrokerIQ.Online.Server.Components
 
 @inject IJSRuntime js
 
@@ -64,8 +65,7 @@
                                            MinDate="DateTime.Today" />
                         </div>
                         <div class="col-sm-6 mt-auto">
-                            <MudTimePicker Clearable="AllowNullDateValues" Placeholder="Deliver message at" @bind-Time="@model.DeliveryTime"
-                                           MinuteSelectionStep="5" AmPm="false" clear />
+                            <TimeOfDay @bind-Value="@model.DeliveryTime" />
                         </div>
                     </div>
                 }
@@ -110,10 +110,25 @@
     MudForm form;
     MessageSendModel model;
 
-    bool DetailsAreInvalid => (string.IsNullOrWhiteSpace(model.MessageToSend) ||
-        (model.DeliveryDate.HasValue && !model.DeliveryTime.HasValue) ||
-        (!model.DeliveryDate.HasValue && model.DeliveryTime.HasValue)) ||
-        (model.DeliveryDate.HasValue && model.DeliveryTime.HasValue && model.DeliveryDate.Value.Add(model.DeliveryTime.Value) <= DateTime.UtcNow.AddMinutes(5));
+    private string SendHour { get; set; }
+    private string SendMinute { get; set; }
+
+    bool DetailsAreInvalid
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(model.MessageToSend) ||
+                (model.DeliveryDate.HasValue && !model.DeliveryTime.HasValue) ||
+                (!model.DeliveryDate.HasValue && model.DeliveryTime.HasValue)) return true;
+
+            if (!model.DeliveryDate.HasValue && !model.DeliveryTime.HasValue) return false;
+
+            var selectedDate = model.DeliveryDate.Value.Add(model.DeliveryTime.Value);
+            var minimumDate = DateTime.Now.AddMinutes(10);
+
+            return selectedDate <= minimumDate;
+        }
+    }
 
     public bool AllowNullDateValues { get; set; }
 

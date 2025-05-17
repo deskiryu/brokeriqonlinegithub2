@@ -2,6 +2,7 @@
     <DialogContent>
         <MudForm @ref="form">
             <MudTextField Class="mb-2" @bind-Value=WealthType.Name Label="Name" Required="true" RequiredError="Name cannot be empty" />
+            <MudCheckBox @bind-Checked=WealthType.IsHighNetWorth>Is High Net Worth</MudCheckBox>
         </MudForm>
     </DialogContent>
     <DialogActions>

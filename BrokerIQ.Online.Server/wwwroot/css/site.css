@@ -661,3 +661,7 @@ tr.recent {
 tr.expired {
     color: red;
 }
+
+.time_component {
+    width: 30%;
+}
