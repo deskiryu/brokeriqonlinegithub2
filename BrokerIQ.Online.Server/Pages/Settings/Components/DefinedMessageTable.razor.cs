@@ -28,7 +28,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         [Parameter]
         public Online.Models.Broker Broker { get; set; }
 
+        [Parameter]
+        public EventCallback<Online.Models.Broker> BrokerChanged { get; set; }
+
         private IEnumerable<BrokerDefinedMessageDto> DefinedMessages { get; set; }
+
         private int LastSortOrder { get; set; }
 
         public string SpinnerVisible { get; set; }
@@ -55,7 +59,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private async Task RefreshMessages()
         {
-            DefinedMessages = new List<BrokerDefinedMessageDto>(await BrokerDefinedMessageService.GetAllForCurrentBroker());
+            DefinedMessages = new List<BrokerDefinedMessageDto>(await BrokerDefinedMessageService.GetForBroker(Broker.Id));
             LastSortOrder = 0;
             if (DefinedMessages != null && DefinedMessages.Any())
             {
@@ -69,6 +73,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                     LastSortOrder = DefinedMessages.Count();
                 }
             }
+
+            StateHasChanged();
         }
 
         protected static string GetReminderTargetName(int targetId)
@@ -175,6 +181,5 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             SpinnerVisible = "display:none";
             StateHasChanged();
         }
-
     }
 }

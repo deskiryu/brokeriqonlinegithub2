@@ -26,21 +26,28 @@ namespace BrokerIQ.Online.Server.Shared
 
         [Parameter]
         public DateTime? ReminderDateTime { get; set; }
-    
 
         [Inject]
         protected IAlertService AlertService { get; set; }
 
-
         public bool DisableReminderDate => !HasNoteReminder;
 
-        public bool TextIsEmpty => string.IsNullOrWhiteSpace(Text);
+        public bool DetailsAreInvalid
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Text) ||
+                    (HasNoteReminder && (!ReminderDate.HasValue || !ReminderTime.HasValue))) return true;
+
+                return false;
+            }
+        }
 
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
 
-            if (ReminderDateTime.HasValue)
+            if (!string.IsNullOrWhiteSpace(Text))
             {
                 ReminderDate = ReminderDateTime.Value.Date;
                 ReminderTime = ReminderDateTime.Value.TimeOfDay;
@@ -53,10 +60,9 @@ namespace BrokerIQ.Online.Server.Shared
             DateTime combined = new DateTime();
             if (HasNoteReminder)
             {
-                if(ReminderDate.HasValue && ReminderTime.HasValue)
+                if (ReminderDate.HasValue && ReminderTime.HasValue)
                 {
-                    combined = ReminderDate.Value;
-                    combined = combined.AddTicks(ReminderTime.Value.Ticks);
+                    combined = ReminderDate.Value.Add(ReminderTime.Value);
                 }
                 else
                 {
@@ -64,7 +70,7 @@ namespace BrokerIQ.Online.Server.Shared
                     return;
                 }
             }
-       
+
 
             MudDialog.Close(DialogResult.Ok(new NoteDetail()
             {

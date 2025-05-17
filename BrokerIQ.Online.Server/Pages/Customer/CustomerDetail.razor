@@ -29,7 +29,7 @@ else if (!Saved)
         {
             <MudStack Row="true" AlignItems="AlignItems.Center">
                 <MudText Typo="Typo.body1">Calendly</MudText>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup">Login</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="ShowCalendlyPopup">@(IsLoggedIntoCalendly() ? "New Appointment" : "Login")</MudButton>
                 @if (IsConnectedToCalendly)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DisconnectFromCalendly">Logout</MudButton>
@@ -426,7 +426,8 @@ else if (!Saved)
                                                          TextChanged="@OnComboValueChanged"
                                                          SearchFunc="@OnTemplateFilter"
                                                          ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)"
-                                                         @ref="TemplateAutoComplete">
+                                                         @ref="TemplateAutoComplete"
+                                                         Clearable="true">
                                         </MudAutocomplete>
                                     </div>
 
@@ -445,24 +446,17 @@ else if (!Saved)
 
                                     @if (ShowInsertDate || ShowInsertTime)
                                     {
-                                        <div class="row">
+                                        <div class="d-flex flex-row">
                                             @if (ShowInsertDate)
                                             {
-                                                <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                                                    <MudDatePicker Visible="@ShowInsertDate" Culture=@(new CultureInfo("en-GB")) Label="Replace INSERT_DATE in template" DateChanged="InsertDateToTemplateMessage" />
-                                                </div>
+                                                <MudDatePicker Culture=@(new CultureInfo("en-GB")) Label="Date" DateChanged="InsertDateToTemplateMessage" />
                                             }
                                             @if (ShowInsertTime)
                                             {
-                                                <div class="col-sm-6 control_wrapper mb-5" style="display:flex; flex-direction: row;">
-                                                    <MudTimePicker Visible="@ShowInsertTime" Label="Replace INSERT_TIME in template" MinuteSelectionStep="5" AmPm="false" TimeChanged="InsertTimeToTemplateMessage" />
-                                                </div>
+                                                <TimeOfDay TimeChanged="InsertTimeToTemplateMessage" />
                                             }
-
                                         </div>
                                     }
-
-
                                 </div>
                             </div>
 
