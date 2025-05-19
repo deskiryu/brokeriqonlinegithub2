@@ -6,7 +6,7 @@
         <OutputType>Library</OutputType>
         <StartupObject />
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <Version>1.4.30</Version>
+        <Version>1.4.31</Version>
         <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
     <ItemGroup>
@@ -41,9 +41,11 @@
     <ItemGroup>
         <None Remove="Converters\" />
         <None Remove="Pages\Wealth\" />
+        <None Remove="Pages\Charts\Components\" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Converters\" />
         <Folder Include="Pages\Wealth\" />
+        <Folder Include="Pages\Charts\Components\" />
     </ItemGroup>
 </Project>
