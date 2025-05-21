@@ -1,0 +1,9 @@
+﻿@inherits BIQDashboardComponent
+
+<div>
+    <MudText Typo="Typo.caption" Style="@TitleStyle">@Title</MudText>
+    <div class="d-flex align-center gap-2">
+        <MudText Typo="Typo.subtitle1" Style="@ValueStyle">@Value</MudText>
+        @ChildContent
+    </div>
+</div>

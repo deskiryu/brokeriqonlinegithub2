@@ -8,12 +8,27 @@ public abstract class BIQDashboardComponent : ComponentBase
     [Parameter]
     public string BackgroundColour { get; set; }
 
+    [Parameter]
+    public string Title { get; set; }
+
+    public string TitleStyle { get; set; } = $"color: {Colors.Grey.Darken1}";
+
+    public string ValueStyle { get; set; } = $"color: {Colors.Shades.Black}";
+
     protected const string DAILY = "Daily";
     protected const string WEEKLY = "Weekly";
     protected const string MONTHLY = "Monthly";
     protected const string YEARLY = "Yearly";
 
-    protected string[] PeriodOptions;
+    protected string[] PeriodOptions =
+    {
+        DAILY,
+        WEEKLY,
+        MONTHLY,
+        YEARLY
+    };
+
+    protected string SelectedPeriodOption { get; set; } = DAILY;
 
     protected ChartOptions Options = new ChartOptions()
     {

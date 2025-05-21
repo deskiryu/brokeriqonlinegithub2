@@ -3,50 +3,81 @@
 @using BrokerIQ.Online.Pages
 @using ChartJs.Blazor
 @using BrokerIQ.Online.Services.Interface
+@using BrokerIQ.Online.Server.Pages.Charts.Components
 
 <h4>Dashboard for @BrokerName who now has @CustomerCount customers (@CustomerAppUserCount app users )</h4>
 
-@if (!Saved){
-<div class="container-fluid">
+<MudGrid Spacing="2" Class="p-2">
+    <MudItem xs="12" md="4">
+        <BIQKpiCard Title="App Downloads" BackgroundColour="@Colors.Yellow.Lighten4">
+            <BIQKpiCell Title="Total" Value="81" />
+            <BIQPeriodChange ChangePercent=".1101" />
+        </BIQKpiCard>
+    </MudItem>
 
+    <MudItem xs="12" md="4">
+        <BIQKpiCard Title="Client Logins" BackgroundColour="@Colors.Amber.Lighten4">
+            <BIQKpiCell Title="Total" Value="230">
+                <BIQPeriodChange ChangePercent=".1101" />
+            </BIQKpiCell>
+            <BIQKpiCell Title="Average" Value="8">
+                <BIQPeriodChange ChangePercent="-0.003" />
+            </BIQKpiCell>
+        </BIQKpiCard>
+    </MudItem>
 
-    <div class="row">
+    <MudItem xs="12" md="4">
+        <BIQKpiCard Title="Referrals" BackgroundColour="@Colors.Orange.Lighten4">
+            <BIQKpiCell Title="Total" Value="12">
+                <BIQPeriodChange ChangePercent=".0608" />
+            </BIQKpiCell>
+            <BIQKpiCell Title="Conversion" Value="25">
+                <BIQPeriodChange ChangePercent=".1603" />
+            </BIQKpiCell>
+        </BIQKpiCard>
+    </MudItem>
+</MudGrid>
 
+@if (!Saved)
+{
+    <div class="container-fluid">
 
-        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
-            <h5>Email/ telephone invites to Signups</h5>
-            <Chart @ref="_pieChartJs2"
-                   Config="@_pieConfig2" />
+        <div class="row">
+
+            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
+                <h5>Email/ telephone invites to Signups</h5>
+                <Chart @ref="_pieChartJs2"
+                       Config="@_pieConfig2" />
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
+                <h5>Logins</h5>
+                <Chart @ref="_steppedChartJs"
+                       Config="@_steppedConfig" />
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
+                <h5>Converted from email/ telephone</h5>
+                <Chart @ref="_pieChartJs"
+                       Config="@_pieConfig" />
+            </div>
+
         </div>
 
-        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
-            <h5>Logins</h5>
-            <Chart @ref="_steppedChartJs"
-                   Config="@_steppedConfig" />
+        <div class="row h-20">
+            <div class="col-12 chart_dashboard">
+                <h5>Invite conversion by day</h5>
+                <Chart @ref="_barChartJs"
+                       Config="@_barConfig"
+                       Width="100"
+                       Height="20" />
+
+            </div>
+
         </div>
 
-        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
-            <h5>Converted from email/ telephone</h5>
-            <Chart @ref="_pieChartJs"
-                   Config="@_pieConfig" />
-        </div>
 
     </div>
-
-    <div class="row h-20">
-        <div class="col-12 chart_dashboard">
-            <h5>Invite conversion by day</h5>
-            <Chart @ref="_barChartJs"
-                   Config="@_barConfig"
-                   Width="100"
-                   Height="20" />
-
-        </div>
-
-    </div>
-
-
-</div>
 
 }
 else
