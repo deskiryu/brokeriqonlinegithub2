@@ -127,7 +127,7 @@
                             </div>
                         </div>
                         <div>
-                            @if (CurrentUser.IsBroker || CurrentUser.IsAdminStaff)
+                            @if (CurrentUser.IsBroker || CurrentUser.IsAdminStaff|| CurrentUser.IsAdmin)
                             {
                                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" ButtonType="ButtonType.Submit" class="btn btn-primary edit-btn mt-1">Update Broker</MudButton>
                             }
