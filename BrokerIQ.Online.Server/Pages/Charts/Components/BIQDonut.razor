@@ -1,0 +1,15 @@
+﻿@inherits BIQDashboardComponent
+
+@if (Data != null && Data.Any())
+{
+    <MudChart ChartType="ChartType.Donut" Height="@Height" InputData="@Data" InputLabels="@Labels" LegendPosition="Position.Bottom" ChartOptions="@Options">
+        <CustomGraphics>
+            <text class="donut-inner-text" x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="5">@KPIValue</text>
+            <text class="donut-inner-text" x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="3">@KPILabel</text>
+        </CustomGraphics>
+    </MudChart>
+}
+else
+{
+    <MudText Align="Align.Center" Typo="Typo.h6">@NoDataMessage</MudText>
+}

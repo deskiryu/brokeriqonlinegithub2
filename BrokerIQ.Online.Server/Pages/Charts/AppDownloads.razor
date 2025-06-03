@@ -1,0 +1,24 @@
+﻿
+@using BrokerIQ.Online.Pages
+@using BrokerIQ.Online.Server.Pages.Charts.Components
+
+@inherits AppDownloadsBase
+
+@page "/charts/AppDownloads"
+
+<MudLink Href="charts/dashboard/0" Typo="Typo.h6" Color="Color.Dark" Class="ml-2"> <MudIcon Icon="@Icons.Material.Filled.ArrowBackIosNew"/> Back to Overview</MudLink>
+
+<MudGrid Spacing="2" Class="p-2">
+    <MudItem xs="12">
+        <BIQKpiCard Title="App Downloads" OnPeriodChange="HandleDownloadPeriodChange" IsLoadingData="IsLoadingDownloadData" SkeletonHeight="450px">
+            <Summary>
+                <BIQKpiCell Title="Total" Value="@DownloadTotal">
+                    <BIQPeriodChange ChangePercent="@DownloadChange" />
+                </BIQKpiCell>
+            </Summary>
+            <Body>
+                <BIQChart ChartType="ChartType.Bar" ChartSeries="@DownloadData" XAxisLabels="@DownloadLabels"/>
+            </Body>
+        </BIQKpiCard>
+    </MudItem>
+</MudGrid>

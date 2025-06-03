@@ -1,10 +1,9 @@
-﻿using BrokerIQ.Dto.Model.Statistics;
-using BrokerIQ.Online.Services.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.Model.Statistics;
+using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Services.Interface;
 
 namespace BrokerIQ.Online.Services.Mock
 {
@@ -82,6 +81,31 @@ namespace BrokerIQ.Online.Services.Mock
         }
 
         public Task<List<(DateTime, int, int, int, int, int)>> GetInvitesSentAndConvertedSequence(int brokerId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AnalyticsDataResponse> GetDownloadData(int brokerId, string period)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AnalyticsDataResponse> GetClientLoginData(int brokerId, int? brokerStaffId, string period)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AnalyticsDataResponse> GetClientLoginAverageData(int brokerId, int? brokerStaffId, string period)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AnalyticsDataResponse> GetReferralData(int brokerId, int? staffId, string period)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AnalyticsDataResponse> GetReferralConversionData(int brokerId, int? staffId, string period)
         {
             throw new NotImplementedException();
         }

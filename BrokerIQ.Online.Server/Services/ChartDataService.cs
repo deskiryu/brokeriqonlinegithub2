@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Model.Statistics;
+using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Interface;
 
@@ -9,12 +10,56 @@ namespace BrokerIQ.Online.Services
 {
     public class ChartDataService : IChartDataService
     {
-        private readonly string statsUrl = "Statistics";
+        private readonly string baseUrl = "Statistics";
+
         private readonly IRequestProviderService requestProviderService;
 
         public ChartDataService(IRequestProviderService requestProviderService)
         {
             this.requestProviderService = requestProviderService;
+        }
+
+        public async Task<AnalyticsDataResponse> GetDownloadData(int brokerId, string period)
+        {
+            var url = $"{baseUrl}/analytics/downloads?brokerId={brokerId}&period={period}";
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
+        public async Task<AnalyticsDataResponse> GetClientLoginData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/customerlogins?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
+        public async Task<AnalyticsDataResponse> GetClientLoginAverageData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/customerloginaverage?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
+        public async Task<AnalyticsDataResponse> GetReferralData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/referrals?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
+        public async Task<AnalyticsDataResponse> GetReferralConversionData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/referralconversion?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
         }
 
         public async Task<AppConversionDto> GetInvitesSentAndConverted(int brokerId)
@@ -36,7 +81,7 @@ namespace BrokerIQ.Online.Services
             };
             return response;
 #else
-            var url = this.statsUrl + $"/{brokerId}";
+            var url = this.baseUrl + $"/{brokerId}";
             var answer = await this.requestProviderService.Get<AppConversionDto>(url);
             return (answer);
 #endif
@@ -61,7 +106,7 @@ namespace BrokerIQ.Online.Services
             };
             return response;
 #else
-            var url = this.statsUrl + $"/sequence/{brokerId}?sequenceType=1&noelements=10";
+            var url = this.baseUrl + $"/sequence/{brokerId}?sequenceType=1&noelements=10";
             var answer = await this.requestProviderService.Get<AppConversionSequenceDto>(url);
             var response = new List<(DateTime, int, int, int, int, int)>
             {
@@ -141,7 +186,7 @@ namespace BrokerIQ.Online.Services
 
         public async Task<List<(string, int)>> GetTotalLogins(int brokerId)
         {
-            var url = this.statsUrl + $"/logins/{brokerId}?noelements=5";
+            var url = this.baseUrl + $"/logins/{brokerId}?noelements=5";
             var answer = await this.requestProviderService.Get<AppLoginsDto>(url);
             var response = new List<(string, int)>
             {

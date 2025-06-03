@@ -11,14 +11,22 @@ public abstract class BIQDashboardComponent : ComponentBase
     [Parameter]
     public string Title { get; set; }
 
-    public string TitleStyle { get; set; } = $"color: {Colors.Grey.Darken1}";
+    [Parameter]
+    public bool IsLoadingData { get; set; }
 
-    public string ValueStyle { get; set; } = $"color: {Colors.Shades.Black}";
+    protected static string[] Pallete = new string[] { "#ffde1a", "#ff7400", "#ffa700", "#ff8d00", "#ffce00" };
 
-    protected const string DAILY = "Daily";
-    protected const string WEEKLY = "Weekly";
-    protected const string MONTHLY = "Monthly";
-    protected const string YEARLY = "Yearly";
+    protected string TitleStyle { get; set; } = $"color: {Colors.Grey.Darken1}";
+
+    protected string ValueStyle { get; set; } = $"color: {Colors.Shades.Black}";
+
+    public const string DAILY = "Daily";
+    public const string WEEKLY = "Weekly";
+    public const string MONTHLY = "Monthly";
+    public const string YEARLY = "Yearly";
+
+    protected string GraphWidth => "100%";
+    protected string GraphHeight => "300px";
 
     protected string[] PeriodOptions =
     {
@@ -28,16 +36,9 @@ public abstract class BIQDashboardComponent : ComponentBase
         YEARLY
     };
 
-    protected string SelectedPeriodOption { get; set; } = DAILY;
-
     protected ChartOptions Options = new ChartOptions()
     {
-        ChartPalette = GetChartPallete()
+        ChartPalette = Pallete
     };
-
-    protected static string[] GetChartPallete()
-    {
-        return new string[] { "#EDBF33", "#EA5545", "#F46A9B", "#EF9B20", "#BDCF32", "#27AEEF", "#B33DC6", "#87BC45", "#EDE15B", "#B30000", "#7C1158", "#4421AF", "#1A53FF", "#0D88E6", "#00B7C7", "#5AD45A", "#8BE04E", "#EBDC78" };
-    }
 }
 

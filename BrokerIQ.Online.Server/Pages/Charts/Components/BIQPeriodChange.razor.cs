@@ -22,7 +22,7 @@ namespace BrokerIQ.Online.Server.Pages.Charts.Components
             {
                 TrendingIcon = string.Empty;
                 ChangeStyle = string.Empty;
-                FormattedChangePercent = "No change data";
+                FormattedChangePercent = string.Empty;
                 return;
             }
 
