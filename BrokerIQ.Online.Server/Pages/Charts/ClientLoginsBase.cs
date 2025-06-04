@@ -80,8 +80,8 @@ public class ClientLoginsBase : BIQDashboardComponent
         CustomerLoginLabels = result.Items.Select(i => i.Label).ToArray();
         CustomerLoginData = result.Items.ToChartSeries("Total");
 
-        result = await ChartDataService.GetClientLoginAverageData(User.MasterBrokerId, StaffId, period);
-        CustomerLoginData.AddRange(result.Items.ToChartSeries("Average"));
+        //result = await ChartDataService.GetClientLoginAverageData(User.MasterBrokerId, StaffId, period);
+        //CustomerLoginData.AddRange(result.Items.ToChartSeries("Average"));
 
         IsLoadingClientLoginData = false;
         StateHasChanged();

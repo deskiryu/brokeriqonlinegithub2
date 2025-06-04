@@ -66,11 +66,11 @@ namespace BrokerIQ.Online.Pages
         protected string ClientLoginAverage { get; set; }
         protected double? ClientLoginAverageChange { get; set; }
 
-        protected bool IsLoadingReferralData { get; set; }
-        protected string ReferralTotal { get; set; }
-        protected double? ReferralChange { get; set; }
-        protected string ReferralConversionTotal { get; set; }
-        protected double? ReferralConversionChange { get; set; }
+        protected bool IsLoadingChatMessageData { get; set; }
+        protected string ChatMessageTotal { get; set; }
+        protected double? ChatMessageChange { get; set; }
+        protected string ChatMessageAverage { get; set; }
+        protected double? ChatMessageAverageChange { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -92,12 +92,14 @@ namespace BrokerIQ.Online.Pages
 
             HandleDownloadPeriodChange(DAILY);
             HandleClientLoginPeriodChange(DAILY);
+            HandleChatMessagePeriodChange(DAILY);
         }
 
         private void SetAllDataLoadingFlags()
         {
             IsLoadingDownloadData = true;
             IsLoadingClientLoginData = true;
+            IsLoadingChatMessageData = true;
 
             StateHasChanged();
         }
@@ -140,6 +142,22 @@ namespace BrokerIQ.Online.Pages
         protected async void HandleClientLoginOnClick()
         {
             NavigationManager.NavigateTo($"/charts/ClientLogins");
+        }
+
+        protected async void HandleChatMessagePeriodChange(string period)
+        {
+            IsLoadingChatMessageData = true;
+            StateHasChanged();
+
+            var result = await ChartDataService.GetChatMessageData(User.MasterBrokerId, StaffId, period);
+
+            ChatMessageTotal = result.Total.ToString("N0");
+            ChatMessageChange = result.ChangeInTotalBetweenPeriodsPercent;
+            ChatMessageAverage = result.Average.ToString("N2");
+            ChatMessageAverageChange = result.ChangeInAverageBetweenPeriodsPercent;
+
+            IsLoadingChatMessageData = false;
+            StateHasChanged();
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using BrokerIQ.Dto.Model.Statistics;
+﻿using System.Threading.Tasks;
 using BrokerIQ.Dto.Response;
 
 namespace BrokerIQ.Online.Services.Interface
@@ -18,21 +15,6 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<AnalyticsDataResponse> GetReferralConversionData(int brokerId, int? staffId, string period);
 
-
-
-
-        Task<AppConversionDto> GetInvitesSentAndConverted(int brokerId);
-
-        Task<List<(DateTime, int, int, int, int, int)>> GetInvitesSentAndConvertedSequence(int brokerId);
-
-        List<(DateTime, int, int)> GetNotificationsSent();
-
-        public List<(string, int)> GetBrokersPerYear();
-
-        public List<(string, int)> GetAppUsersPerYear();
-
-        public List<(string, int)> GetPremiumsManagedPerYear();
-
-        Task<List<(string, int)>> GetTotalLogins(int brokerId);
+        Task<AnalyticsDataResponse> GetChatMessageData(int brokerId, int? staffId, string period);
     }
 }
