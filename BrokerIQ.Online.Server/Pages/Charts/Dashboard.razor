@@ -32,14 +32,14 @@
     </MudItem>
 
     <MudItem xs="12" md="4">
-        <BIQKpiCard Title="Referral" BackgroundColour="@Pallete[2]" IsLoadingData="IsLoadingReferralData">
+        <BIQKpiCard Title="Chat Messages" BackgroundColour="@Pallete[2]" OnPeriodChange="HandleChatMessagePeriodChange" IsLoadingData="IsLoadingChatMessageData">
             <Summary>
                 <div class="d-flex align-center justify-space-between">
-                    <BIQKpiCell Title="Total" Value="@ReferralTotal">
-                        <BIQPeriodChange ChangePercent="@ReferralChange" />
+                    <BIQKpiCell Title="Total" Value="@ChatMessageTotal">
+                        <BIQPeriodChange ChangePercent="@ChatMessageChange" />
                     </BIQKpiCell>
-                    <BIQKpiCell Title="Conversion" Value="@ReferralConversionTotal">
-                        <BIQPeriodChange ChangePercent="@ReferralConversionChange" />
+                    <BIQKpiCell Title="Average" Value="@ChatMessageAverage">
+                        <BIQPeriodChange ChangePercent="@ChatMessageAverageChange" />
                     </BIQKpiCell>
                 </div>
             </Summary>
@@ -59,7 +59,7 @@
         </BIQKpiCard>
     </MudItem>
 
-    <MudItem xs="12" md="6">
+    @*<MudItem xs="12" md="6">
         <BIQKpiCard Title="Video Engagement" BackgroundColour="@Pallete[0]">
             <Summary>
                 <div class="d-flex align-center justify-space-between">
@@ -129,6 +129,6 @@
                 <BIQDonut Data="@data" Labels="@labels" KPILabel="Rate" KPIValue="64%" />
             </Body>
         </BIQKpiCard>
-    </MudItem>
+    </MudItem>*@
 </MudGrid>
 
