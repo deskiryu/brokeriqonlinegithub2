@@ -59,6 +59,8 @@ namespace BrokerIQ.Online.Pages
         protected bool IsLoadingDownloadData { get; set; }
         protected string DownloadTotal { get; set; }
         protected double? DownloadChange { get; set; }
+        protected string DownloadWithoutLoginTotal { get; set; }
+        protected double? DownloadWithoutLoginChange { get; set; }
 
         protected bool IsLoadingClientLoginData { get; set; }
         protected string ClientLoginTotal { get; set; }
@@ -113,6 +115,10 @@ namespace BrokerIQ.Online.Pages
 
             DownloadTotal = result.Total.ToString("N0");
             DownloadChange = result.ChangeInTotalBetweenPeriodsPercent;
+
+            result = await ChartDataService.GetDownloadWithoutLoginData(User.MasterBrokerId, period);
+            DownloadWithoutLoginTotal = result.Total.ToString("N0");
+            DownloadWithoutLoginChange = result.ChangeInTotalBetweenPeriodsPercent;
 
             IsLoadingDownloadData = false;
             StateHasChanged();

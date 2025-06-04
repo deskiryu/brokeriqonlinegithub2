@@ -7,6 +7,8 @@ namespace BrokerIQ.Online.Services.Interface
     {
         Task<AnalyticsDataResponse> GetDownloadData(int brokerId, string period);
 
+        Task<AnalyticsDataResponse> GetDownloadWithoutLoginData(int brokerId, string period);
+
         Task<AnalyticsDataResponse> GetClientLoginData(int brokerId, int? brokerStaffId, string period);
 
         Task<AnalyticsDataResponse> GetClientLoginAverageData(int brokerId, int? brokerStaffId, string period);
