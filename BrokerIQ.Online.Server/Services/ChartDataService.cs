@@ -23,6 +23,13 @@ namespace BrokerIQ.Online.Services
             return answer;
         }
 
+        public async Task<AnalyticsDataResponse> GetDownloadWithoutLoginData(int brokerId, string period)
+        {
+            var url = $"{baseUrl}/analytics/downloadswithoutlogin?brokerId={brokerId}&period={period}";
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
         public async Task<AnalyticsDataResponse> GetClientLoginData(int brokerId, int? staffId, string period)
         {
             var url = $"{baseUrl}/analytics/customerlogins?brokerId={brokerId}&period={period}";

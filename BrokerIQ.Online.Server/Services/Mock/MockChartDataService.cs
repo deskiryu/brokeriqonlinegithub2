@@ -12,6 +12,11 @@ namespace BrokerIQ.Online.Services.Mock
             throw new NotImplementedException();
         }
 
+        public Task<AnalyticsDataResponse> GetDownloadWithoutLoginData(int brokerId, string period)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<AnalyticsDataResponse> GetClientLoginData(int brokerId, int? brokerStaffId, string period)
         {
             throw new NotImplementedException();
