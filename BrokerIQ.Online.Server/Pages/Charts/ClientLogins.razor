@@ -1,0 +1,29 @@
+﻿
+@using BrokerIQ.Online.Pages
+@using BrokerIQ.Online.Server.Pages.Charts.Components
+
+@inherits ClientLoginsBase
+
+@page "/charts/ClientLogins"
+
+<MudLink Href="charts/dashboard/0" Typo="Typo.h6" Color="Color.Dark" Class="ml-2"> <MudIcon Icon="@Icons.Material.Filled.ArrowBackIosNew" /> Back to Overview</MudLink>
+
+<MudGrid Spacing="2" Class="p-2">
+    <MudItem xs="12">
+        <BIQKpiCard Title="App Downloads" OnPeriodChange="HandleClientLoginPeriodChange" IsLoadingData="IsLoadingClientLoginData" SkeletonHeight="450px">
+            <Summary>
+                <div class="d-flex align-center justify-start gap-4">
+                    <BIQKpiCell Title="Total" Value="@ClientLoginTotal">
+                        <BIQPeriodChange ChangePercent="@ClientLoginChange" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Average" Value="@ClientLoginAverage">
+                        <BIQPeriodChange ChangePercent="@ClientLoginAverageChange" />
+                    </BIQKpiCell>
+                </div>
+            </Summary>
+            <Body>
+                <BIQChart ChartType="ChartType.Bar" ChartSeries="@CustomerLoginData" XAxisLabels="@CustomerLoginLabels" />
+            </Body>
+        </BIQKpiCard>
+    </MudItem>
+</MudGrid>

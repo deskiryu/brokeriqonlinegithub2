@@ -1,57 +1,134 @@
-﻿@page "/charts/dashboard/{brokerId}"
+﻿@using BrokerIQ.Online.Pages
+@using BrokerIQ.Online.Server.Pages.Charts.Components
+
 @inherits DashboardBase
-@using BrokerIQ.Online.Pages
-@using ChartJs.Blazor
-@using BrokerIQ.Online.Services.Interface
 
-<h4>Dashboard for @BrokerName who now has @CustomerCount customers (@CustomerAppUserCount app users )</h4>
+@page "/charts/dashboard/{brokerId}"
 
-@if (!Saved){
-<div class="container-fluid">
+<MudGrid Spacing="2" Class="p-2">
+    <MudItem xs="12" md="4">
+        <BIQKpiCard Title="App Downloads" BackgroundColour="@Pallete[0]" OnPeriodChange="HandleDownloadPeriodChange" OnClick="HandleDownloadOnClick" IsLoadingData="IsLoadingDownloadData">
+            <Summary>
+                <BIQKpiCell Title="Total" Value="@DownloadTotal">
+                    <BIQPeriodChange ChangePercent="@DownloadChange" />
+                </BIQKpiCell>
+            </Summary>
+        </BIQKpiCard>
+    </MudItem>
 
+    <MudItem xs="12" md="4">
+        <BIQKpiCard Title="Client Logins" BackgroundColour="@Pallete[1]" OnPeriodChange="HandleClientLoginPeriodChange" OnClick="HandleClientLoginOnClick" IsLoadingData="IsLoadingClientLoginData">
+            <Summary>
+                <div class="d-flex align-center justify-space-between">
+                    <BIQKpiCell Title="Total" Value="@ClientLoginTotal">
+                        <BIQPeriodChange ChangePercent="@ClientLoginChange" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Average" Value="@ClientLoginAverage">
+                        <BIQPeriodChange ChangePercent="@ClientLoginAverageChange" />
+                    </BIQKpiCell>
+                </div>
+            </Summary>
+        </BIQKpiCard>
+    </MudItem>
 
-    <div class="row">
+    <MudItem xs="12" md="4">
+        <BIQKpiCard Title="Referral" BackgroundColour="@Pallete[2]" IsLoadingData="IsLoadingReferralData">
+            <Summary>
+                <div class="d-flex align-center justify-space-between">
+                    <BIQKpiCell Title="Total" Value="@ReferralTotal">
+                        <BIQPeriodChange ChangePercent="@ReferralChange" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Conversion" Value="@ReferralConversionTotal">
+                        <BIQPeriodChange ChangePercent="@ReferralConversionChange" />
+                    </BIQKpiCell>
+                </div>
+            </Summary>
+        </BIQKpiCard>
+    </MudItem>
 
+    <MudItem xs="12">
+        <BIQKpiCard Title="Total Clients">
+            <Summary>
+                <BIQKpiCell Value="11346">
+                    <BIQPeriodChange ChangePercent=".1001" />
+                </BIQKpiCell>
+            </Summary>
+            <Body>
+                <BIQChart ChartType="ChartType.Bar" ChartSeries="@_series" XAxisLabels="@_xAxisLabels"></BIQChart>
+            </Body>
+        </BIQKpiCard>
+    </MudItem>
 
-        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
-            <h5>Email/ telephone invites to Signups</h5>
-            <Chart @ref="_pieChartJs2"
-                   Config="@_pieConfig2" />
-        </div>
+    <MudItem xs="12" md="6">
+        <BIQKpiCard Title="Video Engagement" BackgroundColour="@Pallete[0]">
+            <Summary>
+                <div class="d-flex align-center justify-space-between">
+                    <BIQKpiCell Title="Total Sent" Value="10">
+                        <BIQPeriodChange ChangePercent=".1001" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Total Viewed" Value="5">
+                        <BIQPeriodChange ChangePercent="-.005" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Average Time" Value="24">
+                        <BIQPeriodChange ChangePercent="-.055" />
+                    </BIQKpiCell>
+                </div>
+            </Summary>
+        </BIQKpiCard>
+    </MudItem>
 
-        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
-            <h5>Logins</h5>
-            <Chart @ref="_steppedChartJs"
-                   Config="@_steppedConfig" />
-        </div>
+    <MudItem xs="12" md="6">
+        <BIQKpiCard Title="Voice Engagement" BackgroundColour="@Pallete[1]">
+            <Summary>
+                <div class="d-flex align-center justify-space-between">
+                    <BIQKpiCell Title="Total Sent" Value="23">
+                        <BIQPeriodChange ChangePercent=".1001" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Total Viewed" Value="12">
+                        <BIQPeriodChange ChangePercent="-.15" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Average Time" Value="18">
+                        <BIQPeriodChange ChangePercent=".5" />
+                    </BIQKpiCell>
+                </div>
+            </Summary>
+        </BIQKpiCard>
+    </MudItem>
 
-        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
-            <h5>Converted from email/ telephone</h5>
-            <Chart @ref="_pieChartJs"
-                   Config="@_pieConfig" />
-        </div>
+    <MudItem xs="12" md="9">
+        <BIQKpiCard Title="Advisor Performance">
+            <Body>
+                <MudSimpleTable Style="overflow-x: auto;">
+                    <thead>
+                        <tr>
+                            @foreach (var h in advisorHeadings)
+                            {
+                                <th>@h</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in rows)
+                        {
+                            <tr>
+                                @foreach (var x in row.Split(';'))
+                                {
+                                    <td>@x</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            </Body>
+        </BIQKpiCard>
+    </MudItem>
 
-    </div>
-
-    <div class="row h-20">
-        <div class="col-12 chart_dashboard">
-            <h5>Invite conversion by day</h5>
-            <Chart @ref="_barChartJs"
-                   Config="@_barConfig"
-                   Width="100"
-                   Height="20" />
-
-        </div>
-
-    </div>
-
-
-</div>
-
-}
-else
-{
-    <div class="alert @StatusClass">@Message</div>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to broker list</MudButton>
-}
+    <MudItem xs="12" md="3">
+        <BIQKpiCard Title="Push Notifications">
+            <Body>
+                <BIQDonut Data="@data" Labels="@labels" KPILabel="Rate" KPIValue="64%" />
+            </Body>
+        </BIQKpiCard>
+    </MudItem>
+</MudGrid>
 
