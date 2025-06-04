@@ -75,8 +75,8 @@ public class AppDownloadsBase : BIQDashboardComponent
 
         var result = await ChartDataService.GetDownloadData(User.MasterBrokerId, period);
 
-        DownloadTotal = result.Total.ToString("F0");
-        DownloadChange = result.ChangeBetweenPeriodsPercent;
+        DownloadTotal = result.Total.ToString("N0");
+        DownloadChange = result.ChangeInTotalBetweenPeriodsPercent;
         DownloadLabels = result.Items.Select(i => i.Label).ToArray();
         DownloadData = result.Items.ToChartSeries("Downloads") ;
 

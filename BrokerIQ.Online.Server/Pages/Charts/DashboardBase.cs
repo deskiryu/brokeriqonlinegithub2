@@ -109,8 +109,8 @@ namespace BrokerIQ.Online.Pages
 
             var result = await ChartDataService.GetDownloadData(User.MasterBrokerId, period);
 
-            DownloadTotal = result.Total.ToString("F0");
-            DownloadChange = result.ChangeBetweenPeriodsPercent;
+            DownloadTotal = result.Total.ToString("N0");
+            DownloadChange = result.ChangeInTotalBetweenPeriodsPercent;
 
             IsLoadingDownloadData = false;
             StateHasChanged();
@@ -128,13 +128,10 @@ namespace BrokerIQ.Online.Pages
 
             var result = await ChartDataService.GetClientLoginData(User.MasterBrokerId, StaffId, period);
 
-            ClientLoginTotal = result.Total.ToString("F0");
-            ClientLoginChange = result.ChangeBetweenPeriodsPercent;
-
-            result = await ChartDataService.GetClientLoginAverageData(User.MasterBrokerId, StaffId, period);
-
-            ClientLoginAverage = result.Total.ToString("F0");
-            ClientLoginAverageChange = result.ChangeBetweenPeriodsPercent;
+            ClientLoginTotal = result.Total.ToString("N0");
+            ClientLoginChange = result.ChangeInTotalBetweenPeriodsPercent;
+            ClientLoginAverage = result.Average.ToString("N2");
+            ClientLoginAverageChange = result.ChangeInAverageBetweenPeriodsPercent;
 
             IsLoadingClientLoginData = false;
             StateHasChanged();
