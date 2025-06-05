@@ -71,8 +71,8 @@ namespace BrokerIQ.Online.Pages
         protected bool IsLoadingChatMessageData { get; set; }
         protected string ChatMessageTotal { get; set; }
         protected double? ChatMessageChange { get; set; }
-        protected string ChatMessageAverage { get; set; }
-        protected double? ChatMessageAverageChange { get; set; }
+        protected string ClientChatMessageAverage { get; set; }
+        protected double? ClientChatMessageAverageChange { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -159,8 +159,11 @@ namespace BrokerIQ.Online.Pages
 
             ChatMessageTotal = result.Total.ToString("N0");
             ChatMessageChange = result.ChangeInTotalBetweenPeriodsPercent;
-            ChatMessageAverage = result.Average.ToString("N2");
-            ChatMessageAverageChange = result.ChangeInAverageBetweenPeriodsPercent;
+
+            result = await ChartDataService.GetCustomerChatMessageAverageData(User.MasterBrokerId, StaffId, period);
+
+            ClientChatMessageAverage = result.Average.ToString("N2");
+            ClientChatMessageAverageChange = result.ChangeInAverageBetweenPeriodsPercent;
 
             IsLoadingChatMessageData = false;
             StateHasChanged();
