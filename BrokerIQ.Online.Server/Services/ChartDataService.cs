@@ -57,6 +57,15 @@ namespace BrokerIQ.Online.Services
             return answer;
         }
 
+        public async Task<AnalyticsDataResponse> GetCustomerChatMessageAverageData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/customerchatmessageaverage?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
         public async Task<AnalyticsDataResponse> GetReferralData(int brokerId, int? staffId, string period)
         {
             var url = $"{baseUrl}/analytics/referrals?brokerId={brokerId}&period={period}";
