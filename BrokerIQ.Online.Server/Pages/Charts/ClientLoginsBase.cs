@@ -74,14 +74,11 @@ public class ClientLoginsBase : BIQDashboardComponent
 
         ClientLoginTotal = result.Total.ToString("N0");
         ClientLoginChange = result.ChangeInTotalBetweenPeriodsPercent;
-        ClientLoginAverage = result.Average.ToString("N2");
-        ClientLoginAverageChange = result.ChangeInAverageBetweenPeriodsPercent;
+        ClientLoginAverage = result.Average.HasValue ? result.Average.Value.ToString("N2") : string.Empty;
+        ClientLoginAverageChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
 
         CustomerLoginLabels = result.Items.Select(i => i.Label).ToArray();
         CustomerLoginData = result.Items.ToChartSeries("Total");
-
-        //result = await ChartDataService.GetClientLoginAverageData(User.MasterBrokerId, StaffId, period);
-        //CustomerLoginData.AddRange(result.Items.ToChartSeries("Average"));
 
         IsLoadingClientLoginData = false;
         StateHasChanged();

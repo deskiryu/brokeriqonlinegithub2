@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Pages.Charts.Components;
 using BrokerIQ.Online.Services.Interface;
@@ -74,6 +76,9 @@ namespace BrokerIQ.Online.Pages
         protected string ClientChatMessageAverage { get; set; }
         protected double? ClientChatMessageAverageChange { get; set; }
 
+        protected bool IsLoadingCustomerRiskData { get; set; }
+        protected IEnumerable<AnalyticsRiskCustomerRankingItemDto> CustomerRankingList { get; set; } = Array.Empty<AnalyticsRiskCustomerRankingItemDto>();
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -91,10 +96,11 @@ namespace BrokerIQ.Online.Pages
             {
                 Brokers = await BrokerService.GetBrokers();
             }
-
+            
             HandleDownloadPeriodChange(DAILY);
             HandleClientLoginPeriodChange(DAILY);
             HandleChatMessagePeriodChange(DAILY);
+            HandleCustomerRiskRatingPeriodChange(DAILY);
         }
 
         private void SetAllDataLoadingFlags()
@@ -102,6 +108,7 @@ namespace BrokerIQ.Online.Pages
             IsLoadingDownloadData = true;
             IsLoadingClientLoginData = true;
             IsLoadingChatMessageData = true;
+            IsLoadingCustomerRiskData = true;
 
             StateHasChanged();
         }
@@ -138,8 +145,8 @@ namespace BrokerIQ.Online.Pages
 
             ClientLoginTotal = result.Total.ToString("N0");
             ClientLoginChange = result.ChangeInTotalBetweenPeriodsPercent;
-            ClientLoginAverage = result.Average.ToString("N2");
-            ClientLoginAverageChange = result.ChangeInAverageBetweenPeriodsPercent;
+            ClientLoginAverage = result.Average.HasValue ? result.Average.Value.ToString("N2") : string.Empty;
+            ClientLoginAverageChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
 
             IsLoadingClientLoginData = false;
             StateHasChanged();
@@ -162,10 +169,21 @@ namespace BrokerIQ.Online.Pages
 
             result = await ChartDataService.GetCustomerChatMessageAverageData(User.MasterBrokerId, StaffId, period);
 
-            ClientChatMessageAverage = result.Average.ToString("N2");
-            ClientChatMessageAverageChange = result.ChangeInAverageBetweenPeriodsPercent;
+            ClientChatMessageAverage = result.Average.HasValue ? result.Average.Value.ToString("N2") : string.Empty;
+            ClientChatMessageAverageChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
 
             IsLoadingChatMessageData = false;
+            StateHasChanged();
+        }
+
+        protected async void HandleCustomerRiskRatingPeriodChange(string period)
+        {
+            IsLoadingCustomerRiskData = true;
+            StateHasChanged();
+
+            CustomerRankingList = await ChartDataService.GetHighRiskCustomerRanking(User.MasterBrokerId, StaffId, period);
+
+            IsLoadingCustomerRiskData = false;
             StateHasChanged();
         }
     }

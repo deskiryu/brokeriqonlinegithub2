@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Interface;
@@ -64,6 +65,14 @@ namespace BrokerIQ.Online.Services
 
             var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
             return answer;
+        }
+
+        public async Task<IEnumerable<AnalyticsRiskCustomerRankingItemDto>> GetHighRiskCustomerRanking(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/highriskcustomerranking?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            return await this.requestProviderService.Get<IEnumerable<AnalyticsRiskCustomerRankingItemDto>>(url);
         }
 
         public async Task<AnalyticsDataResponse> GetReferralData(int brokerId, int? staffId, string period)
