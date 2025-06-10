@@ -969,8 +969,7 @@ namespace BrokerIQ.Online.Pages
         {
             if (success)
             {
-                LastChatPageLoaded = 0;
-                Chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
+                await UpdateChat();
                 StateHasChanged();
 
                 Snackbar.Add(message, Severity.Success);
