@@ -275,6 +275,8 @@ namespace BrokerIQ.Online.Pages
 
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
 
+                DocumentTypeValues = await DocumentVaultTypeService.GetAllForBroker(Customer.ChosenBrokerId);
+
                 if (!User.IsAdmin)
                 {
                     Broker = await BrokerService.GetBroker(User.MasterBrokerId, true);
