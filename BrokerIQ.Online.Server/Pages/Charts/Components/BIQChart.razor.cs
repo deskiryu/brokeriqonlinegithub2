@@ -22,6 +22,9 @@ namespace BrokerIQ.Online.Server.Pages.Charts.Components
         public List<ChartSeries> ChartSeries { get; set; }
 
         [Parameter]
+        public Position LegendPosition { get; set; }
+
+        [Parameter]
         public string NoDataMessage { get; set; } = "No Data available";
 
         protected double MaxValue = 5;        

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Models;
@@ -13,27 +14,6 @@ namespace BrokerIQ.Online.Pages
 {
     public class DashboardBase : BIQDashboardComponent
     {
-        protected List<ChartSeries> _series = new List<ChartSeries>()
-        {
-            new ChartSeries() { Name = "Mortgage & Insurance", Data = new double[] { 400, 200, 250, 270, 460, 600, 480} },
-            new ChartSeries() { Name = "Mortgage Only", Data = new double[] { 190, 240, 350, 130, 280, 150, 130 } },
-            new ChartSeries() { Name = "No Products", Data = new double[] { 80, 60, 110, 130, 40, 160, 100 } },
-        };
-        protected string[] _xAxisLabels = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-
-
-        protected string[] advisorHeadings = { "Advisor Name", "Mortgage", "Insurance", "Referral", "Conversion", "Latest Engagement" };
-        protected string[] rows = {
-            @"Advisor Name 1;1;5;23;20;Just Now",
-            @"Advisor Name 5;3;3;20;20;A minute ago",
-            @"Advisor Name 7;1;5;12;20;30 minutes ago",
-            @"Advisor Name 2;1;8;9;20;45 minutes ago",
-            @"Advisor Name 9;5;3;16;20;1 hour ago",
-        };
-
-        public double[] data = { 100, 64 };
-        public string[] labels = { "Total Sent", "Total Opened" };
-
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
@@ -79,6 +59,19 @@ namespace BrokerIQ.Online.Pages
         protected bool IsLoadingCustomerRiskData { get; set; }
         protected IEnumerable<AnalyticsRiskCustomerRankingItemDto> CustomerRankingList { get; set; } = Array.Empty<AnalyticsRiskCustomerRankingItemDto>();
 
+        protected bool IsLoadingReferralData { get; set; }
+        protected string ReferralTotal { get; set; }
+        protected double? ReferralChange { get; set; }
+        protected string ConversionTotal { get; set; }
+        protected double? ConversionChange { get; set; }
+        protected List<ChartSeries> ReferralSeries = new List<ChartSeries>();
+        protected string[] ReferralLabels = Array.Empty<string>();
+
+        protected bool IsLoadingReferralSplitData { get; set; }
+        protected double[] ReferralSplitData = Array.Empty<double>();
+        protected string[] ReferralSplitLabels = Array.Empty<string>();
+        protected string ReferralConvertRate = string.Empty;
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -96,10 +89,12 @@ namespace BrokerIQ.Online.Pages
             {
                 Brokers = await BrokerService.GetBrokers();
             }
-            
+
             HandleDownloadPeriodChange(DAILY);
             HandleClientLoginPeriodChange(DAILY);
             HandleChatMessagePeriodChange(DAILY);
+            HandleReferralPeriodChange(DAILY);
+            HandleReferralSplitPeriodChange(DAILY);
             HandleCustomerRiskRatingPeriodChange(DAILY);
         }
 
@@ -108,6 +103,8 @@ namespace BrokerIQ.Online.Pages
             IsLoadingDownloadData = true;
             IsLoadingClientLoginData = true;
             IsLoadingChatMessageData = true;
+            IsLoadingReferralData = true;
+            IsLoadingReferralSplitData = true;
             IsLoadingCustomerRiskData = true;
 
             StateHasChanged();
@@ -186,5 +183,46 @@ namespace BrokerIQ.Online.Pages
             IsLoadingCustomerRiskData = false;
             StateHasChanged();
         }
+
+        protected async void HandleReferralPeriodChange(string period)
+        {
+            IsLoadingReferralData = true;
+            StateHasChanged();
+
+            ReferralSeries = new List<ChartSeries>();
+            
+            var result = await ChartDataService.GetReferralData(User.MasterBrokerId, StaffId, period);
+
+            ReferralTotal = result.Total.ToString("N0");
+            ReferralChange = result.ChangeInTotalBetweenPeriodsPercent;
+            ReferralSeries.Add(new ChartSeries() { Name = "Referrals", Data = result.Items.Select(i => i.Value).ToArray() });
+            ReferralLabels = result.Items.Select(i => i.Label).ToArray();
+
+            result = await ChartDataService.GetReferralConversionData(User.MasterBrokerId, StaffId, period);
+
+            ConversionTotal = result.Total.ToString("N2");
+            ConversionChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
+            ReferralSeries.Add(new ChartSeries() { Name = "Conversion", Data = result.Items.Select(i => i.Value).ToArray() });
+
+            IsLoadingReferralData = false;
+            StateHasChanged();
+        }
+
+        protected async void HandleReferralSplitPeriodChange(string period)
+        {
+            IsLoadingReferralSplitData = true;
+            StateHasChanged();
+
+            var referrals = await ChartDataService.GetReferralData(User.MasterBrokerId, StaffId, period);
+            var conversions = await ChartDataService.GetReferralConversionData(User.MasterBrokerId, StaffId, period);
+
+            ReferralSplitData = new double[] { referrals.Total, conversions.Total };
+            ReferralSplitLabels = new string[] { "Referrals", "Conversions" };
+            ReferralConvertRate = (ReferralSplitData[1] / ReferralSplitData[0]).ToString("P0");
+
+            IsLoadingReferralSplitData = false;
+            StateHasChanged();
+        }
+
     }
 }

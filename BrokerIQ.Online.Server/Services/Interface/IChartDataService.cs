@@ -14,14 +14,14 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<AnalyticsDataResponse> GetClientLoginAverageData(int brokerId, int? brokerStaffId, string period);
 
-        Task<AnalyticsDataResponse> GetReferralData(int brokerId, int? staffId, string period);
-
-        Task<AnalyticsDataResponse> GetReferralConversionData(int brokerId, int? staffId, string period);
-
         Task<AnalyticsDataResponse> GetChatMessageData(int brokerId, int? staffId, string period);
 
         Task<AnalyticsDataResponse> GetCustomerChatMessageAverageData(int brokerId, int? staffId, string period);
 
         Task<IEnumerable<AnalyticsRiskCustomerRankingItemDto>> GetHighRiskCustomerRanking(int masterBrokerId, int? staffId, string period);
+
+        Task<AnalyticsDataResponse> GetReferralData(int brokerId, int? staffId, string period);
+
+        Task<AnalyticsDataResponse> GetReferralConversionData(int brokerId, int? staffId, string period);
     }
 }
