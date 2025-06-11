@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Services.Interface;
@@ -43,6 +44,11 @@ namespace BrokerIQ.Online.Services.Mock
         }
 
         public Task<AnalyticsDataResponse> GetCustomerChatMessageAverageData(int brokerId, int? staffId, string period)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<AnalyticsRiskCustomerRankingItemDto>> GetHighRiskCustomerRanking(int masterBrokerId, int? staffId, string period)
         {
             throw new NotImplementedException();
         }

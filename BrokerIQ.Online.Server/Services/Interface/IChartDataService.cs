@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BrokerIQ.Dto.Response;
 
 namespace BrokerIQ.Online.Services.Interface
@@ -20,5 +21,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<AnalyticsDataResponse> GetChatMessageData(int brokerId, int? staffId, string period);
 
         Task<AnalyticsDataResponse> GetCustomerChatMessageAverageData(int brokerId, int? staffId, string period);
+
+        Task<IEnumerable<AnalyticsRiskCustomerRankingItemDto>> GetHighRiskCustomerRanking(int masterBrokerId, int? staffId, string period);
     }
 }
