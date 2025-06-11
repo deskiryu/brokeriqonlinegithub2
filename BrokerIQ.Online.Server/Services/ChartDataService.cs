@@ -77,7 +77,7 @@ namespace BrokerIQ.Online.Services
 
         public async Task<AnalyticsDataResponse> GetReferralData(int brokerId, int? staffId, string period)
         {
-            var url = $"{baseUrl}/analytics/referrals?brokerId={brokerId}&period={period}";
+            var url = $"{baseUrl}/analytics/customerreferrals?brokerId={brokerId}&period={period}";
             if (staffId.HasValue) url += $"brokerstaffid={staffId}";
 
             var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
@@ -86,7 +86,7 @@ namespace BrokerIQ.Online.Services
 
         public async Task<AnalyticsDataResponse> GetReferralConversionData(int brokerId, int? staffId, string period)
         {
-            var url = $"{baseUrl}/analytics/referralconversion?brokerId={brokerId}&period={period}";
+            var url = $"{baseUrl}/analytics/convertedreferrals?brokerId={brokerId}&period={period}";
             if (staffId.HasValue) url += $"brokerstaffid={staffId}";
 
             var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);

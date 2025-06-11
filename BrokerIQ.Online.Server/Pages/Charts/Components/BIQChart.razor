@@ -2,7 +2,7 @@
 
 @if (ChartSeries != null && ChartSeries.Any(s => s.Data.Sum() > 0))
 {
-    <MudChart ChartType="@ChartType" ChartSeries="@ChartSeries" XAxisLabels="@XAxisLabels" Width="@GraphWidth" Height="@GraphHeight" ChartOptions="@Options" LegendPosition="Position.Bottom"/>
+    <MudChart ChartType="@ChartType" ChartSeries="@ChartSeries" XAxisLabels="@XAxisLabels" Width="@GraphWidth" Height="@GraphHeight" ChartOptions="@Options" LegendPosition="@LegendPosition"/>
 }
 else
 {

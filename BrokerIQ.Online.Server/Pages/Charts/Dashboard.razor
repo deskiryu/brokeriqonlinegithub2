@@ -51,6 +51,34 @@
         </BIQKpiCard>
     </MudItem>
 
+    <MudItem xs="12" md="9">
+        <BIQKpiCard Title="Referrals" OnPeriodChange="HandleReferralPeriodChange" IsLoadingData="IsLoadingReferralData" SkeletonHeight="435px">
+            <Summary>
+                <div class="d-flex align-center justify-start">
+                    <BIQKpiCell Title="Total" Value="@ReferralTotal">
+                        <BIQPeriodChange ChangePercent="@ReferralChange" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Conversion" Value="@ConversionTotal">
+                        <BIQPeriodChange ChangePercent="@ConversionChange" />
+                    </BIQKpiCell>
+                </div>
+            </Summary>
+            <Body>
+                <BIQChart ChartType="ChartType.Bar" ChartSeries="ReferralSeries" XAxisLabels="ReferralLabels"></BIQChart>
+            </Body>
+        </BIQKpiCard>
+    </MudItem>
+
+    <MudItem xs="12" md="3">
+        <BIQKpiCard OnPeriodChange="HandleReferralSplitPeriodChange" IsLoadingData="IsLoadingReferralSplitData" SkeletonHeight="435px">
+            <Body>
+                <div style="min-height: 50px;"></div>
+                <BIQDonut Data="ReferralSplitData" Labels="ReferralSplitLabels" KPILabel="" KPIValue="@ReferralConvertRate" />
+                <div style="min-height: 50px;"></div>
+            </Body>
+        </BIQKpiCard>
+    </MudItem>
+
     <MudItem xs="12" md="6">
         <BIQKpiCard Title="High Risk Clients" OnPeriodChange="HandleCustomerRiskRatingPeriodChange" IsLoadingData="IsLoadingCustomerRiskData" SkeletonHeight="428px">
             <Body>
@@ -145,14 +173,6 @@
                                 }
                             </tbody>
                         </MudSimpleTable>
-                    </Body>
-                </BIQKpiCard>
-            </MudItem>
-
-            <MudItem xs="12" md="3">
-                <BIQKpiCard Title="Push Notifications">
-                    <Body>
-                        <BIQDonut Data="@data" Labels="@labels" KPILabel="Rate" KPIValue="64%" />
                     </Body>
                 </BIQKpiCard>
             </MudItem>*@
