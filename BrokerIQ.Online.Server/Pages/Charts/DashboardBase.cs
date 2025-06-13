@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Response;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Pages.Charts.Components;
@@ -72,6 +73,12 @@ namespace BrokerIQ.Online.Pages
         protected string[] ReferralSplitLabels = Array.Empty<string>();
         protected string ReferralConvertRate = string.Empty;
 
+        protected bool IsLoadingProductData { get; set; }
+        protected string ProductTotal { get; set; }
+        protected double? ProductChange { get; set; }
+        protected List<ChartSeries> ProductSeries = new List<ChartSeries>();
+        protected string[] ProductLabels = Array.Empty<string>();
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -96,6 +103,7 @@ namespace BrokerIQ.Online.Pages
             HandleReferralPeriodChange(DAILY);
             HandleReferralSplitPeriodChange(DAILY);
             HandleCustomerRiskRatingPeriodChange(DAILY);
+            HandleProductPeriodChange(DAILY);
         }
 
         private void SetAllDataLoadingFlags()
@@ -106,6 +114,7 @@ namespace BrokerIQ.Online.Pages
             IsLoadingReferralData = true;
             IsLoadingReferralSplitData = true;
             IsLoadingCustomerRiskData = true;
+            IsLoadingProductData = true;
 
             StateHasChanged();
         }
@@ -224,5 +233,26 @@ namespace BrokerIQ.Online.Pages
             StateHasChanged();
         }
 
+        protected async void HandleProductPeriodChange(string period)
+        {
+            IsLoadingReferralData = true;
+            StateHasChanged();
+
+            ReferralSeries = new List<ChartSeries>();
+
+            var result = await ChartDataService.GetProductData(User.MasterBrokerId, StaffId, period);
+
+            ProductTotal = result.Total.ToString("N0");
+            ProductChange = result.ChangeInTotalBetweenPeriodsPercent;
+
+            ProductSeries.Add(new ChartSeries() { Name = "Insurance (Personal)", Data = result.Items.Where(i=> i.Category == (int)ServicesEnum.PersonalInsurance).Select(i => i.Value).ToArray() });
+            ProductSeries.Add(new ChartSeries() { Name = "Insurance (Business)", Data = result.Items.Where(i => i.Category == (int)ServicesEnum.BusinessInsurance).Select(i => i.Value).ToArray() });
+            ProductSeries.Add(new ChartSeries() { Name = "Mortgage", Data = result.Items.Where(i => i.Category == (int)ServicesEnum.Mortgage).Select(i => i.Value).ToArray() });
+            ProductSeries.Add(new ChartSeries() { Name = "Wealth", Data = result.Items.Where(i => i.Category == (int)ServicesEnum.Wealth).Select(i => i.Value).ToArray() });
+            ProductLabels = result.Items.Where(i => i.Category == (int)ServicesEnum.PersonalInsurance).Select(i => i.Label).ToArray();
+
+            IsLoadingReferralData = false;
+            StateHasChanged();
+        }
     }
 }

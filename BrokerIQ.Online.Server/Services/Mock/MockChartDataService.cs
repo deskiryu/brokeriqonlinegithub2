@@ -52,5 +52,10 @@ namespace BrokerIQ.Online.Services.Mock
         {
             throw new NotImplementedException();
         }
+
+        public Task<AnalyticsDataResponse> GetProductData(int brokerId, int? staffId, string period)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -93,5 +93,13 @@ namespace BrokerIQ.Online.Services
             return answer;
         }
 
+        public async Task<AnalyticsDataResponse> GetProductData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/products?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
     }
 }
