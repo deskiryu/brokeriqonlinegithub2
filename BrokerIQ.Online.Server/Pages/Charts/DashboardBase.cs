@@ -103,7 +103,7 @@ namespace BrokerIQ.Online.Pages
             HandleReferralPeriodChange(DAILY);
             HandleReferralSplitPeriodChange(DAILY);
             HandleCustomerRiskRatingPeriodChange(DAILY);
-            HandleProductPeriodChange(DAILY);
+            HandleInsurancePeriodChange(DAILY);
         }
 
         private void SetAllDataLoadingFlags()
@@ -233,23 +233,18 @@ namespace BrokerIQ.Online.Pages
             StateHasChanged();
         }
 
-        protected async void HandleProductPeriodChange(string period)
+        protected async void HandleInsurancePeriodChange(string period)
         {
             IsLoadingReferralData = true;
             StateHasChanged();
 
             ReferralSeries = new List<ChartSeries>();
 
-            var result = await ChartDataService.GetProductData(User.MasterBrokerId, StaffId, period);
+            var result = await ChartDataService.GetInsuranceData(User.MasterBrokerId, StaffId, period);
 
-            ProductTotal = result.Total.ToString("N0");
-            ProductChange = result.ChangeInTotalBetweenPeriodsPercent;
+            InsuranceTotal = result.Total.ToString("N0");
+            InsuranceChange = result.ChangeInTotalBetweenPeriodsPercent;
 
-            ProductSeries.Add(new ChartSeries() { Name = "Insurance (Personal)", Data = result.Items.Where(i=> i.Category == (int)ServicesEnum.PersonalInsurance).Select(i => i.Value).ToArray() });
-            ProductSeries.Add(new ChartSeries() { Name = "Insurance (Business)", Data = result.Items.Where(i => i.Category == (int)ServicesEnum.BusinessInsurance).Select(i => i.Value).ToArray() });
-            ProductSeries.Add(new ChartSeries() { Name = "Mortgage", Data = result.Items.Where(i => i.Category == (int)ServicesEnum.Mortgage).Select(i => i.Value).ToArray() });
-            ProductSeries.Add(new ChartSeries() { Name = "Wealth", Data = result.Items.Where(i => i.Category == (int)ServicesEnum.Wealth).Select(i => i.Value).ToArray() });
-            ProductLabels = result.Items.Where(i => i.Category == (int)ServicesEnum.PersonalInsurance).Select(i => i.Label).ToArray();
 
             IsLoadingReferralData = false;
             StateHasChanged();
