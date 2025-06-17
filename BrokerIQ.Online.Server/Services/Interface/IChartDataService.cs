@@ -25,5 +25,9 @@ namespace BrokerIQ.Online.Services.Interface
         Task<AnalyticsDataResponse> GetReferralConversionData(int brokerId, int? staffId, string period);
 
         Task<AnalyticsDataResponse> GetInsuranceData(int brokerId, int? staffId, string period);
+
+        Task<AnalyticsDataResponse> GetMortgageData(int brokerId, int? staffId, string period);
+
+        Task<AnalyticsDataResponse> GetWealthData(int brokerId, int? staffId, string period);
     }
 }

@@ -38,7 +38,8 @@ public abstract class BIQDashboardComponent : ComponentBase
 
     protected ChartOptions Options = new ChartOptions()
     {
-        ChartPalette = Pallete
+        ChartPalette = Pallete,
+        MaxNumYAxisTicks = 10
     };
 }
 

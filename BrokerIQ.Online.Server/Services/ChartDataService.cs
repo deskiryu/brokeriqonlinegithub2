@@ -101,5 +101,23 @@ namespace BrokerIQ.Online.Services
             var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
             return answer;
         }
+
+        public async Task<AnalyticsDataResponse> GetMortgageData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/mortgage?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
+        public async Task<AnalyticsDataResponse> GetWealthData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/wealth?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
     }
 }
