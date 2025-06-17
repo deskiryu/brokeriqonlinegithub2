@@ -260,8 +260,7 @@ namespace BrokerIQ.Online.Pages
 
             if (Broker.ProvidesBusinessInsuranceServices || Broker.ProvidesPersonalInsuranceServices)
             {
-
-                var result = await ChartDataService.GetInsuranceData(User.MasterBrokerId, StaffId, period);
+                var result = await ChartDataService.GetInsuranceCustomersData(User.MasterBrokerId, StaffId, period);
 
                 allProductsTotal += result.Total;
                 allPreviousProductsTotal += result.PreviousPeriodTotal;
@@ -276,8 +275,7 @@ namespace BrokerIQ.Online.Pages
 
             if (Broker.ProvidesMortgageServices)
             {
-
-                var result = await ChartDataService.GetMortgageData(User.MasterBrokerId, StaffId, period);
+                var result = await ChartDataService.GetMortgageCustomersData(User.MasterBrokerId, StaffId, period);
 
                 allProductsTotal += result.Total;
                 allPreviousProductsTotal += result.PreviousPeriodTotal;
@@ -292,8 +290,7 @@ namespace BrokerIQ.Online.Pages
 
             if (Broker.ProvidesWealthServices)
             {
-
-                var result = await ChartDataService.GetWealthData(User.MasterBrokerId, StaffId, period);
+                var result = await ChartDataService.GetWealthCustomersData(User.MasterBrokerId, StaffId, period);
 
                 allProductsTotal += result.Total;
                 allPreviousProductsTotal += result.PreviousPeriodTotal;
@@ -311,6 +308,10 @@ namespace BrokerIQ.Online.Pages
             {
                 ProductsChange = (allProductsTotal - allPreviousProductsTotal) / allProductsTotal;
             }
+
+            var noProducts = await ChartDataService.GetNoProductCustomersData(User.MasterBrokerId, StaffId, period);
+
+            ProductsSeries.Add(GetChartSeriesFrom(noProducts, "No Products"));
 
             IsLoadingProductData = false;
             StateHasChanged();

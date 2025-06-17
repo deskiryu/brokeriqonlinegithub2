@@ -24,10 +24,12 @@ namespace BrokerIQ.Online.Services.Interface
 
         Task<AnalyticsDataResponse> GetReferralConversionData(int brokerId, int? staffId, string period);
 
-        Task<AnalyticsDataResponse> GetInsuranceData(int brokerId, int? staffId, string period);
+        Task<AnalyticsDataResponse> GetInsuranceCustomersData(int brokerId, int? staffId, string period);
 
-        Task<AnalyticsDataResponse> GetMortgageData(int brokerId, int? staffId, string period);
+        Task<AnalyticsDataResponse> GetMortgageCustomersData(int brokerId, int? staffId, string period);
 
-        Task<AnalyticsDataResponse> GetWealthData(int brokerId, int? staffId, string period);
+        Task<AnalyticsDataResponse> GetWealthCustomersData(int brokerId, int? staffId, string period);
+
+        Task<AnalyticsDataResponse> GetNoProductCustomersData(int brokerId, int? staffId, string period);
     }
 }
