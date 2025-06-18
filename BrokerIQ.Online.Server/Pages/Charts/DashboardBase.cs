@@ -29,12 +29,11 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IChartDataService ChartDataService { get; set; }
 
-        [Parameter]
-        public string BrokerId { get; set; }
-
         public int? StaffId { get; set; }
 
         public User User { get; set; }
+
+        public Broker Broker { get; set; }
 
         public IEnumerable<Broker> Brokers { get; set; }
 
@@ -72,6 +71,12 @@ namespace BrokerIQ.Online.Pages
         protected string[] ReferralSplitLabels = Array.Empty<string>();
         protected string ReferralConvertRate = string.Empty;
 
+        protected bool IsLoadingProductData { get; set; }
+        protected string ProductsTotal { get; set; }
+        protected double? ProductsChange { get; set; }
+        protected List<ChartSeries> ProductsSeries = new List<ChartSeries>();
+        protected string[] ProductsLabels = Array.Empty<string>();
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -79,6 +84,8 @@ namespace BrokerIQ.Online.Pages
             SetAllDataLoadingFlags();
 
             User = await AccountService.GetUser();
+
+            Broker = await BrokerService.GetBroker(User.MasterBrokerId, true);
 
             if (User.IsBrokerStaff)
             {
@@ -96,6 +103,7 @@ namespace BrokerIQ.Online.Pages
             HandleReferralPeriodChange(DAILY);
             HandleReferralSplitPeriodChange(DAILY);
             HandleCustomerRiskRatingPeriodChange(DAILY);
+            HandleProductsPeriodChange(DAILY);
         }
 
         private void SetAllDataLoadingFlags()
@@ -106,6 +114,7 @@ namespace BrokerIQ.Online.Pages
             IsLoadingReferralData = true;
             IsLoadingReferralSplitData = true;
             IsLoadingCustomerRiskData = true;
+            IsLoadingProductData = true;
 
             StateHasChanged();
         }
@@ -190,22 +199,37 @@ namespace BrokerIQ.Online.Pages
             StateHasChanged();
 
             ReferralSeries = new List<ChartSeries>();
-            
+
             var result = await ChartDataService.GetReferralData(User.MasterBrokerId, StaffId, period);
 
             ReferralTotal = result.Total.ToString("N0");
             ReferralChange = result.ChangeInTotalBetweenPeriodsPercent;
-            ReferralSeries.Add(new ChartSeries() { Name = "Referrals", Data = result.Items.Select(i => i.Value).ToArray() });
-            ReferralLabels = result.Items.Select(i => i.Label).ToArray();
+            ReferralSeries.Add(GetChartSeriesFrom(result, "Referrals"));
+            ReferralLabels = GetLabelsFrom(result);
 
             result = await ChartDataService.GetReferralConversionData(User.MasterBrokerId, StaffId, period);
 
             ConversionTotal = result.Total.ToString("N2");
             ConversionChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
-            ReferralSeries.Add(new ChartSeries() { Name = "Conversion", Data = result.Items.Select(i => i.Value).ToArray() });
+            ReferralSeries.Add(GetChartSeriesFrom(result, "Conversion"));
 
             IsLoadingReferralData = false;
             StateHasChanged();
+        }
+
+        private static ChartSeries GetChartSeriesFrom(AnalyticsDataResponse result, string seriesLabel)
+        {
+            var series = result.Items.GroupBy(i => i.Label).Select(g => g.Sum(i => i.Value)).ToArray();
+
+            return new ChartSeries() { Name = seriesLabel, Data = series };
+        }
+
+        private static string[] GetLabelsFrom(AnalyticsDataResponse result)
+        {
+            var categories = result.Items.Select(i => i.Category).Distinct().ToArray();
+
+            // get the labels from just one of the categories
+            return result.Items.Where(i => i.Category == categories[0]).Select(i => i.Label).ToArray();
         }
 
         protected async void HandleReferralSplitPeriodChange(string period)
@@ -224,5 +248,73 @@ namespace BrokerIQ.Online.Pages
             StateHasChanged();
         }
 
+        protected async void HandleProductsPeriodChange(string period)
+        {
+            IsLoadingProductData = true;
+            StateHasChanged();
+
+            ProductsSeries = new List<ChartSeries>();
+            ProductsLabels = Array.Empty<string>();
+            var allProductsTotal = 0.0;
+            var allPreviousProductsTotal = 0.0;
+
+            if (Broker.ProvidesBusinessInsuranceServices || Broker.ProvidesPersonalInsuranceServices)
+            {
+                var result = await ChartDataService.GetInsuranceCustomersData(User.MasterBrokerId, StaffId, period);
+
+                allProductsTotal += result.Total;
+                allPreviousProductsTotal += result.PreviousPeriodTotal;
+
+                if (!ProductsLabels.Any())
+                {
+                    ProductsLabels = GetLabelsFrom(result);
+                }
+
+                ProductsSeries.Add(GetChartSeriesFrom(result, "Insurance"));
+            }
+
+            if (Broker.ProvidesMortgageServices)
+            {
+                var result = await ChartDataService.GetMortgageCustomersData(User.MasterBrokerId, StaffId, period);
+
+                allProductsTotal += result.Total;
+                allPreviousProductsTotal += result.PreviousPeriodTotal;
+
+                if (!ProductsLabels.Any())
+                {
+                    ProductsLabels = GetLabelsFrom(result);
+                }
+
+                ProductsSeries.Add(GetChartSeriesFrom(result, "Mortgage"));
+            }
+
+            if (Broker.ProvidesWealthServices)
+            {
+                var result = await ChartDataService.GetWealthCustomersData(User.MasterBrokerId, StaffId, period);
+
+                allProductsTotal += result.Total;
+                allPreviousProductsTotal += result.PreviousPeriodTotal;
+
+                if (!ProductsLabels.Any())
+                {
+                    ProductsLabels = GetLabelsFrom(result);
+                }
+
+                ProductsSeries.Add(GetChartSeriesFrom(result, "Wealth"));
+            }
+
+            ProductsTotal = allProductsTotal.ToString("N0");
+            if (allProductsTotal > 0)
+            {
+                ProductsChange = (allProductsTotal - allPreviousProductsTotal) / allProductsTotal;
+            }
+
+            var noProducts = await ChartDataService.GetNoProductCustomersData(User.MasterBrokerId, StaffId, period);
+
+            ProductsSeries.Add(GetChartSeriesFrom(noProducts, "No Products"));
+
+            IsLoadingProductData = false;
+            StateHasChanged();
+        }
     }
 }
