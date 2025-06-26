@@ -373,7 +373,7 @@
                         <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.IntegrationsVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 5)" />
                     </TabContent>
                     <ChildContent>
-                        <IntegrationStack />
+                        <IntegrationStack Broker="@Broker"/>
                     </ChildContent>
                 </MudTabPanel>
             }

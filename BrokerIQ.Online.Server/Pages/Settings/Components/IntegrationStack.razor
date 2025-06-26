@@ -1,6 +1,19 @@
-<MudStack AlignItems="AlignItems.Stretch" Justify="Justify.FlexStart">
+<div class="d-flex gap-2">
     <MudPaper>
-        <MudSwitch Class="ml-1" T="bool" Checked="@AllowCalendlyConnection" CheckedChanged="ToggleCalendlyConnection" Color="Color.Primary"
-            Label="Allow users to connect to Calendly" />
+        <MudSwitch Class="m-1" T="bool" Checked="@AllowCalendlyConnection" CheckedChanged="ToggleCalendlyConnection" Color="Color.Primary"
+                   Label="Allow users to connect to Calendly" />
     </MudPaper>
-</MudStack>
+    <MudPaper>
+        <div class="m-1">
+            <MudToggleIconButton Toggled="ConnectedToPipedrive"
+                                 ToggledChanged="OnPipedriveToggledChanged"
+                                 Icon="@Icons.Material.Filled.CloudOff"
+                                 Color="@Color.Error"
+                                 ToggledIcon="@Icons.Material.Filled.CloudDone"
+                                 ToggledColor="@Color.Success"
+                                 title="@(ConnectedToPipedrive ? "On" : "Off")" />
+
+            <span>Pipedrive is @(ConnectedToPipedrive ? "On" : "Off")</span>
+        </div>
+    </MudPaper>
+</div>

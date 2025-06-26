@@ -4,13 +4,13 @@ using BrokerIQ.Online.Services.Abstract;
 
 namespace BrokerIQ.Online.Server;
 
-public class CalendlyService : ICalendlyService
+public class PipedriveService : IPipedriveService
 {
-    private readonly string Url = "Calendly";
+    private readonly string Url = "Pipedrive";
 
     private readonly IRequestProviderService requestProviderService;
 
-    public CalendlyService(IRequestProviderService requestProviderService)
+    public PipedriveService(IRequestProviderService requestProviderService)
     {
         this.requestProviderService = requestProviderService;
     }

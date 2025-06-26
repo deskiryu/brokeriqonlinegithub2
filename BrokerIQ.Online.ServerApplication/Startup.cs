@@ -51,6 +51,7 @@ namespace BrokerIQ.Online.ServerApplication
             services.Configure<FileUploadSettings>(Configuration.GetSection(typeof(FileUploadSettings).Name));
             services.Configure<MetaDefenderCoreDetails>(Configuration.GetSection(typeof(MetaDefenderCoreDetails).Name));
             services.Configure<CalendlySettings>(Configuration.GetSection(typeof(CalendlySettings).Name));
+            services.Configure<PipedriveSettings>(Configuration.GetSection(typeof(PipedriveSettings).Name));
             services.Configure<TutorialVideos>(Configuration.GetSection(typeof(TutorialVideos).Name));
 
             services.ConfigureBrokerIQServices();
