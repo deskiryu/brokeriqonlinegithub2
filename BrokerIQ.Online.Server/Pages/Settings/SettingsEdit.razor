@@ -365,7 +365,7 @@
                 </MudTabPanel>
             }
 
-            @if ((User.IsBroker || User.IsAdminStaff) && ShowAppointmentSection())
+            @if ((User.IsBroker || User.IsAdminStaff))
             {
                 <MudTabPanel>
                     <TabContent>

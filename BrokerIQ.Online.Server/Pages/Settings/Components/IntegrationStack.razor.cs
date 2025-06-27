@@ -92,4 +92,13 @@ public partial class IntegrationStack
 
         return url;
     }
+
+    protected bool ShowAppointmentSection()
+    {
+        if (Broker is null) return false; // disabled while broker is not set
+
+        if (Broker.BrokerIdentifier is null || !Broker.BrokerIdentifier.IdentifierFound) return true;
+
+        return Broker.BrokerIdentifier.HasAppointments;
+    }
 }

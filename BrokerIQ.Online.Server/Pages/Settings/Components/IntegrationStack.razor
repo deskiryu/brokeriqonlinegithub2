@@ -1,8 +1,11 @@
 <div class="d-flex gap-2">
-    <MudPaper>
-        <MudSwitch Class="m-1" T="bool" Checked="@AllowCalendlyConnection" CheckedChanged="ToggleCalendlyConnection" Color="Color.Primary"
-                   Label="Allow users to connect to Calendly" />
-    </MudPaper>
+    @if (ShowAppointmentSection())
+    {
+        <MudPaper>
+            <MudSwitch Class="m-1" T="bool" Checked="@AllowCalendlyConnection" CheckedChanged="ToggleCalendlyConnection" Color="Color.Primary"
+                       Label="Allow users to connect to Calendly" />
+        </MudPaper>
+    }
     <MudPaper>
         <div class="m-1">
             <MudToggleIconButton Toggled="ConnectedToPipedrive"
