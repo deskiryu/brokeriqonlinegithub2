@@ -456,6 +456,17 @@ namespace BrokerIQ.Online.Pages
         {
             var toInvite = SelectedCustomers.Where(c => string.IsNullOrWhiteSpace(c.AppVersion)).ToArray();
 
+            if (!toInvite.Any())
+            {
+                var noCustomersParams = new DialogParameters
+                {
+                    { "Message", "All selected customers have downloaded the application already." }
+                };
+                await DialogService.Show<AlertDialog>("Invalid selection", noCustomersParams).Result;
+
+                return;
+            }
+
             var dialogParams = new DialogParameters
             {
                 { "SelectedCustomers", toInvite }

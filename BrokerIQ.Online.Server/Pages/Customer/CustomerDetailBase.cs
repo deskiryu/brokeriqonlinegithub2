@@ -275,6 +275,8 @@ namespace BrokerIQ.Online.Pages
 
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
 
+                DocumentTypeValues = await DocumentVaultTypeService.GetAllForBroker(Customer.ChosenBrokerId);
+
                 if (!User.IsAdmin)
                 {
                     Broker = await BrokerService.GetBroker(User.MasterBrokerId, true);
@@ -967,8 +969,7 @@ namespace BrokerIQ.Online.Pages
         {
             if (success)
             {
-                LastChatPageLoaded = 0;
-                Chat = await ChatService.GetPaged(Customer.Id, Broker.Id, ++LastChatPageLoaded, ChatPageSize);
+                await UpdateChat();
                 StateHasChanged();
 
                 Snackbar.Add(message, Severity.Success);
