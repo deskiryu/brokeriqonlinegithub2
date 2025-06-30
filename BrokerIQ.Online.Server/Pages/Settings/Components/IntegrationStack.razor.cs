@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
@@ -49,7 +50,7 @@ public partial class IntegrationStack
 
         PipedriveDetails = await BrokerService.GetBrokerPipedriveDetails(Broker.Id);
 
-        ConnectedToPipedrive = PipedriveDetails is not null && PipedriveDetails.ExpiresAt > DateTime.Now;
+        ConnectedToPipedrive = PipedriveDetails is not null && PipedriveDetails.ExpiresAt.AjdustForUKTimeZones() > DateTime.Now;
     }
 
     private async void ToggleCalendlyConnection()
