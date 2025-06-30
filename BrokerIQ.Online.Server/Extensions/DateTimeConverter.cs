@@ -24,6 +24,11 @@ namespace BrokerIQ.Online.Server.Extensions
             return dateIn.ToString("dd/MM/yyyy HH:mm");
         }
 
+        public static DateTime AjdustForUKTimeZones(this DateTime dateTimeIn)
+        {
+            return Get(dateTimeIn);
+        }
+
         private static DateTime Get(DateTime dateIn)
         {
             var zone = "GMT Standard Time";
