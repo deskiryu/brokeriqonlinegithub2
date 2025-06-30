@@ -1,21 +1,14 @@
-﻿using BrokerIQ.Online.Server.AppSettings;
+﻿using System.Threading.Tasks;
 using BrokerIQ.Online.Server.Services.Interface;
-
-using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
 
 namespace BrokerIQ.Online.Server.Pages;
 
-public partial class Calendly
+public partial class Pipedrive
 {
     [Inject]
-    public ICalendlyService CalendlyService { get; set; }
-
-    [Inject]
-    public IOptions<CalendlySettings> Options { get; set; }
+    public IPipedriveService PipedriveService { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
@@ -28,9 +21,9 @@ public partial class Calendly
 
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("code", out var code))
         {
-            success = await CalendlyService.RegisterConnection(code);
+            success = await PipedriveService.RegisterConnection(code);
         }
 
-        NavigationManager.NavigateTo($"/clientlist?sucess={success}");
+        NavigationManager.NavigateTo($"/settingsedit?sucess={success}");
     }
 }

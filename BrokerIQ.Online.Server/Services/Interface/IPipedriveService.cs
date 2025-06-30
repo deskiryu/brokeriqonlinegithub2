@@ -2,7 +2,7 @@
 
 namespace BrokerIQ.Online.Server.Services.Interface;
 
-public interface ICalendlyService
+public interface IPipedriveService
 {
     Task<bool> Disconnect();
 
