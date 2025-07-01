@@ -14,6 +14,7 @@ using MudBlazor;
 using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Online.Models.Account;
 using System.Linq;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace BrokerIQ.Online.Pages
 {
@@ -56,6 +57,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        public ISnackbar Snackbar { get; set; }
 
         [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
@@ -134,6 +138,23 @@ namespace BrokerIQ.Online.Pages
             }
 
             fileUploadSettings = this.FileUploadSettingsOption.Value;
+
+
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("pipedrive", out var pipedriveSuccess))
+            {
+                if(pipedriveSuccess == "True")
+                    Snackbar.Add("Pipedrive connection is ON", Severity.Success);
+                else
+                    Snackbar.Add("Pipedrive connection failed", Severity.Error);
+            }
         }
 
         private async void LoadBroker(int brokerId = 0)

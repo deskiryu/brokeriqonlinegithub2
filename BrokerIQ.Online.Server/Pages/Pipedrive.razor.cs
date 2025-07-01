@@ -24,6 +24,6 @@ public partial class Pipedrive
             success = await PipedriveService.RegisterConnection(code);
         }
 
-        NavigationManager.NavigateTo($"/settingsedit?sucess={success}");
+        NavigationManager.NavigateTo($"/settingsedit?pipedrive={success}");
     }
 }
