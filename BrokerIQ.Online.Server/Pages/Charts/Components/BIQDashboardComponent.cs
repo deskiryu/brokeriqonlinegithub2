@@ -14,7 +14,7 @@ public abstract class BIQDashboardComponent : ComponentBase
     [Parameter]
     public bool IsLoadingData { get; set; }
 
-    protected static string[] Pallete = new string[] { "#ffde1a", "#ff7400", "#ffa700", "#ff8d00", "#ffce00" };
+    protected static string[] Pallete = new string[] { "#ffde1a", "#ff7400", "#c4c4c4", "#ffa700", "#6b6b6b", "#ff8d00", "#ffce00" };
 
     protected string TitleStyle { get; set; } = $"color: {Colors.Grey.Darken1}";
 
@@ -38,7 +38,8 @@ public abstract class BIQDashboardComponent : ComponentBase
 
     protected ChartOptions Options = new ChartOptions()
     {
-        ChartPalette = Pallete
+        ChartPalette = Pallete,
+        MaxNumYAxisTicks = 10
     };
 }
 

@@ -3,7 +3,7 @@
 
 @inherits DashboardBase
 
-@page "/charts/dashboard/{brokerId}"
+@page "/charts/dashboard"
 
 <MudGrid Spacing="2" Class="p-2">
     <MudItem xs="12" md="4">
@@ -79,23 +79,36 @@
         </BIQKpiCard>
     </MudItem>
 
-    <MudItem xs="12" md="6">
+    <MudItem xs="12" md="4">
         <BIQKpiCard Title="High Risk Clients" OnPeriodChange="HandleCustomerRiskRatingPeriodChange" IsLoadingData="IsLoadingCustomerRiskData" SkeletonHeight="428px">
             <Body>
                 <MudTable Items="CustomerRankingList" Style="overflow-x: auto;" Dense="true">
                     <HeaderContent>
-                        <MudTh>Email</MudTh>
                         <MudTh>Name</MudTh>
                         <MudTh>Messages</MudTh>
                         <MudTh>Logins</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd>@context.EmailAddress</MudTd>
                         <MudTd>@context.Name</MudTd>
                         <MudTd>@context.MessageCount</MudTd>
                         <MudTd>@context.LoginCount</MudTd>
                     </RowTemplate>
                 </MudTable>
+            </Body>
+        </BIQKpiCard>
+    </MudItem>
+        
+    <MudItem xs="12" md="8">
+        <BIQKpiCard Title="Product Gap" OnPeriodChange="HandleProductsPeriodChange" IsLoadingData="IsLoadingProductData" SkeletonHeight="428px">
+            <Summary>
+                <div class="d-flex align-center justify-start">
+                    <BIQKpiCell Title="Total" Value="@ProductsTotal">
+                        <BIQPeriodChange ChangePercent="@ProductsChange" />
+                    </BIQKpiCell>
+                </div>
+            </Summary>
+            <Body>
+                <BIQChart ChartType="ChartType.Bar" ChartSeries="ProductsSeries" XAxisLabels="ProductsLabels"></BIQChart>
             </Body>
         </BIQKpiCard>
     </MudItem>

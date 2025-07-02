@@ -93,5 +93,40 @@ namespace BrokerIQ.Online.Services
             return answer;
         }
 
+        public async Task<AnalyticsDataResponse> GetInsuranceCustomersData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/insurancecustomers?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
+        public async Task<AnalyticsDataResponse> GetMortgageCustomersData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/mortgagecustomers?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
+        public async Task<AnalyticsDataResponse> GetWealthCustomersData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/wealthcustomers?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
+        public async Task<AnalyticsDataResponse> GetNoProductCustomersData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/noproductcustomers?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
     }
 }
