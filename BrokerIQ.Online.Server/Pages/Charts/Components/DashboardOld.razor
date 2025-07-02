@@ -1,0 +1,57 @@
+@page "/charts/dashboardold/{brokerId}"
+@inherits DashboardOldBase
+@using BrokerIQ.Online.Pages
+@using ChartJs.Blazor
+@using BrokerIQ.Online.Services.Interface
+
+<h4>Dashboard for @BrokerName who now has @CustomerCount customers (@CustomerAppUserCount app users )</h4>
+
+@if (!Saved){
+<div class="container-fluid">
+
+
+    <div class="row">
+
+
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
+            <h5>Email/ telephone invites to Signups</h5>
+            <Chart @ref="_pieChartJs2"
+                   Config="@_pieConfig2" />
+        </div>
+
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
+            <h5>Logins</h5>
+            <Chart @ref="_steppedChartJs"
+                   Config="@_steppedConfig" />
+        </div>
+
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4 chart_dashboard">
+            <h5>Converted from email/ telephone</h5>
+            <Chart @ref="_pieChartJs"
+                   Config="@_pieConfig" />
+        </div>
+
+    </div>
+
+    <div class="row h-20">
+        <div class="col-12 chart_dashboard">
+            <h5>Invite conversion by day</h5>
+            <Chart @ref="_barChartJs"
+                   Config="@_barConfig"
+                   Width="100"
+                   Height="20" />
+
+        </div>
+
+    </div>
+
+
+</div>
+
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@NavigateToOverview" class="btn btn-link">Back to broker list</MudButton>
+}
+
