@@ -33,11 +33,12 @@ namespace BrokerIQ.Online.Pages
 
         public User User { get; set; }
 
-        public Broker Broker { get; set; }
-
         public IEnumerable<Broker> Brokers { get; set; }
 
         protected Broker Broker { get; set; }
+
+        [Parameter]
+        public string BrokerId { get; set; }
 
         protected bool IsLoadingDownloadData { get; set; }
         protected string DownloadTotal { get; set; }
