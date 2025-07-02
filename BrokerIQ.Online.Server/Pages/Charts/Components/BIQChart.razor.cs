@@ -45,9 +45,6 @@ namespace BrokerIQ.Online.Server.Pages.Charts.Components
 
                 if (max > MaxValue) MaxValue = max;
             }
-
-            // split the graph Y values into 5 intervals
-            Options.YAxisTicks = MaxValue > 5 ? (int)Math.Floor(MaxValue / 5) : (int)Math.Floor(MaxValue);
         }
     }
 }
