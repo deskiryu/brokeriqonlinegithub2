@@ -38,8 +38,6 @@ public class ClientLoginsBase : BIQDashboardComponent
 
     public string Href { get; set; } 
 
-    public IEnumerable<Online.Models.Broker> Brokers { get; set; }
-
     protected bool IsLoadingClientLoginData { get; set; }
     protected string ClientLoginTotal { get; set; }
     protected double? ClientLoginChange { get; set; }
