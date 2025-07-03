@@ -1,29 +1,21 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BrokerIQ.Online.Pages.Samples.Shared;
+using BrokerIQ.Dto.Response;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Server.Pages.Charts.Components;
 using BrokerIQ.Online.Services.Interface;
-using ChartJs.Blazor;
-using ChartJs.Blazor.BarChart;
-using ChartJs.Blazor.Common;
-using ChartJs.Blazor.Common.Axes;
-using ChartJs.Blazor.Common.Enums;
-using ChartJs.Blazor.LineChart;
-using ChartJs.Blazor.PieChart;
-using ChartJs.Blazor.Util;
+
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace BrokerIQ.Online.Pages
 {
-    public class DashboardBase : ComponentBase
+    public class DashboardBase : BIQDashboardComponent
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        public IChartDataService ChartDataService { get; set; }
 
         [Inject]
         public IAccountService AccountService { get; set; }
@@ -32,357 +24,330 @@ namespace BrokerIQ.Online.Pages
         public IBrokerService BrokerService { get; set; }
 
         [Inject]
-        public ICustomerService CustomerService { get; set; }
+        public IBrokerStaffService BrokerStaffService { get; set; }
+
+        [Inject]
+        public IChartDataService ChartDataService { get; set; }
+
+        public int? StaffId { get; set; }
+
+        public User User { get; set; }
+
+        public IEnumerable<Broker> Brokers { get; set; }
+
+        protected Broker Broker { get; set; }
 
         [Parameter]
         public string BrokerId { get; set; }
 
-        public LineConfig _lineConfig;
-        public Chart _lineChartJs;
+        protected bool IsLoadingDownloadData { get; set; }
+        protected string DownloadTotal { get; set; }
+        protected double? DownloadChange { get; set; }
+        protected string DownloadWithoutLoginTotal { get; set; }
+        protected double? DownloadWithoutLoginChange { get; set; }
 
-        public PieConfig _pieConfig;
-        public Chart _pieChartJs;
+        protected bool IsLoadingClientLoginData { get; set; }
+        protected string ClientLoginTotal { get; set; }
+        protected double? ClientLoginChange { get; set; }
+        protected string ClientLoginAverage { get; set; }
+        protected double? ClientLoginAverageChange { get; set; }
 
-        public PieConfig _pieConfig2;
-        public Chart _pieChartJs2;
+        protected bool IsLoadingChatMessageData { get; set; }
+        protected string ChatMessageTotal { get; set; }
+        protected double? ChatMessageChange { get; set; }
+        protected string ClientChatMessageAverage { get; set; }
+        protected double? ClientChatMessageAverageChange { get; set; }
 
-        public LineConfig _steppedConfig;
-        public Chart _steppedChartJs;
+        protected bool IsLoadingCustomerRiskData { get; set; }
+        protected IEnumerable<AnalyticsRiskCustomerRankingItemDto> CustomerRankingList { get; set; } = Array.Empty<AnalyticsRiskCustomerRankingItemDto>();
 
-        public BarConfig _barConfig;
-        public Chart _barChartJs;
+        protected bool IsLoadingReferralData { get; set; }
+        protected string ReferralTotal { get; set; }
+        protected double? ReferralChange { get; set; }
+        protected string ConversionTotal { get; set; }
+        protected double? ConversionChange { get; set; }
+        protected List<ChartSeries> ReferralSeries = new List<ChartSeries>();
+        protected string[] ReferralLabels = Array.Empty<string>();
 
-        private int _brokerId;
+        protected bool IsLoadingReferralSplitData { get; set; }
+        protected double[] ReferralSplitData = Array.Empty<double>();
+        protected string[] ReferralSplitLabels = Array.Empty<string>();
+        protected string ReferralConvertRate = string.Empty;
 
+        public bool IsAdmin { get; set; }
 
-        private LineDataset<int> _SentDataSet;
-        private LineDataset<int> _ConvertedDataSet;
-        private PieDataset<int> _PieDataSet;
-        private PieDataset<int> _PieDataSet2;
-        private LineDataset<int> _SentSteppedDataSet;
+        public bool IsMinorAdmin { get; set; }
 
-        protected string Message = string.Empty;
-        protected string StatusClass = string.Empty;
-        protected bool Saved;
+        public int _BrokerId;
 
-        public string BrokerName { get; set; }
-        public int CustomerCount { get; set; }
-        public int CustomerAppUserCount { get; set; }
+        protected bool IsLoadingProductData { get; set; }
+        protected string ProductsTotal { get; set; }
+        protected double? ProductsChange { get; set; }
+        protected List<ChartSeries> ProductsSeries = new List<ChartSeries>();
+        protected string[] ProductsLabels = Array.Empty<string>();
 
         protected override async Task OnInitializedAsync()
         {
-            // Charting
-            _lineConfig = new LineConfig
+            await base.OnInitializedAsync();
+
+            SetAllDataLoadingFlags();
+
+            User = await AccountService.GetUser();
+
+            Broker = await BrokerService.GetBroker(User.MasterBrokerId, true);
+
+            if (User.IsBrokerStaff)
             {
-                Options = new LineOptions
-                {
-                    Responsive = true,
-                    Title = new OptionsTitle
-                    {
-                        Display = true,
-                        Text = "Invite emails sent to App downloads",
-                        FontSize = 20
-                    },
-                    Scales = new Scales
-                    {
-                        XAxes = new List<CartesianAxis>
-{
-                        new CategoryAxis
-                        {
-                            ScaleLabel = new ScaleLabel
-                            {
-                                LabelString = "Month"
-                            }
-                        }
-                    },
-                        YAxes = new List<CartesianAxis>
-{
-                        new LinearCartesianAxis
-                        {
-                            ScaleLabel = new ScaleLabel
-                            {
-                                LabelString = "Value"
-                            }
-                        }
-                    }
-                    }
-                }
-            };
-
-            _pieConfig = new PieConfig
-            {
-                Options = new PieOptions
-                {
-                    Responsive = true,
-                    Title = new OptionsTitle
-                    {
-                        Display = true,
-                        Text = "Sign ups (Converted from invite/ chose broker from list)",
-                        FontSize = 20
-                    }
-                }
-            };
-
-            _pieConfig2 = new PieConfig
-            {
-                Options = new PieOptions
-                {
-                    Responsive = true,
-                    Title = new OptionsTitle
-                    {
-                        Display = true,
-                        Text = "Signed up after invite/ not signed up yet",
-                        FontSize = 20
-                    }
-                }
-            };
-
-            _steppedConfig = new LineConfig
-            {
-                Options = new LineOptions
-                {
-                    Responsive = true,
-                    Title = new OptionsTitle
-                    {
-                        Display = true,
-                        Text = "No of users/ no times logged in to app",
-                        FontSize = 20
-                    },
-                    Scales = new Scales
-                    {
-                        XAxes = new List<CartesianAxis>
-{
-                        new CategoryAxis
-                        {
-                            ScaleLabel = new ScaleLabel
-                            {
-                                LabelString = "Login amounts"
-                            }
-                            ,GridLines = new GridLines
-                            {
-                                OffsetGridLines=true
-                            }
-                        }
-
-                    },
-                        YAxes = new List<CartesianAxis>
-{
-                        new LinearCartesianAxis
-                        {
-                            ScaleLabel = new ScaleLabel
-                            {
-                                LabelString = "Users"
-                            },
-
-
-                        }
-                    }
-                    }
-                }
-            };
-
-            // Charting
-            _barConfig = new BarConfig()
-            {
-                Options = new BarOptions
-                {
-                    Responsive = true,
-                    Legend = new Legend
-                    {
-                        Position = ChartJs.Blazor.Common.Enums.Position.Top
-                    },
-                    Title = new OptionsTitle
-                    {
-                        Display = true,
-                        Text = "Invites to conversions",
-                        FontSize = 20
-                    }
-                }
-            };
-
-            _SentDataSet = new LineDataset<int>
-            {
-                BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.FromArgb(0x58, 0x58, 0x58)),
-                BorderColor = ColorUtil.FromDrawingColor(System.Drawing.Color.Black),
-                Label = "Invites sent per day",
-                Fill = true,
-                BorderWidth = 2,
-                PointRadius = 2,
-                PointBorderWidth = 2,
-                SteppedLine = SteppedLine.False
-            };
-
-            _ConvertedDataSet = new LineDataset<int>
-            {
-                BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.FromArgb(0xff, 0xfd, 0x7e)),
-                BorderColor = ColorUtil.FromDrawingColor(System.Drawing.Color.White),
-                Label = "App downloads per day",
-                Fill = true,
-                BorderWidth = 2,
-                PointRadius = 2,
-                PointBorderWidth = 2,
-                SteppedLine = SteppedLine.False
-            };
-
-            _SentSteppedDataSet = new LineDataset<int>
-            {
-                BackgroundColor = ColorUtil.FromDrawingColor(System.Drawing.Color.FromArgb(0x58, 0x58, 0x58)),
-                BorderColor = ColorUtil.FromDrawingColor(System.Drawing.Color.Black),
-                Label = "Logins",
-                Fill = false,
-                BorderWidth = 2,
-                PointRadius = 2,
-                PointBorderWidth = 2,
-                SteppedLine = SteppedLine.True
-            };
-
-            try
-            {
-                var user = await AccountService.GetUser();
-
-                if (user is not null)
-                {
-                    if (user.IsAdmin || user.IsMinorAdmin)
-                    {
-                        _brokerId = 0;
-                        Int32.TryParse(BrokerId, out _brokerId);
-                    }
-                    else
-                    {
-                        _brokerId = user.MasterBrokerId;
-                    }
-                }
-
-                BrokerName = (await BrokerService.GetBroker(_brokerId)).Name;
-                CustomerCount = await CustomerService.GetCustomerCount(_brokerId);
-                CustomerAppUserCount = await CustomerService.GetCustomerAppUserCount(_brokerId);
-
-                var invitesSentAndConverted = await ChartDataService.GetInvitesSentAndConvertedSequence(_brokerId);
-
-                var dates = new List<string>();
-                dates = invitesSentAndConverted.Select(x => x.Item1.ToShortDateString()).ToList();
-
-                foreach (var date in dates)
-                {
-                    _lineConfig.Data.Labels.Add(date);
-                }
-
-
-                var listSent = new List<int>();
-                var listConverted = new List<int>();
-                listSent = invitesSentAndConverted.Select(x => x.Item2).ToList();
-                listConverted = invitesSentAndConverted.Select(x => x.Item3).ToList();
-
-                _SentDataSet.AddRange(listSent);
-                _ConvertedDataSet.AddRange(listConverted);
-
-                _lineConfig.Data.Datasets.Add(_ConvertedDataSet);
-                _lineConfig.Data.Datasets.Add(_SentDataSet);
-
-                var totalLogins = await ChartDataService.GetTotalLogins(_brokerId);
-
-                var loginCount = totalLogins.Select(x => x.Item1).ToList();
-                var totalLoginsByAmount = totalLogins.Select(x => x.Item2).ToList();
-
-                foreach (var login in loginCount)
-                {
-                    _steppedConfig.Data.Labels.Add(login.ToString());
-                }
-
-                _SentSteppedDataSet.AddRange(totalLoginsByAmount);
-                _steppedConfig.Data.Datasets.Add(_SentSteppedDataSet);
-
-
-                var datesNotifs = new List<string>();
-                datesNotifs = invitesSentAndConverted.Select(x => x.Item1.ToShortDateString()).ToList();
-                var emailInvitesSent = new List<int>();
-                var telephoneInvitesSent = new List<int>();
-                var appConversionsLoginEmail = new List<int>();
-                var appConversionsLoginTelephone = new List<int>();
-                var unconvertedList = new List<int>();
-                emailInvitesSent = invitesSentAndConverted.Select(x => x.Item2).ToList();
-                telephoneInvitesSent = invitesSentAndConverted.Select(x => x.Item3).ToList();
-                appConversionsLoginEmail = invitesSentAndConverted.Select(x => x.Item4).ToList();
-                appConversionsLoginTelephone = invitesSentAndConverted.Select(x => x.Item5).ToList();
-                unconvertedList = invitesSentAndConverted.Select(x => x.Item6).ToList();
-
-                var EmailDataSet = new BarDataset<int>(emailInvitesSent)
-                {
-                    Label = "Email Invites Sent Today",
-                    BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.BIQYellow)
-                };
-
-                var TelephoneDataSet = new BarDataset<int>(telephoneInvitesSent)
-                {
-                    Label = "Telephone Invites Sent Today",
-                    BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.BIQLightGray)
-                };
-
-                var SignupAfterInviteDataSetEmail = new BarDataset<int>(appConversionsLoginEmail)
-                {
-                    Label = "Sign up after invite email",
-                    BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.BIQLightGray)
-                };
-
-                var SignupAfterInviteDataSetTelephone = new BarDataset<int>(appConversionsLoginTelephone)
-                {
-                    Label = "Sign up after invite telephone",
-                    BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.BIQLightGray)
-                };
-
-                var unconverted = new BarDataset<int>(unconvertedList)
-                {
-                    Label = "Signup not invited or used a different email/ telephone",
-                    BackgroundColor = ColorUtil.FromDrawingColor(SampleUtils.ChartColors.Black)
-                };
-
-                foreach (var date in datesNotifs)
-                {
-                    _barConfig.Data.Labels.Add(date);
-                }
-
-                _barConfig.Data.Datasets.Add(EmailDataSet);
-                _barConfig.Data.Datasets.Add(TelephoneDataSet);
-                _barConfig.Data.Datasets.Add(SignupAfterInviteDataSetEmail);
-                _barConfig.Data.Datasets.Add(SignupAfterInviteDataSetTelephone);
-                _barConfig.Data.Datasets.Add(unconverted);
-
-
-                var totals = await this.ChartDataService.GetInvitesSentAndConverted(_brokerId);
-
-                _PieDataSet = new PieDataset<int>(new List<int> { totals.TotalConvertedLoginsEmail, totals.TotalConvertedLoginsTelephone, totals.TotalUnConvertedLogins })
-                {
-                    BackgroundColor = SampleUtils.ChartColors.All.Take(3).Select(ColorUtil.FromDrawingColor).ToArray(),
-                };
-
-                _pieConfig.Data.Datasets.Add(_PieDataSet);
-                _pieConfig.Data.Labels.Add("Converted from email");
-                _pieConfig.Data.Labels.Add("Converted from telephone");
-                _pieConfig.Data.Labels.Add("Chose broker");
-
-                _PieDataSet2 = new PieDataset<int>(new List<int> { totals.TotalConvertedLoginsEmail, totals.TotalConvertedLoginsTelephone, totals.TotalEmailInvites + totals.TotalTelephoneInvites - totals.TotalConvertedLoginsEmail - totals.TotalConvertedLoginsTelephone })
-                {
-                    BackgroundColor = SampleUtils.ChartColors.All.Take(2).Select(ColorUtil.FromDrawingColor).ToArray(),
-
-                };
-
-                _pieConfig2.Data.Datasets.Add(_PieDataSet2);
-                _pieConfig2.Data.Labels.Add("Loggged in after email invite");
-                _pieConfig2.Data.Labels.Add("Loggged in after telephone invite");
-                _pieConfig2.Data.Labels.Add("Not logged in yet");
-
+                StaffId = User.StaffBrokerId;
             }
-            catch
+
+            IsAdmin = User.IsAdmin;
+            IsMinorAdmin = User.IsMinorAdmin;
+
+            var brokerId = 0;
+            if (User.IsAdmin || User.IsMinorAdmin)
             {
-                StatusClass = "alert-danger";
-                Message = "Something went wrong getting details";
-                Saved = false;
+                Int32.TryParse(BrokerId, out brokerId);
+                _BrokerId = brokerId;
+            }
+            else
+            {
+                _BrokerId = User.MasterBrokerId;
+            }
+
+            HandleDownloadPeriodChange(DAILY);
+            HandleClientLoginPeriodChange(DAILY);
+            HandleChatMessagePeriodChange(DAILY);
+            HandleReferralPeriodChange(DAILY);
+            HandleReferralSplitPeriodChange(DAILY);
+            HandleCustomerRiskRatingPeriodChange(DAILY);
+            HandleProductsPeriodChange(DAILY);
+        }
+
+        private void SetAllDataLoadingFlags()
+        {
+            IsLoadingDownloadData = true;
+            IsLoadingClientLoginData = true;
+            IsLoadingChatMessageData = true;
+            IsLoadingReferralData = true;
+            IsLoadingReferralSplitData = true;
+            IsLoadingCustomerRiskData = true;
+            IsLoadingProductData = true;
+
+            StateHasChanged();
+        }
+
+        protected async void HandleDownloadPeriodChange(string period)
+        {
+            IsLoadingDownloadData = true;
+            StateHasChanged();
+
+            var result = await ChartDataService.GetDownloadData(_BrokerId, period);
+
+            DownloadTotal = result.Total.ToString("N0");
+            DownloadChange = result.ChangeInTotalBetweenPeriodsPercent;
+
+            result = await ChartDataService.GetDownloadWithoutLoginData(_BrokerId, period);
+            DownloadWithoutLoginTotal = result.Total.ToString("N0");
+            DownloadWithoutLoginChange = result.ChangeInTotalBetweenPeriodsPercent;
+
+            IsLoadingDownloadData = false;
+            StateHasChanged();
+        }
+
+        protected async void HandleDownloadOnClick()
+        {
+            if (IsAdmin || IsMinorAdmin)
+            {
+                NavigationManager.NavigateTo($"/charts/AppDownloads/{_BrokerId}");
+            }
+            else
+            {
+                NavigationManager.NavigateTo($"/charts/AppDownloads/0");
+            }
+
+        }
+
+        protected async void HandleClientLoginPeriodChange(string period)
+        {
+            IsLoadingClientLoginData = true;
+            StateHasChanged();
+
+            var result = await ChartDataService.GetClientLoginData(_BrokerId, StaffId, period);
+
+            ClientLoginTotal = result.Total.ToString("N0");
+            ClientLoginChange = result.ChangeInTotalBetweenPeriodsPercent;
+            ClientLoginAverage = result.Average.HasValue ? result.Average.Value.ToString("N2") : string.Empty;
+            ClientLoginAverageChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
+
+            IsLoadingClientLoginData = false;
+            StateHasChanged();
+        }
+
+        protected async void HandleClientLoginOnClick()
+        {
+            if (IsAdmin || IsMinorAdmin)
+            {
+                NavigationManager.NavigateTo($"/charts/ClientLogins/{_BrokerId}");
+            }
+            else
+            {
+                NavigationManager.NavigateTo($"/charts/ClientLogins/0");
             }
         }
 
-        protected void NavigateToOverview()
+        protected async void HandleChatMessagePeriodChange(string period)
         {
-            NavigationManager.NavigateTo($"/brokerlist");
+            IsLoadingChatMessageData = true;
+            StateHasChanged();
+
+            var result = await ChartDataService.GetChatMessageData(_BrokerId, StaffId, period);
+
+            ChatMessageTotal = result.Total.ToString("N0");
+            ChatMessageChange = result.ChangeInTotalBetweenPeriodsPercent;
+
+            result = await ChartDataService.GetCustomerChatMessageAverageData(_BrokerId, StaffId, period);
+
+            ClientChatMessageAverage = result.Average.HasValue ? result.Average.Value.ToString("N2") : string.Empty;
+            ClientChatMessageAverageChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
+
+            IsLoadingChatMessageData = false;
+            StateHasChanged();
+        }
+
+        protected async void HandleCustomerRiskRatingPeriodChange(string period)
+        {
+            IsLoadingCustomerRiskData = true;
+            StateHasChanged();
+
+            CustomerRankingList = await ChartDataService.GetHighRiskCustomerRanking(_BrokerId, StaffId, period);
+
+            IsLoadingCustomerRiskData = false;
+            StateHasChanged();
+        }
+
+        protected async void HandleReferralPeriodChange(string period)
+        {
+            IsLoadingReferralData = true;
+            StateHasChanged();
+
+            ReferralSeries = new List<ChartSeries>();
+
+            var result = await ChartDataService.GetReferralData(_BrokerId, StaffId, period);
+
+            ReferralTotal = result.Total.ToString("N0");
+            ReferralChange = result.ChangeInTotalBetweenPeriodsPercent;
+            ReferralSeries.Add(GetChartSeriesFrom(result, "Referrals"));
+            ReferralLabels = GetLabelsFrom(result);
+
+            result = await ChartDataService.GetReferralConversionData(_BrokerId, StaffId, period);
+
+            ConversionTotal = result.Total.ToString("N2");
+            ConversionChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
+            ReferralSeries.Add(GetChartSeriesFrom(result, "Conversion"));
+
+            IsLoadingReferralData = false;
+            StateHasChanged();
+        }
+
+        private static ChartSeries GetChartSeriesFrom(AnalyticsDataResponse result, string seriesLabel)
+        {
+            var series = result.Items.GroupBy(i => i.Label).Select(g => g.Sum(i => i.Value)).ToArray();
+
+            return new ChartSeries() { Name = seriesLabel, Data = series };
+        }
+
+        private static string[] GetLabelsFrom(AnalyticsDataResponse result)
+        {
+            var categories = result.Items.Select(i => i.Category).Distinct().ToArray();
+
+            // get the labels from just one of the categories
+            return result.Items.Where(i => i.Category == categories[0]).Select(i => i.Label).ToArray();
+        }
+
+        protected async void HandleReferralSplitPeriodChange(string period)
+        {
+            IsLoadingReferralSplitData = true;
+            StateHasChanged();
+
+            var referrals = await ChartDataService.GetReferralData(_BrokerId, StaffId, period);
+            var conversions = await ChartDataService.GetReferralConversionData(_BrokerId, StaffId, period);
+
+            ReferralSplitData = new double[] { referrals.Total, conversions.Total };
+            ReferralSplitLabels = new string[] { "Referrals", "Conversions" };
+            ReferralConvertRate = (ReferralSplitData[1] / ReferralSplitData[0]).ToString("P0");
+
+            IsLoadingReferralSplitData = false;
+            StateHasChanged();
+        }
+
+        protected async void HandleProductsPeriodChange(string period)
+        {
+            IsLoadingProductData = true;
+            StateHasChanged();
+
+            ProductsSeries = new List<ChartSeries>();
+            ProductsLabels = Array.Empty<string>();
+            var allProductsTotal = 0.0;
+            var allPreviousProductsTotal = 0.0;
+
+            if (Broker.ProvidesBusinessInsuranceServices || Broker.ProvidesPersonalInsuranceServices)
+            {
+                var result = await ChartDataService.GetInsuranceCustomersData(User.MasterBrokerId, StaffId, period);
+
+                allProductsTotal += result.Total;
+                allPreviousProductsTotal += result.PreviousPeriodTotal;
+
+                if (!ProductsLabels.Any())
+                {
+                    ProductsLabels = GetLabelsFrom(result);
+                }
+
+                ProductsSeries.Add(GetChartSeriesFrom(result, "Insurance"));
+            }
+
+            if (Broker.ProvidesMortgageServices)
+            {
+                var result = await ChartDataService.GetMortgageCustomersData(User.MasterBrokerId, StaffId, period);
+
+                allProductsTotal += result.Total;
+                allPreviousProductsTotal += result.PreviousPeriodTotal;
+
+                if (!ProductsLabels.Any())
+                {
+                    ProductsLabels = GetLabelsFrom(result);
+                }
+
+                ProductsSeries.Add(GetChartSeriesFrom(result, "Mortgage"));
+            }
+
+            if (Broker.ProvidesWealthServices)
+            {
+                var result = await ChartDataService.GetWealthCustomersData(User.MasterBrokerId, StaffId, period);
+
+                allProductsTotal += result.Total;
+                allPreviousProductsTotal += result.PreviousPeriodTotal;
+
+                if (!ProductsLabels.Any())
+                {
+                    ProductsLabels = GetLabelsFrom(result);
+                }
+
+                ProductsSeries.Add(GetChartSeriesFrom(result, "Wealth"));
+            }
+
+            ProductsTotal = allProductsTotal.ToString("N0");
+            if (allProductsTotal > 0)
+            {
+                ProductsChange = (allProductsTotal - allPreviousProductsTotal) / allProductsTotal;
+            }
+
+            var noProducts = await ChartDataService.GetNoProductCustomersData(User.MasterBrokerId, StaffId, period);
+
+            ProductsSeries.Add(GetChartSeriesFrom(noProducts, "No Products"));
+
+            IsLoadingProductData = false;
+            StateHasChanged();
         }
     }
 }
