@@ -1570,9 +1570,8 @@ namespace BrokerIQ.Online.Pages
             finally
             {
                 IsSyncing = false;
+                StateHasChanged();
             }
-
-            StateHasChanged();
         }
     }
 }
