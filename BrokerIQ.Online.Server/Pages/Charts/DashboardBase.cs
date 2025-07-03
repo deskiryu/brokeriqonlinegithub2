@@ -163,7 +163,7 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
-                NavigationManager.NavigateTo($"/charts/AppDownloads");
+                NavigationManager.NavigateTo($"/charts/AppDownloads/0");
             }
 
         }
@@ -192,7 +192,7 @@ namespace BrokerIQ.Online.Pages
             }
             else
             {
-                NavigationManager.NavigateTo($"/charts/ClientLogins");
+                NavigationManager.NavigateTo($"/charts/ClientLogins/0");
             }
         }
 

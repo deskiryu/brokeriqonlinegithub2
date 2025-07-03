@@ -69,7 +69,7 @@ public class ClientLoginsBase : BIQDashboardComponent
         else
         {
             _BrokerId = User.MasterBrokerId;
-            Href = $"charts/dashboard";
+            Href = $"charts/dashboard/0";
         }
 
         HandleClientLoginPeriodChange(DAILY);
