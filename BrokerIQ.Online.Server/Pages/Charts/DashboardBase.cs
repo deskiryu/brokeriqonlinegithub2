@@ -157,7 +157,15 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleDownloadOnClick()
         {
-            NavigationManager.NavigateTo($"/charts/AppDownloads");
+            if (IsAdmin || IsMinorAdmin)
+            {
+                NavigationManager.NavigateTo($"/charts/AppDownloads/{_BrokerId}");
+            }
+            else
+            {
+                NavigationManager.NavigateTo($"/charts/AppDownloads");
+            }
+
         }
 
         protected async void HandleClientLoginPeriodChange(string period)
@@ -178,7 +186,14 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleClientLoginOnClick()
         {
-            NavigationManager.NavigateTo($"/charts/ClientLogins");
+            if (IsAdmin || IsMinorAdmin)
+            {
+                NavigationManager.NavigateTo($"/charts/ClientLogins/{_BrokerId}");
+            }
+            else
+            {
+                NavigationManager.NavigateTo($"/charts/ClientLogins");
+            }
         }
 
         protected async void HandleChatMessagePeriodChange(string period)

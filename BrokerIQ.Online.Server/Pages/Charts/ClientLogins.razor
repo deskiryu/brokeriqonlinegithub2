@@ -4,9 +4,9 @@
 
 @inherits ClientLoginsBase
 
-@page "/charts/ClientLogins"
+@page "/charts/ClientLogins/{BrokerId}"
 
-<MudLink Href="charts/dashboard" Typo="Typo.h6" Color="Color.Dark" Class="ml-2"> <MudIcon Icon="@Icons.Material.Filled.ArrowBackIosNew" /> Back to Overview</MudLink>
+<MudLink Href="@Href" Typo="Typo.h6" Color="Color.Dark" Class="ml-2"> <MudIcon Icon="@Icons.Material.Filled.ArrowBackIosNew" /> Back to Overview</MudLink>
 
 <MudGrid Spacing="2" Class="p-2">
     <MudItem xs="12">

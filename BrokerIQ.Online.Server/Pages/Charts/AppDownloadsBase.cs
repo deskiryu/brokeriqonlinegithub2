@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Online.Models;
@@ -30,11 +31,13 @@ public class AppDownloadsBase : BIQDashboardComponent
     [Parameter]
     public string BrokerId { get; set; }
 
+    public int _BrokerId { get; set; }
+
     public int? StaffId { get; set; }
 
     public User User { get; set; }
 
-    public IEnumerable<Online.Models.Broker> Brokers { get; set; }
+    public string Href { get; set; } 
 
     protected bool IsLoadingDownloadData { get; set; }
     protected string DownloadTotal { get; set; }
@@ -50,15 +53,19 @@ public class AppDownloadsBase : BIQDashboardComponent
 
         User = await AccountService.GetUser();
 
-        if (User.IsBrokerStaff)
+        var brokerId = 0;
+        if (User.IsAdmin || User.IsMinorAdmin)
         {
-            StaffId = User.StaffBrokerId;
+            System.Int32.TryParse(BrokerId, out brokerId);
+            _BrokerId = brokerId;
+            Href = $"charts/dashboard/{_BrokerId}";
         }
-
-        if (User.IsAdmin)
+        else
         {
-            Brokers = await BrokerService.GetBrokers();
+            _BrokerId = User.MasterBrokerId;
+            Href = $"charts/dashboard";
         }
+          
 
         HandleDownloadPeriodChange(DAILY);
     }
@@ -73,7 +80,7 @@ public class AppDownloadsBase : BIQDashboardComponent
         IsLoadingDownloadData = true;
         StateHasChanged();
 
-        var result = await ChartDataService.GetDownloadData(User.MasterBrokerId, period);
+        var result = await ChartDataService.GetDownloadData(_BrokerId, period);
 
         DownloadTotal = result.Total.ToString("N0");
         DownloadChange = result.ChangeInTotalBetweenPeriodsPercent;
