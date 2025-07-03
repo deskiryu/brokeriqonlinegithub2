@@ -1,0 +1,27 @@
+﻿@inherits BIQDashboardComponent
+
+<MudPaper Class="px-3 py-2" Style="@PaperStyle" @onclick="HandleOnClick">
+    @if (IsLoadingData)
+    {
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="@SkeletonHeight" />
+    }
+    else
+    {
+        <div class="d-flex align-center justify-space-between @BarMargin">
+            <MudText Typo="Typo.subtitle1">@Title</MudText>
+            <MudMenu Label="@SelectedPeriodOption" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" >
+                @foreach (var period in PeriodOptions)
+                {
+                    var current = period;
+                    <MudMenuItem OnClick="@(() => HandleOnPeriodChange(current))">@current</MudMenuItem>
+                }
+            </MudMenu>
+        </div>
+
+        @Summary
+
+        @Body
+    }
+</MudPaper>
+
+
