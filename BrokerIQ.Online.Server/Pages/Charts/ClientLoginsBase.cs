@@ -30,11 +30,13 @@ public class ClientLoginsBase : BIQDashboardComponent
     [Parameter]
     public string BrokerId { get; set; }
 
+    public int _BrokerId { get; set; }
+
     public int? StaffId { get; set; }
 
     public User User { get; set; }
 
-    public IEnumerable<Online.Models.Broker> Brokers { get; set; }
+    public string Href { get; set; } 
 
     protected bool IsLoadingClientLoginData { get; set; }
     protected string ClientLoginTotal { get; set; }
@@ -57,9 +59,17 @@ public class ClientLoginsBase : BIQDashboardComponent
             StaffId = User.StaffBrokerId;
         }
 
-        if (User.IsAdmin)
+        var brokerId = 0;
+        if (User.IsAdmin || User.IsMinorAdmin)
         {
-            Brokers = await BrokerService.GetBrokers();
+            System.Int32.TryParse(BrokerId, out brokerId);
+            _BrokerId = brokerId;
+            Href = $"charts/dashboard/{_BrokerId}";
+        }
+        else
+        {
+            _BrokerId = User.MasterBrokerId;
+            Href = $"charts/dashboard/0";
         }
 
         HandleClientLoginPeriodChange(DAILY);
