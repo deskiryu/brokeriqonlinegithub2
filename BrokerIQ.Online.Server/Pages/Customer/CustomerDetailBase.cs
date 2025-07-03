@@ -4,9 +4,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
@@ -103,6 +103,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IOptions<TutorialVideos> TutorialVideosOption { get; set; }
+
+        [Inject]
+        public IPipedriveService PipedriveService { get; set; }
 
         protected TutorialVideos tutorialVideos { get; set; }
 
@@ -251,6 +254,10 @@ namespace BrokerIQ.Online.Pages
 
         public bool DisableSelectedFilesButton => !SelectedItemsCustomerDocuments.Any() || IsZippingFiles;
 
+        protected PipedriveAccessDetailsDto PipedriveDetails { get; set; }
+
+        protected bool IsSyncing { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             tutorialVideos = TutorialVideosOption.Value;
@@ -291,8 +298,11 @@ namespace BrokerIQ.Online.Pages
 
                     if (Broker.ProvidesBusinessInsuranceServices)
                     {
-                        MyMaxAllowedFiles = MyMaxAllowedFiles * 2;
+                        MyMaxAllowedFiles *= 2;
                     }
+
+                    PipedriveDetails = await BrokerService.GetBrokerPipedriveDetails(Broker.Id);
+
                 }
                 else
                 {
@@ -1227,7 +1237,7 @@ namespace BrokerIQ.Online.Pages
                 using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
                 {
                     var previousNames = new List<string>();
-                    
+
                     foreach (var file in SelectedItemsCustomerDocuments)
                     {
                         var fileName = file.FileName;
@@ -1536,6 +1546,33 @@ namespace BrokerIQ.Online.Pages
 
                 Snackbar.Add("Draft message was deleted", Severity.Success);
             }
+        }
+
+        protected async void SyncWithPipedrive()
+        {
+            IsSyncing = true;
+
+            try
+            {
+                if (Customer.PipedriveId is null)
+                {
+                    Customer = await PipedriveService.SyncCustomer(Customer.Id);
+                }
+
+                await PipedriveService.SyncChatMessages(Chat.Id);
+
+                Snackbar.Add("Message sync has concluded.", Severity.Success);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add("Sync Failed.Please try again in a few minutes.", Severity.Error);
+            }
+            finally
+            {
+                IsSyncing = false;
+            }
+
+            StateHasChanged();
         }
     }
 }

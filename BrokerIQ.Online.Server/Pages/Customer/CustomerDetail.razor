@@ -503,8 +503,16 @@ else if (!Saved)
                                     <MudButton Style="@ScheduledChatButtonStyle" OnClick="ScheduledChatButtonClicked">Scheduled</MudButton>
                                 </MudButtonGroup>
                                 <MudSpacer />
-
                             </MudStack>
+                            @if (PipedriveDetails is not null)
+                            {
+                                <MudButton Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           Style="@($"color:{Colors.Shades.Black};")"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                                           Disabled="IsSyncing"
+                                           OnClick="SyncWithPipedrive">Pipedrive</MudButton>
+                            }
                         </MudPaper>
                     }
                     else
