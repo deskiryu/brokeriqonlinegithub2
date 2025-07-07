@@ -31,5 +31,9 @@ namespace BrokerIQ.Online.Services.Interface
         Task<AnalyticsDataResponse> GetWealthCustomersData(int brokerId, int? staffId, string period);
 
         Task<AnalyticsDataResponse> GetNoProductCustomersData(int brokerId, int? staffId, string period);
+
+        Task<AnalyticsDataResponse> GetVideoEngagementData(int brokerId, int? staffId, string period);
+
+        Task<AnalyticsDataResponse> GetAudioEngagementData(int brokerId, int? staffId, string period);
     }
 }

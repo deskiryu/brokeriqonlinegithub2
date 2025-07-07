@@ -80,6 +80,42 @@
         </BIQKpiCard>
     </MudItem>
 
+    <MudItem xs="12" md="6">
+        <BIQKpiCard Title="Video Engagement" BackgroundColour="@Pallete[0]" OnPeriodChange="HandleVideoPeriodChange" IsLoadingData="IsLoadingVideoData">
+            <Summary>
+                <div class="d-flex align-center justify-space-between">
+                    <BIQKpiCell Title="Total Sent" Value="@VideoSentTotal">
+                        <BIQPeriodChange ChangePercent="@VideoSentChange" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Total Viewed" Value="@VideoViewedTotal">
+                        <BIQPeriodChange ChangePercent="@VideoViewedChange" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Average Time" Value="@AverageVideoTimeTotal">
+                        <BIQPeriodChange ChangePercent="@AverageVideoTimeChange" />
+                    </BIQKpiCell>
+                </div>
+            </Summary>
+        </BIQKpiCard>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <BIQKpiCard Title="Audio Engagement" BackgroundColour="@Pallete[1]" OnPeriodChange="HandleAudioPeriodChange" IsLoadingData="IsLoadingAudioData">
+            <Summary>
+                <div class="d-flex align-center justify-space-between">
+                    <BIQKpiCell Title="Total Sent" Value="@AudioSentTotal">
+                        <BIQPeriodChange ChangePercent="@AudioSentChange" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Total Viewed" Value="@AudioViewedTotal">
+                        <BIQPeriodChange ChangePercent="@AudioViewedChange" />
+                    </BIQKpiCell>
+                    <BIQKpiCell Title="Average Time" Value="@AverageAudioTimeTotal">
+                        <BIQPeriodChange ChangePercent="@AverageAudioTimeChange" />
+                    </BIQKpiCell>
+                </div>
+            </Summary>
+        </BIQKpiCard>
+    </MudItem>
+
     <MudItem xs="12" md="4">
         <BIQKpiCard Title="High Risk Clients" OnPeriodChange="HandleCustomerRiskRatingPeriodChange" IsLoadingData="IsLoadingCustomerRiskData" SkeletonHeight="428px">
             <Body>
@@ -98,7 +134,7 @@
             </Body>
         </BIQKpiCard>
     </MudItem>
-        
+
     <MudItem xs="12" md="8">
         <BIQKpiCard Title="Product Gap" OnPeriodChange="HandleProductsPeriodChange" IsLoadingData="IsLoadingProductData" SkeletonHeight="428px">
             <Summary>
@@ -127,41 +163,7 @@
             </BIQKpiCard>
         </MudItem>
 
-        <MudItem xs="12" md="6">
-                <BIQKpiCard Title="Video Engagement" BackgroundColour="@Pallete[0]">
-                    <Summary>
-                        <div class="d-flex align-center justify-space-between">
-                            <BIQKpiCell Title="Total Sent" Value="10">
-                                <BIQPeriodChange ChangePercent=".1001" />
-                            </BIQKpiCell>
-                            <BIQKpiCell Title="Total Viewed" Value="5">
-                                <BIQPeriodChange ChangePercent="-.005" />
-                            </BIQKpiCell>
-                            <BIQKpiCell Title="Average Time" Value="24">
-                                <BIQPeriodChange ChangePercent="-.055" />
-                            </BIQKpiCell>
-                        </div>
-                    </Summary>
-                </BIQKpiCard>
-            </MudItem>
 
-            <MudItem xs="12" md="6">
-                <BIQKpiCard Title="Voice Engagement" BackgroundColour="@Pallete[1]">
-                    <Summary>
-                        <div class="d-flex align-center justify-space-between">
-                            <BIQKpiCell Title="Total Sent" Value="23">
-                                <BIQPeriodChange ChangePercent=".1001" />
-                            </BIQKpiCell>
-                            <BIQKpiCell Title="Total Viewed" Value="12">
-                                <BIQPeriodChange ChangePercent="-.15" />
-                            </BIQKpiCell>
-                            <BIQKpiCell Title="Average Time" Value="18">
-                                <BIQPeriodChange ChangePercent=".5" />
-                            </BIQKpiCell>
-                        </div>
-                    </Summary>
-                </BIQKpiCard>
-            </MudItem>
 
             <MudItem xs="12" md="9">
                 <BIQKpiCard Title="Advisor Performance">

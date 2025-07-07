@@ -128,5 +128,23 @@ namespace BrokerIQ.Online.Services
             var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
             return answer;
         }
+
+        public async Task<AnalyticsDataResponse> GetVideoEngagementData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/videoengagement?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
+
+        public async Task<AnalyticsDataResponse> GetAudioEngagementData(int brokerId, int? staffId, string period)
+        {
+            var url = $"{baseUrl}/analytics/audioengagement?brokerId={brokerId}&period={period}";
+            if (staffId.HasValue) url += $"brokerstaffid={staffId}";
+
+            var answer = await this.requestProviderService.Get<AnalyticsDataResponse>(url);
+            return answer;
+        }
     }
 }
