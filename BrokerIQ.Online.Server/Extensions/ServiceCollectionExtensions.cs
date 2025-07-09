@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace BrokerIQ.Online.Server.Extensions
 {
     public static class ServiceCollectionExtensions
-	{
+    {
         public static IServiceCollection ConfigureBrokerIQServices(this IServiceCollection services)
         {
             services.AddScoped<IAccountService, AccountService>();
@@ -39,6 +39,7 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<IEmailInviteService, EmailInviteService>();
             services.AddScoped<IMenuPlanService, MenuPlanService>();
             services.AddScoped<IChartDataService, ChartDataService>();
+            services.AddScoped<IOldChartDataService, OldChartDataService>();
             services.AddScoped<INoteService, NoteService>();
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IMetaDefenderCoreService, MetaDefenderCoreService>();
@@ -54,6 +55,7 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<IAssignmentService, AssignmentService>();
             services.AddScoped<IBrokerIntegrationService, BrokerIntegrationService>();
             services.AddScoped<ICalendlyService, CalendlyService>();
+            services.AddScoped<IPipedriveService, PipedriveService>();
             services.AddScoped<ICustomerAppointmentService, CustomerAppointmentService>();
             services.AddScoped<IDocumentVaultTypeService, DocumentVaultTypeService>();
             services.AddScoped<IWealthService, WealthService>();
@@ -63,7 +65,7 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<ICustomerGoalService, CustomerGoalService>();
             services.AddScoped<ICustomerWarningService, CustomerWarningService>();
             services.AddScoped<IEmailMessageTemplateService, EmailMessageTemplateService>();
-            services.AddScoped<IBlogService, BlogService>();            
+            services.AddScoped<IBlogService, BlogService>();
 
 
             services.AddAutoMapper(typeof(ReviewItMapper));

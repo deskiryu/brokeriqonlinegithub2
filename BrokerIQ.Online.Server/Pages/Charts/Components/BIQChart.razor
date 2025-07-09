@@ -1,0 +1,10 @@
+﻿@inherits BIQDashboardComponent
+
+@if (ChartSeries != null && ChartSeries.Any(s => s.Data.Sum() > 0))
+{
+    <MudChart ChartType="@ChartType" ChartSeries="@ChartSeries" XAxisLabels="@XAxisLabels" Width="@GraphWidth" Height="@GraphHeight" ChartOptions="@Options" LegendPosition="@LegendPosition"/>
+}
+else
+{
+    <MudText Align="Align.Center" Typo="Typo.h6">@NoDataMessage</MudText>
+}
