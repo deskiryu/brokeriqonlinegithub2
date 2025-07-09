@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Dto.Request;
 using BrokerIQ.Online.Models;
@@ -77,6 +78,13 @@ namespace BrokerIQ.Online.Services
             var urlToGo = this.BrokerUrl + $"/{brokerId}/toggleservice/{serviceId}";
 
             return await this.requestProviderService.Post<bool>(urlToGo);
+        }
+
+        public async Task<PipedriveAccessDetailsDto> GetBrokerPipedriveDetails(int brokerId)
+        {
+            var url = this.BrokerUrl + $"/pipedrivedetails/{brokerId}";
+
+            return await this.requestProviderService.Get<PipedriveAccessDetailsDto>(url);
         }
     }
 }

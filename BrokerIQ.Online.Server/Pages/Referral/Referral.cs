@@ -282,7 +282,7 @@ namespace BrokerIQ.Online.Pages
             {
                 { "Text", note },
                 { "HasNoteReminder", false },
-                { "ReminderDate", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
+                { "ReminderDateTime", DateTime.UtcNow.Date.Add(TimeSpan.FromDays(7))},
             };
 
             var result = await DialogService.Show<NoteEditDialog>("Edit Note", dialogParams).Result;

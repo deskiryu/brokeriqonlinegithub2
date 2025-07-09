@@ -136,5 +136,7 @@ namespace BrokerIQ.Online.Models
         public int? WealthTypeId { get; set; }
 
         public bool HasConnection { get; set; }
+
+        public int? PipedriveId { get; set; }
     }
 }

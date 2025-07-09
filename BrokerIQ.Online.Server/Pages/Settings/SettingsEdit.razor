@@ -36,7 +36,7 @@
     @if (Broker != null)
     {
         <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" @ref="Tabs">
-            @if (User.IsAdmin || User.IsBroker || (User.IsBrokerStaff && Broker.BrokerIdentifier.StaffCanManageTemplates))
+            @if (User.IsAdmin || User.IsBroker || User.IsAdminStaff || (User.IsBrokerStaff && Broker.BrokerIdentifier.StaffCanManageTemplates))
             {
                 <MudTabPanel>
                     <TabContent>
@@ -49,7 +49,7 @@
                 </MudTabPanel>
             }
 
-            @if (User.IsBroker || (User.IsBrokerStaff && Broker.BrokerIdentifier.StaffCanManageReminders))
+            @if (User.IsBroker || User.IsAdminStaff || (User.IsBrokerStaff && Broker.BrokerIdentifier.StaffCanManageReminders))
             {
                 <MudTabPanel>
                     <TabContent>
@@ -69,7 +69,7 @@
                 </MudTabPanel>
             }
 
-            @if (User.IsBroker || (User.IsBrokerStaff && Broker.BrokerIdentifier.StaffCanManageDocumentTypes))
+            @if (User.IsBroker || User.IsAdminStaff || (User.IsBrokerStaff && Broker.BrokerIdentifier.StaffCanManageDocumentTypes))
             {
                 <MudTabPanel>
                     <TabContent>
@@ -82,7 +82,7 @@
                 </MudTabPanel>
             }
 
-            @if (User.IsBroker && Broker.ProvidesWealthServices)
+            @if ((User.IsBroker || User.IsAdminStaff) && Broker.ProvidesWealthServices)
             {
                 <MudTabPanel>
                     <TabContent>
@@ -209,7 +209,7 @@
                             </EditForm>
                         }
 
-                        @if (User.IsBroker)
+                        @if (User.IsBroker || User.IsAdminStaff)
                         {
                             <EditForm Model="@Broker" OnValidSubmit="@HandleValidSubmit">
                                 <div class="row">
@@ -365,7 +365,7 @@
                 </MudTabPanel>
             }
 
-            @if (User.IsBroker && ShowAppointmentSection())
+            @if ((User.IsBroker || User.IsAdminStaff))
             {
                 <MudTabPanel>
                     <TabContent>
@@ -373,7 +373,7 @@
                         <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.IntegrationsVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 5)" />
                     </TabContent>
                     <ChildContent>
-                        <IntegrationStack />
+                        <IntegrationStack Broker="@Broker"/>
                     </ChildContent>
                 </MudTabPanel>
             }
