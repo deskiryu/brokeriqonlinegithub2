@@ -29,16 +29,18 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IChartDataService ChartDataService { get; set; }
 
+        [Parameter]
+        public string BrokerId { get; set; }
+
         public int? StaffId { get; set; }
 
         public User User { get; set; }
 
         public IEnumerable<Broker> Brokers { get; set; }
 
-        protected Broker Broker { get; set; }
+        protected int _BrokerId;
 
-        [Parameter]
-        public string BrokerId { get; set; }
+        protected Broker Broker { get; set; }
 
         protected bool IsLoadingDownloadData { get; set; }
         protected string DownloadTotal { get; set; }
@@ -94,8 +96,6 @@ namespace BrokerIQ.Online.Pages
 
         public bool IsMinorAdmin { get; set; }
 
-        public int _BrokerId;
-
         protected bool IsLoadingProductData { get; set; }
         protected string ProductsTotal { get; set; }
         protected double? ProductsChange { get; set; }
@@ -110,7 +110,16 @@ namespace BrokerIQ.Online.Pages
 
             User = await AccountService.GetUser();
 
-            Broker = await BrokerService.GetBroker(User.MasterBrokerId, true);
+            if (User.IsAdmin || User.IsMinorAdmin)
+            {
+                Int32.TryParse(BrokerId, out _BrokerId);
+            }
+            else
+            {
+                _BrokerId = User.MasterBrokerId;
+            }
+
+            Broker = await BrokerService.GetBroker(_BrokerId, true);
 
             if (User.IsBrokerStaff)
             {
@@ -119,17 +128,6 @@ namespace BrokerIQ.Online.Pages
 
             IsAdmin = User.IsAdmin;
             IsMinorAdmin = User.IsMinorAdmin;
-
-            var brokerId = 0;
-            if (User.IsAdmin || User.IsMinorAdmin)
-            {
-                Int32.TryParse(BrokerId, out brokerId);
-                _BrokerId = brokerId;
-            }
-            else
-            {
-                _BrokerId = User.MasterBrokerId;
-            }
 
             HandleDownloadPeriodChange(DAILY);
             HandleClientLoginPeriodChange(DAILY);
