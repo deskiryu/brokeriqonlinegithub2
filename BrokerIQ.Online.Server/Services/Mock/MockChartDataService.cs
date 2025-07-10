@@ -72,5 +72,15 @@ namespace BrokerIQ.Online.Services.Mock
         {
             throw new NotImplementedException();
         }
+
+        public Task<AnalyticsDataResponse> GetVideoEngagementData(int brokerId, int? staffId, string period)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AnalyticsDataResponse> GetAudioEngagementData(int brokerId, int? staffId, string period)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -29,16 +29,18 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IChartDataService ChartDataService { get; set; }
 
+        [Parameter]
+        public string BrokerId { get; set; }
+
         public int? StaffId { get; set; }
 
         public User User { get; set; }
 
         public IEnumerable<Broker> Brokers { get; set; }
 
-        protected Broker Broker { get; set; }
+        protected int _BrokerId;
 
-        [Parameter]
-        public string BrokerId { get; set; }
+        protected Broker Broker { get; set; }
 
         protected bool IsLoadingDownloadData { get; set; }
         protected string DownloadTotal { get; set; }
@@ -74,11 +76,25 @@ namespace BrokerIQ.Online.Pages
         protected string[] ReferralSplitLabels = Array.Empty<string>();
         protected string ReferralConvertRate = string.Empty;
 
+        protected bool IsLoadingVideoData { get; set; }
+        protected string VideoSentTotal { get; set; }
+        protected double? VideoSentChange { get; set; }
+        protected string VideoViewedTotal { get; set; }
+        protected double? VideoViewedChange { get; set; }
+        protected string AverageVideoTimeTotal { get; set; }
+        protected double? AverageVideoTimeChange { get; set; }
+
+        protected bool IsLoadingAudioData { get; set; }
+        protected string AudioSentTotal { get; set; }
+        protected double? AudioSentChange { get; set; }
+        protected string AudioViewedTotal { get; set; }
+        protected double? AudioViewedChange { get; set; }
+        protected string AverageAudioTimeTotal { get; set; }
+        protected double? AverageAudioTimeChange { get; set; }
+
         public bool IsAdmin { get; set; }
 
         public bool IsMinorAdmin { get; set; }
-
-        public int _BrokerId;
 
         protected bool IsLoadingProductData { get; set; }
         protected string ProductsTotal { get; set; }
@@ -94,7 +110,16 @@ namespace BrokerIQ.Online.Pages
 
             User = await AccountService.GetUser();
 
-            Broker = await BrokerService.GetBroker(User.MasterBrokerId, true);
+            if (User.IsAdmin || User.IsMinorAdmin)
+            {
+                Int32.TryParse(BrokerId, out _BrokerId);
+            }
+            else
+            {
+                _BrokerId = User.MasterBrokerId;
+            }
+
+            Broker = await BrokerService.GetBroker(_BrokerId, true);
 
             if (User.IsBrokerStaff)
             {
@@ -104,17 +129,6 @@ namespace BrokerIQ.Online.Pages
             IsAdmin = User.IsAdmin;
             IsMinorAdmin = User.IsMinorAdmin;
 
-            var brokerId = 0;
-            if (User.IsAdmin || User.IsMinorAdmin)
-            {
-                Int32.TryParse(BrokerId, out brokerId);
-                _BrokerId = brokerId;
-            }
-            else
-            {
-                _BrokerId = User.MasterBrokerId;
-            }
-
             HandleDownloadPeriodChange(DAILY);
             HandleClientLoginPeriodChange(DAILY);
             HandleChatMessagePeriodChange(DAILY);
@@ -122,6 +136,8 @@ namespace BrokerIQ.Online.Pages
             HandleReferralSplitPeriodChange(DAILY);
             HandleCustomerRiskRatingPeriodChange(DAILY);
             HandleProductsPeriodChange(DAILY);
+            HandleVideoPeriodChange(DAILY);
+            HandleAudioPeriodChange(DAILY);
         }
 
         private void SetAllDataLoadingFlags()
@@ -133,6 +149,8 @@ namespace BrokerIQ.Online.Pages
             IsLoadingReferralSplitData = true;
             IsLoadingCustomerRiskData = true;
             IsLoadingProductData = true;
+            IsLoadingVideoData = true;
+            IsLoadingAudioData = true;
 
             StateHasChanged();
         }
@@ -144,12 +162,12 @@ namespace BrokerIQ.Online.Pages
 
             var result = await ChartDataService.GetDownloadData(_BrokerId, period);
 
-            DownloadTotal = result.Total.ToString("N0");
-            DownloadChange = result.ChangeInTotalBetweenPeriodsPercent;
+            DownloadTotal = result.Total[DEFAULT_SERIES_KEY].Value.ToString("N0");
+            DownloadChange = result.ChangeInTotalBetweenPeriodsPercent[DEFAULT_SERIES_KEY].Value;
 
             result = await ChartDataService.GetDownloadWithoutLoginData(_BrokerId, period);
-            DownloadWithoutLoginTotal = result.Total.ToString("N0");
-            DownloadWithoutLoginChange = result.ChangeInTotalBetweenPeriodsPercent;
+            DownloadWithoutLoginTotal = result.Total[DEFAULT_SERIES_KEY].Value.ToString("N0");
+            DownloadWithoutLoginChange = result.ChangeInTotalBetweenPeriodsPercent[DEFAULT_SERIES_KEY].Value;
 
             IsLoadingDownloadData = false;
             StateHasChanged();
@@ -175,10 +193,11 @@ namespace BrokerIQ.Online.Pages
 
             var result = await ChartDataService.GetClientLoginData(_BrokerId, StaffId, period);
 
-            ClientLoginTotal = result.Total.ToString("N0");
-            ClientLoginChange = result.ChangeInTotalBetweenPeriodsPercent;
-            ClientLoginAverage = result.Average.HasValue ? result.Average.Value.ToString("N2") : string.Empty;
-            ClientLoginAverageChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
+            ClientLoginTotal = result.Total[DEFAULT_SERIES_KEY].Value.ToString("N0");
+            ClientLoginChange = result.ChangeInTotalBetweenPeriodsPercent[DEFAULT_SERIES_KEY].Value;
+            ClientLoginAverage = result.Average[DEFAULT_SERIES_KEY].HasValue ? result.Average[DEFAULT_SERIES_KEY].Value.ToString("N2") : string.Empty;
+            ClientLoginAverageChange = result.ChangeInAverageBetweenPeriodsPercent[DEFAULT_SERIES_KEY].HasValue ?
+                result.ChangeInAverageBetweenPeriodsPercent[DEFAULT_SERIES_KEY].Value : 0;
 
             IsLoadingClientLoginData = false;
             StateHasChanged();
@@ -203,13 +222,14 @@ namespace BrokerIQ.Online.Pages
 
             var result = await ChartDataService.GetChatMessageData(_BrokerId, StaffId, period);
 
-            ChatMessageTotal = result.Total.ToString("N0");
-            ChatMessageChange = result.ChangeInTotalBetweenPeriodsPercent;
+            ChatMessageTotal = result.Total[DEFAULT_SERIES_KEY].Value.ToString("N0");
+            ChatMessageChange = result.ChangeInTotalBetweenPeriodsPercent[DEFAULT_SERIES_KEY].Value;
 
             result = await ChartDataService.GetCustomerChatMessageAverageData(_BrokerId, StaffId, period);
 
-            ClientChatMessageAverage = result.Average.HasValue ? result.Average.Value.ToString("N2") : string.Empty;
-            ClientChatMessageAverageChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
+            ClientChatMessageAverage = result.Average[DEFAULT_SERIES_KEY].HasValue ? result.Average[DEFAULT_SERIES_KEY].Value.ToString("N2") : string.Empty;
+            ClientChatMessageAverageChange = result.ChangeInAverageBetweenPeriodsPercent[DEFAULT_SERIES_KEY].HasValue ?
+                result.ChangeInAverageBetweenPeriodsPercent[DEFAULT_SERIES_KEY].Value : 0;
 
             IsLoadingChatMessageData = false;
             StateHasChanged();
@@ -235,15 +255,16 @@ namespace BrokerIQ.Online.Pages
 
             var result = await ChartDataService.GetReferralData(_BrokerId, StaffId, period);
 
-            ReferralTotal = result.Total.ToString("N0");
-            ReferralChange = result.ChangeInTotalBetweenPeriodsPercent;
+            ReferralTotal = result.Total[DEFAULT_SERIES_KEY].Value.ToString("N0");
+            ReferralChange = result.ChangeInTotalBetweenPeriodsPercent[DEFAULT_SERIES_KEY].Value;
             ReferralSeries.Add(GetChartSeriesFrom(result, "Referrals"));
             ReferralLabels = GetLabelsFrom(result);
 
             result = await ChartDataService.GetReferralConversionData(_BrokerId, StaffId, period);
 
-            ConversionTotal = result.Total.ToString("N2");
-            ConversionChange = result.ChangeInAverageBetweenPeriodsPercent.HasValue ? result.ChangeInAverageBetweenPeriodsPercent : 0;
+            ConversionTotal = result.Total[DEFAULT_SERIES_KEY].Value.ToString("N2");
+            ConversionChange = result.ChangeInAverageBetweenPeriodsPercent[DEFAULT_SERIES_KEY].HasValue ?
+                result.ChangeInAverageBetweenPeriodsPercent[DEFAULT_SERIES_KEY].Value : 0;
             ReferralSeries.Add(GetChartSeriesFrom(result, "Conversion"));
 
             IsLoadingReferralData = false;
@@ -252,7 +273,7 @@ namespace BrokerIQ.Online.Pages
 
         private static ChartSeries GetChartSeriesFrom(AnalyticsDataResponse result, string seriesLabel)
         {
-            var series = result.Items.GroupBy(i => i.Label).Select(g => g.Sum(i => i.Value)).ToArray();
+            var series = result.Items.GroupBy(i => i.PeriodLabel).Select(g => g.Sum(i => i.Value)).ToArray();
 
             return new ChartSeries() { Name = seriesLabel, Data = series };
         }
@@ -262,7 +283,7 @@ namespace BrokerIQ.Online.Pages
             var categories = result.Items.Select(i => i.Category).Distinct().ToArray();
 
             // get the labels from just one of the categories
-            return result.Items.Where(i => i.Category == categories[0]).Select(i => i.Label).ToArray();
+            return result.Items.Where(i => i.Category == categories[0]).Select(i => i.PeriodLabel).ToArray();
         }
 
         protected async void HandleReferralSplitPeriodChange(string period)
@@ -273,7 +294,7 @@ namespace BrokerIQ.Online.Pages
             var referrals = await ChartDataService.GetReferralData(_BrokerId, StaffId, period);
             var conversions = await ChartDataService.GetReferralConversionData(_BrokerId, StaffId, period);
 
-            ReferralSplitData = new double[] { referrals.Total, conversions.Total };
+            ReferralSplitData = new double[] { referrals.Total[DEFAULT_SERIES_KEY].Value, conversions.Total[DEFAULT_SERIES_KEY].Value };
             ReferralSplitLabels = new string[] { "Referrals", "Conversions" };
             ReferralConvertRate = (ReferralSplitData[1] / ReferralSplitData[0]).ToString("P0");
 
@@ -295,8 +316,8 @@ namespace BrokerIQ.Online.Pages
             {
                 var result = await ChartDataService.GetInsuranceCustomersData(User.MasterBrokerId, StaffId, period);
 
-                allProductsTotal += result.Total;
-                allPreviousProductsTotal += result.PreviousPeriodTotal;
+                allProductsTotal += result.Total.Sum(t=> t.Value).Value;
+                allPreviousProductsTotal += result.PreviousPeriodTotal.Sum(t => t.Value).Value;
 
                 if (!ProductsLabels.Any())
                 {
@@ -310,8 +331,8 @@ namespace BrokerIQ.Online.Pages
             {
                 var result = await ChartDataService.GetMortgageCustomersData(User.MasterBrokerId, StaffId, period);
 
-                allProductsTotal += result.Total;
-                allPreviousProductsTotal += result.PreviousPeriodTotal;
+                allProductsTotal += result.Total.Sum(t => t.Value).Value;
+                allPreviousProductsTotal += result.PreviousPeriodTotal.Sum(t => t.Value).Value;
 
                 if (!ProductsLabels.Any())
                 {
@@ -325,8 +346,8 @@ namespace BrokerIQ.Online.Pages
             {
                 var result = await ChartDataService.GetWealthCustomersData(User.MasterBrokerId, StaffId, period);
 
-                allProductsTotal += result.Total;
-                allPreviousProductsTotal += result.PreviousPeriodTotal;
+                allProductsTotal += result.Total.Sum(t => t.Value).Value;
+                allPreviousProductsTotal += result.PreviousPeriodTotal.Sum(t => t.Value).Value;
 
                 if (!ProductsLabels.Any())
                 {
@@ -347,6 +368,53 @@ namespace BrokerIQ.Online.Pages
             ProductsSeries.Add(GetChartSeriesFrom(noProducts, "No Products"));
 
             IsLoadingProductData = false;
+            StateHasChanged();
+        }
+
+        protected async void HandleVideoPeriodChange(string period)
+        {
+            IsLoadingVideoData = true;
+            StateHasChanged();
+
+            var result = await ChartDataService.GetVideoEngagementData(_BrokerId, StaffId, period);
+
+            VideoSentTotal = result.Total["Sent"].Value.ToString("N0");
+            VideoSentChange = result.ChangeInTotalBetweenPeriodsPercent["Sent"].Value;
+
+            VideoViewedTotal = result.Total["Viewed"].Value.ToString("N0");
+            VideoViewedChange = result.ChangeInTotalBetweenPeriodsPercent["Viewed"].Value;
+
+            AverageVideoTimeTotal = result.Total["AvgTimePlayed"].Value.ToString("N0");
+            AverageVideoTimeChange = result.ChangeInTotalBetweenPeriodsPercent["AvgTimePlayed"].Value;
+
+            IsLoadingVideoData = false;
+            StateHasChanged();
+        }
+
+        public static double? ChangeInTotalBetweenPeriodsPercent(double total, double previousTotal)
+        {
+            if (previousTotal == 0) return null;
+
+            return (total - previousTotal) / previousTotal;
+        }
+
+        protected async void HandleAudioPeriodChange(string period)
+        {
+            IsLoadingAudioData = true;
+            StateHasChanged();
+
+            var result = await ChartDataService.GetAudioEngagementData(_BrokerId, StaffId, period);
+
+            AudioSentTotal = result.Total["Sent"].Value.ToString("N0");
+            AudioSentChange = result.ChangeInTotalBetweenPeriodsPercent["Sent"].Value;
+
+            AudioViewedTotal = result.Total["Viewed"].Value.ToString("N0");
+            AudioViewedChange = result.ChangeInTotalBetweenPeriodsPercent["Viewed"].Value;
+
+            AverageAudioTimeTotal = result.Total["AvgTimePlayed"].Value.ToString("N0");
+            AverageAudioTimeChange = result.ChangeInTotalBetweenPeriodsPercent["AvgTimePlayed"].Value;
+
+            IsLoadingAudioData = false;
             StateHasChanged();
         }
     }

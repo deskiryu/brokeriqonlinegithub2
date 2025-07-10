@@ -139,7 +139,7 @@
                     </EditForm>
                 </MudTabPanel>
 
-                @if (CurrentUser.IsBroker && Broker is not null)
+                @if ((CurrentUser.IsBroker || CurrentUser.IsAdmin) && Broker is not null)
                 {
                     <MudTabPanel Text="@(CurrentUser.IsBroker ? "My Details" : "Broker Details")">
                         <BrokerDetails CurrentBroker="@Broker" />
