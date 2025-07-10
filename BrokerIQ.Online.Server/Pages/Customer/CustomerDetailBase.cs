@@ -1556,7 +1556,18 @@ namespace BrokerIQ.Online.Pages
             {
                 if (Customer.PipedriveId is null)
                 {
-                    Customer = await PipedriveService.SyncCustomer(Customer.Id);
+                    var customer = await PipedriveService.SyncCustomer(Customer.Id);
+
+                    if(customer == null)
+                    {
+                        Snackbar.Add("Sync was unable to create customer, stopping sync.", Severity.Error);
+
+                        IsSyncing = false;
+                        StateHasChanged();
+                        return;
+                    }
+
+                    Customer = customer;
                 }
 
                 await PipedriveService.SyncChatMessages(Chat.Id);

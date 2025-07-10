@@ -42,7 +42,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\BrokerIQ.Online.Server\BrokerIQ.Online.Server.csproj" />
+		<ProjectReference Include="..\BrokerIQ.Online.Server\BrokerIQ.Online.Server.csproj">
+		  <Targets></Targets>
+		  <OutputItemType></OutputItemType>
+		  <ReferenceSourceTarget>ProjectReference</ReferenceSourceTarget>
+		  <GlobalPropertiesToRemove>;WebPublishProfileFile</GlobalPropertiesToRemove>
+		</ProjectReference>
 	</ItemGroup>
 
 	<ItemGroup>
