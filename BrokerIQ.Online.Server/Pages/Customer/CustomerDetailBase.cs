@@ -129,7 +129,7 @@ namespace BrokerIQ.Online.Pages
 
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
-        public IEnumerable<CustomerDocument> CustomerDocuments { get; set; }
+        public IEnumerable<CustomerDocument> CustomerDocuments { get; set; } = new List<CustomerDocument>();
 
         protected HashSet<CustomerDocument> SelectedItemsCustomerDocuments = new HashSet<CustomerDocument>();
 
@@ -277,7 +277,7 @@ namespace BrokerIQ.Online.Pages
 
                 Connection = await CustomerService.GetConnection(Customer.Id);
 
-                CustomerDocuments = await GetCustomerDocuments();
+                CustomerDocuments = (await GetCustomerDocuments(isInitialLoad :true));
                 ResetUploadsBadge();
 
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
@@ -371,9 +371,10 @@ namespace BrokerIQ.Online.Pages
             return Tabs.ActivePanel.ID?.ToString() == "pn_chat";
         }
 
-        private async Task<IEnumerable<CustomerDocument>> GetCustomerDocuments()
+        private async Task<IEnumerable<CustomerDocument>> GetCustomerDocuments(bool isInitialLoad = false)
         {
             List<CustomerDocument> documents = new List<CustomerDocument>();
+
             documents.AddRange((await CustomerDocumentService.Get(Customer.Id)).Data);
 
             if (Connection != null)
@@ -382,7 +383,7 @@ namespace BrokerIQ.Online.Pages
                 if (connectionDocuments.Data != null) documents.AddRange(connectionDocuments.Data);
             }
 
-            return documents;
+            return isInitialLoad? documents.OrderByDescending(d => d.CreatedDate) : documents;
         }
 
         private async Task SetUserCalendlyDetails()
@@ -498,8 +499,6 @@ namespace BrokerIQ.Online.Pages
 
                 var targetsName = new List<string>();
                 targetsName.Add(Customer.Name);
-
-                //var longlist = string.Join(",", targets);
 
                 dialogParams.Add("Users", targetsName);
                 dialogParams.Add("areBrokers", false);
