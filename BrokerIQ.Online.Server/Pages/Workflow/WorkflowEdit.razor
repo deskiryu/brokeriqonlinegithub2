@@ -1,0 +1,20 @@
+﻿@page "/workflow"
+
+@inherits WorkflowEditBase
+
+@using BrokerIQ.Online.Server.Pages.Workflow.Components
+
+<h4 class="page-title">Edit Workflow</h4>
+
+<MudContainer Class="pa-4 mx-auto my-4" >
+    <MudStack Row="true" Spacing="1" Class="mb-2">
+        <MudTextField T="string" @bind-Value="Workflow.Name" Label="Workflow Name" Variant="Variant.Text" Margin="Margin.Dense" />
+        <MudButton OnClick="Save" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Save</MudButton>
+    </MudStack>
+    <WorkflowDiagram Workflow="Workflow" TriggerOptions="_triggerOptions" ActivityOptions="_activityOptions" />
+    @* <MudDivider Class="mb-4" />
+    <MudStack Direction="Row" Spacing="1" Class="mb-2">
+        <MudButton OnClick="Save" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Save</MudButton>
+        <MudButton OnClick="Load" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.FolderOpen">Load</MudButton>
+    </MudStack> *@
+</MudContainer>

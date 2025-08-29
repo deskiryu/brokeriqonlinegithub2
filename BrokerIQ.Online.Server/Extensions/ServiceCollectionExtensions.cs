@@ -66,6 +66,7 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<ICustomerWarningService, CustomerWarningService>();
             services.AddScoped<IEmailMessageTemplateService, EmailMessageTemplateService>();
             services.AddScoped<IBlogService, BlogService>();
+            services.AddScoped<IWorkflowService, WorkflowService>();
 
 
             services.AddAutoMapper(typeof(ReviewItMapper));
@@ -77,4 +78,3 @@ namespace BrokerIQ.Online.Server.Extensions
         }
     }
 }
-

@@ -1,0 +1,90 @@
+﻿@using BrokerIQ.Dto.Dto.Workflows
+
+<div class="workflow-diagram">
+    <MudCard>
+    <MudCardContent>
+        @if(TriggerOptions is not null){
+            <MudSelect T="int" @bind-Value="Workflow.TriggerId" Label="When" Dense="true" Placeholder="Select trigger">
+                <MudSelectItem Value="0"></MudSelectItem>
+                @foreach (var option in TriggerOptions)
+                {
+                    <MudSelectItem Value="@option.Id">@option.Name</MudSelectItem>
+                }
+            </MudSelect>
+        }
+        </MudCardContent>
+        @if(!Workflow.Steps.Any()){
+            <MudCardActions >
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
+            </MudCardActions>
+        }
+    </MudCard>
+
+     @foreach (var step in Workflow.Steps)
+    {
+        <div class="arrow">&#8595;</div>
+
+        <MudCard>
+            <MudCardContent>
+                <MudSelect T="int" @bind-Value="step.ActivityId" Dense="true">
+                    <MudSelectItem Value="0"> </MudSelectItem>
+                    @foreach (var option in ActivityOptions)
+                    {
+                        <MudSelectItem T="string" Value="@option.Id">@option.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudCardContent>
+            <MudCardActions>
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
+            </MudCardActions>
+        </MudCard>
+
+        <MudButton Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveStep(step))">
+            Remove Step
+        </MudButton>
+    }
+    @* <div class="arrow">&#8595;</div> *@
+
+</div>
+
+<style>
+.workflow-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.arrow {
+    font-size: 24px;
+}
+.branches {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+.branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.branch-label {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 2px;
+}
+.details {
+    font-size: 0.8em;
+    color: #666;
+}
+.attachment-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 4px;
+}
+.attachment-list li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+</style>
