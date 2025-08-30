@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
 using BrokerIQ.Dto.Enum;
+using BrokerIQ.Dto.Dto.Statistics;
+using MudBlazor;
+using System.Collections.Generic;
 
 namespace BrokerIQ.Online.Server.Extensions
 {
@@ -135,6 +138,26 @@ namespace BrokerIQ.Online.Server.Extensions
         public static string FormatForMobileNotification(this string message)
         {
             return message.Replace("<--", "").Replace("-->", "").Trim();
+        }
+
+        public static List<ChartSeries> ToChartSeries(this IEnumerable<SeriesItemDto> items, string nullSeriesName)
+        {
+            var categories = items.Select(i => i.Category).Distinct().ToArray();
+
+            var result = new List<ChartSeries>();
+
+            foreach (var c in categories)
+            {
+                var series = new ChartSeries()
+                {
+                    Name = c is null ? nullSeriesName : c.ToString(),
+                    Data = items.Where(i => i.Category == c).Select(i => i.Value).ToArray()
+                };
+
+                result.Add(series);
+            }
+
+            return result;
         }
     }
 }

@@ -4,9 +4,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using BrokerIQ.Dto.Dto;
 using BrokerIQ.Dto.Enum;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Online.Models;
@@ -104,6 +104,9 @@ namespace BrokerIQ.Online.Pages
         [Inject]
         public IOptions<TutorialVideos> TutorialVideosOption { get; set; }
 
+        [Inject]
+        public IPipedriveService PipedriveService { get; set; }
+
         protected TutorialVideos tutorialVideos { get; set; }
 
         protected User User { get; set; }
@@ -126,7 +129,7 @@ namespace BrokerIQ.Online.Pages
 
         public IEnumerable<Broker> CustomerBrokers { get; set; }
 
-        public IEnumerable<CustomerDocument> CustomerDocuments { get; set; }
+        public IEnumerable<CustomerDocument> CustomerDocuments { get; set; } = new List<CustomerDocument>();
 
         protected HashSet<CustomerDocument> SelectedItemsCustomerDocuments = new HashSet<CustomerDocument>();
 
@@ -251,6 +254,10 @@ namespace BrokerIQ.Online.Pages
 
         public bool DisableSelectedFilesButton => !SelectedItemsCustomerDocuments.Any() || IsZippingFiles;
 
+        protected PipedriveAccessDetailsDto PipedriveDetails { get; set; }
+
+        protected bool IsSyncing { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             tutorialVideos = TutorialVideosOption.Value;
@@ -270,7 +277,7 @@ namespace BrokerIQ.Online.Pages
 
                 Connection = await CustomerService.GetConnection(Customer.Id);
 
-                CustomerDocuments = await GetCustomerDocuments();
+                CustomerDocuments = (await GetCustomerDocuments(isInitialLoad :true));
                 ResetUploadsBadge();
 
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
@@ -291,8 +298,11 @@ namespace BrokerIQ.Online.Pages
 
                     if (Broker.ProvidesBusinessInsuranceServices)
                     {
-                        MyMaxAllowedFiles = MyMaxAllowedFiles * 2;
+                        MyMaxAllowedFiles *= 2;
                     }
+
+                    PipedriveDetails = await BrokerService.GetBrokerPipedriveDetails(Broker.Id);
+
                 }
                 else
                 {
@@ -361,9 +371,10 @@ namespace BrokerIQ.Online.Pages
             return Tabs.ActivePanel.ID?.ToString() == "pn_chat";
         }
 
-        private async Task<IEnumerable<CustomerDocument>> GetCustomerDocuments()
+        private async Task<IEnumerable<CustomerDocument>> GetCustomerDocuments(bool isInitialLoad = false)
         {
             List<CustomerDocument> documents = new List<CustomerDocument>();
+
             documents.AddRange((await CustomerDocumentService.Get(Customer.Id)).Data);
 
             if (Connection != null)
@@ -372,7 +383,7 @@ namespace BrokerIQ.Online.Pages
                 if (connectionDocuments.Data != null) documents.AddRange(connectionDocuments.Data);
             }
 
-            return documents;
+            return isInitialLoad? documents.OrderByDescending(d => d.CreatedDate) : documents;
         }
 
         private async Task SetUserCalendlyDetails()
@@ -488,8 +499,6 @@ namespace BrokerIQ.Online.Pages
 
                 var targetsName = new List<string>();
                 targetsName.Add(Customer.Name);
-
-                //var longlist = string.Join(",", targets);
 
                 dialogParams.Add("Users", targetsName);
                 dialogParams.Add("areBrokers", false);
@@ -1227,7 +1236,7 @@ namespace BrokerIQ.Online.Pages
                 using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
                 {
                     var previousNames = new List<string>();
-                    
+
                     foreach (var file in SelectedItemsCustomerDocuments)
                     {
                         var fileName = file.FileName;
@@ -1535,6 +1544,43 @@ namespace BrokerIQ.Online.Pages
                 StateHasChanged();
 
                 Snackbar.Add("Draft message was deleted", Severity.Success);
+            }
+        }
+
+        protected async void SyncWithPipedrive()
+        {
+            IsSyncing = true;
+
+            try
+            {
+                if (Customer.PipedriveId is null)
+                {
+                    var customer = await PipedriveService.SyncCustomer(Customer.Id);
+
+                    if(customer == null || customer.PipedriveId == null)
+                    {
+                        Snackbar.Add("Sync was unable to create customer, stopping (is Pipedrive on?).", Severity.Error);
+
+                        IsSyncing = false;
+                        StateHasChanged();
+                        return;
+                    }
+
+                    Customer = customer;
+                }
+
+                await PipedriveService.SyncChatMessages(Chat.Id);
+
+                Snackbar.Add("Message sync has concluded.", Severity.Success);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add("Sync Failed.Please try again in a few minutes.", Severity.Error);
+            }
+            finally
+            {
+                IsSyncing = false;
+                StateHasChanged();
             }
         }
     }

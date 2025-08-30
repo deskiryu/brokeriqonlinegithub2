@@ -15,7 +15,7 @@ public class CalendlyService : ICalendlyService
         this.requestProviderService = requestProviderService;
     }
 
-    public async Task<bool> RegisterCalendlyConnection(string code)
+    public async Task<bool> RegisterConnection(string code)
     {
         return await this.requestProviderService.Post($"{Url}/auth", code);
     }

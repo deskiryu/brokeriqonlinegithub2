@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Dto.Request;
+using BrokerIQ.Dto.Dto;
 
 namespace BrokerIQ.Online.Services.Interface
 {
@@ -22,5 +23,7 @@ namespace BrokerIQ.Online.Services.Interface
         Task<BoolResponseDto> VerifyBroker(int id);
 
         Task<bool> ToggleService(int brokerId, int serviceId);
+
+        Task<PipedriveAccessDetailsDto> GetBrokerPipedriveDetails(int brokerId);
     }
 }
