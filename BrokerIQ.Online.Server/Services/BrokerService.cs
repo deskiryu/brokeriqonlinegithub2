@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using AutoMapper;
 using BrokerIQ.Dto.Dto;
@@ -84,7 +86,9 @@ namespace BrokerIQ.Online.Services
         {
             var url = this.BrokerUrl + $"/pipedrivedetails/{brokerId}";
 
-            return await this.requestProviderService.Get<PipedriveAccessDetailsDto>(url);
+            var result = await this.requestProviderService.Get<PipedriveAccessDetailsDto>(url);
+
+            return result.ExpiresAt == DateTime.MinValue ? null : result;
         }
     }
 }
