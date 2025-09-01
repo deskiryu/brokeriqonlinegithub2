@@ -10,5 +10,7 @@ public interface IWorkflowService
 
     Task<IEnumerable<ActivityDto>> GetActivitiesAsync();
 
-    Task<WorkflowDto> Save(WorkflowDto dto);
+    Task<WorkflowDto> SaveAsync(WorkflowDto dto);
+
+    Task<WorkflowDto> GetWorkflowAsync(string workflowId);
 }

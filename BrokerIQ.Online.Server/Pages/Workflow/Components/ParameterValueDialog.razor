@@ -1,0 +1,19 @@
+<MudDialog>
+    <DialogContent>
+        @foreach(var param in StepParameters){
+            var type = ActivityParameters.First(p => p.Order == param.Order).Type;
+
+            switch(type){
+                case "System.String":
+                    <MudTextField T="string" @bind-Value="param.Value" Variant="Variant.Text" Margin="Margin.Dense" />
+                    break;
+                default:
+                    continue;
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Confirm" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")">Confirm</MudButton>
+    </DialogActions>
+</MudDialog>

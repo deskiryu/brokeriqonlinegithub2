@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+
 using BrokerIQ.Dto.Dto.Workflows;
 using BrokerIQ.Online.Server.Services.Interface;
-using Microsoft.AspNetCore.Components;
-using Microsoft.VisualBasic;
+using System;
 
 namespace BrokerIQ.Online.Server.Pages.Workflow;
 
@@ -12,37 +14,36 @@ public class WorkflowEditBase : ComponentBase
     [Inject]
     public IWorkflowService WorkflowService { get; set; }
 
-    protected WorkflowDto Workflow = new();
+    [Parameter]
+    public string WorkflowId { get; set; }
 
-    protected string? _json;
+    protected WorkflowDto Workflow = new();
 
     protected IEnumerable<TriggerDto> _triggerOptions;
 
     protected IEnumerable<ActivityDto> _activityOptions;
-    //private readonly List<string> _conditionOptions = new() { "NoCondition", "PolicyActive", "LoanApproved" };
 
     protected override async Task OnInitializedAsync()
     {
         _triggerOptions = await WorkflowService.GetTriggersAsync();
         _activityOptions = await WorkflowService.GetActivitiesAsync();
-    }
 
-    // void Generate()
-    // {
-    //     _json = WorkflowService.GenerateJson(_workflow);
-    // }
+        if (!string.IsNullOrWhiteSpace(WorkflowId))
+        {
+            Workflow = await WorkflowService.GetWorkflowAsync(WorkflowId);
+        }
+    }
 
     protected async Task Save()
     {
-        Workflow = await WorkflowService.Save(Workflow);
+        if (WorkflowIsValid())
+        {
+            Workflow = await WorkflowService.SaveAsync(Workflow);
+        }
     }
 
-    // void Load()
-    // {
-    //     var loaded = WorkflowService.Load(_workflow.Name);
-    //     if (loaded is not null)
-    //     {
-    //         _workflow = loaded;
-    //     }
-    // }
+    private bool WorkflowIsValid()
+    {
+        return true;
+    }
 }

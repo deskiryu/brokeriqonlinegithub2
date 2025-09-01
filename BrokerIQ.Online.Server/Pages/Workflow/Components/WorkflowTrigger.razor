@@ -1,0 +1,11 @@
+﻿<MudPaper Class="pa-1 ma-1">
+    @if(TriggerOptions is not null){
+        <MudSelect T="int" @bind-Value="Workflow.TriggerId" Label="When" Dense="true" Placeholder="Select trigger" >
+            <MudSelectItem Value="0">Please Select</MudSelectItem>
+            @foreach (var option in TriggerOptions)
+            {
+                <MudSelectItem Value="@option.Id">@option.Name</MudSelectItem>
+            }
+        </MudSelect>
+    }
+</MudPaper>

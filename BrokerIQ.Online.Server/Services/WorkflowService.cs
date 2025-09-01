@@ -48,7 +48,7 @@ public class WorkflowService : BIQService, IWorkflowService
         return Array.Empty<ActivityDto>();
     }
 
-    public async Task<WorkflowDto> Save(WorkflowDto workflowDto)
+    public async Task<WorkflowDto> SaveAsync(WorkflowDto workflowDto)
     {
         var brokerId = await GetCurrentBrokerId();
 
@@ -61,5 +61,10 @@ public class WorkflowService : BIQService, IWorkflowService
         };
 
         return await this._requestProviderService.Post<CreateWorkflowDto, WorkflowDto>($"{API_CONTROLLER}/workflow", createDto);
+    }
+
+    public async Task<WorkflowDto> GetWorkflowAsync(string workflowId)
+    {
+        return await this._requestProviderService.Get<WorkflowDto>($"{API_CONTROLLER}/workflow/{workflowId}");
     }
 }

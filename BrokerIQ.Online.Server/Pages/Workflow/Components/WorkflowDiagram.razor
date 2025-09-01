@@ -1,47 +1,21 @@
 ﻿@using BrokerIQ.Dto.Dto.Workflows
 
 <div class="workflow-diagram">
-    <MudCard>
-    <MudCardContent>
-        @if(TriggerOptions is not null){
-            <MudSelect T="int" @bind-Value="Workflow.TriggerId" Label="When" Dense="true" Placeholder="Select trigger">
-                <MudSelectItem Value="0"></MudSelectItem>
-                @foreach (var option in TriggerOptions)
-                {
-                    <MudSelectItem Value="@option.Id">@option.Name</MudSelectItem>
-                }
-            </MudSelect>
-        }
-        </MudCardContent>
-        @if(!Workflow.Steps.Any()){
-            <MudCardActions >
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
-            </MudCardActions>
-        }
-    </MudCard>
+    <WorkflowTrigger Workflow="Workflow" TriggerOptions="TriggerOptions"/>
+    @if(!Workflow.Steps.Any()){
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
+    }
 
      @foreach (var step in Workflow.Steps)
     {
         <div class="arrow">&#8595;</div>
-
-        <MudCard>
-            <MudCardContent>
-                <MudSelect T="int" @bind-Value="step.ActivityId" Dense="true">
-                    <MudSelectItem Value="0"> </MudSelectItem>
-                    @foreach (var option in ActivityOptions)
-                    {
-                        <MudSelectItem T="string" Value="@option.Id">@option.Name</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudCardContent>
-            <MudCardActions>
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
-            </MudCardActions>
-        </MudCard>
-
-        <MudButton Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveStep(step))">
-            Remove Step
-        </MudButton>
+        <WorkflowActivity Step="step" ActivityOptions="ActivityOptions"/>
+        <MudStack Row="true" Class="m-1">
+            @if(CanAddStep(step)){
+                <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
+            }
+            <MudIconButton Icon="@Icons.Material.Filled.Remove" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveStep(step))" />
+        </MudStack>
     }
     @* <div class="arrow">&#8595;</div> *@
 
