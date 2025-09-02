@@ -16,15 +16,7 @@ public partial class ParameterValueDialog : ComponentBase
     public IEnumerable<ActivityParameterDto> ActivityParameters { get; set; }
 
     [Parameter]
-    public IEnumerable<StepParameterDto> StepParameters { get; set; }
-
-    protected override void OnInitialized()
-    {
-        if (!StepParameters.Any())
-        {
-            StepParameters = ActivityParameters.Select(p => new StepParameterDto() { Order = p.Order, Value = string.Empty });
-        }
-    }
+    public ICollection<StepParameterDto> StepParameters { get; set; }
 
     private void Cancel()
     {

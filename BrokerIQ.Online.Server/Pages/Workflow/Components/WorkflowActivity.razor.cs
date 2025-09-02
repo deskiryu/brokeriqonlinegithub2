@@ -35,14 +35,29 @@ public partial class WorkflowActivity
         var dialogParams = new DialogParameters
             {
                 { "ActivityParameters", ActivityParameters},
-                { "StepParameters", Step.StepParameters }
+                { "StepParameters", BuildCurrentParameters() }
             };
 
-        var dialogResult = await DialogService.Show<ParameterValueDialog>("Set Parameter(s)", dialogParams).Result;
+        var dialogResult = await DialogService.Show<ParameterValueDialog>("Set Parameter(s)", dialogParams, new DialogOptions() { MaxWidth = MaxWidth.Medium }).Result;
 
         if (!dialogResult.Canceled)
         {
             Step.StepParameters = dialogResult.Data as StepParameterDto[];
         }
+    }
+
+    private StepParameterDto[] BuildCurrentParameters()
+    {
+        var currentParameters = Step.StepParameters.ToArray();
+        StepParameterDto[] newParameters = ActivityParameters.Select(p => new StepParameterDto() { Order = p.Order, Value = string.Empty }).ToArray();
+
+        for (int i = 0; i < newParameters.Length; i++)
+        {
+            if (i >= currentParameters.Length) break;
+
+            newParameters[i].Value = currentParameters[i].Value;
+        }
+
+        return newParameters;
     }
 }
