@@ -26,6 +26,11 @@ public class PipedriveService : IPipedriveService
         return await this.requestProviderService.Post($"{Url}/auth", code);
     }
 
+    public async Task<bool> IsConnected()
+    {
+        return await this.requestProviderService.Get<bool>($"{Url}/isconnected");
+    }
+
     public async Task<bool> Disconnect()
     {
         return await this.requestProviderService.Delete($"{Url}");
@@ -42,4 +47,6 @@ public class PipedriveService : IPipedriveService
     {
         await this.requestProviderService.Post<int, CustomerDto>($"{this.Url}/chatsync", id);
     }
+
+
 }
