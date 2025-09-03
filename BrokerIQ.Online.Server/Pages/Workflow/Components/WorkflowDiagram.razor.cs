@@ -41,13 +41,13 @@ public partial class WorkflowDiagram
         }
     }
 
-    bool CanAddStep(StepDto step)
-    {
-        var selected = ActivityOptions.FirstOrDefault(a => a.Id == step.ActivityId);
-        if (selected is null) return false;
+    // bool CanAddStep(StepDto step)
+    // {
+    //     var selected = ActivityOptions.FirstOrDefault(a => a.Id == step.ActivityId);
+    //     if (selected is null) return false;
 
-        if (selected.Parameters.Count() != step.StepParameters.Count()) return false;
+    //     if (selected.Parameters.Count() != step.StepParameters.Count()) return false;
 
-        return step.StepParameters.Any(s => string.IsNullOrWhiteSpace(s.Value));
-    }
+    //     return step.StepParameters.Any(s => string.IsNullOrWhiteSpace(s.Value));
+    // }
 }

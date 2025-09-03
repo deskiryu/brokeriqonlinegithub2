@@ -11,9 +11,7 @@
         <div class="arrow">&#8595;</div>
         <WorkflowActivity Step="step" ActivityOptions="ActivityOptions"/>
         <MudStack Row="true" Class="m-1">
-            @if(CanAddStep(step)){
                 <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
-            }
             <MudIconButton Icon="@Icons.Material.Filled.Remove" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveStep(step))" />
         </MudStack>
     }

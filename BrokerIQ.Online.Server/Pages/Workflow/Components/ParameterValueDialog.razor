@@ -1,11 +1,14 @@
 <MudDialog>
     <DialogContent>
         @foreach(var param in StepParameters){
-            var type = ActivityParameters.First(p => p.Order == param.Order).Type;
+            var activityParam = ActivityParameters.First(p => p.Order == param.Order);
 
-            switch(type){
+            switch(activityParam.Type){
                 case "System.String":
-                    <MudTextField T="string" @bind-Value="param.Value" Variant="Variant.Text" Margin="Margin.Dense" />
+                    <MudTextField Label="@activityParam.Label" Variant="Variant.Text" Margin="Margin.Dense" @bind-Value="param.Value"/>
+                    break;
+                case "System.TimeSpan":
+                     <TimeControl @bind-Value="param.Value"/>
                     break;
                 default:
                     continue;
