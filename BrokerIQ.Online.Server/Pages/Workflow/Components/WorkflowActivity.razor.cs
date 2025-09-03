@@ -38,7 +38,9 @@ public partial class WorkflowActivity
                 { "StepParameters", BuildCurrentParameters() }
             };
 
-        var dialogResult = await DialogService.Show<ParameterValueDialog>("Set Parameter(s)", dialogParams, new DialogOptions() { MaxWidth = MaxWidth.Medium }).Result;
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        var dialogResult = await DialogService.Show<ParameterValueDialog>("Set Parameter(s)", dialogParams, options).Result;
 
         if (!dialogResult.Canceled)
         {
