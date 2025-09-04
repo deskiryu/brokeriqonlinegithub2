@@ -52,6 +52,11 @@ public class WorkflowService : BIQService, IWorkflowService
     {
         var brokerId = await GetCurrentBrokerId();
 
+        if (workflowDto.Id != Guid.Empty)
+        {
+            return await _requestProviderService.Put<WorkflowDto, WorkflowDto>($"{API_CONTROLLER}/{workflowDto.Id}", workflowDto);
+        }
+
         var createDto = new CreateWorkflowDto()
         {
             BrokerId = brokerId,
