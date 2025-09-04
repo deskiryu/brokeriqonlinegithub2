@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Workflows;
@@ -13,4 +14,8 @@ public interface IWorkflowService
     Task<WorkflowDto> SaveAsync(WorkflowDto dto);
 
     Task<WorkflowDto> GetWorkflowAsync(string workflowId);
+
+    Task<IEnumerable<WorkflowDto>> GetWorkflowsAsync();
+
+    Task DeleteWorkflowAsync(Guid workflowId);
 }

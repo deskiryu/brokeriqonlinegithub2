@@ -60,11 +60,21 @@ public class WorkflowService : BIQService, IWorkflowService
             Steps = workflowDto.Steps,
         };
 
-        return await this._requestProviderService.Post<CreateWorkflowDto, WorkflowDto>($"{API_CONTROLLER}/workflow", createDto);
+        return await _requestProviderService.Post<CreateWorkflowDto, WorkflowDto>($"{API_CONTROLLER}", createDto);
+    }
+
+    public async Task<IEnumerable<WorkflowDto>> GetWorkflowsAsync()
+    {
+        return await _requestProviderService.Get<IEnumerable<WorkflowDto>>($"{API_CONTROLLER}");
     }
 
     public async Task<WorkflowDto> GetWorkflowAsync(string workflowId)
     {
-        return await this._requestProviderService.Get<WorkflowDto>($"{API_CONTROLLER}/workflow/{workflowId}");
+        return await _requestProviderService.Get<WorkflowDto>($"{API_CONTROLLER}/{workflowId}");
+    }
+
+    public async Task DeleteWorkflowAsync(Guid workflowId)
+    {
+        await _requestProviderService.Delete($"{API_CONTROLLER}/{workflowId}");
     }
 }
