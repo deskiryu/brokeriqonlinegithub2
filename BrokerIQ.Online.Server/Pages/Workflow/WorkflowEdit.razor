@@ -9,7 +9,11 @@
     <h4 class="page-title">Edit Workflow</h4>
 
     <MudPaper Class="pa-2">
-        <MudTextField T="string" @bind-Value="Workflow.Name" Label="Workflow Name" Variant="Variant.Text" Margin="Margin.Dense" MaxLength="100"/>
+        <MudStack Row="true">
+            <MudTextField T="string" @bind-Value="Workflow.Name" Label="Workflow Name" Variant="Variant.Text" Margin="Margin.Dense" MaxLength="100"/>
+            <MudCheckBox @bind-Checked="Workflow.IsActive" Label="Active" LabelPosition="LabelPosition.End"/>
+        </MudStack>
+
         <MudStack Row="true" Spacing="1" Class="mb-2" Justify="Justify.FlexEnd">
             <MudButton Variant="Variant.Filled" Color="Color.Error" Href="workflows">Cancel</MudButton>
             <MudButton OnClick="Save" Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
