@@ -13,11 +13,10 @@
             <MudTextField T="string" @bind-Value="Workflow.Name" Label="Workflow Name" Variant="Variant.Text" Margin="Margin.Dense" MaxLength="100"/>
             <MudCheckBox @bind-Checked="Workflow.IsActive" Label="Active" LabelPosition="LabelPosition.End"/>
         </MudStack>
-
+        <WorkflowDiagram Workflow="Workflow" TriggerOptions="_triggerOptions" ActivityOptions="_activityOptions" />
         <MudStack Row="true" Spacing="1" Class="mb-2" Justify="Justify.FlexEnd">
             <MudButton Variant="Variant.Filled" Color="Color.Error" Href="workflows">Cancel</MudButton>
             <MudButton OnClick="Save" Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
         </MudStack>
-        <WorkflowDiagram Workflow="Workflow" TriggerOptions="_triggerOptions" ActivityOptions="_activityOptions" />
     </MudPaper>
 </MudContainer>
