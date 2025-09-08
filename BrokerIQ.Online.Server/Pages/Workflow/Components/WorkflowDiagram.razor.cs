@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Workflows;
 using Microsoft.AspNetCore.Components;
 
@@ -16,6 +17,9 @@ public partial class WorkflowDiagram
     [Parameter]
     public IEnumerable<TriggerDto> TriggerOptions { get; set; } = Enumerable.Empty<TriggerDto>();
 
+    [Parameter] public EventCallback OnChanged { get; set; }
+    private Task HasChanged() => OnChanged.InvokeAsync();
+
     protected void AddStep()
     {
         var newStep = new StepDto();
@@ -27,6 +31,8 @@ public partial class WorkflowDiagram
         }
 
         Workflow.Steps.Add(newStep);
+
+        HasChanged();
     }
 
     void RemoveStep(StepDto step)
@@ -39,6 +45,8 @@ public partial class WorkflowDiagram
                 s.NextStepId = null;
             }
         }
+
+        HasChanged();
     }
 
     // bool CanAddStep(StepDto step)
@@ -50,4 +58,8 @@ public partial class WorkflowDiagram
 
     //     return step.StepParameters.Any(s => string.IsNullOrWhiteSpace(s.Value));
     // }
+    private void ActivityChanged()
+    {
+        HasChanged();
+    }
 }

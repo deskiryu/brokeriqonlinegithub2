@@ -19,6 +19,9 @@ public partial class WorkflowActivity
     [Parameter]
     public IEnumerable<ActivityDto> ActivityOptions { get; set; } = Enumerable.Empty<ActivityDto>();
 
+    [Parameter] public EventCallback OnChanged { get; set; }
+    private Task HasChanged() => OnChanged.InvokeAsync();
+
     private IEnumerable<ActivityParameterDto> ActivityParameters
     {
         get
@@ -45,6 +48,8 @@ public partial class WorkflowActivity
         if (!dialogResult.Canceled)
         {
             Step.StepParameters = dialogResult.Data as StepParameterDto[];
+
+            await HasChanged();
         }
     }
 

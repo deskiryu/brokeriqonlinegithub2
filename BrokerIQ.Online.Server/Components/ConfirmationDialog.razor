@@ -9,7 +9,7 @@
         }
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Cancel">@CancelText</MudButton>
         @if(this.Color==Color.Primary)
         {
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};margin-top:5px")" OnClick="Submit">@ButtonText</MudButton>
@@ -28,6 +28,8 @@
     [Parameter] public string ContentText { get; set; }
 
     [Parameter] public string AdditionalText { get; set; }
+
+    [Parameter] public string CancelText { get; set; }
 
     [Parameter] public string ButtonText { get; set; }
 

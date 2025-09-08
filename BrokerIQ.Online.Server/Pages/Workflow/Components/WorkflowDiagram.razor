@@ -9,9 +9,9 @@
      @foreach (var step in Workflow.Steps)
     {
         <div class="arrow">&#8595;</div>
-        <WorkflowActivity Step="step" ActivityOptions="ActivityOptions"/>
+        <WorkflowActivity Step="step" ActivityOptions="ActivityOptions" OnChanged="ActivityChanged"/>
         <MudStack Row="true" Class="m-1">
-                <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
+                <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep"/>
             <MudIconButton Icon="@Icons.Material.Filled.Remove" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveStep(step))" />
         </MudStack>
     }
