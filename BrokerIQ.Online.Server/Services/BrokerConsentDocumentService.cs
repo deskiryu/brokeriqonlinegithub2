@@ -59,6 +59,15 @@ namespace BrokerIQ.Online.Services
         {
             try
             {
+                // Ensure broker id is set if the DTO supports it
+                try
+                {
+                    var brokerId = await GetCurrentBrokerId();
+                    var prop = document?.GetType().GetProperty("BrokerId");
+                    prop?.SetValue(document, brokerId);
+                }
+                catch { }
+
                 var response = await _requestProviderService.Post<CreateBrokerConsentDocumentDto, BrokerConsentDocumentDto>(API_CONTROLLER, document);
                 return response.Id > 0;
             }
@@ -97,4 +106,3 @@ namespace BrokerIQ.Online.Services
         }
     }
 }
-

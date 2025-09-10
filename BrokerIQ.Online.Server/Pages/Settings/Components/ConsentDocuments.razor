@@ -1,4 +1,36 @@
 @using Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+
+@using BrokerIQ.Dto.Models
+
+<MudPaper Class="pa-4 mb-4">
+    <MudText Typo="Typo.h6">Existing Consents</MudText>
+    <MudTable Items="@ExistingConsents" Dense="true" Hover>
+        <NoRecordsContent>
+            <MudText>No consents found.</MudText>
+        </NoRecordsContent>
+        <HeaderContent>
+            <MudTh>Type</MudTh>
+            <MudTh>Description</MudTh>
+            <MudTh>Version</MudTh>
+            <MudTh>Source</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+        </RowTemplate>
+        <ChildRowContent>
+            <MudTr>
+                <MudTd>@GetConsentTypeLabel(context)</MudTd>
+                <MudTd>@GetDescription(context)</MudTd>
+                <MudTd>@GetVersionLabel(context)</MudTd>
+                <MudTd>@GetSourceLabel(context)</MudTd>
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" OnClick="@(r => StartEdit(context))" />
+                </MudTd>
+            </MudTr>
+        </ChildRowContent>
+    </MudTable>
+</MudPaper>
 
 <MudPaper Class="pa-4">
     <MudForm @ref="form">
@@ -7,7 +39,7 @@
                 <MudSelect T="ConsentDocumentsEnum" Label="Consent Type" @bind-Value="Model.ConsentType" Required="true" RequiredError="Please select a consent type">
                     @foreach (var value in Enum.GetValues(typeof(ConsentDocumentsEnum)).Cast<ConsentDocumentsEnum>())
                     {
-                        <MudSelectItem Value="@value">@value.ToString()</MudSelectItem>
+                        <MudSelectItem Value="@value">@((string.IsNullOrWhiteSpace(value.GetDisplayName()) ? value.ToString() : value.GetDisplayName()))</MudSelectItem>
                     }
                 </MudSelect>
             </div>
@@ -48,24 +80,34 @@
 
             <div class="col-md-3 col-6 mt-3">
                 <MudSelect T="int" Label="Major Version" @bind-Value="Model.MajorVersion" Required="true">
-                    @for (int i = 1; i <= 10; i++)
+                    @for (int i = 0; i < 10; i++)
                     {
-                        <MudSelectItem Value="@i">@i</MudSelectItem>
+                        var v = i;
+                        <MudSelectItem Value="@v">@v</MudSelectItem>
                     }
                 </MudSelect>
             </div>
             <div class="col-md-3 col-6 mt-3">
                 <MudSelect T="int" Label="Minor Version" @bind-Value="Model.MinorVersion" Required="true">
-                    @for (int i = 1; i <= 100; i++)
+                    @for (int i = 0; i < 100; i++)
                     {
-                        <MudSelectItem Value="@i">@i</MudSelectItem>
+                        var v = i;
+                        <MudSelectItem Value="@v">@v</MudSelectItem>
                     }
                 </MudSelect>
             </div>
         </div>
 
         <div class="mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="color:black" OnClick="Submit">Create</MudButton>
+            @if (IsEditing)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="color:black" OnClick="Submit">Update</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Class="ml-2" OnClick="CancelEdit">Cancel</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="color:black" OnClick="Submit">Create</MudButton>
+            }
         </div>
     </MudForm>
 </MudPaper>
