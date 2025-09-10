@@ -105,6 +105,19 @@
                 </MudTabPanel>
             }
 
+            @* Consent Documents tab *@
+            @if (User.IsBroker || User.IsAdminStaff)
+            {
+                <MudTabPanel>
+                    <TabContent>
+                        <MudText Typo="Typo.subtitle2" Class="mr-1">CONSENT DOCUMENTS</MudText>
+                    </TabContent>
+                    <ChildContent>
+                        <ConsentDocuments Broker="@Broker" User="@User" />
+                    </ChildContent>
+                </MudTabPanel>
+            }
+
             @if (!User.IsAdmin && !User.IsMinorAdmin)
             {
                 <MudTabPanel>
