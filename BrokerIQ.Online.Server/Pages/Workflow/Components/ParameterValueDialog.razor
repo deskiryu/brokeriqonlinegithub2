@@ -1,13 +1,19 @@
+@using BrokerIQ.Online.Server.Components
 <MudDialog>
     <DialogContent>
         @foreach(var param in StepParameters){
             var activityParam = ActivityParameters.First(p => p.Order == param.Order);
 
             switch(activityParam.Type){
-                case "System.String":
+                case "text":
                     <MudTextField Label="@activityParam.Label" Variant="Variant.Text" Margin="Margin.Dense" @bind-Value="param.Value"/>
                     break;
-                case "System.TimeSpan":
+                case "template":
+                        <TemplateMessageEditor Broker="Broker" Customer="SampleCustomer" Connection="SampleConnection"
+                        @bind-DefinedMessage="Template"
+                        @bind-MessagePreview="Message" />
+                    break;
+                case "timespan":
                      <TimeControl @bind-Value="param.Value"/>
                     break;
                 default:
