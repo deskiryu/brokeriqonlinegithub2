@@ -117,7 +117,7 @@ namespace BrokerIQ.Online.Server.Models
 
         public bool CanEditDocuvaultTypes { get; set; }
 
-        public bool CanConnectCustomers{ get; set; }
+        public bool CanConnectCustomers { get; set; }
 
         public int MaxEmployeesAllowed { get; set; }
 
@@ -132,5 +132,7 @@ namespace BrokerIQ.Online.Server.Models
         public bool UseFirebaseForIOS { get; set; }
 
         public string ReferAFriendText { get; set; }
+        
+        public bool UseConsentDocuments { get; set; } 
     }
 }

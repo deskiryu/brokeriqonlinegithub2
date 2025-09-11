@@ -111,7 +111,7 @@
             }
 
             @* Consent Documents tab *@
-            @if (User.IsBroker || User.IsAdminStaff)
+            @if ((User.IsBroker || User.IsBrokerStaff) && (Broker?.BrokerIdentifier?.UseConsentDocuments ?? false))
             {
                 <MudTabPanel>
                     <TabContent>
