@@ -10,23 +10,25 @@
 @functions {
     async void PreviewFile(MemoryStream ms)
     {
-        await Extensions.PreviewFile(js, ms);
+        await ExtensionClass.PreviewFile(js, ms);
     }
 }
 
 <MudDialog>
     <DialogContent>
         <MudContainer Style="overflow-y: scroll">
-            <MudTextField T="string" Label="Message to send" Required="true" RequiredError="Please fill in the message" @bind-Value="model.MessageToSend" Lines="5" AutoGrow="true" Immediate="true" />
+            <MudTextField T="string" Label="Message to send" Required="true" RequiredError="Please fill in the message"
+                @bind-Value="model.MessageToSend" Lines="5" AutoGrow="true" Immediate="true" />
             <div class="row">
                 <div class="col-sm-2 mt-auto">
                     <MudIconButton Icon="@Icons.Material.Filled.InsertLink" Variant="Variant.Filled" Size="Size.Small"
-                                   Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" OnClick="InsertLink"
-                                   Disabled="@model.HideLinkButton">
+                        Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" OnClick="InsertLink"
+                        Disabled="@model.HideLinkButton">
                     </MudIconButton>
                 </div>
                 <div class="col-sm-10">
-                    <MudTextField T="string" Placeholder="Link address" @bind-Value="model.Link" Disabled="@model.HideLinkButton" />
+                    <MudTextField T="string" Placeholder="Link address" @bind-Value="model.Link"
+                        Disabled="@model.HideLinkButton" />
                 </div>
             </div>
             <div>
@@ -44,7 +46,9 @@
                     {
                         <div class="row">
                             <div class="col-sm-2">
-                                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Preview" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudIconButton>
+                                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Preview" Variant="Variant.Filled"
+                                    Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+                                    OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudIconButton>
                             </div>
                             <div class="col-sm-10">
                                 <MudText Style="font-weight: bold;">@fileName.Item1</MudText>
@@ -61,8 +65,8 @@
                 {
                     <div class="row">
                         <div class="col-sm-6 mt-auto">
-                            <MudDatePicker Clearable="AllowNullDateValues" Placeholder="Deliver message on" @bind-Date="@model.DeliveryDate"
-                                           MinDate="DateTime.Today" />
+                            <MudDatePicker Clearable="AllowNullDateValues" Placeholder="Deliver message on"
+                                @bind-Date="@model.DeliveryDate" MinDate="DateTime.Today" />
                         </div>
                         <div class="col-sm-6 mt-auto">
                             <TimeOfDay @bind-Value="@model.DeliveryTime" />
@@ -74,7 +78,8 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="SendMessage" Disabled="DetailsAreInvalid">Send</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+            OnClick="SendMessage" Disabled="DetailsAreInvalid">Send</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -118,8 +123,8 @@
         get
         {
             if (string.IsNullOrWhiteSpace(model.MessageToSend) ||
-                (model.DeliveryDate.HasValue && !model.DeliveryTime.HasValue) ||
-                (!model.DeliveryDate.HasValue && model.DeliveryTime.HasValue)) return true;
+            (model.DeliveryDate.HasValue && !model.DeliveryTime.HasValue) ||
+            (!model.DeliveryDate.HasValue && model.DeliveryTime.HasValue)) return true;
 
             if (!model.DeliveryDate.HasValue && !model.DeliveryTime.HasValue) return false;
 
@@ -217,8 +222,8 @@
         {
             var dialogParams = new DialogParameters
 {
-                { "Message", $"The URL supplied is not valid." }
-            };
+{ "Message", $"The URL supplied is not valid." }
+};
 
             await DialogService.Show<AlertDialog>("Validation failure", dialogParams).Result;
             return;

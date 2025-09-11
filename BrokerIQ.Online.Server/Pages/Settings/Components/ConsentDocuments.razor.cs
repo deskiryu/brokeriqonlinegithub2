@@ -12,6 +12,7 @@ using MudBlazor;
 using BrokerIQ.Online.Server.AppSettings;
 using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Dto.Models;
+using Microsoft.JSInterop;
 using BrokerIQ.Online.Server.Extensions;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
@@ -32,6 +33,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         [Inject]
         public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
+
+        [Inject]
+        private IJSRuntime js { get; set; }
 
         protected FileUploadSettings FileUploadSettings { get; set; }
 
@@ -57,6 +61,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         private bool IsEditing { get; set; }
         private BrokerConsentDocumentDto EditingDocument { get; set; }
+        private bool ShowForm { get; set; }
 
         protected override void OnInitialized()
         {
@@ -130,6 +135,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             if (value == null) return fallback;
             if (value is int i) return i;
+            if (value is long l) return (int)l;
+            if (value is short s) return s;
+            if (value is byte b) return b;
             if (int.TryParse(value.ToString(), out var parsed)) return parsed;
             return fallback;
         }
@@ -150,9 +158,14 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         // Helpers used by the Razor table
         protected string GetConsentTypeLabel(BrokerConsentDocumentDto doc)
         {
-            var val = GetProp(doc, "ConsentType", "ConsentDocumentType", "ConsentDocumentsEnum", "ConsentTypeId");
+            var val = GetProp(doc, "ConsentDocumentEnum");
             try
             {
+                if (val != null && val.GetType().IsEnum)
+                {
+                    var name = ((Enum)val).GetDisplayName();
+                    return string.IsNullOrWhiteSpace(name) ? val.ToString() : name;
+                }
                 if (val is int iv)
                 {
                     var enumVal = (Dto.Enum.ConsentDocumentsEnum)iv;
@@ -174,6 +187,59 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 return val?.ToString() ?? "";
             }
             catch { return val?.ToString() ?? ""; }
+        }
+
+        protected bool CanView(BrokerConsentDocumentDto doc)
+        {
+            var url = GetString(GetProp(doc, "Url"));
+            var file = GetProp(doc, "File") as byte[];
+            return (!string.IsNullOrWhiteSpace(url) && url.IsValidUrl()) || (file != null && file.Length > 0);
+        }
+
+        protected async Task ViewConsent(BrokerConsentDocumentDto doc)
+        {
+            var url = GetString(GetProp(doc, "Url"));
+            if (!string.IsNullOrWhiteSpace(url) && url.IsValidUrl())
+            {
+                await ExtensionClass.OpenLinkInNewTab(js, url);
+                return;
+            }
+
+            var file = GetProp(doc, "File") as byte[];
+            if (file != null && file.Length > 0)
+            {
+                await ExtensionClass.PreviewFile(js, new MemoryStream(file));
+            }
+        }
+
+        protected async Task PreviewCurrent()
+        {
+            if (Model.IsUrlConsent)
+            {
+                var url = Model.Url?.Trim();
+                if (!string.IsNullOrWhiteSpace(url) && url.IsValidUrl())
+                {
+                    await ExtensionClass.OpenLinkInNewTab(js, url);
+                }
+                else
+                {
+                    Snackbar.Add("Please enter a valid URL.", Severity.Warning);
+                }
+            }
+            else if (SelectedFiles.Any())
+            {
+                try
+                {
+                    var file = SelectedFiles.First();
+                    using var ms = new MemoryStream();
+                    await file.OpenReadStream(FileUploadSettings.MaxFileSize).CopyToAsync(ms);
+                    await ExtensionClass.PreviewFile(js, ms);
+                }
+                catch
+                {
+                    Snackbar.Add("Unable to preview the selected file.", Severity.Error);
+                }
+            }
         }
 
         protected string GetDescription(BrokerConsentDocumentDto doc)
@@ -204,6 +270,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             EditingDocument = doc;
             IsEditing = true;
+            ShowForm = true;
 
             // Populate the form model from the selected document via reflection
             var consentType = GetProp(doc, "ConsentType", "ConsentDocumentType", "ConsentDocumentsEnum", "ConsentTypeId");
@@ -234,6 +301,17 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             EditingDocument = null;
             Model = new ConsentDocumentModel();
             SelectedFiles.Clear();
+            ShowForm = false;
+            StateHasChanged();
+        }
+
+        protected void StartAdd()
+        {
+            IsEditing = false;
+            EditingDocument = null;
+            Model = new ConsentDocumentModel();
+            SelectedFiles.Clear();
+            ShowForm = true;
             StateHasChanged();
         }
 
@@ -410,6 +488,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                     Model = new ConsentDocumentModel();
                     SelectedFiles.Clear();
                     await LoadConsents();
+                    ShowForm = false;
                     StateHasChanged();
                 }
                 else

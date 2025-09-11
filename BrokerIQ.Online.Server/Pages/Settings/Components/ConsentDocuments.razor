@@ -17,22 +17,28 @@
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
+            <MudTd>@GetConsentTypeLabel(context)</MudTd>
+            <MudTd>@GetDescription(context)</MudTd>
+            <MudTd>@GetVersionLabel(context)</MudTd>
+            <MudTd>@GetSourceLabel(context)</MudTd>
+            <MudTd>
+                @if (CanView(context))
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info" Size="Size.Small" OnClick="@(r => ViewConsent(context))" />
+                }
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" Class="ml-1" OnClick="@(r => StartEdit(context))" />
+            </MudTd>
         </RowTemplate>
-        <ChildRowContent>
-            <MudTr>
-                <MudTd>@GetConsentTypeLabel(context)</MudTd>
-                <MudTd>@GetDescription(context)</MudTd>
-                <MudTd>@GetVersionLabel(context)</MudTd>
-                <MudTd>@GetSourceLabel(context)</MudTd>
-                <MudTd>
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" OnClick="@(r => StartEdit(context))" />
-                </MudTd>
-            </MudTr>
-        </ChildRowContent>
     </MudTable>
+
+    <div class="mt-3">
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" OnClick="StartAdd">Add consent</MudButton>
+    </div>
 </MudPaper>
 
-<MudPaper Class="pa-4">
+@if (ShowForm)
+{
+<MudPaper Class="pa-4 mx-auto" Style="max-width: 720px;">
     <MudForm @ref="form">
         <div class="row">
             <div class="col-lg-6 col-md-12">
@@ -57,6 +63,7 @@
                 <div class="col-12 mt-2">
                     <MudTextField T="string" Label="Consent URL" Placeholder="https://example.com/consent.pdf" @bind-Value="Model.Url"
                                   Required="true" RequiredError="URL is required" />
+                    <MudButton Variant="Variant.Outlined" Color="Color.Info" Size="Size.Small" Class="mt-2" OnClick="PreviewCurrent">Preview</MudButton>
                 </div>
             }
             else
@@ -73,13 +80,14 @@
                         <div class="mt-2">
                             <MudChip>@SelectedFiles[0].Name</MudChip>
                             <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Class="ml-2" OnClick="@(e => DeleteSelectedFile())">Remove</MudButton>
+                            <MudButton Variant="Variant.Outlined" Color="Color.Info" Size="Size.Small" Class="ml-2" OnClick="PreviewCurrent">Preview</MudButton>
                         </div>
                     }
                 </div>
             }
 
-            <div class="col-md-3 col-6 mt-3">
-                <MudSelect T="int" Label="Major Version" @bind-Value="Model.MajorVersion" Required="true">
+            <div class="col-auto mt-3">
+                <MudSelect T="int" Label="Major Version" @bind-Value="Model.MajorVersion" Required="true" Style="width:130px;">
                     @for (int i = 0; i < 10; i++)
                     {
                         var v = i;
@@ -87,8 +95,8 @@
                     }
                 </MudSelect>
             </div>
-            <div class="col-md-3 col-6 mt-3">
-                <MudSelect T="int" Label="Minor Version" @bind-Value="Model.MinorVersion" Required="true">
+            <div class="col-auto mt-3">
+                <MudSelect T="int" Label="Minor Version" @bind-Value="Model.MinorVersion" Required="true" Style="width:130px;">
                     @for (int i = 0; i < 100; i++)
                     {
                         var v = i;
@@ -111,3 +119,4 @@
         </div>
     </MudForm>
 </MudPaper>
+}
