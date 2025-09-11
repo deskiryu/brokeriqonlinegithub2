@@ -14,7 +14,7 @@
             <MudTh>Description</MudTh>
             <MudTh>Version</MudTh>
             <MudTh>Source</MudTh>
-            <MudTh></MudTh>
+            <MudTh>View Consent</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>@GetConsentTypeLabel(context)</MudTd>
@@ -24,7 +24,7 @@
             <MudTd>
                 @if (CanView(context))
                 {
-                    <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info" Size="Size.Small" OnClick="@(r => ViewConsent(context))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Visibility" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" OnClick="@(r => ViewConsent(context))" />
                 }
                 <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" Class="ml-1" OnClick="@(r => StartEdit(context))" />
             </MudTd>
@@ -38,7 +38,7 @@
 
 @if (ShowForm)
 {
-<MudPaper Class="pa-4 mx-auto" Style="max-width: 720px;">
+<MudPaper Class="pa-4" Style="max-width: 720px;">
     <MudForm @ref="form">
         <div class="row">
             <div class="col-lg-6 col-md-12">
@@ -63,7 +63,6 @@
                 <div class="col-12 mt-2">
                     <MudTextField T="string" Label="Consent URL" Placeholder="https://example.com/consent.pdf" @bind-Value="Model.Url"
                                   Required="true" RequiredError="URL is required" />
-                    <MudButton Variant="Variant.Outlined" Color="Color.Info" Size="Size.Small" Class="mt-2" OnClick="PreviewCurrent">Preview</MudButton>
                 </div>
             }
             else
@@ -80,7 +79,6 @@
                         <div class="mt-2">
                             <MudChip>@SelectedFiles[0].Name</MudChip>
                             <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Class="ml-2" OnClick="@(e => DeleteSelectedFile())">Remove</MudButton>
-                            <MudButton Variant="Variant.Outlined" Color="Color.Info" Size="Size.Small" Class="ml-2" OnClick="PreviewCurrent">Preview</MudButton>
                         </div>
                     }
                 </div>
@@ -107,14 +105,16 @@
         </div>
 
         <div class="mt-4">
+            <MudButton StartIcon="@Icons.Material.Filled.Visibility" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Disabled="@(!CanPreviewCurrent())" OnClick="PreviewCurrent">View</MudButton>
+            
             @if (IsEditing)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="color:black" OnClick="Submit">Update</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Class="ml-2" OnClick="Submit">Update</MudButton>
                 <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Class="ml-2" OnClick="CancelEdit">Cancel</MudButton>
             }
             else
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="color:black" OnClick="Submit">Create</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Class="ml-2" OnClick="Submit">Create</MudButton>
             }
         </div>
     </MudForm>

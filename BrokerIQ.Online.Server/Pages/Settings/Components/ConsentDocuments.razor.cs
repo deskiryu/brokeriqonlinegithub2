@@ -158,7 +158,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         // Helpers used by the Razor table
         protected string GetConsentTypeLabel(BrokerConsentDocumentDto doc)
         {
-            var val = GetProp(doc, "ConsentDocumentEnum");
+            var val = GetProp(doc, "ConsentType", "ConsentDocumentType", "ConsentDocumentsEnum", "ConsentDocumentEnum", "ConsentTypeId", "ConsentDocumentTypeId", "Type", "TypeId");
             try
             {
                 if (val != null && val.GetType().IsEnum)
@@ -223,7 +223,16 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 }
                 else
                 {
-                    Snackbar.Add("Please enter a valid URL.", Severity.Warning);
+                    // try existing document url if editing
+                    var existingUrl = EditingDocument != null ? GetString(GetProp(EditingDocument, "Url")) : null;
+                    if (!string.IsNullOrWhiteSpace(existingUrl) && existingUrl.IsValidUrl())
+                    {
+                        await ExtensionClass.OpenLinkInNewTab(js, existingUrl);
+                    }
+                    else
+                    {
+                        Snackbar.Add("Please enter a valid URL.", Severity.Warning);
+                    }
                 }
             }
             else if (SelectedFiles.Any())
@@ -240,6 +249,43 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                     Snackbar.Add("Unable to preview the selected file.", Severity.Error);
                 }
             }
+            else if (EditingDocument != null)
+            {
+                var url = GetString(GetProp(EditingDocument, "Url"));
+                if (!string.IsNullOrWhiteSpace(url) && url.IsValidUrl())
+                {
+                    await ExtensionClass.OpenLinkInNewTab(js, url);
+                    return;
+                }
+                var file = GetProp(EditingDocument, "File") as byte[];
+                if (file != null && file.Length > 0)
+                {
+                    await ExtensionClass.PreviewFile(js, new MemoryStream(file));
+                }
+            }
+        }
+
+        protected bool CanPreviewCurrent()
+        {
+            if (Model.IsUrlConsent)
+            {
+                var url = Model.Url?.Trim();
+                if (!string.IsNullOrWhiteSpace(url) && url.IsValidUrl()) return true;
+                // fallback to existing url when editing
+                if (EditingDocument != null)
+                {
+                    var existingUrl = GetString(GetProp(EditingDocument, "Url"));
+                    if (!string.IsNullOrWhiteSpace(existingUrl) && existingUrl.IsValidUrl()) return true;
+                }
+                return false;
+            }
+            if (SelectedFiles.Any()) return true;
+            if (EditingDocument != null)
+            {
+                var file = GetProp(EditingDocument, "File") as byte[];
+                if (file != null && file.Length > 0) return true;
+            }
+            return false;
         }
 
         protected string GetDescription(BrokerConsentDocumentDto doc)
@@ -273,7 +319,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             ShowForm = true;
 
             // Populate the form model from the selected document via reflection
-            var consentType = GetProp(doc, "ConsentType", "ConsentDocumentType", "ConsentDocumentsEnum", "ConsentTypeId");
+            var consentType = GetProp(doc, "ConsentType", "ConsentDocumentType", "ConsentDocumentsEnum", "ConsentDocumentEnum", "ConsentTypeId", "ConsentDocumentTypeId");
             if (consentType != null)
             {
                 if (consentType is int iv)
@@ -358,6 +404,15 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                         {
                             p.SetValue(EditingDocument, Enum.ToObject(p.PropertyType, iv));
                         }
+                        else if (!p.PropertyType.IsEnum && value.GetType().IsEnum)
+                        {
+                            // target expects a numeric type, but we have an enum value
+                            var intVal = (int)value;
+                            if (p.PropertyType == typeof(int) || p.PropertyType == typeof(int?)) p.SetValue(EditingDocument, intVal);
+                            else if (p.PropertyType == typeof(short) || p.PropertyType == typeof(short?)) p.SetValue(EditingDocument, (short)intVal);
+                            else if (p.PropertyType == typeof(byte) || p.PropertyType == typeof(byte?)) p.SetValue(EditingDocument, (byte)intVal);
+                            else p.SetValue(EditingDocument, intVal);
+                        }
                         else
                         {
                             p.SetValue(EditingDocument, value);
@@ -368,7 +423,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 SetEditProp("ConsentType", Model.ConsentType);
                 SetEditProp("ConsentDocumentType", Model.ConsentType);
                 SetEditProp("ConsentDocumentsEnum", Model.ConsentType);
+                SetEditProp("ConsentDocumentEnum", Model.ConsentType);
                 SetEditProp("ConsentTypeId", (int)Model.ConsentType);
+                SetEditProp("ConsentDocumentTypeId", (int)Model.ConsentType);
 
                 var desc = (Model.Description ?? string.Empty).Trim();
                 if (desc.Length > 300) desc = desc.Substring(0, 300);
@@ -434,6 +491,14 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                         {
                             p.SetValue(createDto, Enum.ToObject(p.PropertyType, iv));
                         }
+                        else if (!p.PropertyType.IsEnum && value.GetType().IsEnum)
+                        {
+                            var intVal = (int)value;
+                            if (p.PropertyType == typeof(int) || p.PropertyType == typeof(int?)) p.SetValue(createDto, intVal);
+                            else if (p.PropertyType == typeof(short) || p.PropertyType == typeof(short?)) p.SetValue(createDto, (short)intVal);
+                            else if (p.PropertyType == typeof(byte) || p.PropertyType == typeof(byte?)) p.SetValue(createDto, (byte)intVal);
+                            else p.SetValue(createDto, intVal);
+                        }
                         else
                         {
                             p.SetValue(createDto, value);
@@ -446,7 +511,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 SetProp("ConsentType", Model.ConsentType);
                 SetProp("ConsentDocumentType", Model.ConsentType);
                 SetProp("ConsentDocumentsEnum", Model.ConsentType);
+                SetProp("ConsentDocumentEnum", Model.ConsentType);
                 SetProp("ConsentTypeId", (int)Model.ConsentType);
+                SetProp("ConsentDocumentTypeId", (int)Model.ConsentType);
 
                 // Description
                 var desc = (Model.Description ?? string.Empty).Trim();
