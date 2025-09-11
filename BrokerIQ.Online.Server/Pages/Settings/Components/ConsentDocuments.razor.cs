@@ -14,6 +14,7 @@ using BrokerIQ.Online.Services.Interface;
 using BrokerIQ.Dto.Models;
 using Microsoft.JSInterop;
 using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Server.Components;
 
 namespace BrokerIQ.Online.Server.Pages.Settings.Components
 {
@@ -36,6 +37,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         [Inject]
         private IJSRuntime js { get; set; }
+
+        [Inject]
+        private IDialogService DialogService { get; set; }
 
         protected FileUploadSettings FileUploadSettings { get; set; }
 
@@ -310,6 +314,35 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             }
             var fileName = GetString(GetProp(doc, "FileName"));
             return string.IsNullOrWhiteSpace(fileName) ? "PDF" : fileName;
+        }
+
+        protected async Task ConfirmDelete(BrokerConsentDocumentDto doc)
+        {
+            var parameters = new DialogParameters
+            {
+                { "ContentText", "Are you sure you wish to delete this consent requirement?" },
+                { "ButtonText", "Delete" },
+                { "Color", Color.Error }
+            };
+
+            var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+            var result = await DialogService.Show<ConfirmationDialog>("Delete", parameters, options).Result;
+            if (result.Canceled) return;
+
+            var ok = await BrokerConsentDocumentService.Delete(doc);
+            if (ok)
+            {
+                Snackbar.Add("Consent requirement deleted successfully", Severity.Success);
+                if (EditingDocument?.Id == doc.Id)
+                {
+                    CancelEdit();
+                }
+                await LoadConsents();
+            }
+            else
+            {
+                Snackbar.Add("Unable to delete consent requirement. Please try again.", Severity.Error);
+            }
         }
 
         protected void StartEdit(BrokerConsentDocumentDto doc)

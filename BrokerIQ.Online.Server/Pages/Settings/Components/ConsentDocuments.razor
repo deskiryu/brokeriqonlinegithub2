@@ -15,6 +15,7 @@
             <MudTh>Version</MudTh>
             <MudTh>Source</MudTh>
             <MudTh>View Consent</MudTh>
+            <MudTh>Delete</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>@GetConsentTypeLabel(context)</MudTd>
@@ -27,6 +28,9 @@
                     <MudIconButton Icon="@Icons.Material.Filled.Visibility" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" OnClick="@(r => ViewConsent(context))" />
                 }
                 <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" Class="ml-1" OnClick="@(r => StartEdit(context))" />
+            </MudTd>
+            <MudTd>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Style="color:black" Size="Size.Small" OnClick="@(r => ConfirmDelete(context))" />
             </MudTd>
         </RowTemplate>
     </MudTable>

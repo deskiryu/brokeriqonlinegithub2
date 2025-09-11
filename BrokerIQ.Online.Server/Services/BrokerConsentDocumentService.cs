@@ -96,7 +96,7 @@ namespace BrokerIQ.Online.Services
         {
             try
             {
-                return await _requestProviderService.Delete($"{API_CONTROLLER}?brokerId={document.BrokerId}&id={document.Id}");
+                return await _requestProviderService.Delete($"{API_CONTROLLER}/{document.Id}");
             }
             catch (Exception ex)
             {
