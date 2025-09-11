@@ -70,6 +70,56 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         private BrokerConsentDocumentDto EditingDocument { get; set; }
         private bool ShowForm { get; set; }
 
+        private int? GetDocumentId(BrokerConsentDocumentDto doc)
+        {
+            try
+            {
+                // Prefer strong property if available
+                var idProp = doc?.GetType().GetProperty("Id");
+                if (idProp != null)
+                {
+                    var val = idProp.GetValue(doc);
+                    if (val is int i) return i;
+                    if (val != null && int.TryParse(val.ToString(), out var parsed)) return parsed;
+                }
+            }
+            catch { }
+            return null;
+        }
+
+        private Dto.Enum.ConsentDocumentsEnum? GetDocumentConsentType(BrokerConsentDocumentDto doc)
+        {
+            var val = GetProp(doc, "ConsentType", "ConsentDocumentType", "ConsentDocumentsEnum", "ConsentDocumentEnum", "ConsentTypeId", "ConsentDocumentTypeId", "Type", "TypeId");
+            try
+            {
+                if (val == null) return null;
+                if (val.GetType().IsEnum)
+                {
+                    return (Dto.Enum.ConsentDocumentsEnum)val;
+                }
+                if (val is int iv) return (Dto.Enum.ConsentDocumentsEnum)iv;
+                if (int.TryParse(val.ToString(), out var parsed)) return (Dto.Enum.ConsentDocumentsEnum)parsed;
+                if (val is string s && Enum.TryParse<Dto.Enum.ConsentDocumentsEnum>(s, out var parsedEnum)) return parsedEnum;
+            }
+            catch { }
+            return null;
+        }
+
+        private bool ConsentTypeExists(Dto.Enum.ConsentDocumentsEnum type, int? excludeId = null)
+        {
+            foreach (var doc in ExistingConsents ?? Enumerable.Empty<BrokerConsentDocumentDto>())
+            {
+                var docId = GetDocumentId(doc);
+                if (excludeId.HasValue && docId.HasValue && docId.Value == excludeId.Value) continue;
+                var docType = GetDocumentConsentType(doc);
+                if (docType.HasValue && docType.Value.Equals(type))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         protected override void OnInitialized()
         {
             FileUploadSettings = FileUploadSettingsOption.Value;
@@ -464,6 +514,15 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                         return;
                     }
                 }
+            }
+
+            // Uniqueness: prevent two consents with same type
+            var excludeId = IsEditing && EditingDocument != null ? GetDocumentId(EditingDocument) : (int?)null;
+            if (ConsentTypeExists(Model.ConsentType, excludeId))
+            {
+                var typeName = GetConsentTypeDescription(Model.ConsentType);
+                Snackbar.Add($"A consent for '{typeName}' already exists.", Severity.Warning);
+                return;
             }
 
             if (IsEditing && EditingDocument != null)
