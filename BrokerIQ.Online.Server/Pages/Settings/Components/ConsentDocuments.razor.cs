@@ -61,6 +61,9 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         protected string HoverClass;
         protected string DropZoneClass => SelectedFiles.Any() ? "card" : "card";
 
+        protected bool HasExistingFileForEdit { get; set; }
+        protected string ExistingFileName { get; set; }
+
         private IEnumerable<BrokerConsentDocumentDto> ExistingConsents { get; set; } = Enumerable.Empty<BrokerConsentDocumentDto>();
 
         private bool IsEditing { get; set; }
@@ -104,6 +107,29 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         protected void DeleteSelectedFile()
         {
             SelectedFiles.Clear();
+        }
+
+        protected void RemoveExistingFile()
+        {
+            HasExistingFileForEdit = false;
+            StateHasChanged();
+        }
+
+        private string GetConsentTypeDescription(Dto.Enum.ConsentDocumentsEnum type)
+        {
+            // Prefer the enum DisplayAttribute.Prompt as a description; fallback to display name or enum name
+            var prompt = type.GetDisplayPrompt();
+            if (!string.IsNullOrWhiteSpace(prompt)) return prompt;
+            var name = type.GetDisplayName();
+            return string.IsNullOrWhiteSpace(name) ? type.ToString() : name;
+        }
+
+        protected void OnConsentTypeChanged(Dto.Enum.ConsentDocumentsEnum value)
+        {
+            Model.ConsentType = value;
+            // Auto-fill description from enum when type changes; user may edit afterwards
+            Model.Description = GetConsentTypeDescription(value);
+            StateHasChanged();
         }
 
         private async Task LoadConsents()
@@ -301,7 +327,14 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         {
             var maj = GetInt(GetProp(doc, "MajorVersion"), 0);
             var min = GetInt(GetProp(doc, "MinorVersion"), 0);
-            return $"v{maj}.{min}";
+            return $"v{maj}.{min:D2}";
+        }
+
+        protected string GetBracketedVersion(BrokerConsentDocumentDto doc)
+        {
+            var maj = GetInt(GetProp(doc, "MajorVersion"), 0);
+            var min = GetInt(GetProp(doc, "MinorVersion"), 0);
+            return $"[{maj}.{min:D2}]";
         }
 
         protected string GetSourceLabel(BrokerConsentDocumentDto doc)
@@ -370,6 +403,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             Model.IsUrlConsent = isUrl || !string.IsNullOrWhiteSpace(url);
             Model.Url = url;
 
+            // Existing file info for edit mode display/validation
+            var fileBytes = GetProp(doc, "File") as byte[];
+            var fileName = GetString(GetProp(doc, "FileName"));
+            HasExistingFileForEdit = (fileBytes != null && fileBytes.Length > 0) || !string.IsNullOrWhiteSpace(fileName);
+            ExistingFileName = string.IsNullOrWhiteSpace(fileName) ? "Existing PDF" : fileName;
+
             SelectedFiles.Clear();
             StateHasChanged();
         }
@@ -391,6 +430,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             Model = new ConsentDocumentModel();
             SelectedFiles.Clear();
             ShowForm = true;
+            // Initialize description from the default/initial type so it’s pre-filled on create
+            Model.Description = GetConsentTypeDescription(Model.ConsentType);
             StateHasChanged();
         }
 
@@ -416,8 +457,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             {
                 if (!SelectedFiles.Any())
                 {
-                    Snackbar.Add("Please upload a PDF file", Severity.Warning);
-                    return;
+                    // In edit mode, allow keeping existing file without forcing re-upload
+                    if (!(IsEditing && HasExistingFileForEdit))
+                    {
+                        Snackbar.Add("Please upload a PDF file", Severity.Warning);
+                        return;
+                    }
                 }
             }
 
@@ -550,6 +595,10 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
                 // Description
                 var desc = (Model.Description ?? string.Empty).Trim();
+                if (string.IsNullOrWhiteSpace(desc))
+                {
+                    desc = GetConsentTypeDescription(Model.ConsentType);
+                }
                 if (desc.Length > 300) desc = desc.Substring(0, 300);
                 SetProp("Description", desc);
 
