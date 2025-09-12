@@ -45,16 +45,6 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         protected MudForm form;
 
-        protected class ConsentDocumentModel
-        {
-            public Dto.Enum.ConsentDocumentsEnum ConsentType { get; set; }
-            public string Description { get; set; }
-            public bool IsUrlConsent { get; set; }
-            public string Url { get; set; }
-            public int MajorVersion { get; set; } = 1;
-            public int MinorVersion { get; set; } = 1;
-        }
-
         protected ConsentDocumentModel Model { get; set; } = new ConsentDocumentModel();
 
         protected List<IBrowserFile> SelectedFiles = new();
