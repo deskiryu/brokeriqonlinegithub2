@@ -63,6 +63,7 @@ public class WorkflowService : BIQService, IWorkflowService
             TriggerId = workflowDto.TriggerId,
             Name = workflowDto.Name,
             Steps = workflowDto.Steps,
+            IsActive = workflowDto.IsActive
         };
 
         return await _requestProviderService.Post<CreateWorkflowDto, WorkflowDto>($"{API_CONTROLLER}", createDto);
