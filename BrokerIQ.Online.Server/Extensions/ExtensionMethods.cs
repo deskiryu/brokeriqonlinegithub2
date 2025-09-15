@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace BrokerIQ.Online.Server.Extensions
 {
-    public static class Extensions
+    public static class ExtensionClass
     {
         public async static Task SaveAs(IJSRuntime js, string filename, byte[] data)
         {
@@ -49,9 +49,9 @@ namespace BrokerIQ.Online.Server.Extensions
 
         public async static Task PreviewFileText(IJSRuntime js, string htmlIn)
         {
-                await js.InvokeAsync<object>(
-                    "openInTabText",
-                    htmlIn);
+            await js.InvokeAsync<object>(
+                "openInTabText",
+                htmlIn);
         }
 
         public async static Task OpenLinkInNewTab(IJSRuntime js, string url)

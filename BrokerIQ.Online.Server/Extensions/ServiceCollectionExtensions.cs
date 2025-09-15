@@ -24,6 +24,7 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<ICustomerDocumentService, CustomerDocumentService>();
             services.AddScoped<IDocumentsRequirementService, DocumentsRequirementService>();
             services.AddScoped<IBrokerDefinedMessageService, BrokerDefinedMessageService>();
+            services.AddScoped<IBrokerConsentDocumentService, BrokerConsentDocumentService>();
             services.AddScoped<IAlertService, AlertService>();
             services.AddScoped<IVideoService, VideoService>();
             services.AddScoped<IAudioService, AudioService>();

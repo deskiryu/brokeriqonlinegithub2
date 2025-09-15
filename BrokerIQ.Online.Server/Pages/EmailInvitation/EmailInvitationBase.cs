@@ -631,7 +631,7 @@ namespace BrokerIQ.Online.Pages
                 message += $"Please download the app for your device.%0aiOS:%0a{appStore}%0aAndroid:%0a{playstore}";
 
                 var url = $"https://wa.me/{telephoneNumber}/?text={message}";
-                await Extensions.NavigateToNewTab(js, url);
+                await ExtensionClass.NavigateToNewTab(js, url);
 
             }
             catch

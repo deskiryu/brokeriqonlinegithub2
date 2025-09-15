@@ -106,7 +106,7 @@ namespace BrokerIQ.Online.Pages
                 await GetCustomers();
                 User = await AccountService.GetUser();
 
-                CustomerCategoriesByRelevance = Extensions.GetAllCustomerCategories();
+                CustomerCategoriesByRelevance = ExtensionClass.GetAllCustomerCategories();
 
                 if (User.IsAdmin)
                 {
@@ -125,7 +125,7 @@ namespace BrokerIQ.Online.Pages
 
                     if (broker.BrokerIdentifier.InsuranceOnly)
                     {
-                        CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                        CustomerCategoriesByRelevance = ExtensionClass.GetFilteredCustomerCategories(new int[] { 0, 2 });
                     }
 
                     await RefreshEmployees();
@@ -347,7 +347,8 @@ namespace BrokerIQ.Online.Pages
             if (targetsName == null && !targetsName.Any())
             {
                 AlertService.Error("No targets chosen or marketing for those targets not allowed");
-            };
+            }
+            ;
 
             //var longlist = string.Join(",", targets);
 
@@ -388,12 +389,14 @@ namespace BrokerIQ.Online.Pages
                     else
                     {
                         AlertService.Error("Notification sending failed");
-                    };
+                    }
+                    ;
                 }
                 else
                 {
                     AlertService.Error("No targets chosen or marketing for those targets not allowed");
-                };
+                }
+                ;
             }
         }
 
