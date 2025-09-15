@@ -19,7 +19,9 @@
     <MudTextField ShrinkLabel Label="Message" @bind-Value="MessagePreview"
         Lines="3" AutoGrow="true"
         Variant="Variant.Outlined"
-        Class="mb-1"/>
+        Class="mb-1"
+        OnBlur="OnPreviewMessageBlur"
+        Immediate="true"/>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="@(f => ClearAutoComplete())" Size="Size.Small">Clear</MudButton>
 </div>
 
@@ -32,7 +34,7 @@
     </div>
 }
 
-@if (ShowInsertDate || ShowInsertTime)
+@* @if (ShowInsertDate || ShowInsertTime)
 {
     <div class="d-flex flex-row">
         @if (ShowInsertDate)
@@ -44,4 +46,4 @@
             <TimeOfDay TimeChanged="InsertTimeToTemplateMessage" />
         }
     </div>
-}
+} *@

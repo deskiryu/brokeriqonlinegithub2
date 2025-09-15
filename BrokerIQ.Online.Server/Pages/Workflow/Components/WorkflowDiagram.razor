@@ -10,10 +10,12 @@
     {
         <div class="arrow">&#8595;</div>
         <WorkflowActivity Step="step" ActivityOptions="ActivityOptions" OnChanged="ActivityChanged"/>
-        <MudStack Row="true" Class="m-1">
+        @if(string.IsNullOrWhiteSpace(step.NextStepId) && string.IsNullOrWhiteSpace(step.AlternateStepId)){
+            <MudStack Row="true" Class="m-1">
                 <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep"/>
-            <MudIconButton Icon="@Icons.Material.Filled.Remove" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveStep(step))" />
-        </MudStack>
+                <MudIconButton Icon="@Icons.Material.Filled.Remove" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveStep(step))" />
+            </MudStack>
+        }
     }
     @* <div class="arrow">&#8595;</div> *@
 

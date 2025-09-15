@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BrokerIQ.Online.Models;
-using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -99,8 +98,8 @@ public partial class TemplateMessageEditor : ComponentBase
         if (DefinedMessage != null)
         {
             MessagePreview = DefinedMessage.Message;
-            ShowInsertDate = DefinedMessage.Message.Contains("INSERT_DATE");
-            ShowInsertTime = DefinedMessage.Message.Contains("INSERT_TIME");
+            // ShowInsertDate = DefinedMessage.Message.Contains("INSERT_DATE");
+            // ShowInsertTime = DefinedMessage.Message.Contains("INSERT_TIME");
             ShowTemplatePdf = !string.IsNullOrEmpty(DefinedMessage.FileName);
             TemplatePdfName = !string.IsNullOrEmpty(DefinedMessage.FileName) ? DefinedMessage.FileName : "";
         }
@@ -116,38 +115,38 @@ public partial class TemplateMessageEditor : ComponentBase
         return MergedMessages.Where(mm => mm.Prompt.ToLower().Contains(value.ToLower())).ToArray();
     }
 
-    protected void InsertDateToTemplateMessage(DateTime? dateIn)
-    {
-        SelectedTemplateDateReplacement = dateIn;
-        UpdatePreviewWithTimes();
-    }
+    // protected void InsertDateToTemplateMessage(DateTime? dateIn)
+    // {
+    //     SelectedTemplateDateReplacement = dateIn;
+    //     UpdatePreviewWithTimes();
+    // }
 
-    protected void InsertTimeToTemplateMessage(TimeSpan? timeIn)
-    {
-        SelectedTemplateTimeReplacement = timeIn;
-        UpdatePreviewWithTimes();
-    }
+    // protected void InsertTimeToTemplateMessage(TimeSpan? timeIn)
+    // {
+    //     SelectedTemplateTimeReplacement = timeIn;
+    //     UpdatePreviewWithTimes();
+    // }
 
-    private void UpdatePreviewWithTimes()
-    {
-        if (DefinedMessage == null)
-        {
-            return;
-        }
+    // private void UpdatePreviewWithTimes()
+    // {
+    //     if (DefinedMessage == null)
+    //     {
+    //         return;
+    //     }
 
-        MessagePreview = DefinedMessage.Message;
-        if (DefinedMessage.Message.Contains("INSERT_DATE") && SelectedTemplateDateReplacement.HasValue)
-        {
-            MessagePreview = MessagePreview.Replace("INSERT_DATE", SelectedTemplateDateReplacement.Value.ToBiqDateString());
-        }
+    //     MessagePreview = DefinedMessage.Message;
+    //     if (DefinedMessage.Message.Contains("INSERT_DATE") && SelectedTemplateDateReplacement.HasValue)
+    //     {
+    //         MessagePreview = MessagePreview.Replace("INSERT_DATE", SelectedTemplateDateReplacement.Value.ToBiqDateString());
+    //     }
 
-        if (DefinedMessage.Message.Contains("INSERT_TIME") && SelectedTemplateTimeReplacement.HasValue)
-        {
-            MessagePreview = MessagePreview.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
-        }
+    //     if (DefinedMessage.Message.Contains("INSERT_TIME") && SelectedTemplateTimeReplacement.HasValue)
+    //     {
+    //         MessagePreview = MessagePreview.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
+    //     }
 
-        MessagePreviewChanged.InvokeAsync(MessagePreview);
-    }
+    //     MessagePreviewChanged.InvokeAsync(MessagePreview);
+    // }
 
     protected async Task ClearAutoComplete()
     {
@@ -164,5 +163,9 @@ public partial class TemplateMessageEditor : ComponentBase
 
         MessagePreview = string.Empty;
         await MessagePreviewChanged.InvokeAsync(MessagePreview);
+    }
+    private void OnPreviewMessageBlur(Microsoft.AspNetCore.Components.Web.FocusEventArgs args)
+    {
+        MessagePreviewChanged.InvokeAsync(MessagePreview);
     }
 }

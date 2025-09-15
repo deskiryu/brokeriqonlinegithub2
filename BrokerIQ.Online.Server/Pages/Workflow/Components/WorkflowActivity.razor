@@ -1,4 +1,6 @@
 ﻿<MudPaper Class="pa-1 ma-1">
+@if(@InEditMode)
+{
     <MudSelect T="int" @bind-Value="Step.ActivityId" Dense="true" Label="Action">
         <MudSelectItem T="int" Value="0">Please Select</MudSelectItem>
         @foreach (var option in ActivityOptions)
@@ -9,4 +11,16 @@
     @if(ActivityParameters.Any()){
         <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="EditParameters" FullWidth="true">Parameters</MudButton>
     }
+}
+else{
+    <div class="d-flex justify-space-between align-center">
+        <MudText Typo="Typo.body2">Action</MudText>
+        <MudSpacer/>
+        <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Edit" Color="Color.Dark" OnClick="@ResetStep"/>
+    </div>
+    <MudText>@SelectedAction</MudText>
+    @if(Step.StepParameters.Any()){
+        @ParametersText
+    }
+}
 </MudPaper>

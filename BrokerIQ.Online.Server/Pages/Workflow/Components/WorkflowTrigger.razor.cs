@@ -12,4 +12,11 @@ public partial class WorkflowTrigger
 
     [Parameter]
     public IEnumerable<TriggerDto> TriggerOptions { get; set; } = Enumerable.Empty<TriggerDto>();
+
+    public string SelectedTrigger => TriggerOptions.First(to => to.Id == Workflow.TriggerId)?.Name;
+
+    private void ResetTrigger()
+    {
+        Workflow.TriggerId = 0;
+    }
 }

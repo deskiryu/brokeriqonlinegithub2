@@ -79,7 +79,7 @@ public partial class ParameterValueDialog : ComponentBase
     private void Confirm()
     {
         var template = ActivityParameters.FirstOrDefault(p => p.Type == "template");
-        if (template is not null)
+        if (template is not null && !string.IsNullOrWhiteSpace(Message))
         {
             StepParameters.First(p => p.Order == template.Order).Value = Message;
         }
