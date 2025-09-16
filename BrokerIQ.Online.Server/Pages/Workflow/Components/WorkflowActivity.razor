@@ -1,7 +1,7 @@
 ﻿<MudPaper Class="pa-1 ma-1">
 @if(@InEditMode)
 {
-    <MudSelect T="int" @bind-Value="Step.ActivityId" Dense="true" Label="Action">
+    <MudSelect T="int" @bind-Value="SelectedActivityId" Dense="true" Label="Action" >
         <MudSelectItem T="int" Value="0">Please Select</MudSelectItem>
         @foreach (var option in ActivityOptions)
         {

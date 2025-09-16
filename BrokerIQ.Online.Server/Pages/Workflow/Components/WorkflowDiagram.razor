@@ -1,64 +1,95 @@
 ﻿@using BrokerIQ.Dto.Dto.Workflows
 
-<div class="workflow-diagram">
-    <WorkflowTrigger Workflow="Workflow" TriggerOptions="TriggerOptions"/>
+<div class= "workflow-diagram" >
+    <WorkflowTrigger Workflow="Workflow" TriggerOptions="TriggerOptions" />
     @if(!Workflow.Steps.Any()){
         <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
     }
-
-     @foreach (var step in Workflow.Steps)
+    @foreach (var step in Workflow.Steps)
     {
+        if(step.IsBranchOption) continue;
+
+        var activity = ActivityOptions.FirstOrDefault(a => a.Id == step.ActivityId);
+
         <div class="arrow">&#8595;</div>
-        <WorkflowActivity Step="step" ActivityOptions="ActivityOptions" OnChanged="ActivityChanged"/>
-        @if(string.IsNullOrWhiteSpace(step.NextStepId) && string.IsNullOrWhiteSpace(step.AlternateStepId)){
+        <WorkflowActivity Step="step" ActivityOptions="ActivityOptions" OnChanged="ActivityChanged" />
+        @if (activity is not null && activity.IsCheckActivity)
+        {
+            var yesStep = Workflow.Steps.FirstOrDefault(s => s.Id == step.NextStepId);
+
+            var noStep = Workflow.Steps.FirstOrDefault(s => s.Id == step.AlternateStepId);
+
+            <div class="branches">
+                <div class="branch">
+                    <div class="arrow">&#8601;</div>
+                    <div class="branch-label">Yes</div>
+                    <WorkflowActivity Step="yesStep" ActivityOptions="NonCheckActivityOptions" OnChanged="ActivityChanged" />
+                </div>
+                <div class="branch">
+                    <div class="arrow">&#8600;</div>
+                    <div class="branch-label">No</div>
+                    <WorkflowActivity Step="noStep" ActivityOptions="NonCheckActivityOptions" OnChanged="ActivityChanged" />
+                </div>
+            </div>
+        }
+
+        @if (step == Workflow.Steps.Last(s => !s.IsBranchOption))
+        {
             <MudStack Row="true" Class="m-1">
-                <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep"/>
-                <MudIconButton Icon="@Icons.Material.Filled.Remove" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => RemoveStep(step))" />
+                @if(step.ActivityId != FinishActivity.Id){
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
+                }
+                <MudIconButton Icon="@Icons.Material.Filled.Remove" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
+                    OnClick="@(() => RemoveStep(step))" />
             </MudStack>
         }
     }
-    @* <div class="arrow">&#8595;</div> *@
-
 </div>
 
 <style>
-.workflow-diagram {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+    .workflow-diagram {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-.arrow {
-    font-size: 24px;
-}
-.branches {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-.branch {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.branch-label {
-    font-size: 0.8em;
-    color: #666;
-    margin-bottom: 2px;
-}
-.details {
-    font-size: 0.8em;
-    color: #666;
-}
-.attachment-list {
-    list-style-type: none;
-    padding-left: 0;
-    margin-top: 4px;
-}
-.attachment-list li {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-}
+    .arrow {
+        font-size: 24px;
+    }
+
+    .branches {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .branch {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .branch-label {
+        font-size: 0.8em;
+        color: #666;
+        margin-bottom: 2px;
+    }
+
+    .details {
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    .attachment-list {
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 4px;
+    }
+
+    .attachment-list li {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
 </style>

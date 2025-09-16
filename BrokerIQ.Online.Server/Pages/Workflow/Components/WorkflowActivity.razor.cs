@@ -23,7 +23,32 @@ public partial class WorkflowActivity
     [Parameter] public EventCallback OnChanged { get; set; }
     private Task HasChanged() => OnChanged.InvokeAsync();
 
-    public bool InEditMode { get; set; }
+    private int SelectedActivityId
+    {
+        get => Step.ActivityId;
+        set
+        {
+            if (Step.ActivityId == value) return;
+
+            Step.ActivityId = value;
+            Step.StepParameters = BuildCurrentParameters();
+
+            HasChanged();
+        }
+    }
+
+    public bool InEditMode
+    {
+        get
+        {
+            if (Step.ActivityId == 0) return true;
+
+            var activity = ActivityOptions.FirstOrDefault(a => a.Id == Step.ActivityId);
+            if (!activity.Parameters.Any()) return false;
+
+            return Step.StepParameters.Any(p => string.IsNullOrWhiteSpace(p.Value));
+        }
+    }
 
     public string SelectedAction => ActivityOptions.First(a => a.Id == Step.ActivityId)?.Description;
 
@@ -65,11 +90,6 @@ public partial class WorkflowActivity
         }
     }
 
-    protected override void OnInitialized()
-    {
-        InEditMode = Step.ActivityId == 0;
-    }
-
     private IEnumerable<ActivityParameterDto> ActivityParameters
     {
         get
@@ -86,7 +106,7 @@ public partial class WorkflowActivity
         var dialogParams = new DialogParameters
             {
                 { "ActivityParameters", ActivityParameters},
-                { "StepParameters", BuildCurrentParameters() }
+                { "StepParameters", Step.StepParameters }
             };
 
         var options = new DialogOptions() { MaxWidth = MaxWidth.Medium };
@@ -96,7 +116,6 @@ public partial class WorkflowActivity
         if (!dialogResult.Canceled)
         {
             Step.StepParameters = dialogResult.Data as StepParameterDto[];
-            InEditMode = false;
 
             await HasChanged();
         }
@@ -120,6 +139,5 @@ public partial class WorkflowActivity
     private void ResetStep()
     {
         Step.ActivityId = 0;
-        InEditMode = true;
     }
 }
