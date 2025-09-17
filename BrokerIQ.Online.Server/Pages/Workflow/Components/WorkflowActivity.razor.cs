@@ -37,18 +37,8 @@ public partial class WorkflowActivity
         }
     }
 
-    public bool InEditMode
-    {
-        get
-        {
-            if (Step.ActivityId == 0) return true;
+    public bool InEditMode { get; set; }
 
-            var activity = ActivityOptions.FirstOrDefault(a => a.Id == Step.ActivityId);
-            if (!activity.Parameters.Any()) return false;
-
-            return Step.StepParameters.Any(p => string.IsNullOrWhiteSpace(p.Value));
-        }
-    }
 
     public string SelectedAction => ActivityOptions.First(a => a.Id == Step.ActivityId)?.Description;
 
@@ -117,6 +107,8 @@ public partial class WorkflowActivity
         {
             Step.StepParameters = dialogResult.Data as StepParameterDto[];
 
+            InEditMode = Step.StepParameters.Any(p => string.IsNullOrWhiteSpace(p.Value));
+
             await HasChanged();
         }
     }
@@ -138,6 +130,6 @@ public partial class WorkflowActivity
 
     private void ResetStep()
     {
-        Step.ActivityId = 0;
+        InEditMode = true;
     }
 }
