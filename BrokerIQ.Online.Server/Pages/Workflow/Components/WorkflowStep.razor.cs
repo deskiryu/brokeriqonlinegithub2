@@ -3,16 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Workflows;
+using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Extensions;
+using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace BrokerIQ.Online.Server.Pages.Workflow.Components;
 
-public partial class WorkflowActivity
+public partial class WorkflowStep
 {
     [Inject]
     IDialogService DialogService { get; set; }
+
+    [Inject]
+    public IVideoService VideoService { get; set; }
+
+    [Parameter]
+    public User User { get; set; }
 
     [Parameter]
     public StepDto Step { get; set; } = new();
@@ -22,6 +30,8 @@ public partial class WorkflowActivity
 
     [Parameter] public EventCallback OnChanged { get; set; }
     private Task HasChanged() => OnChanged.InvokeAsync();
+
+    public IEnumerable<Models.Video> BrokerVideos { get; set; }
 
     private int SelectedActivityId
     {
@@ -39,37 +49,35 @@ public partial class WorkflowActivity
 
     public bool InEditMode { get; set; }
 
-
     public string SelectedAction => ActivityOptions.First(a => a.Id == Step.ActivityId)?.Description;
 
     public MarkupString ParametersText
     {
         get
         {
-            if (!Step.StepParameters.Any()) return new MarkupString();
+            if (!Step.StepParameters.Any() || BrokerVideos == null) return new MarkupString();
 
-            var result = "</BR></BR>";
+            var result = "";
             foreach (var param in Step.StepParameters)
             {
                 var activityParam = ActivityParameters.First(p => p.Order == param.Order);
 
-                if (result != "</BR></BR>")
-                {
-                    result += "</BR>";
-                }
-
                 switch (activityParam.Type)
                 {
                     case "text":
-                        result += $"{activityParam.Label}: \" {param.Value}\"";
+                        result += $"<div>{activityParam.Label}: \" {param.Value}\"</div>";
                         break;
                     case "template":
-                        result += $"{activityParam.Label}: \"{param.Value}\"";
+                        result += $"<div>{activityParam.Label}: \"{param.Value}\"</div>";
                         break;
                     case "timespan":
                         result += TimeSpan.TryParse(param.Value, out var timespan) ?
-                             $"{activityParam.Label}: {timespan.Humanize()}" :
-                             $"{activityParam.Label}:";
+                             $"<div>{activityParam.Label}: {timespan.Humanize()}</div>" :
+                             $"<div>{activityParam.Label}:</div>";
+                        break;
+                    case "videourl":
+                        var video = BrokerVideos.FirstOrDefault(v => v.Id.ToString() == param.Value);
+                        if (video != null) result += $"<div>{activityParam.Label}: {video.Name}</div>";
                         break;
                     default:
                         continue;
@@ -91,12 +99,20 @@ public partial class WorkflowActivity
         }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        BrokerVideos = (await VideoService.GetVideos(User.MasterBrokerId)).ToList();
+    }
+
     async Task EditParameters()
     {
         var dialogParams = new DialogParameters
             {
-                { "ActivityParameters", ActivityParameters},
-                { "StepParameters", Step.StepParameters }
+                { "Activity", ActivityOptions.First(a => a.Id == SelectedActivityId)},
+                { "Step", Step },
+                { "User", User },
+                { "BrokerVideos", BrokerVideos }
+
             };
 
         var options = new DialogOptions() { MaxWidth = MaxWidth.Medium };
@@ -105,7 +121,7 @@ public partial class WorkflowActivity
 
         if (!dialogResult.Canceled)
         {
-            Step.StepParameters = dialogResult.Data as StepParameterDto[];
+            Step = dialogResult.Data as StepDto;
 
             InEditMode = Step.StepParameters.Any(p => string.IsNullOrWhiteSpace(p.Value));
 

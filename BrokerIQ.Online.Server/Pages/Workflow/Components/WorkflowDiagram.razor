@@ -12,7 +12,7 @@
         var activity = ActivityOptions.FirstOrDefault(a => a.Id == step.ActivityId);
 
         <div class="arrow">&#8595;</div>
-        <WorkflowActivity Step="step" ActivityOptions="ActivityOptions" OnChanged="ActivityChanged" />
+        <WorkflowStep User="User" Step="step" ActivityOptions="ActivityOptions" OnChanged="ActivityChanged" />
         @if (activity is not null && activity.IsCheckActivity)
         {
             var yesStep = Workflow.Steps.FirstOrDefault(s => s.Id == step.NextStepId);
@@ -23,12 +23,12 @@
                 <div class="branch">
                     <div class="arrow">&#8601;</div>
                     <div class="branch-label">Yes</div>
-                    <WorkflowActivity Step="yesStep" ActivityOptions="NonCheckActivityOptions" OnChanged="ActivityChanged" />
+                    <WorkflowStep User="User" Step="yesStep" ActivityOptions="NonCheckActivityOptions" OnChanged="ActivityChanged" />
                 </div>
                 <div class="branch">
                     <div class="arrow">&#8600;</div>
                     <div class="branch-label">No</div>
-                    <WorkflowActivity Step="noStep" ActivityOptions="NonCheckActivityOptions" OnChanged="ActivityChanged" />
+                    <WorkflowStep User="User" Step="noStep" ActivityOptions="NonCheckActivityOptions" OnChanged="ActivityChanged" />
                 </div>
             </div>
         }

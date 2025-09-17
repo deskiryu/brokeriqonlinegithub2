@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,6 +10,7 @@ using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
+using System.Collections.Generic;
 
 namespace BrokerIQ.Online.Server.Pages.Workflow.Components;
 
@@ -18,9 +18,6 @@ public partial class ParameterValueDialog : ComponentBase
 {
     [Inject]
     public IMapper Mapper { get; set; }
-
-    [Inject]
-    public IAccountService AccountService { get; set; }
 
     [Inject]
     public IBrokerService BrokerService { get; set; }
@@ -32,27 +29,35 @@ public partial class ParameterValueDialog : ComponentBase
     MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public IEnumerable<ActivityParameterDto> ActivityParameters { get; set; }
+    public ActivityDto Activity { get; set; }
 
     [Parameter]
-    public ICollection<StepParameterDto> StepParameters { get; set; }
+    public StepDto Step { get; set; }
 
-    public Online.Models.Broker Broker { get; set; }
+    [Parameter]
+    public User User { get; set; }
 
-    public Online.Models.Customer SampleCustomer { get; set; }
+    [Parameter]
+    public IEnumerable<Models.Video> BrokerVideos { get; set; }
 
-    public Online.Models.Customer SampleConnection { get; set; }
+    private Online.Models.Broker Broker { get; set; }
 
-    public BrokerDefinedMessage Template { get; set; }
+    private Online.Models.Customer SampleCustomer { get; set; }
+
+    private Online.Models.Customer SampleConnection { get; set; }
+
+    private BrokerDefinedMessage Template { get; set; }
 
     public string Message { get; set; }
 
+    //private IList<IBrowserFile> _files = new List<IBrowserFile>();
+
     protected override async Task OnInitializedAsync()
     {
-        var template = ActivityParameters.FirstOrDefault(p => p.Type == "template");
+        var template = Activity.Parameters.FirstOrDefault(p => p.Type == "template");
         if (template is not null)
         {
-            Message = StepParameters.First(p => p.Order == template.Order).Value;
+            Message = Step.StepParameters.First(p => p.Order == template.Order).Value;
         }
 
         SampleCustomer = new Online.Models.Customer()
@@ -67,9 +72,14 @@ public partial class ParameterValueDialog : ComponentBase
             LastName = "Smith"
         };
 
-        var user = await AccountService.GetUser();
-        Broker = await BrokerService.GetBroker(user.MasterBrokerId);
+        Broker = await BrokerService.GetBroker(User.MasterBrokerId);
     }
+
+    // private void UploadFiles(IBrowserFile file)
+    // {
+    //     _files.Add(file);
+    //     //TODO upload the files to the server
+    // }
 
     private void Cancel()
     {
@@ -78,12 +88,12 @@ public partial class ParameterValueDialog : ComponentBase
 
     private void Confirm()
     {
-        var template = ActivityParameters.FirstOrDefault(p => p.Type == "template");
+        var template = Activity.Parameters.FirstOrDefault(p => p.Type == "template");
         if (template is not null && !string.IsNullOrWhiteSpace(Message))
         {
-            StepParameters.First(p => p.Order == template.Order).Value = Message;
+            Step.StepParameters.First(p => p.Order == template.Order).Value = Message;
         }
 
-        MudDialog.Close(StepParameters);
+        MudDialog.Close(Step);
     }
 }

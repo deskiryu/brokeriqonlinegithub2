@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Workflows;
+using BrokerIQ.Online.Models;
+using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 
 namespace BrokerIQ.Online.Server.Pages.Workflow.Components;
 
 public partial class WorkflowDiagram
 {
+    [Inject]
+    public IAccountService AccountService { get; set; }
+
     [Parameter]
     public WorkflowDto Workflow { get; set; } = new();
 
@@ -21,11 +26,18 @@ public partial class WorkflowDiagram
     [Parameter] public EventCallback OnChanged { get; set; }
     private Task HasChanged() => OnChanged.InvokeAsync();
 
+    private User User { get; set; }
+
     public IEnumerable<ActivityDto> CheckActivityOptions => ActivityOptions.Where(a => a.IsCheckActivity).ToArray();
 
     public IEnumerable<ActivityDto> NonCheckActivityOptions => ActivityOptions.Where(a => !a.IsCheckActivity).ToArray();
 
     public ActivityDto FinishActivity => ActivityOptions.First(a => a.Id == -1);
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await AccountService.GetUser();
+    }
 
     protected void AddStep()
     {

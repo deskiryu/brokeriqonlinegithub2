@@ -1,8 +1,8 @@
 @using BrokerIQ.Online.Server.Components
 <MudDialog>
     <DialogContent>
-        @foreach(var param in StepParameters){
-            var activityParam = ActivityParameters.First(p => p.Order == param.Order);
+        @foreach(var param in Step.StepParameters){
+            var activityParam = Activity.Parameters.First(p => p.Order == param.Order);
 
             switch(activityParam.Type){
                 case "text":
@@ -16,10 +16,43 @@
                 case "timespan":
                      <TimeControl @bind-Value="param.Value"/>
                     break;
+                case "videourl":
+                    if(BrokerVideos != null){
+                        <MudSelect T="string" @bind-Value="param.Value" Dense="true" Label="Video" >
+                            <MudSelectItem T="string" Value="0.ToString()">Please Select</MudSelectItem>
+                            @foreach (var video in BrokerVideos)
+                            {
+                                <MudSelectItem T="string" Value="@video.Id.ToString()">@video.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                    break;
                 default:
                     continue;
             }
         }
+        @* @if(Activity.AcceptsAttachment){
+            <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" AppendMultipleFiles="false">
+                <ActivatorContent>
+                    <MudButton Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            StartIcon="@Icons.Material.Filled.CloudUpload">
+                        Upload Files
+                    </MudButton>
+                </ActivatorContent>
+            </MudFileUpload>
+            @if (_files != null)
+            {
+                <MudList T="string">
+                    @foreach (var file in _files)
+                    {
+                        <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
+                            @file.Name <code>@file.Size bytes</code>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+        } *@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
