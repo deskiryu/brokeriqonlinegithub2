@@ -1,0 +1,85 @@
+<div class="branch">
+@{
+    var currentStep = InitialStep;
+
+    while(currentStep != null){
+        var tmp = currentStep;
+
+        <div class="arrow">&#8595;</div>
+        <WorkflowStep User="User" Step="tmp" Activities="Activities" OnChanged="OnStepChange" />
+        if (UsesBranchingActivity(tmp))
+        {
+            <div class="branches">
+                <div class="branch">
+                    @* <div class="arrow">&#8601;</div> *@
+                    <div class="branch-label">Yes</div>
+                    @if(!string.IsNullOrWhiteSpace(tmp.NextStepId)){
+                        <WorkflowPath Steps ="Steps"
+                                    InitialStep="Steps.First(s => s.Id == tmp.NextStepId)"
+                                    Activities="Activities"
+                                    User="User"
+                                    OnChanged="OnStepChange"/>
+                    }
+                    else{
+                        <MudIconButton Icon="@Icons.Material.Filled.Add"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Primary"
+                                    Size="Size.Small"
+                                    OnClick="() => AddNextStepFor(tmp)" />
+                    }
+                </div>
+                @if(string.IsNullOrWhiteSpace(tmp.NextStepId) && string.IsNullOrWhiteSpace(tmp.NextStepId) ){
+                    <div>
+                        <MudIconButton Icon="@Icons.Material.Filled.Remove"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Error"
+                                    Size="Size.Small"
+                                    OnClick="@(() => RemoveStep(tmp))" />
+                    </div>
+                }
+                <div class="branch">
+                    @* <div class="arrow">&#8600;</div> *@
+                    <div class="branch-label">No</div>
+                    @if(!string.IsNullOrWhiteSpace(tmp.AlternateStepId)){
+                        <WorkflowPath Steps ="Steps"
+                                    InitialStep="Steps.First(s => s.Id == tmp.AlternateStepId)"
+                                    Activities="Activities"
+                                    User="User"
+                                    OnChanged="OnStepChange"/>
+                    }
+                    else{
+                        <MudIconButton Icon="@Icons.Material.Filled.Add"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Primary"
+                                    Size="Size.Small"
+                                    OnClick="() => AddAlternateStepFor(tmp)" />
+                    }
+                </div>
+            </div>
+
+            break;
+        }
+        else
+        {
+            <MudStack Row="true">
+                @if(tmp.ActivityId != FinishActivity.Id && string.IsNullOrWhiteSpace(tmp.NextStepId)){
+                    <MudIconButton Icon="@Icons.Material.Filled.Add"
+                                Variant="Variant.Filled"
+                                Color="Color.Primary"
+                                Size="Size.Small"
+                                OnClick="() => AddNextStepFor(tmp)" />
+                }
+                @if(string.IsNullOrWhiteSpace(tmp.NextStepId)){
+                    <MudIconButton Icon="@Icons.Material.Filled.Remove"
+                                Variant="Variant.Filled"
+                                Color="Color.Error"
+                                Size="Size.Small"
+                                OnClick="@(() => RemoveStep(tmp))" />
+                }
+            </MudStack>
+        }
+
+        currentStep = Steps.FirstOrDefault(s => s.Id == currentStep.NextStepId);
+    }
+}
+</div>

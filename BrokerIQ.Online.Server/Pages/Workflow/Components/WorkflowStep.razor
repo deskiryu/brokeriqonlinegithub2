@@ -3,7 +3,7 @@
 {
     <MudSelect T="int" @bind-Value="SelectedActivityId" Dense="true" Label="Action" >
         <MudSelectItem T="int" Value="0">Please Select</MudSelectItem>
-        @foreach (var option in ActivityOptions)
+        @foreach (var option in Activities)
         {
             <MudSelectItem T="int" Value="@option.Id">@option.Description</MudSelectItem>
         }

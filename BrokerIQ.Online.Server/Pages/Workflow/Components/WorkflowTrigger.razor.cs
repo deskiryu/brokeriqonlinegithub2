@@ -11,9 +11,9 @@ public partial class WorkflowTrigger
     public WorkflowDto Workflow { get; set; } = new();
 
     [Parameter]
-    public IEnumerable<TriggerDto> TriggerOptions { get; set; } = Enumerable.Empty<TriggerDto>();
+    public IEnumerable<TriggerDto> Triggers { get; set; } = Enumerable.Empty<TriggerDto>();
 
-    public string SelectedTrigger => TriggerOptions.First(to => to.Id == Workflow.TriggerId)?.Name;
+    public string SelectedTrigger => Triggers.First(to => to.Id == Workflow.TriggerId)?.Name;
 
     private void ResetTrigger()
     {

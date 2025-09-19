@@ -1,95 +1,81 @@
 ﻿@using BrokerIQ.Dto.Dto.Workflows
 
-<div class= "workflow-diagram" >
-    <WorkflowTrigger Workflow="Workflow" TriggerOptions="TriggerOptions" />
+<div class="workflow-diagram" >
+    <WorkflowTrigger Workflow="Workflow" Triggers="Triggers" />
     @if(!Workflow.Steps.Any()){
-        <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
+        <MudIconButton Icon="@Icons.Material.Filled.Add"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Size="Size.Small"
+                       OnClick="AddInitialStep" />
     }
-    @foreach (var step in Workflow.Steps)
-    {
-        if(step.IsBranchOption) continue;
 
-        var activity = ActivityOptions.FirstOrDefault(a => a.Id == step.ActivityId);
-
-        <div class="arrow">&#8595;</div>
-        <WorkflowStep User="User" Step="step" ActivityOptions="ActivityOptions" OnChanged="ActivityChanged" />
-        @if (activity is not null && activity.IsCheckActivity)
-        {
-            var yesStep = Workflow.Steps.FirstOrDefault(s => s.Id == step.NextStepId);
-
-            var noStep = Workflow.Steps.FirstOrDefault(s => s.Id == step.AlternateStepId);
-
-            <div class="branches">
-                <div class="branch">
-                    <div class="arrow">&#8601;</div>
-                    <div class="branch-label">Yes</div>
-                    <WorkflowStep User="User" Step="yesStep" ActivityOptions="NonCheckActivityOptions" OnChanged="ActivityChanged" />
-                </div>
-                <div class="branch">
-                    <div class="arrow">&#8600;</div>
-                    <div class="branch-label">No</div>
-                    <WorkflowStep User="User" Step="noStep" ActivityOptions="NonCheckActivityOptions" OnChanged="ActivityChanged" />
-                </div>
-            </div>
-        }
-
-        @if (step == Workflow.Steps.Last(s => !s.IsBranchOption))
-        {
-            <MudStack Row="true" Class="m-1">
-                @if(step.ActivityId != FinishActivity.Id){
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddStep" />
-                }
-                <MudIconButton Icon="@Icons.Material.Filled.Remove" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
-                    OnClick="@(() => RemoveStep(step))" />
-            </MudStack>
-        }
+    @if(Workflow.Steps.Any()){
+        <WorkflowPath Steps ="Workflow.Steps"
+                      InitialStep="Workflow.Steps.First()"
+                      Activities="Activities"
+                      User="User"
+                      OnChanged="OnPathChange"/>
     }
 </div>
 
 <style>
-    .workflow-diagram {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+.workflow-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-    .arrow {
-        font-size: 24px;
-    }
+.activity-box {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin: 4px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    min-width: 200px;
+    text-align: center;
+}
 
-    .branches {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-    }
+.arrow {
+    font-size: 24px;
+}
 
-    .branch {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+.branches {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    border-radius: 3px;
+    border-width: 1px;
+    border-color: gray;
+}
 
-    .branch-label {
-        font-size: 0.8em;
-        color: #666;
-        margin-bottom: 2px;
-    }
+.branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-    .details {
-        font-size: 0.8em;
-        color: #666;
-    }
+.branch-label {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 2px;
+}
 
-    .attachment-list {
-        list-style-type: none;
-        padding-left: 0;
-        margin-top: 4px;
-    }
+.details {
+    font-size: 0.8em;
+    color: #666;
+}
 
-    .attachment-list li {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-    }
+.attachment-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 4px;
+}
+
+.attachment-list li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
 </style>

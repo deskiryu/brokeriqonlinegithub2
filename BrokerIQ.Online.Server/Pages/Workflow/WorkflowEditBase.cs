@@ -10,6 +10,7 @@ using BrokerIQ.Online.Server.Shared;
 using System;
 using BrokerIQ.Online.Server.Components;
 using System.Linq;
+using System.Diagnostics;
 
 namespace BrokerIQ.Online.Server.Pages.Workflow;
 
@@ -29,9 +30,9 @@ public class WorkflowEditBase : ComponentBase
 
     protected WorkflowDto Workflow = new();
 
-    protected IEnumerable<TriggerDto> _triggerOptions;
+    protected IEnumerable<TriggerDto> _triggers;
 
-    protected IEnumerable<ActivityDto> _activityOptions;
+    protected IEnumerable<ActivityDto> _activities;
 
     protected string ActiveButtonLabel => Workflow.IsActive ? "Deactivate" : "Activate";
 
@@ -44,8 +45,8 @@ public class WorkflowEditBase : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        _triggerOptions = await WorkflowService.GetTriggersAsync();
-        _activityOptions = await WorkflowService.GetActivitiesAsync();
+        _triggers = await WorkflowService.GetTriggersAsync();
+        _activities = await WorkflowService.GetActivitiesAsync();
 
         if (!string.IsNullOrWhiteSpace(WorkflowId))
         {
@@ -72,6 +73,11 @@ public class WorkflowEditBase : ComponentBase
             Workflow.IsActive = !result.Canceled;
         }
 
+        if (Workflow.IsActive)
+        {
+            CleanLooseEnds();
+        }
+
         try
         {
             Workflow = await WorkflowService.SaveAsync(Workflow);
@@ -81,6 +87,34 @@ public class WorkflowEditBase : ComponentBase
         catch
         {
             Snackbar.Add("Unable to save workflow.", Severity.Error);
+        }
+    }
+
+    private void CleanLooseEnds()
+    {
+        var unfinishedSteps = Workflow.Steps
+            .Where(s => s.ActivityId != -1 && (string.IsNullOrWhiteSpace(s.NextStepId) || string.IsNullOrWhiteSpace(s.AlternateStepId)))
+            .ToList();
+
+        foreach (var step in unfinishedSteps)
+        {
+            var activity = _activities.First(a => a.Id == step.ActivityId);
+
+            if (string.IsNullOrWhiteSpace(step.NextStepId))
+            {
+                var newStep = new StepDto() { ActivityId = -1 };
+                step.NextStepId = newStep.Id;
+
+                Workflow.Steps.Add(newStep);
+            }
+
+            if (activity.IsBranchingActivity && string.IsNullOrWhiteSpace(step.AlternateStepId))
+            {
+                var newStep = new StepDto() { ActivityId = -1 };
+                step.AlternateStepId = newStep.Id;
+
+                Workflow.Steps.Add(newStep);
+            }
         }
     }
 

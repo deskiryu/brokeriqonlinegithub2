@@ -26,7 +26,7 @@ public partial class WorkflowStep
     public StepDto Step { get; set; } = new();
 
     [Parameter]
-    public IEnumerable<ActivityDto> ActivityOptions { get; set; } = Enumerable.Empty<ActivityDto>();
+    public IEnumerable<ActivityDto> Activities { get; set; } = Enumerable.Empty<ActivityDto>();
 
     [Parameter] public EventCallback OnChanged { get; set; }
     private Task HasChanged() => OnChanged.InvokeAsync();
@@ -43,13 +43,27 @@ public partial class WorkflowStep
             Step.ActivityId = value;
             Step.StepParameters = BuildCurrentParameters();
 
+            if (!Activities.First(a => a.Id == Step.ActivityId).IsBranchingActivity)
+            {
+                Step.AlternateStepId = null;
+            }
+
+            InEditMode = Activities.First(a => a.Id == Step.ActivityId).Parameters.Any();
+
             HasChanged();
         }
     }
 
     public bool InEditMode { get; set; }
 
-    public string SelectedAction => ActivityOptions.First(a => a.Id == Step.ActivityId)?.Description;
+    public string SelectedAction
+    {
+        get
+        {
+            var action = Activities.FirstOrDefault(a => a.Id == Step.ActivityId);
+            return action == null ? string.Empty : action.Description;
+        }
+    }
 
     public MarkupString ParametersText
     {
@@ -92,7 +106,7 @@ public partial class WorkflowStep
     {
         get
         {
-            var selected = ActivityOptions.FirstOrDefault(a => a.Id == Step.ActivityId);
+            var selected = Activities.FirstOrDefault(a => a.Id == Step.ActivityId);
             if (selected is null) return Array.Empty<ActivityParameterDto>();
 
             return selected.Parameters;
@@ -102,13 +116,15 @@ public partial class WorkflowStep
     protected override async Task OnInitializedAsync()
     {
         BrokerVideos = (await VideoService.GetVideos(User.MasterBrokerId)).ToList();
+        InEditMode = Step.ActivityId == 0;
     }
 
     async Task EditParameters()
     {
+        var selectedActivity = Activities.First(a => a.Id == SelectedActivityId);
         var dialogParams = new DialogParameters
             {
-                { "Activity", ActivityOptions.First(a => a.Id == SelectedActivityId)},
+                { "Activity", selectedActivity},
                 { "Step", Step },
                 { "User", User },
                 { "BrokerVideos", BrokerVideos }
@@ -123,7 +139,7 @@ public partial class WorkflowStep
         {
             Step = dialogResult.Data as StepDto;
 
-            InEditMode = Step.StepParameters.Any(p => string.IsNullOrWhiteSpace(p.Value));
+            InEditMode = selectedActivity.Parameters.Any() && Step.StepParameters.Any(p => string.IsNullOrWhiteSpace(p.Value));
 
             await HasChanged();
         }
