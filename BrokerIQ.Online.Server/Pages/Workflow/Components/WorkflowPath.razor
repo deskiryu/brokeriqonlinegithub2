@@ -1,5 +1,6 @@
-<div class="branch">
-@{
+<MudPaper Elevation="3"
+          Outlined="true"
+              Class="d-flex flex-column align-center pa-1 ma-1"> @{
     var currentStep = InitialStep;
 
     while(currentStep != null){
@@ -9,10 +10,9 @@
         <WorkflowStep User="User" Step="tmp" Activities="Activities" OnChanged="OnStepChange" />
         if (UsesBranchingActivity(tmp))
         {
-            <div class="branches">
-                <div class="branch">
-                    @* <div class="arrow">&#8601;</div> *@
-                    <div class="branch-label">Yes</div>
+            <div class="d-flex justify-space-around">
+                <div class="d-flex flex-column align-center flex-grow-1">
+                    <MudText Typo="Typo.button">Yes</MudText>
                     @if(!string.IsNullOrWhiteSpace(tmp.NextStepId)){
                         <WorkflowPath Steps ="Steps"
                                     InitialStep="Steps.First(s => s.Id == tmp.NextStepId)"
@@ -37,9 +37,8 @@
                                     OnClick="@(() => RemoveStep(tmp))" />
                     </div>
                 }
-                <div class="branch">
-                    @* <div class="arrow">&#8600;</div> *@
-                    <div class="branch-label">No</div>
+                <div class="d-flex flex-column align-center">
+                    <MudText Typo="Typo.button">No</MudText>
                     @if(!string.IsNullOrWhiteSpace(tmp.AlternateStepId)){
                         <WorkflowPath Steps ="Steps"
                                     InitialStep="Steps.First(s => s.Id == tmp.AlternateStepId)"
@@ -82,4 +81,4 @@
         currentStep = Steps.FirstOrDefault(s => s.Id == currentStep.NextStepId);
     }
 }
-</div>
+</MudPaper>
