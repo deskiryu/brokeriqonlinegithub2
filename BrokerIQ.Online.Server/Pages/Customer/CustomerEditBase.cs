@@ -77,7 +77,7 @@ namespace BrokerIQ.Online.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            CustomerCategoriesByRelevance = Extensions.GetAllCustomerCategories();
+            CustomerCategoriesByRelevance = ExtensionClass.GetAllCustomerCategories();
 
             id = Int32.Parse(CustomerId);
 
@@ -93,7 +93,7 @@ namespace BrokerIQ.Online.Pages
 
                 if (Broker.BrokerIdentifier.InsuranceOnly)
                 {
-                    CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                    CustomerCategoriesByRelevance = ExtensionClass.GetFilteredCustomerCategories(new int[] { 0, 2 });
                 }
             }
         }

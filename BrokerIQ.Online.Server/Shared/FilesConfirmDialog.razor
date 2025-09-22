@@ -7,7 +7,7 @@
 @functions {
     async void PreviewFile(MemoryStream ms)
     {
-        await Extensions.PreviewFile(js, ms);
+        await ExtensionClass.PreviewFile(js, ms);
     }
 }
 
@@ -22,37 +22,42 @@
             {
                 @if (!string.IsNullOrEmpty(Message))
                 {
-                    <MudText Style="white-space: pre-line;">@Message</MudText>                  
+                    <MudText Style="white-space: pre-line;">@Message</MudText>
                 }
 
                 @if (@OverSized)
                 {
                     <MudText Style="white-space: pre-line;">Some files were too big</MudText>
-                    
+
                 }
                 @if (FileNameAndStreams.Any())
                 {
-                     <MudText Style="white-space: pre-line;">The following file(s) :</MudText>
-                    @foreach(var fileName in FileNameAndStreams)
+                    <MudText Style="white-space: pre-line;">The following file(s) :</MudText>
+                    @foreach (var fileName in FileNameAndStreams)
                     {
-                        <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">@fileName.Item1</MudText>                  
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudButton>                  
+                        <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">
+                            @fileName.Item1</MudText>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+                            OnClick="f => PreviewFile(fileName.Item2)">Preview Pdf</MudButton>
                     }
 
                     <MudText Style="white-space: pre-line;">will be sent to this client </MudText>
-                    <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">@Client</MudText>
+                    <MudText Style="white-space: pre-line; font-weight: bold; margin-top: 5px; margin-bottom: 5px">@Client
+                    </MudText>
 
                     @if (string.IsNullOrEmpty(Message))
                     {
-                        <MudText Style="white-space: pre-line;">along with a notification</MudText>                   
-                    }                           
+                        <MudText Style="white-space: pre-line;">along with a notification</MudText>
+                    }
                 }
             }
         </MudContainer>
     </DialogContent>
     <DialogActions>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Cancel">Cancel</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" OnClick="Ok">Continue</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+            OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+            OnClick="Ok">Continue</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -78,7 +83,7 @@
     {
         await base.OnInitializedAsync();
 
-        if(!string.IsNullOrEmpty(Oversize) &&  Oversize.Contains("true"))
+        if (!string.IsNullOrEmpty(Oversize) && Oversize.Contains("true"))
         {
             OverSized = true;
         }
@@ -86,12 +91,12 @@
         Loading = false;
         FileNameAndStreams = new List<(string, MemoryStream)>();
 
-        if(FileNames.Count == MemoryStreams.Count)
+        if (FileNames.Count == MemoryStreams.Count)
         {
-            for(int i=0; i<FileNames.Count; i++)
+            for (int i = 0; i < FileNames.Count; i++)
             {
                 FileNameAndStreams.Add((FileNames[i], MemoryStreams[i]));
-            }            
+            }
         }
 
     }

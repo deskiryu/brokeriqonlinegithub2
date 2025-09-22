@@ -268,7 +268,7 @@ namespace BrokerIQ.Online.Pages
 
             ClearUnReadChat();
 
-            CustomerCategoriesByRelevance = Extensions.GetAllCustomerCategories();
+            CustomerCategoriesByRelevance = ExtensionClass.GetAllCustomerCategories();
 
             try
             {
@@ -277,7 +277,7 @@ namespace BrokerIQ.Online.Pages
 
                 Connection = await CustomerService.GetConnection(Customer.Id);
 
-                CustomerDocuments = (await GetCustomerDocuments(isInitialLoad :true));
+                CustomerDocuments = (await GetCustomerDocuments(isInitialLoad: true));
                 ResetUploadsBadge();
 
                 await SetNotesFromInterval(DateTime.UtcNow.AddMonths(DefaultMonthsToShow), DateTime.UtcNow);
@@ -292,7 +292,7 @@ namespace BrokerIQ.Online.Pages
 
                     if (!Broker.ProvidesMortgageServices && !Broker.ProvidesWealthServices)
                     {
-                        CustomerCategoriesByRelevance = Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                        CustomerCategoriesByRelevance = ExtensionClass.GetFilteredCustomerCategories(new int[] { 0, 2 });
 
                     }
 
@@ -383,7 +383,7 @@ namespace BrokerIQ.Online.Pages
                 if (connectionDocuments.Data != null) documents.AddRange(connectionDocuments.Data);
             }
 
-            return isInitialLoad? documents.OrderByDescending(d => d.CreatedDate) : documents;
+            return isInitialLoad ? documents.OrderByDescending(d => d.CreatedDate) : documents;
         }
 
         private async Task SetUserCalendlyDetails()
@@ -1260,7 +1260,7 @@ namespace BrokerIQ.Online.Pages
                         previousNames.Add(fileName);
                     }
                 }
-                await Extensions.SaveAs(js, zipName, ms.ToArray());
+                await ExtensionClass.SaveAs(js, zipName, ms.ToArray());
             }
 
             IsZippingFiles = false;
@@ -1292,7 +1292,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task ViewLink(string url)
         {
-            await Extensions.OpenLinkInNewTab(js, url);
+            await ExtensionClass.OpenLinkInNewTab(js, url);
         }
 
         protected async Task SaveDocumentUpload(CustomerDocument doc)
@@ -1311,23 +1311,23 @@ namespace BrokerIQ.Online.Pages
 
         async Task PreviewImage()
         {
-            await Extensions.PreviewFile(js, memoryStream, true);
+            await ExtensionClass.PreviewFile(js, memoryStream, true);
         }
 
         async Task SaveImage()
         {
-            await Extensions.SaveAs(js, imageFileName, imageData);
+            await ExtensionClass.SaveAs(js, imageFileName, imageData);
         }
 
         async Task DownloadPdf(CustomerDocument sdoc)
         {
-            await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
+            await ExtensionClass.SaveAs(js, sdoc.FileName, sdoc.File);
         }
 
         async Task PreviewPdf(CustomerDocument sdoc)
         {
             var memoryStream = new MemoryStream(sdoc.File);
-            await Extensions.PreviewFile(js, memoryStream);
+            await ExtensionClass.PreviewFile(js, memoryStream);
         }
 
         private async Task<byte[]> GetFileBytes(IBrowserFile file)
@@ -1557,7 +1557,7 @@ namespace BrokerIQ.Online.Pages
                 {
                     var customer = await PipedriveService.SyncCustomer(Customer.Id);
 
-                    if(customer == null || customer.PipedriveId == null)
+                    if (customer == null || customer.PipedriveId == null)
                     {
                         Snackbar.Add("Sync was unable to create customer, stopping (is Pipedrive on?).", Severity.Error);
 

@@ -20,7 +20,7 @@ public partial class BIQKpiCard : BIQDashboardComponent
     [Parameter]
     public string SkeletonHeight { get; set; } = "89px";
 
-    protected string SelectedPeriodOption { get; set; } = DAILY;
+    protected string SelectedPeriodOption { get; set; } = TODAY;
 
     protected string PaperStyle { get; set; }
 

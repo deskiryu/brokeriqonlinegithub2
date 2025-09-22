@@ -44,13 +44,13 @@ public partial class IntegrationStack
 
     protected override async Task OnInitializedAsync()
     {
+        ConnectedToPipedrive = await PipedriveService.IsConnected();
+
         var integrations = await BrokerIntegrationService.GetBrokerIntegrations();
 
         AllowCalendlyConnection = integrations.Any(i => i.Integration == Dto.Enum.IntegrationEnum.Calendly);
 
         PipedriveDetails = await BrokerService.GetBrokerPipedriveDetails(Broker.Id);
-
-        ConnectedToPipedrive = PipedriveDetails is not null && PipedriveDetails.ExpiresAt.AjdustForUKTimeZones() > DateTime.Now;
     }
 
     private async void ToggleCalendlyConnection()
@@ -73,7 +73,7 @@ public partial class IntegrationStack
 
     public void OnPipedriveToggledChanged(bool turnOn)
     {
-        if(turnOn)
+        if (turnOn)
         {
             NavigationManager.NavigateTo(GetAuthorizationUrl());
         }
