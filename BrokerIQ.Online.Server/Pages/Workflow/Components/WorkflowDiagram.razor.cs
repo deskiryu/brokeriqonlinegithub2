@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,9 +18,6 @@ public partial class WorkflowDiagram
 
     [Parameter]
     public IEnumerable<ActivityDto> Activities { get; set; } = Enumerable.Empty<ActivityDto>();
-
-    [Parameter]
-    public IEnumerable<TriggerDto> Triggers { get; set; } = Enumerable.Empty<TriggerDto>();
 
     [Parameter] public EventCallback OnChanged { get; set; }
     private Task HasChanged() => OnChanged.InvokeAsync();

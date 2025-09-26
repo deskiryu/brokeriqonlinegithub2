@@ -26,14 +26,10 @@ public class WorkflowsBase : ComponentBase
     [Parameter]
     public Online.Models.Broker Broker { get; set; }
 
-    protected IEnumerable<TriggerDto> _triggerOptions;
-
     protected IEnumerable<WorkflowDto> BrokerWorkflows { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        _triggerOptions = await WorkflowService.GetTriggersAsync();
-
         BrokerWorkflows = await WorkflowService.GetWorkflowsAsync();
     }
 

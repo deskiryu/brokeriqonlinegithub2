@@ -54,6 +54,22 @@ public partial class WorkflowStep
         }
     }
 
+    private string ActivityLabel
+    {
+        get
+        {
+            var activity = Activities.FirstOrDefault(a => a.Id == SelectedActivityId);
+
+            if (activity == null) return string.Empty;
+
+            if (activity.IsEventActivity) return "When";
+
+            if (activity.IsBranchingActivity) return "Check";
+
+            return "Action";
+        }
+    }
+
     public bool InEditMode { get; set; }
 
     public string SelectedAction

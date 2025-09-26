@@ -25,9 +25,11 @@ public partial class WorkflowPath : ComponentBase
     [Parameter] public EventCallback OnChanged { get; set; }
     private Task HasChanged() => OnChanged.InvokeAsync();
 
-    public IEnumerable<ActivityDto> BranchingActivities => Activities.Where(a => a.IsBranchingActivity).ToArray();
+    public IEnumerable<ActivityDto> EventActivities => Activities.Where(a => a.IsEventActivity).ToArray();
 
-    public IEnumerable<ActivityDto> ActionActivities => Activities.Where(a => !a.IsBranchingActivity).ToArray();
+    public IEnumerable<ActivityDto> ActionActivities => Activities.Where(a => !a.IsEventActivity).ToArray();
+
+    public IEnumerable<ActivityDto> BranchingActivities => Activities.Where(a => a.IsBranchingActivity).ToArray();
 
     public ActivityDto FinishActivity => Activities.First(a => a.Id == -1);
 

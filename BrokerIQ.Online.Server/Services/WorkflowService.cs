@@ -20,20 +20,6 @@ public class WorkflowService : BIQService, IWorkflowService
     {
     }
 
-    public async Task<IEnumerable<TriggerDto>> GetTriggersAsync()
-    {
-        try
-        {
-            return await _requestProviderService.Get<IEnumerable<TriggerDto>>($"{API_CONTROLLER}/trigger");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Get: exception {ex.Message}");
-        }
-
-        return Array.Empty<TriggerDto>();
-    }
-
     public async Task<IEnumerable<ActivityDto>> GetActivitiesAsync()
     {
         try
@@ -60,7 +46,6 @@ public class WorkflowService : BIQService, IWorkflowService
         var createDto = new CreateWorkflowDto()
         {
             BrokerId = brokerId,
-            TriggerId = workflowDto.TriggerId,
             Name = workflowDto.Name,
             Steps = workflowDto.Steps,
             IsActive = workflowDto.IsActive
