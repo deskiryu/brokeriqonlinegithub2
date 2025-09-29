@@ -15,12 +15,14 @@
     </NoRecordsContent>
     <HeaderContent>
         <MudTh>Name</MudTh>
+        <MudTh>Trigger</MudTh>
         <MudTh Style="text-align:center">Is Active</MudTh>
         <MudTh></MudTh>
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd>@(context.Name)</MudTd>
+        <MudTd>@GetTriggerName(context)</MudTd>
         <MudTd Style="text-align:center"><MudIcon Icon="@(context.IsActive ? Icons.Material.Filled.CheckCircleOutline :  Icons.Material.Filled.HighlightOff)"
             Color="@(context.IsActive ? Color.Success :  Color.Error)"/></MudTd>
         <MudTd>

@@ -155,7 +155,8 @@ public partial class WorkflowStep
         {
             Step = dialogResult.Data as StepDto;
 
-            InEditMode = selectedActivity.Parameters.Any() && Step.StepParameters.Any(p => string.IsNullOrWhiteSpace(p.Value));
+            var required = selectedActivity.Parameters.Where(p => p.IsRequired);
+            InEditMode = Step.StepParameters.Any(p => required.Any(r => r.Order == p.Order) && string.IsNullOrWhiteSpace(p.Value));
 
             await HasChanged();
         }

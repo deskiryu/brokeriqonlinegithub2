@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Workflows;
 using BrokerIQ.Online.Models;
@@ -28,8 +29,11 @@ public class WorkflowsBase : ComponentBase
 
     protected IEnumerable<WorkflowDto> BrokerWorkflows { get; set; }
 
+    protected IEnumerable<ActivityDto> Triggers { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        Triggers = (await WorkflowService.GetActivitiesAsync()).Where(a => a.IsEventActivity).ToArray();
         BrokerWorkflows = await WorkflowService.GetWorkflowsAsync();
     }
 
@@ -54,5 +58,12 @@ public class WorkflowsBase : ComponentBase
 
             BrokerWorkflows = await WorkflowService.GetWorkflowsAsync();
         }
+    }
+
+    protected string GetTriggerName(WorkflowDto wf)
+    {
+        if (!Triggers.Any() || !wf.Steps.Any()) return string.Empty;
+
+        return Triggers.First(t => t.Id == wf.Steps.First().ActivityId).Description;
     }
 }
