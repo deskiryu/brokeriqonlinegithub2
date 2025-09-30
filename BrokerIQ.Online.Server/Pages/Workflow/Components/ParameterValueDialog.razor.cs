@@ -13,6 +13,9 @@ using MudBlazor;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components.Forms;
 using System.IO;
+using Microsoft.Extensions.Options;
+using BrokerIQ.Online.Server.AppSettings;
+using BrokerIQ.Online.Server.Shared;
 
 namespace BrokerIQ.Online.Server.Pages.Workflow.Components;
 
@@ -26,6 +29,12 @@ public partial class ParameterValueDialog : ComponentBase
 
     [Inject]
     public IBrokerDefinedMessageService DefinedMessageService { get; set; }
+
+    [Inject]
+    public IOptions<FileUploadSettings> FileUploadSettingsOption { get; set; }
+
+    [Inject]
+    public IDialogService DialogService { get; set; }
 
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
@@ -42,6 +51,8 @@ public partial class ParameterValueDialog : ComponentBase
     [Parameter]
     public IEnumerable<Models.Video> BrokerVideos { get; set; }
 
+    private FileUploadSettings fileUploadSettings { get; set; }
+
     private Online.Models.Broker Broker { get; set; }
 
     private Online.Models.Customer SampleCustomer { get; set; }
@@ -56,6 +67,8 @@ public partial class ParameterValueDialog : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        fileUploadSettings = this.FileUploadSettingsOption.Value;
+
         var template = Activity.Parameters.FirstOrDefault(p => p.Type == "template");
         if (template is not null)
         {
@@ -79,6 +92,17 @@ public partial class ParameterValueDialog : ComponentBase
 
     private async Task UploadFile(IBrowserFile file)
     {
+        if (file.Size > this.fileUploadSettings.MaxFileSize)
+        {
+            var dialogParams = new DialogParameters
+            {
+                { "Message", $"File is too large, limit is {fileUploadSettings.MaxFileSize / 1024}MB" }
+            };
+            await DialogService.Show<AlertDialog>("File size ", dialogParams).Result;
+
+            return;
+        }
+
         _attachment = file;
 
         Step.AttachmentDto = new StepAttachmentDto()
