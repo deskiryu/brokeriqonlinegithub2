@@ -111,11 +111,10 @@ public partial class ParameterValueDialog : ComponentBase
             ContentType = _attachment.ContentType
         };
 
-        await using Stream stream = _attachment.OpenReadStream();
-        byte[] contents = new byte[stream.Length]; // Or a smaller buffer for chunked reading
-        await stream.ReadAsync(contents, 0, (int)stream.Length);
-
-        Step.AttachmentDto.Data = contents;
+        using var stream = file.OpenReadStream(file.Size);
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        Step.AttachmentDto.Data = memoryStream.ToArray();
     }
 
     private void Cancel()
