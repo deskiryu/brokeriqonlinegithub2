@@ -62,7 +62,7 @@ public partial class WorkflowStep
 
             if (activity == null) return string.Empty;
 
-            if (activity.IsEventActivity) return "When";
+            if (activity.IsEventActivity) return "Trigger";
 
             if (activity.IsBranchingActivity) return "Check";
 
@@ -70,16 +70,24 @@ public partial class WorkflowStep
         }
     }
 
-    public bool InEditMode { get; set; }
-
-    public string SelectedAction
+    private Color ActivityColor
     {
         get
         {
-            var action = Activities.FirstOrDefault(a => a.Id == Step.ActivityId);
-            return action == null ? string.Empty : action.Description;
+            var activity = Activities.FirstOrDefault(a => a.Id == SelectedActivityId);
+
+            if (activity == null) return Color.Default;
+
+            if (activity.Parameters.Any()) return Color.Primary;
+
+            return Color.Default;
         }
+
     }
+
+    public bool InEditMode { get; set; }
+
+    public ActivityDto SelectedActivity => Activities.FirstOrDefault(a => a.Id == Step.ActivityId);
 
     public MarkupString ParametersText
     {
@@ -135,8 +143,15 @@ public partial class WorkflowStep
         InEditMode = Step.ActivityId == 0;
     }
 
+    protected void SetActivity(int activityId)
+    {
+        SelectedActivityId = activityId;
+    }
+
     async Task EditParameters()
     {
+        if (!SelectedActivity.Parameters.Any()) return;
+
         var selectedActivity = Activities.First(a => a.Id == SelectedActivityId);
         var dialogParams = new DialogParameters
             {

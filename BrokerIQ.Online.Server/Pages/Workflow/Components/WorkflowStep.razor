@@ -1,5 +1,22 @@
-﻿<MudPaper Class="pa-1 ma-1" Width="250px" Elevation="3" >
-@if(@InEditMode)
+﻿<MudPaper Class="pa-2 ma-1"
+          Width="250px"
+          Elevation="3">
+    <MudStack Row="true"
+              AlignItems="AlignItems.Center"
+              Justify="Justify.SpaceBetween">
+        <MudMenu Label="@(SelectedActivity != null ? SelectedActivity.Name : "Choose Activity")"
+                 Dense="true"> @foreach (var activity in Activities) {
+                 <MudMenuItem OnClick="() => SetActivity(activity.Id)">@activity.Name
+            </MudMenuItem>
+                                  }
+        </MudMenu>
+        <MudChip Size="Size.Small" Color="@ActivityColor"
+                 OnClick="EditParameters">@ActivityLabel</MudChip>
+    </MudStack>
+    <MudDivider Class="ma-1" />
+    <MudText Class="ma-1"
+             Typo="Typo.caption">@SelectedActivity.Description</MudText>
+</MudPaper> @* @if(@InEditMode)
 {
     <MudSelect T="int" @bind-Value="SelectedActivityId" Dense="true" Label="Action" >
         <MudSelectItem T="int" Value="0">Please Select</MudSelectItem>
@@ -31,5 +48,4 @@ else{
             <MudText Typo="Typo.subtitle2"> @Step.AttachmentDto.FileName</MudText>
         </MudStack>
     }
-}
-</MudPaper>
+} *@

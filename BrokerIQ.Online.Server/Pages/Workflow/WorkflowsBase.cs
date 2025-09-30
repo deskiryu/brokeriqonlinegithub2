@@ -64,6 +64,6 @@ public class WorkflowsBase : ComponentBase
     {
         if (!Triggers.Any() || !wf.Steps.Any()) return string.Empty;
 
-        return Triggers.First(t => t.Id == wf.Steps.First().ActivityId).Description;
+        return Triggers.First(t => t.Id == wf.Steps.First().ActivityId).Name;
     }
 }
