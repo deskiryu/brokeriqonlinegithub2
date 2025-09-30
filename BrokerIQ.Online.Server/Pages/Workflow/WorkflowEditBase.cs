@@ -29,20 +29,36 @@ public class WorkflowEditBase : ComponentBase
 
     protected WorkflowDto Workflow = new();
 
-    protected IEnumerable<ActivityDto> _activities;
+    protected IEnumerable<ActivityDto> Activities {get; set;}
 
     protected string ActiveButtonLabel => Workflow.IsActive ? "Deactivate" : "Activate";
 
     protected Color ActiveButtonColour => Workflow.IsActive ? Color.Error : Color.Success;
 
-    protected bool WorkflowIsNotValid => string.IsNullOrWhiteSpace(Workflow.Name) ||
-            // Workflow.TriggerId == 0 ||
-            !Workflow.Steps.Any() ||
-            Workflow.Steps.Any(s => s.ActivityId == 0 || s.StepParameters.Any(p => string.IsNullOrWhiteSpace(p.Value)));
+    protected bool WorkflowIsNotValid
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(Workflow.Name) || Workflow.Steps.Count <= 1) return true;
+
+            foreach (var step in Workflow.Steps)
+            {
+                var stepActivity = Activities.FirstOrDefault(a => a.Id == step.ActivityId);
+
+                if (stepActivity == null) return true;
+
+                var requiredOrder = stepActivity.Parameters.Where(p => p.IsRequired).Select(p => p.Order).ToList();
+
+                if (step.StepParameters.Any(p => requiredOrder.Contains(p.Order) && string.IsNullOrWhiteSpace(p.Value))) return true;
+            }
+
+            return false;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        _activities = await WorkflowService.GetActivitiesAsync();
+        Activities = await WorkflowService.GetActivitiesAsync();
 
         if (!string.IsNullOrWhiteSpace(WorkflowId))
         {
@@ -94,7 +110,7 @@ public class WorkflowEditBase : ComponentBase
 
         foreach (var step in unfinishedSteps)
         {
-            var activity = _activities.First(a => a.Id == step.ActivityId);
+            var activity = Activities.First(a => a.Id == step.ActivityId);
 
             if (string.IsNullOrWhiteSpace(step.NextStepId))
             {

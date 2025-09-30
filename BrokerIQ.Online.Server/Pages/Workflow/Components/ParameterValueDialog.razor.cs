@@ -11,6 +11,8 @@ using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Components.Forms;
+using System.IO;
 
 namespace BrokerIQ.Online.Server.Pages.Workflow.Components;
 
@@ -50,7 +52,7 @@ public partial class ParameterValueDialog : ComponentBase
 
     public string Message { get; set; }
 
-    //private IList<IBrowserFile> _files = new List<IBrowserFile>();
+    private IBrowserFile _attachment;
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,11 +77,22 @@ public partial class ParameterValueDialog : ComponentBase
         Broker = await BrokerService.GetBroker(User.MasterBrokerId);
     }
 
-    // private void UploadFiles(IBrowserFile file)
-    // {
-    //     _files.Add(file);
-    //     //TODO upload the files to the server
-    // }
+    private async Task UploadFile(IBrowserFile file)
+    {
+        _attachment = file;
+
+        Step.AttachmentDto = new StepAttachmentDto()
+        {
+            FileName = _attachment.Name,
+            ContentType = _attachment.ContentType
+        };
+
+        await using Stream stream = _attachment.OpenReadStream();
+        byte[] contents = new byte[stream.Length]; // Or a smaller buffer for chunked reading
+        await stream.ReadAsync(contents, 0, (int)stream.Length);
+
+        Step.AttachmentDto.Data = contents;
+    }
 
     private void Cancel()
     {
@@ -95,5 +108,23 @@ public partial class ParameterValueDialog : ComponentBase
         }
 
         MudDialog.Close(Step);
+    }
+
+    private void OnTemplateChange(BrokerDefinedMessage template)
+    {
+        if (template.File == null) return;
+
+        Step.AttachmentDto = new StepAttachmentDto()
+        {
+            FileName = template.FileName,
+            ContentType = "application/pdf",
+            Data = template.File
+        };
+    }
+
+    private void RemoveAttachment(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+    {
+        _attachment = null;
+        Step.AttachmentDto = null;
     }
 }

@@ -24,5 +24,12 @@ else{
             @ParametersText
         </div>
     }
+
+    @if(Step.AttachmentDto != null){
+        <MudStack Row="true">
+            <MudIcon Icon="@Icons.Material.Filled.AttachFile" Size="Size.Small"></MudIcon>
+            <MudText Typo="Typo.subtitle2"> @Step.AttachmentDto.FileName</MudText>
+        </MudStack>
+    }
 }
 </MudPaper>
