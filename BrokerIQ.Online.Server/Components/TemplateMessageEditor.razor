@@ -11,7 +11,8 @@
                      SearchFunc="@OnTemplateFilter"
                      ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)"
                      @ref="TemplateAutoComplete"
-                     Clearable="true">
+                     Clearable="true"
+                     ItemDisabledFunc="@MessageContainsDateMarkers">
     </MudAutocomplete>
 </div>
 <div class="control_wrapper mb-5">

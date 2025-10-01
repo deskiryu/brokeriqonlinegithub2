@@ -65,22 +65,7 @@ public partial class TemplateMessageEditor : ComponentBase
         MergedMessages = new List<BrokerDefinedMessage>();
         var templates = Mapper.Map<List<BrokerDefinedMessage>>(await BrokerDefinedMessageService.GetAllForCurrentBroker());
 
-        foreach (var template in templates)
-        {
-            // if (!string.IsNullOrWhiteSpace(template.Message))
-            // {
-            //     // display broker defined message
-            //     template.Message = template.Message
-            //         .Replace("INSERT_CLIENT_NAME", Connection != null ? $"{Customer.FirstName} and {Connection.FirstName}" : Customer.FirstName)
-            //         .Replace("INSERT_BROKER_NAME", $"{Broker?.BrokerFirstName} {Broker?.BrokerLastName}")
-            //         .Replace("INSERT_COMPANY_NAME", Broker?.Name);
-            // }
-
-            if (!template.WelcomeChat)
-            {
-                MergedMessages.Add(template);
-            }
-        }
+        MergedMessages.AddRange(templates.Where(t => !t.WelcomeChat));
     }
 
     protected void OnComboValueChanged(string itemResponse)
@@ -98,8 +83,6 @@ public partial class TemplateMessageEditor : ComponentBase
         if (DefinedMessage != null)
         {
             MessagePreview = DefinedMessage.Message;
-            // ShowInsertDate = DefinedMessage.Message.Contains("INSERT_DATE");
-            // ShowInsertTime = DefinedMessage.Message.Contains("INSERT_TIME");
             ShowTemplatePdf = !string.IsNullOrEmpty(DefinedMessage.FileName);
             TemplatePdfName = !string.IsNullOrEmpty(DefinedMessage.FileName) ? DefinedMessage.FileName : "";
         }
@@ -114,39 +97,6 @@ public partial class TemplateMessageEditor : ComponentBase
 
         return MergedMessages.Where(mm => mm.Prompt.ToLower().Contains(value.ToLower())).ToArray();
     }
-
-    // protected void InsertDateToTemplateMessage(DateTime? dateIn)
-    // {
-    //     SelectedTemplateDateReplacement = dateIn;
-    //     UpdatePreviewWithTimes();
-    // }
-
-    // protected void InsertTimeToTemplateMessage(TimeSpan? timeIn)
-    // {
-    //     SelectedTemplateTimeReplacement = timeIn;
-    //     UpdatePreviewWithTimes();
-    // }
-
-    // private void UpdatePreviewWithTimes()
-    // {
-    //     if (DefinedMessage == null)
-    //     {
-    //         return;
-    //     }
-
-    //     MessagePreview = DefinedMessage.Message;
-    //     if (DefinedMessage.Message.Contains("INSERT_DATE") && SelectedTemplateDateReplacement.HasValue)
-    //     {
-    //         MessagePreview = MessagePreview.Replace("INSERT_DATE", SelectedTemplateDateReplacement.Value.ToBiqDateString());
-    //     }
-
-    //     if (DefinedMessage.Message.Contains("INSERT_TIME") && SelectedTemplateTimeReplacement.HasValue)
-    //     {
-    //         MessagePreview = MessagePreview.Replace("INSERT_TIME", SelectedTemplateTimeReplacement.Value.ToBiqTimeString());
-    //     }
-
-    //     MessagePreviewChanged.InvokeAsync(MessagePreview);
-    // }
 
     protected async Task ClearAutoComplete()
     {
@@ -167,5 +117,10 @@ public partial class TemplateMessageEditor : ComponentBase
     private void OnPreviewMessageBlur(Microsoft.AspNetCore.Components.Web.FocusEventArgs args)
     {
         MessagePreviewChanged.InvokeAsync(MessagePreview);
+    }
+
+    private static bool MessageContainsDateMarkers(BrokerDefinedMessage message)
+    {
+        return message.Message.Contains("INSERT_DATE") || message.Message.Contains("INSERT_TIME");
     }
 }

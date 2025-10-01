@@ -59,8 +59,6 @@ public partial class ParameterValueDialog : ComponentBase
 
     private Online.Models.Customer SampleConnection { get; set; }
 
-    private BrokerDefinedMessage Template { get; set; }
-
     public string Message { get; set; }
 
     private IBrowserFile _attachment;
