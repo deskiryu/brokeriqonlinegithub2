@@ -31,7 +31,15 @@ public partial class WorkflowStep
     [Parameter] public EventCallback OnChanged { get; set; }
     private Task HasChanged() => OnChanged.InvokeAsync();
 
+    private MudMenu activityMenu;
+
     public IEnumerable<Models.Video> BrokerVideos { get; set; }
+
+    public IEnumerable<ActivityDto> Events => Activities.Where(a => a.IsEventActivity).ToArray();
+
+    public IEnumerable<ActivityDto> Actions => Activities.Where(a => !a.IsEventActivity && !a.IsBranchingActivity).ToArray();
+
+    public IEnumerable<ActivityDto> BranchingActions => Activities.Where(a => a.IsBranchingActivity).ToArray();
 
     private int SelectedActivityId
     {
@@ -43,12 +51,10 @@ public partial class WorkflowStep
             Step.ActivityId = value;
             Step.StepParameters = BuildCurrentParameters();
 
-            if (!Activities.First(a => a.Id == Step.ActivityId).IsBranchingActivity)
+            if (BranchingActions.FirstOrDefault(a => a.Id == Step.ActivityId) == null)
             {
                 Step.AlternateStepId = null;
             }
-
-            InEditMode = Activities.First(a => a.Id == Step.ActivityId).Parameters.Any();
 
             HasChanged();
         }
@@ -85,45 +91,31 @@ public partial class WorkflowStep
 
     }
 
-    public bool InEditMode { get; set; }
-
     public ActivityDto SelectedActivity => Activities.FirstOrDefault(a => a.Id == Step.ActivityId);
 
-    public MarkupString ParametersText
+    public string BuildParameterText(StepParameterDto param)
     {
-        get
+        var activityParam = ActivityParameters.First(p => p.Order == param.Order);
+
+        switch (activityParam.Type)
         {
-            if (!Step.StepParameters.Any() || BrokerVideos == null) return new MarkupString();
-
-            var result = "";
-            foreach (var param in Step.StepParameters)
-            {
-                var activityParam = ActivityParameters.First(p => p.Order == param.Order);
-
-                switch (activityParam.Type)
-                {
-                    case "text":
-                        result += $"<div>{activityParam.Label}: \" {param.Value}\"</div>";
-                        break;
-                    case "template":
-                        result += $"<div>{activityParam.Label}: \"{param.Value}\"</div>";
-                        break;
-                    case "timespan":
-                        result += TimeSpan.TryParse(param.Value, out var timespan) ?
-                             $"<div>{activityParam.Label}: {timespan.Humanize()}</div>" :
-                             $"<div>{activityParam.Label}:</div>";
-                        break;
-                    case "videourl":
-                        var video = BrokerVideos.FirstOrDefault(v => v.Id.ToString() == param.Value);
-                        if (video != null) result += $"<div>{activityParam.Label}: {video.Name}</div>";
-                        break;
-                    default:
-                        continue;
-                }
-            }
-
-            return new MarkupString(result);
+            case "text":
+                return $"{param.Value[..(param.Value.Length > 25 ? 25 : param.Value.Length)]}";
+            case "template":
+                return $"{param.Value[..(param.Value.Length > 25 ? 25 : param.Value.Length)]}";
+            case "videourl":
+                var video = BrokerVideos.FirstOrDefault(v => v.Id.ToString() == param.Value);
+                if (video != null) return $" With video {video.Name}";
+                break;
+            case "timespan":
+                return TimeSpan.TryParse(param.Value, out var timespan) ?
+                     $"Put workflow on hold for {timespan.Humanize()}" :
+                     "Put workflow on hold for a time";
+            default:
+                break;
         }
+
+        return string.Empty;
     }
 
     private IEnumerable<ActivityParameterDto> ActivityParameters
@@ -140,12 +132,13 @@ public partial class WorkflowStep
     protected override async Task OnInitializedAsync()
     {
         BrokerVideos = (await VideoService.GetVideos(User.MasterBrokerId)).ToList();
-        InEditMode = Step.ActivityId == 0;
     }
 
     protected void SetActivity(int activityId)
     {
         SelectedActivityId = activityId;
+
+        activityMenu.CloseMenu();
     }
 
     async Task EditParameters()
@@ -171,7 +164,6 @@ public partial class WorkflowStep
             Step = dialogResult.Data as StepDto;
 
             var required = selectedActivity.Parameters.Where(p => p.IsRequired);
-            InEditMode = Step.StepParameters.Any(p => required.Any(r => r.Order == p.Order) && string.IsNullOrWhiteSpace(p.Value));
 
             await HasChanged();
         }
@@ -190,10 +182,5 @@ public partial class WorkflowStep
         }
 
         return newParameters;
-    }
-
-    private void ResetStep()
-    {
-        InEditMode = true;
     }
 }

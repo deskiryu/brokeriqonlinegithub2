@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,7 +26,7 @@ public partial class WorkflowPath : ComponentBase
 
     public IEnumerable<ActivityDto> EventActivities => Activities.Where(a => a.IsEventActivity).ToArray();
 
-    public IEnumerable<ActivityDto> ActionActivities => Activities.Where(a => !a.IsEventActivity).ToArray();
+    public IEnumerable<ActivityDto> NonEventActivities => Activities.Where(a => !a.IsEventActivity).ToArray();
 
     public IEnumerable<ActivityDto> BranchingActivities => Activities.Where(a => a.IsBranchingActivity).ToArray();
 

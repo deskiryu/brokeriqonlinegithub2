@@ -4,47 +4,68 @@
               AlignItems="AlignItems.Center"
               Justify="Justify.SpaceBetween">
         <MudMenu Label="@(SelectedActivity != null ? SelectedActivity.Name : "Choose Activity")"
-                 Dense="true"> @foreach (var activity in Activities) {
-                 <MudMenuItem OnClick="() => SetActivity(activity.Id)">@activity.Name
-            </MudMenuItem>
-                                  }
+                 Dense="true"
+                 AnchorOrigin="Origin.BottomLeft"
+                 @ref="activityMenu">
+                @if(Events.Any()){
+                    @foreach (var activity in Events) {
+                        <MudMenuItem OnClick="() => SetActivity(activity.Id)">@activity.Name </MudMenuItem>
+                    }
+                }
+                @if(Actions.Any()){
+                <MudMenuItem>
+                    <MudMenu AnchorOrigin="Origin.BottomLeft"
+                             Dense="true"
+                             ActivationEvent="MouseEvent.MouseOver">
+                        <ActivatorContent>
+                            <MudText>Action ▸</MudText>
+                        </ActivatorContent>
+                        <ChildContent>
+                            @foreach (var activity in Actions) {
+                                <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name </MudMenuItem>
+                            }
+                        </ChildContent>
+                    </MudMenu>
+                </MudMenuItem>
+                }
+                @if(BranchingActions.Any()){
+                <MudMenuItem>
+                    <MudMenu AnchorOrigin="Origin.BottomLeft"
+                             Dense="true"
+                             ActivationEvent="MouseEvent.MouseOver">
+                        <ActivatorContent>
+                            <MudText>Branch ▸</MudText>
+                        </ActivatorContent>
+                        <ChildContent>
+                            @foreach (var activity in BranchingActions) {
+                                <MudMenuItem OnClick="() => SetActivity(activity.Id)">@activity.Name </MudMenuItem>
+                            }
+                        </ChildContent>
+                    </MudMenu>
+                </MudMenuItem>
+                }
         </MudMenu>
         <MudChip Size="Size.Small" Color="@ActivityColor"
                  OnClick="EditParameters">@ActivityLabel</MudChip>
     </MudStack>
     <MudDivider Class="ma-1" />
-    <MudText Class="ma-1"
-             Typo="Typo.caption">@SelectedActivity.Description</MudText>
-</MudPaper> @* @if(@InEditMode)
-{
-    <MudSelect T="int" @bind-Value="SelectedActivityId" Dense="true" Label="Action" >
-        <MudSelectItem T="int" Value="0">Please Select</MudSelectItem>
-        @foreach (var option in Activities)
-        {
-            <MudSelectItem T="int" Value="@option.Id">@option.Description</MudSelectItem>
+    @if(Step.StepParameters.Any(p => !string.IsNullOrWhiteSpace(p.Value)))
+    {
+        @foreach(var param in Step.StepParameters.Where(p => !string.IsNullOrWhiteSpace(p.Value))){
+            <div>
+            <MudText Class="ma-1"
+                    Typo="Typo.caption">@BuildParameterText(param)</MudText>
+            </div>
         }
-    </MudSelect>
-    @if(ActivityParameters.Any()){
-        <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="EditParameters" FullWidth="true">Parameters</MudButton>
+        @if(Step.AttachmentDto != null){
+            <MudStack Row="true" Class="mt-1" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Filled.AttachFile" Size="Size.Small"></MudIcon>
+                <MudText Typo="Typo.caption"> @Step.AttachmentDto.FileName</MudText>
+            </MudStack>
+        }
     }
-}
-else{
-    <div class="d-flex justify-space-between align-center">
-        <MudText Typo="Typo.body2">@ActivityLabel</MudText>
-        <MudSpacer/>
-        <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Edit" Color="Color.Dark" OnClick="@ResetStep"/>
-    </div>
-    <MudText>@SelectedAction</MudText>
-    @if(Step.StepParameters.Any()){
-        <div class="pl-1 mt-1">
-            @ParametersText
-        </div>
+    else{
+        <MudText Class="ma-1"
+                Typo="Typo.caption">@SelectedActivity.Description</MudText>
     }
-
-    @if(Step.AttachmentDto != null){
-        <MudStack Row="true">
-            <MudIcon Icon="@Icons.Material.Filled.AttachFile" Size="Size.Small"></MudIcon>
-            <MudText Typo="Typo.subtitle2"> @Step.AttachmentDto.FileName</MudText>
-        </MudStack>
-    }
-} *@
+</MudPaper>
