@@ -67,7 +67,7 @@ public class AppDownloadsBase : BIQDashboardComponent
         }
           
 
-        HandleDownloadPeriodChange(DAILY);
+        HandleDownloadPeriodChange(TODAY);
     }
 
     public override Task SetParametersAsync(ParameterView parameters)

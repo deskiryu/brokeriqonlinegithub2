@@ -72,7 +72,7 @@ public class ClientLoginsBase : BIQDashboardComponent
             Href = $"charts/dashboard/0";
         }
 
-        HandleClientLoginPeriodChange(DAILY);
+        HandleClientLoginPeriodChange(TODAY);
     }
 
     protected async void HandleClientLoginPeriodChange(string period)

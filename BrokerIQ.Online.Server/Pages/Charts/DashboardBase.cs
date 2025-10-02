@@ -129,15 +129,15 @@ namespace BrokerIQ.Online.Pages
             IsAdmin = User.IsAdmin;
             IsMinorAdmin = User.IsMinorAdmin;
 
-            HandleDownloadPeriodChange(DAILY);
-            HandleClientLoginPeriodChange(DAILY);
-            HandleChatMessagePeriodChange(DAILY);
-            HandleReferralPeriodChange(DAILY);
-            HandleReferralSplitPeriodChange(DAILY);
-            HandleCustomerRiskRatingPeriodChange(DAILY);
-            HandleProductsPeriodChange(DAILY);
-            HandleVideoPeriodChange(DAILY);
-            HandleAudioPeriodChange(DAILY);
+            HandleDownloadPeriodChange(TODAY);
+            HandleClientLoginPeriodChange(TODAY);
+            HandleChatMessagePeriodChange(TODAY);
+            HandleReferralPeriodChange(TODAY);
+            HandleReferralSplitPeriodChange(TODAY);
+            HandleCustomerRiskRatingPeriodChange(TODAY);
+            HandleProductsPeriodChange(TODAY);
+            HandleVideoPeriodChange(TODAY);
+            HandleAudioPeriodChange(TODAY);
         }
 
         private void SetAllDataLoadingFlags()
@@ -157,6 +157,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleDownloadPeriodChange(string period)
         {
+            period = GetPeriodCode(period);
             IsLoadingDownloadData = true;
             StateHasChanged();
 
@@ -171,6 +172,11 @@ namespace BrokerIQ.Online.Pages
 
             IsLoadingDownloadData = false;
             StateHasChanged();
+        }
+
+        private static string GetPeriodCode(string period)
+        {
+            return period.ToLower().Replace(" ", "");
         }
 
         protected async void HandleDownloadOnClick()
@@ -188,6 +194,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleClientLoginPeriodChange(string period)
         {
+            period = GetPeriodCode(period);
             IsLoadingClientLoginData = true;
             StateHasChanged();
 
@@ -217,6 +224,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleChatMessagePeriodChange(string period)
         {
+            period = GetPeriodCode(period);
             IsLoadingChatMessageData = true;
             StateHasChanged();
 
@@ -237,6 +245,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleCustomerRiskRatingPeriodChange(string period)
         {
+            period = GetPeriodCode(period);
             IsLoadingCustomerRiskData = true;
             StateHasChanged();
 
@@ -248,6 +257,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleReferralPeriodChange(string period)
         {
+            period = GetPeriodCode(period);
             IsLoadingReferralData = true;
             StateHasChanged();
 
@@ -288,6 +298,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleReferralSplitPeriodChange(string period)
         {
+            period = GetPeriodCode(period);
             IsLoadingReferralSplitData = true;
             StateHasChanged();
 
@@ -296,7 +307,7 @@ namespace BrokerIQ.Online.Pages
 
             ReferralSplitData = new double[] { referrals.Total[DEFAULT_SERIES_KEY].Value, conversions.Total[DEFAULT_SERIES_KEY].Value };
             ReferralSplitLabels = new string[] { "Referrals", "Conversions" };
-            ReferralConvertRate = (ReferralSplitData[1] / ReferralSplitData[0]).ToString("P0");
+            ReferralConvertRate = ReferralSplitData[0] == 0 ? 0.ToString("P0") : (ReferralSplitData[1] / ReferralSplitData[0]).ToString("P0");
 
             IsLoadingReferralSplitData = false;
             StateHasChanged();
@@ -304,6 +315,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleProductsPeriodChange(string period)
         {
+            period = GetPeriodCode(period);
             IsLoadingProductData = true;
             StateHasChanged();
 
@@ -373,6 +385,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleVideoPeriodChange(string period)
         {
+            period = GetPeriodCode(period);
             IsLoadingVideoData = true;
             StateHasChanged();
 
@@ -400,6 +413,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async void HandleAudioPeriodChange(string period)
         {
+            period = GetPeriodCode(period);
             IsLoadingAudioData = true;
             StateHasChanged();
 

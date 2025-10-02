@@ -90,7 +90,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
         {
             selectedNotification = "A new video has arrived";
 
-            CustomerCategoriesByRelevance = Extensions.Extensions.GetAllCustomerCategories();
+            CustomerCategoriesByRelevance = Extensions.ExtensionClass.GetAllCustomerCategories();
 
             var user = await AccountService.GetUser();
             IsAdmin = user.IsAdmin;
@@ -108,7 +108,7 @@ namespace BrokerIQ.Online.Server.Pages.Video
 
                 if (broker.BrokerIdentifier.InsuranceOnly)
                 {
-                    CustomerCategoriesByRelevance = Extensions.Extensions.GetFilteredCustomerCategories(new int[] { 0, 2 });
+                    CustomerCategoriesByRelevance = Extensions.ExtensionClass.GetFilteredCustomerCategories(new int[] { 0, 2 });
                 }
             }
 
@@ -255,7 +255,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
                 else
                 {
                     AlertService.Error("Notification sending failed");
-                };
+                }
+                ;
 
             }
         }
@@ -335,7 +336,8 @@ namespace BrokerIQ.Online.Server.Pages.Video
                     var data = memoryStream.ToArray();
                     memoryStream.Position = 0;
                     var result = await VideoService.UploadThumbnail(ThisVideo.Id, memoryStream, BrokerId);
-                    if (result.Item1) {
+                    if (result.Item1)
+                    {
                         ThisVideo.VideoThumbnailData = ThumbnailImage = result.Item2;
                     }
                 }

@@ -18,12 +18,12 @@
 @functions {
     async void DownloadFile(MortgageDocument sdoc)
     {
-        await Extensions.SaveAs(js, sdoc.FileName, sdoc.File);
+        await ExtensionClass.SaveAs(js, sdoc.FileName, sdoc.File);
     }
     async void PreviewFile(MortgageDocument sdoc)
     {
         var memoryStream = new MemoryStream(sdoc.File);
-        await Extensions.PreviewFile(js, memoryStream);
+        await ExtensionClass.PreviewFile(js, memoryStream);
     }
 }
 

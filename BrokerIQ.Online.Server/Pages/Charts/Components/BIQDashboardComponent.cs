@@ -16,26 +16,30 @@ public abstract class BIQDashboardComponent : ComponentBase
 
     protected string DEFAULT_SERIES_KEY = string.Empty;
 
-    protected static string[] Pallete = new string[] { "#ffde1a", "#ff7400", "#c4c4c4", "#ffa700", "#6b6b6b", "#ff8d00", "#ffce00" };
+    protected static string[] Pallete = new string[] { "#ebe5fd", "#cebffa", "#d8ccfb", "#3f2c58", "#f5f2fe", "#cdd0f8", "#ffcae9" };
 
     protected string TitleStyle { get; set; } = $"color: {Colors.Grey.Darken1}";
 
     protected string ValueStyle { get; set; } = $"color: {Colors.Shades.Black}";
 
-    public const string DAILY = "Daily";
-    public const string WEEKLY = "Weekly";
-    public const string MONTHLY = "Monthly";
-    public const string YEARLY = "Yearly";
+    public const string TODAY = "Today";
+    public const string THIS_WEEK = "This Week";
+    public const string LAST_7_DAYS = "Last 7 Days";
+    public const string THIS_MONTH = "This Month";
+    public const string LAST_3_MONTHS = "Last 3 Months";
+    public const string LAST_12_WEEKS = "Last 12 Weeks";
 
     protected string GraphWidth => "100%";
     protected string GraphHeight => "300px";
 
     protected string[] PeriodOptions =
     {
-        DAILY,
-        WEEKLY,
-        MONTHLY,
-        YEARLY
+        TODAY,
+        THIS_WEEK,
+        LAST_7_DAYS,
+        THIS_MONTH,
+        LAST_3_MONTHS,
+        LAST_12_WEEKS
     };
 
     protected ChartOptions Options = new ChartOptions()
@@ -44,4 +48,3 @@ public abstract class BIQDashboardComponent : ComponentBase
         MaxNumYAxisTicks = 10
     };
 }
-
