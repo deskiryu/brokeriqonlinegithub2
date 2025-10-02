@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Workflows;
@@ -95,14 +96,16 @@ public partial class WorkflowStep
 
     public string BuildParameterText(StepParameterDto param)
     {
+        const int MaxLengthAttribute = 30;
+
         var activityParam = ActivityParameters.First(p => p.Order == param.Order);
 
         switch (activityParam.Type)
         {
             case "text":
-                return $"{param.Value[..(param.Value.Length > 25 ? 25 : param.Value.Length)]} ...";
+                return $"{param.Value[..(param.Value.Length > MaxLengthAttribute ? MaxLengthAttribute : param.Value.Length)]} ...";
             case "template":
-                return $"{param.Value[..(param.Value.Length > 25 ? 25 : param.Value.Length)]} ...";
+                return $"{param.Value[..(param.Value.Length > MaxLengthAttribute ? MaxLengthAttribute : param.Value.Length)]} ...";
             case "videourl":
                 var video = BrokerVideos.FirstOrDefault(v => v.Id.ToString() == param.Value);
                 if (video != null) return $" With video {video.Name}";
