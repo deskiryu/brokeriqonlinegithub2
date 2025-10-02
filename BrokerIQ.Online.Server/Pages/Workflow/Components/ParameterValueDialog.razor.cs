@@ -59,31 +59,11 @@ public partial class ParameterValueDialog : ComponentBase
 
     private Online.Models.Customer SampleConnection { get; set; }
 
-    public string Message { get; set; }
-
     private IBrowserFile _attachment;
 
     protected override async Task OnInitializedAsync()
     {
         fileUploadSettings = this.FileUploadSettingsOption.Value;
-
-        var template = Activity.Parameters.FirstOrDefault(p => p.Type == "template");
-        if (template is not null)
-        {
-            Message = Step.StepParameters.First(p => p.Order == template.Order).Value;
-        }
-
-        SampleCustomer = new Online.Models.Customer()
-        {
-            FirstName = "John",
-            LastName = "Smith"
-        };
-
-        SampleConnection = new Online.Models.Customer()
-        {
-            FirstName = "Jane",
-            LastName = "Smith"
-        };
 
         Broker = await BrokerService.GetBroker(User.MasterBrokerId);
     }
@@ -122,18 +102,16 @@ public partial class ParameterValueDialog : ComponentBase
 
     private void Confirm()
     {
-        var template = Activity.Parameters.FirstOrDefault(p => p.Type == "template");
-        if (template is not null && !string.IsNullOrWhiteSpace(Message))
-        {
-            Step.StepParameters.First(p => p.Order == template.Order).Value = Message;
-        }
-
         MudDialog.Close(Step);
     }
 
     private void OnTemplateChange(BrokerDefinedMessage template)
     {
-        if (template.File == null) return;
+        if (string.IsNullOrWhiteSpace(template.FileName))
+        {
+            Step.AttachmentDto = null;
+            return;
+        }
 
         Step.AttachmentDto = new StepAttachmentDto()
         {

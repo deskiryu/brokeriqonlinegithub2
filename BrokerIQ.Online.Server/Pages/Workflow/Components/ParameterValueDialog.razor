@@ -11,7 +11,7 @@
                 case "template":
                         <TemplateMessageEditor Broker="Broker" Customer="SampleCustomer" Connection="SampleConnection"
                         DefinedMessageChanged="OnTemplateChange"
-                        @bind-MessagePreview="Message" />
+                        @bind-MessagePreview="param.Value" />
                     break;
                 case "timespan":
                      <TimeControl @bind-Value="param.Value"/>
