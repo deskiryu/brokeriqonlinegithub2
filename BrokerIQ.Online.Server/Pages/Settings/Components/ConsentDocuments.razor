@@ -1,0 +1,152 @@
+@using Dto.Enum
+@using BrokerIQ.Online.Server.Extensions
+
+@using BrokerIQ.Dto.Models
+
+<MudPaper Class="pa-4 mb-4">
+    <MudText Typo="Typo.h6">Existing Consents</MudText>
+    <MudTable Items="@ExistingConsents" Dense="true" Hover>
+        <NoRecordsContent>
+            <MudText>No consents found.</MudText>
+        </NoRecordsContent>
+        <HeaderContent>
+            <MudTh>Type</MudTh>
+            <MudTh>Description (Shown to user in app)</MudTh>
+            <MudTh>Version</MudTh>
+            <MudTh>Source</MudTh>
+            <MudTh>View Consent</MudTh>
+            <MudTh>Delete</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>
+                <MudText Typo="Typo.body2" Bold="true">@GetConsentTypeLabel(context)</MudText>
+            </MudTd>
+            <MudTd>@GetDescription(context)</MudTd>
+            <MudTd>@GetBracketedVersion(context)</MudTd>
+            <MudTd>@GetSourceLabel(context)</MudTd>
+            <MudTd>
+                @if (CanView(context))
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Visibility" Variant="Variant.Filled" Color="Color.Primary"
+                        Style="color:black" Size="Size.Small" OnClick="@(r => ViewConsent(context))" />
+                }
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary"
+                    Style="color:black" Size="Size.Small" Class="ml-1" OnClick="@(r => StartEdit(context))" />
+            </MudTd>
+            <MudTd>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error"
+                    Style="color:black" Size="Size.Small" OnClick="@(r => ConfirmDelete(context))" />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    <div class="mt-3">
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"
+            Style="color:black" OnClick="StartAdd">Add consent</MudButton>
+    </div>
+</MudPaper>
+
+@if (ShowForm)
+{
+    <MudPaper Class="pa-4" Style="max-width: 720px;">
+        <MudForm @ref="form">
+            <div class="row">
+                <div class="col-lg-6 col-md-12">
+                    <MudSelect T="ConsentDocumentsEnum" Label="Consent Type" Value="Model.ConsentType"
+                        ValueChanged="OnConsentTypeChanged" Required="true" RequiredError="Please select a consent type">
+                        @foreach (var value in Enum.GetValues(typeof(ConsentDocumentsEnum)).Cast<ConsentDocumentsEnum>())
+                        {
+                            <MudSelectItem Value="@value">@((string.IsNullOrWhiteSpace(value.GetDisplayName()) ?
+                                                        value.ToString() : value.GetDisplayName()))</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <MudTextField T="string" Label="Description" @bind-Value="Model.Description" MaxLength="300" Lines="3"
+                        Placeholder="Optional description (max 300 characters)" />
+                </div>
+
+                <div class="col-12 mt-3">
+                    <MudCheckBox Label="Use URL (instead of uploading a PDF)" @bind-Checked="Model.IsUrlConsent"
+                        Style="margin-left: -15px" />
+                </div>
+
+                @if (Model.IsUrlConsent)
+                {
+                    <div class="col-12 mt-2">
+                        <MudTextField T="string" Label="Consent URL" Placeholder="https://example.com/consent.pdf"
+                            @bind-Value="Model.Url" Required="true" RequiredError="URL is required" />
+                    </div>
+                }
+                else
+                {
+                    <div class="col-12 mt-2">
+                        <div class="@DropZoneClass @HoverClass mt-1" @ondragenter="OnDragEnter" @ondragover="OnDragEnter"
+                            @ondragleave="OnDragLeave" @ondrop="OnDragLeave">
+                            <MudPaper class="drag-drop-zone">
+                                <InputFile OnChange="LoadFiles" class="drag-drop-input" accept="application/pdf" />
+                                <MudText>Click or drag and drop a PDF file here</MudText>
+                            </MudPaper>
+                        </div>
+                        @if (SelectedFiles.Any())
+                        {
+                            <div class="mt-2">
+                                <MudChip>@SelectedFiles[0].Name</MudChip>
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Class="ml-2"
+                                    OnClick="@(e => DeleteSelectedFile())">Remove</MudButton>
+                            </div>
+                        }
+                        else if (IsEditing && !Model.IsUrlConsent && HasExistingFileForEdit)
+                        {
+                            <div class="mt-2">
+                                <MudChip>@ExistingFileName</MudChip>
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" Class="ml-2"
+                                    OnClick="@(e => RemoveExistingFile())">Remove</MudButton>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <div class="col-auto mt-3">
+                    <MudSelect T="int" Label="Major Version" @bind-Value="Model.MajorVersion" Required="true"
+                        Style="width:130px;">
+                        @for (int i = 0; i < 10; i++)
+                        {
+                            var v = i;
+                            <MudSelectItem Value="@v">@v</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+                <div class="col-auto mt-3">
+                    <MudSelect T="int" Label="Minor Version" @bind-Value="Model.MinorVersion" Required="true"
+                        Style="width:130px;">
+                        @for (int i = 0; i < 100; i++)
+                        {
+                            var v = i;
+                            <MudSelectItem Value="@v">@v</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <MudButton StartIcon="@Icons.Material.Filled.Visibility" Variant="Variant.Filled" Color="Color.Primary"
+                    Style="color:black" Disabled="@(!CanPreviewCurrent())" OnClick="PreviewCurrent">View</MudButton>
+
+                @if (IsEditing)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Class="ml-2" OnClick="Submit">
+                        Update</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Class="ml-2" OnClick="CancelEdit">Cancel
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Class="ml-2" OnClick="Submit">
+                        Create</MudButton>
+                }
+            </div>
+        </MudForm>
+    </MudPaper>
+}

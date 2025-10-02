@@ -290,13 +290,13 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
         {
             var messages = string.Join("<br/>", ImportPreview.Errors.Select(e => $"Line {e.Line} : {e.ErrorMessage}"));
 
-            await Extensions.Extensions.PreviewFileText(JSRuntime, messages);
+            await Extensions.ExtensionClass.PreviewFileText(JSRuntime, messages);
         }
 
         private async Task SaveRecordsInError()
         {
             byte[] fileContent = Encoding.UTF8.GetBytes(ImportPreview.RecordsInError);
-            await Extensions.Extensions.SaveAs(JSRuntime, GetErrorFileName(csvFile.Name, "Records In Error"), fileContent);
+            await Extensions.ExtensionClass.SaveAs(JSRuntime, GetErrorFileName(csvFile.Name, "Records In Error"), fileContent);
         }
 
         private string GetErrorFileName(string name, string toAppend)
@@ -394,7 +394,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             var sampleContent = GetSampleHeader();
             sampleContent += "<hr />";
             sampleContent += GetSampleContent();
-            await Extensions.Extensions.PreviewFileText(JSRuntime, sampleContent);
+            await Extensions.ExtensionClass.PreviewFileText(JSRuntime, sampleContent);
         }
 
         private async Task DownloadSampleFile()
@@ -404,7 +404,7 @@ namespace BrokerIQ.Online.Server.Pages.Customer.Components
             sampleContent += GetSampleContent();
             sampleContent = sampleContent.Replace("<br/>", "\n");
 
-            await Extensions.Extensions.SaveAs(JSRuntime, "import_sample.csv", Encoding.Unicode.GetBytes(sampleContent));
+            await Extensions.ExtensionClass.SaveAs(JSRuntime, "import_sample.csv", Encoding.Unicode.GetBytes(sampleContent));
         }
     }
 }

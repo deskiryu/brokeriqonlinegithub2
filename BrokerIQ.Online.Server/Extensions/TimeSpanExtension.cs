@@ -8,6 +8,14 @@ namespace BrokerIQ.Online.Server.Extensions
         {
             if (timeSpan == TimeSpan.Zero) return "Not set";
 
+            if (timeSpan >= TimeSpan.FromDays(364))
+            {
+                var year = (int)((timeSpan.TotalDays / 365.2425)+0.5);
+
+                var spanUnit = year > 1 ? "years" : "year";
+
+                return $"{year} {spanUnit}";
+            }
             if (timeSpan >= TimeSpan.FromDays(1))
             {
                 var spanUnit = timeSpan.TotalDays > 1 ? "days" : "day";
@@ -33,8 +41,11 @@ namespace BrokerIQ.Online.Server.Extensions
         public static string ToDisplayValue(this TimeSpan timeSpan)
         {
             if (timeSpan == TimeSpan.Zero) return "Not set";
-
-            if (timeSpan == TimeSpan.FromDays(365)) return "365 days (1 year) before review date";
+            if (timeSpan == TimeSpan.FromDays(365*5)) return "5 years before review date";
+            if (timeSpan == TimeSpan.FromDays(365*4)) return "4 years before review date";
+            if (timeSpan == TimeSpan.FromDays(365*3)) return "3 years before review date";
+            if (timeSpan == TimeSpan.FromDays(365*2)) return "2 years before review date";
+            if (timeSpan == TimeSpan.FromDays(365)) return "1 year before review date";
 
             if (timeSpan >= TimeSpan.FromDays(30))
             {

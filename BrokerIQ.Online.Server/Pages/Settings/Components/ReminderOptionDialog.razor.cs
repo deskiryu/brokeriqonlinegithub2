@@ -23,7 +23,7 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         public ReminderOptionDto Option { get; set; }
 
         [Microsoft.AspNetCore.Components.Parameter]
-        public Models.BrokerIdentifier BrokerIdentifier  { get; set; }
+        public Models.BrokerIdentifier BrokerIdentifier { get; set; }
 
         [Inject]
         public IAlertService AlertService { get; set; }
@@ -37,6 +37,10 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         private bool HideLink { get; set; }
 
         private readonly TimeSpan[] ExpiryTimeSpan = new TimeSpan[]{
+            TimeSpan.FromDays(365*5),
+            TimeSpan.FromDays(365*4),
+            TimeSpan.FromDays(365*3),
+            TimeSpan.FromDays(365*2),
             TimeSpan.FromDays(365),
             TimeSpan.FromDays(270),
             TimeSpan.FromDays(240),
@@ -116,8 +120,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         protected override async Task OnInitializedAsync()
         {
-            if(Option.Id > 0)
-            {         
+            if (Option.Id > 0)
+            {
                 var startLink = Option.MessageContent.IndexOf("<--") + 3;
                 var endLink = Option.MessageContent.IndexOf("-->");
 
