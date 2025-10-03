@@ -34,7 +34,9 @@ public partial class TimeOfDay : ComponentBase
     {
         await base.OnInitializedAsync();
 
-        HourAsString = Value.Value.Hours.ToString("00") ;
+        if (!Value.HasValue) return;
+
+        HourAsString = Value.Value.Hours.ToString("00");
         MinuteAsString = Value.Value.Minutes.ToString("00");
     }
 
