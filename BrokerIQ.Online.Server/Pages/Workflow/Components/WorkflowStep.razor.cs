@@ -96,16 +96,18 @@ public partial class WorkflowStep
 
     public string BuildParameterText(StepParameterDto param)
     {
-        const int MaxLengthAttribute = 30;
+        const int textMaxLength = 30;
 
         var activityParam = ActivityParameters.First(p => p.Order == param.Order);
 
         switch (activityParam.Type)
         {
             case "text":
-                return $"{param.Value[..(param.Value.Length > MaxLengthAttribute ? MaxLengthAttribute : param.Value.Length)]} ...";
+                var endText = param.Value.Length <= textMaxLength ? string.Empty : " ...";
+                return $"{param.Value[..(param.Value.Length > textMaxLength ? textMaxLength : param.Value.Length)]}{endText}";
             case "template":
-                return $"{param.Value[..(param.Value.Length > MaxLengthAttribute ? MaxLengthAttribute : param.Value.Length)]} ...";
+                endText = param.Value.Length <= textMaxLength ? string.Empty : " ...";
+                return $"{param.Value[..(param.Value.Length > textMaxLength ? textMaxLength : param.Value.Length)]}{endText}";
             case "videourl":
                 var video = BrokerVideos.FirstOrDefault(v => v.Id.ToString() == param.Value);
                 if (video != null) return $" With video {video.Name}";
