@@ -29,11 +29,11 @@ public class WorkflowsBase : ComponentBase
 
     protected IEnumerable<WorkflowDto> BrokerWorkflows { get; set; }
 
-    protected IEnumerable<ActivityDto> Triggers { get; set; }
+    protected IEnumerable<TriggerDto> Triggers { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Triggers = (await WorkflowService.GetActivitiesAsync()).Where(a => a.IsEventActivity).ToArray();
+        Triggers = (await WorkflowService.GetTriggersAsync()).ToArray();
         BrokerWorkflows = await WorkflowService.GetWorkflowsAsync();
     }
 
@@ -64,6 +64,6 @@ public class WorkflowsBase : ComponentBase
     {
         if (!Triggers.Any() || !wf.Steps.Any()) return string.Empty;
 
-        return Triggers.First(t => t.Id == wf.Steps.First().ActivityId).Name;
+        return Triggers.First(t => t.Key == wf.TriggerKey).Name;
     }
 }

@@ -7,28 +7,6 @@
                  Dense="true"
                  AnchorOrigin="Origin.BottomLeft"
                  @ref="activityMenu">
-                @if(Events.Any()){
-                    @foreach (var activity in Events.Where(e => string.IsNullOrWhiteSpace(e.Group)).OrderBy(e => e.Name)) {
-                        <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name </MudMenuItem>
-                    }
-                    var groups = Events.Where(e => !string.IsNullOrWhiteSpace(e.Group)).Select(e => e.Group).Distinct();
-                    @foreach (var group in groups) {
-                        <MudMenuItem>
-                            <MudMenu AnchorOrigin="Origin.BottomLeft"
-                                    Dense="true"
-                                    ActivationEvent="MouseEvent.MouseOver">
-                                <ActivatorContent>
-                                    <MudText>@group ▸</MudText>
-                                </ActivatorContent>
-                                <ChildContent>
-                                    @foreach (var activity in Events.Where(e => e.Group == group).OrderBy(e => e.Name)) {
-                                        <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name </MudMenuItem>
-                                    }
-                                </ChildContent>
-                            </MudMenu>
-                        </MudMenuItem>
-                    }
-                }
                 @if(Actions.Any()){
                 <MudMenuItem>
                     <MudMenu AnchorOrigin="Origin.BottomLeft"

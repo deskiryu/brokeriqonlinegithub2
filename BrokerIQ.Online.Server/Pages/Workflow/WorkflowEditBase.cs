@@ -29,17 +29,21 @@ public class WorkflowEditBase : ComponentBase
 
     protected WorkflowDto Workflow = new();
 
-    protected IEnumerable<ActivityDto> Activities {get; set;}
+    protected IEnumerable<TriggerDto> Triggers { get; set; }
+
+    protected IEnumerable<ActivityDto> Activities { get; set; }
 
     protected string ActiveButtonLabel => Workflow.IsActive ? "Deactivate" : "Activate";
 
     protected Color ActiveButtonColour => Workflow.IsActive ? Color.Error : Color.Success;
 
-    protected bool WorkflowIsNotValid
+    protected bool DisableSaveButton
     {
         get
         {
-            if (string.IsNullOrWhiteSpace(Workflow.Name) || Workflow.Steps.Count <= 1) return true;
+            if (string.IsNullOrWhiteSpace(Workflow.TriggerKey)) return true;
+
+            if (string.IsNullOrWhiteSpace(Workflow.Name) || Workflow.Steps.Count < 1) return true;
 
             foreach (var step in Workflow.Steps)
             {
@@ -58,6 +62,8 @@ public class WorkflowEditBase : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        Triggers = await WorkflowService.GetTriggersAsync();
+
         Activities = await WorkflowService.GetActivitiesAsync();
 
         if (!string.IsNullOrWhiteSpace(WorkflowId))
@@ -68,7 +74,7 @@ public class WorkflowEditBase : ComponentBase
 
     protected async Task Save()
     {
-        if (WorkflowIsNotValid)
+        if (DisableSaveButton)
         {
             return;
         }

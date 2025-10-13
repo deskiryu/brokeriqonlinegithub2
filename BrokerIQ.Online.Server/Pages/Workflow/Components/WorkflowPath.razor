@@ -6,19 +6,12 @@
     while(currentStep != null){
         var tmp = currentStep;
 
-        @if(currentStep == Steps.First()){
-            <WorkflowStep User="User"
-                          Step="tmp"
-                          Activities="EventActivities"
-                          OnChanged="OnStepChange" />
-        }
-        else{
-            <div class="arrow">&#8595;</div>
-            <WorkflowStep User="User"
-                          Step="tmp"
-                          Activities="NonEventActivities"
-                          OnChanged="OnStepChange" />
-        }
+        <div class="arrow">&#8595;</div>
+        <WorkflowStep User="User"
+                        Step="tmp"
+                        Activities="Activities"
+                        OnChanged="OnStepChange" />
+
         if (UsesBranchingActivity(tmp))
         {
             <div class="d-flex justify-space-around">

@@ -14,13 +14,13 @@
                 Variant="Variant.Text" Margin="Margin.Dense" MaxLength="100" Error="@(string.IsNullOrWhiteSpace(Workflow.Name))"
                 Required="true" RequiredError="Please name this workflow" Immediate="true"/>
         </MudStack>
-        <WorkflowDiagram Workflow="Workflow" Activities="Activities" OnChanged="HandleChildChanged"/>
+        <WorkflowDiagram Workflow="Workflow" Triggers="Triggers" Activities="Activities" OnChanged="HandleChildChanged"/>
         <MudStack Row="true" Spacing="1" Class="mt-2" Justify="Justify.FlexEnd">
             @if(Workflow.Id != Guid.Empty){
                 <MudButton Variant="Variant.Filled" Color="@ActiveButtonColour" OnClick="SetActiveStatus" >@ActiveButtonLabel</MudButton>
             }
             <MudButton Variant="Variant.Outlined" Href="workflows">Cancel</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Save" Disabled="@WorkflowIsNotValid" >Save</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Save" Disabled="@DisableSaveButton" >Save</MudButton>
         </MudStack>
     </MudPaper>
 </MudContainer>

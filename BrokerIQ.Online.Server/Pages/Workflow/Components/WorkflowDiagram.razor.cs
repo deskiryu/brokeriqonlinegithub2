@@ -17,6 +17,9 @@ public partial class WorkflowDiagram
     public WorkflowDto Workflow { get; set; } = new();
 
     [Parameter]
+    public IEnumerable<TriggerDto> Triggers { get; set; } = Enumerable.Empty<TriggerDto>();
+
+    [Parameter]
     public IEnumerable<ActivityDto> Activities { get; set; } = Enumerable.Empty<ActivityDto>();
 
     [Parameter] public EventCallback OnChanged { get; set; }
