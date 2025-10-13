@@ -132,7 +132,9 @@ namespace BrokerIQ.Online.Server.Models
         public bool UseFirebaseForIOS { get; set; }
 
         public string ReferAFriendText { get; set; }
-        
+
         public bool UseConsentDocuments { get; set; } 
+        
+        public bool SendEmailNotificationReminders { get; set; }  
     }
 }

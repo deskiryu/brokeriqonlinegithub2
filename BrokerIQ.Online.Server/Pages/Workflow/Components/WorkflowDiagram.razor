@@ -1,0 +1,20 @@
+﻿@using BrokerIQ.Dto.Dto.Workflows
+
+<div class="d-flex flex-column align-center" >
+    @* <WorkflowTrigger Workflow="Workflow" Triggers="Triggers" /> *@
+    @if(!Workflow.Steps.Any()){
+        <MudIconButton Icon="@Icons.Material.Filled.Add"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Size="Size.Small"
+                       OnClick="AddInitialStep" />
+    }
+
+    @if(Workflow.Steps.Any()){
+        <WorkflowPath Steps ="Workflow.Steps"
+                      InitialStep="Workflow.Steps.First()"
+                      Activities="Activities"
+                      User="User"
+                      OnChanged="OnPathChange"/>
+    }
+</div>
