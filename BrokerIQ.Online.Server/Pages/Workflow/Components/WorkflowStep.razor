@@ -7,37 +7,49 @@
                  Dense="true"
                  AnchorOrigin="Origin.BottomLeft"
                  @ref="activityMenu">
+
                 @if(Actions.Any()){
-                <MudMenuItem>
-                    <MudMenu AnchorOrigin="Origin.BottomLeft"
-                             Dense="true"
-                             ActivationEvent="MouseEvent.MouseOver">
-                        <ActivatorContent>
-                            <MudText>Action ▸</MudText>
-                        </ActivatorContent>
-                        <ChildContent>
-                            @foreach (var activity in Actions) {
-                                <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name </MudMenuItem>
-                            }
-                        </ChildContent>
-                    </MudMenu>
-                </MudMenuItem>
+                    @foreach (var activity in Actions.Where(e => string.IsNullOrWhiteSpace(e.Group)).OrderBy(e => e.Name)) {
+                        <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name</MudMenuItem>
+                    }
+                    var groups = Actions.Where(e => !string.IsNullOrWhiteSpace(e.Group)).Select(e => e.Group).Distinct();
+                    @foreach (var group in groups) {
+                        <MudMenuItem>
+                            <MudMenu AnchorOrigin="Origin.BottomLeft"
+                                    Dense="true"
+                                    ActivationEvent="MouseEvent.MouseOver">
+                                <ActivatorContent>
+                                    <MudText>@group ▸</MudText>
+                                </ActivatorContent>
+                                <ChildContent> @foreach (var activity in Actions.Where(e => e.Group == group).OrderBy(e => e.Name)) {
+                                        <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name</MudMenuItem>
+                                    }
+                                </ChildContent>
+                            </MudMenu>
+                        </MudMenuItem>
+                    }
                 }
+
                 @if(BranchingActions.Any()){
-                <MudMenuItem>
-                    <MudMenu AnchorOrigin="Origin.BottomLeft"
-                             Dense="true"
-                             ActivationEvent="MouseEvent.MouseOver">
-                        <ActivatorContent>
-                            <MudText>Branch ▸</MudText>
-                        </ActivatorContent>
-                        <ChildContent>
-                            @foreach (var activity in BranchingActions) {
-                                <MudMenuItem OnClick="() => SetActivity(activity.Id)">@activity.Name </MudMenuItem>
-                            }
-                        </ChildContent>
-                    </MudMenu>
-                </MudMenuItem>
+                    @foreach (var activity in BranchingActions.Where(e => string.IsNullOrWhiteSpace(e.Group)).OrderBy(e => e.Name)) {
+                        <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name</MudMenuItem>
+                    }
+                    var groups = BranchingActions.Where(e => !string.IsNullOrWhiteSpace(e.Group)).Select(e => e.Group).Distinct();
+                    @foreach (var group in groups) {
+                        <MudMenuItem>
+                            <MudMenu AnchorOrigin="Origin.BottomLeft"
+                                    Dense="true"
+                                    ActivationEvent="MouseEvent.MouseOver">
+                                <ActivatorContent>
+                                    <MudText>@group ▸</MudText>
+                                </ActivatorContent>
+                                <ChildContent> @foreach (var activity in BranchingActions.Where(e => e.Group == group).OrderBy(e => e.Name)) {
+                                        <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name</MudMenuItem>
+                                    }
+                                </ChildContent>
+                            </MudMenu>
+                        </MudMenuItem>
+                    }
                 }
         </MudMenu>
         <MudChip Size="Size.Small" Color="@ActivityColor"

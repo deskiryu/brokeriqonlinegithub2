@@ -8,8 +8,8 @@
                  AnchorOrigin="Origin.BottomLeft"
                  @ref="triggerMenu">
                 @if(Triggers.Any()){
-                    @foreach (var activity in Triggers.Where(e => string.IsNullOrWhiteSpace(e.Group)).OrderBy(e => e.Name)) {
-                        <MudMenuItem AutoClose="true" OnClick="() => SetTrigger(activity.Key)">@activity.Name </MudMenuItem>
+                    @foreach (var trigger in Triggers.Where(e => string.IsNullOrWhiteSpace(e.Group)).OrderBy(e => e.Name)) {
+                        <MudMenuItem AutoClose="true" OnClick="() => SetTrigger(trigger.Key)">@trigger.Name</MudMenuItem>
                     }
                     var groups = Triggers.Where(e => !string.IsNullOrWhiteSpace(e.Group)).Select(e => e.Group).Distinct();
                     @foreach (var group in groups) {
@@ -21,7 +21,7 @@
                                     <MudText>@group ▸</MudText>
                                 </ActivatorContent>
                                 <ChildContent> @foreach (var trigger in Triggers.Where(e => e.Group == group).OrderBy(e => e.Name)) {
-                                        <MudMenuItem AutoClose="true" OnClick="() => SetTrigger(trigger.Key)">@trigger.Name </MudMenuItem>
+                                        <MudMenuItem AutoClose="true" OnClick="() => SetTrigger(trigger.Key)">@trigger.Name</MudMenuItem>
                                     }
                                 </ChildContent>
                             </MudMenu>
