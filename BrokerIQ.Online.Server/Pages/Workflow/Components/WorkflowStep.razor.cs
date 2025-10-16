@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Dto.Workflows;
@@ -36,9 +35,7 @@ public partial class WorkflowStep
 
     public IEnumerable<Models.Video> BrokerVideos { get; set; }
 
-    public IEnumerable<ActivityDto> Events => Activities.Where(a => a.IsEventActivity).ToArray();
-
-    public IEnumerable<ActivityDto> Actions => Activities.Where(a => !a.IsEventActivity && !a.IsBranchingActivity).ToArray();
+    public IEnumerable<ActivityDto> Actions => Activities.Where(a => !a.IsBranchingActivity).ToArray();
 
     public IEnumerable<ActivityDto> BranchingActions => Activities.Where(a => a.IsBranchingActivity).ToArray();
 
@@ -68,8 +65,6 @@ public partial class WorkflowStep
             var activity = Activities.FirstOrDefault(a => a.Id == SelectedActivityId);
 
             if (activity == null) return string.Empty;
-
-            if (activity.IsEventActivity) return "Trigger";
 
             if (activity.IsBranchingActivity) return "Check";
 

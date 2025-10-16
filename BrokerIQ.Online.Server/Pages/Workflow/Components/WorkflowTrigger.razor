@@ -1,0 +1,38 @@
+﻿<MudPaper Class="pa-2 ma-1"
+          Elevation="3">
+    <MudStack Row="true"
+              AlignItems="AlignItems.Center"
+              Justify="Justify.SpaceBetween">
+        <MudMenu Label="@(SelectedTrigger != null ? SelectedTrigger.Name : "Choose Trigger")"
+                 Dense="true"
+                 AnchorOrigin="Origin.BottomLeft"
+                 @ref="triggerMenu">
+                @if(Triggers.Any()){
+                    @foreach (var trigger in Triggers.Where(e => string.IsNullOrWhiteSpace(e.Group)).OrderBy(e => e.Name)) {
+                        <MudMenuItem AutoClose="true" OnClick="() => SetTrigger(trigger.Key)">@trigger.Name</MudMenuItem>
+                    }
+                    var groups = Triggers.Where(e => !string.IsNullOrWhiteSpace(e.Group)).Select(e => e.Group).Distinct();
+                    @foreach (var group in groups) {
+                        <MudMenuItem>
+                            <MudMenu AnchorOrigin="Origin.BottomLeft"
+                                    Dense="true"
+                                    ActivationEvent="MouseEvent.MouseOver">
+                                <ActivatorContent>
+                                    <MudText>@group ▸</MudText>
+                                </ActivatorContent>
+                                <ChildContent> @foreach (var trigger in Triggers.Where(e => e.Group == group).OrderBy(e => e.Name)) {
+                                        <MudMenuItem AutoClose="true" OnClick="() => SetTrigger(trigger.Key)">@trigger.Name</MudMenuItem>
+                                    }
+                                </ChildContent>
+                            </MudMenu>
+                        </MudMenuItem>
+                    }
+                }
+        </MudMenu>
+        <MudChip Size="Size.Small" Color="Color.Default">Trigger</MudChip>
+    </MudStack>
+    <MudDivider Class="ma-1" />
+    <MudText Class="ma-1"
+            Typo="Typo.caption">@SelectedTrigger.Description
+    </MudText>
+</MudPaper>

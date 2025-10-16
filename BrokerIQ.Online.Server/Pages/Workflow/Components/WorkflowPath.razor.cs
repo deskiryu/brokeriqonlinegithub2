@@ -19,14 +19,13 @@ public partial class WorkflowPath : ComponentBase
     public StepDto InitialStep { get; set; }
 
     [Parameter]
+    public IEnumerable<TriggerDto> Triggers { get; set; } = Enumerable.Empty<TriggerDto>();
+
+    [Parameter]
     public IEnumerable<ActivityDto> Activities { get; set; } = Enumerable.Empty<ActivityDto>();
 
     [Parameter] public EventCallback OnChanged { get; set; }
     private Task HasChanged() => OnChanged.InvokeAsync();
-
-    public IEnumerable<ActivityDto> EventActivities => Activities.Where(a => a.IsEventActivity).ToArray();
-
-    public IEnumerable<ActivityDto> NonEventActivities => Activities.Where(a => !a.IsEventActivity).ToArray();
 
     public IEnumerable<ActivityDto> BranchingActivities => Activities.Where(a => a.IsBranchingActivity).ToArray();
 
