@@ -1,0 +1,64 @@
+@using BrokerIQ.Online.Server.Components
+
+<MudDialog>
+    <DialogContent>
+        @foreach(var param in Step.StepParameters){
+            var activityParam = Activity.Parameters.First(p => p.Order == param.Order);
+            switch(activityParam.Type){
+                case "text":
+                    <MudTextField Label="@activityParam.Label" Variant="Variant.Text" Margin="Margin.Dense" @bind-Value="param.Value"/>
+                    break;
+                case "template":
+                        <TemplateMessageEditor Broker="Broker" Customer="SampleCustomer" Connection="SampleConnection"
+                        DefinedMessageChanged="OnTemplateChange"
+                        @bind-MessagePreview="param.Value" />
+                    break;
+                case "timespan":
+                     <TimeControl @bind-Value="param.Value"/>
+                    break;
+                case "videourl":
+                    if(BrokerVideos != null){
+                        <MudSelect T="string" @bind-Value="param.Value" Dense="true" Label="Video" >
+                            <MudSelectItem T="string" Value="0.ToString()">None</MudSelectItem>
+                            @foreach (var video in BrokerVideos)
+                            {
+                                <MudSelectItem T="string" Value="@video.Id.ToString()">@video.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                    break;
+                default:
+                    continue;
+            }
+        }
+        @if(Activity.AcceptsAttachment){
+            <MudFileUpload T="IBrowserFile"
+                           FilesChanged="UploadFile"
+                           Accept=".pdf">
+                <ButtonTemplate>
+                    <MudButton Variant="Variant.Filled"
+                            HtmlTag="label"
+                            Color="Color.Primary"
+                            StartIcon="@Icons.Material.Filled.CloudUpload"
+                            Size="Size.Small"
+                            FullWidth="true"
+                            for="@context.Id">
+                        Attach file
+                    </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+            @if (Step.AttachmentDto != null && !string.IsNullOrWhiteSpace(Step.AttachmentDto.FileName))
+            {
+                <MudStack Row="true" Class="mt-1" Justify="Justify.SpaceAround" AlignItems="AlignItems.Center">
+                    <MudIcon Icon="@Icons.Material.Filled.AttachFile" Size="Size.Small"></MudIcon>
+                    <MudText Typo="Typo.subtitle2"> @Step.AttachmentDto.FileName</MudText>
+                    <MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" OnClick="RemoveAttachment" />
+                </MudStack>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Confirm" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black}")">Confirm</MudButton>
+    </DialogActions>
+</MudDialog>
