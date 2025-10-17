@@ -229,7 +229,23 @@ namespace BrokerIQ.Online.Server.Services
 
             return result;
         }
+        public async Task<(bool, string)> SetHomeScreenVideo(int id, int brokerId,  bool isHomeScreenVideo = true)
+        {
+            var result = (false, string.Empty);
 
+            var url = this.videoUrl + $"/sethomescreenvideo?brokerId={brokerId}&id={id}&isHomeScreenVideo={isHomeScreenVideo}";
+
+            try
+            {
+                result = await this.requestProviderService.Post<(bool, string)>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SetHomeScreenVideo: exception {ex.Message}");
+            }
+
+            return result;
+        }
         public async Task<(bool, string)> SetVideoSendDate(int id, int brokerId, DateTime? sendDate)
         {
             var answer = (false, string.Empty);

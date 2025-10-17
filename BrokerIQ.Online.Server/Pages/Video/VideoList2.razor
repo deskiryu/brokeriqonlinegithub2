@@ -228,6 +228,39 @@
                                         </div>
                                     </div>
                                 </MudDropZone>
+
+                                <MudDropZone T="BrokerIQ.Online.Server.Models.Video" OnlyZone="true" Identifier="HomeScreen">
+                                    <div class="card " style="padding-left: 0px; padding-right: 0px">
+                                        <div class="card-header">App Home Screen Video</div>
+                                        <div class="card-title my_card_title">@(HomeScreenVideo !=null ? HomeScreenVideo.Name : "")</div>
+                                        <div class="card-body my_card_body">
+                                            @if (HomeScreenVideo != null)
+                                            {
+                                                <div class="close" @onclick="@( async () => await RemoveDrag(HomeScreenVideo.Id, VideoSendEnum.HomeScreenVideo) )"></div>
+                                                if (DisplayEmbeddedVideo[HomeScreenVideo.Id])
+                                                {
+                                                    <div class="video_play">
+                                                        <video id="movie" class="video_play_size" controls preload>
+                                                            <source src='@HomeScreenVideo.Url#t=0.1'>
+                                                        </video>
+                                                    </div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="video_thumb">
+                                                        <img class="img-thumbnail" src="@HomeScreenVideo.VideoThumbnailData" style="width:150px;" />
+                                                        <div class="play-button" @onclick="@( () => ShowVideoPlayer(@HomeScreenVideo.Id) )"></div>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="none_block"><p>NONE</p></div>
+                                            }
+                                        </div>
+                                    </div>
+                                </MudDropZone> 
                             }
 
                             @if (HasVideo && MaxVideos >= 1)
