@@ -103,6 +103,8 @@ namespace BrokerIQ.Online.Pages
 
         public Video InsuranceVideo { get; set; }
 
+        public Video HomeScreenVideo { get; set; }
+
         public Video SendDateVideo1 { get; set; }
 
         public Video SendDateVideo2 { get; set; }
@@ -598,6 +600,29 @@ namespace BrokerIQ.Online.Pages
                             }
                         }
                     }
+                    if (video.Identifier != "HomeScreen" && video.VideoSendTypeId == VideoSendEnum.HomeScreenVideo)
+                    {
+                        message += $"Video {video.Name} will no longer be an app home screen video. ";
+                    }
+                    else if (video.Identifier == "HomeScreen" && video.VideoSendTypeId != VideoSendEnum.HomeScreenVideo)
+                    {
+                        if (video.Vetted)
+                        {
+                            message += $"Video {video.Name} will be an app home screen video. ";
+                        }
+                        else
+                        {
+                            if (IsBrokerStaff)
+                            {
+                                message += $"Video {video.Name} is not vetted. Only broker admin can drag this video to this slot. ";
+                                vetted = false;
+                            }
+                            else
+                            {
+                                message += $"Video {video.Name} is not vetted. By continuing you verify that this video is of appropriate content and will be an app home scree video. ";
+                            }
+                        }
+                    }
                 }
             }
             return (message, vetted);
@@ -809,6 +834,13 @@ namespace BrokerIQ.Online.Pages
                         break;
                     }
 
+                    if (video.Identifier == "HomeScreen" && video.VideoSendTypeId != VideoSendEnum.HomeScreenVideo)
+                    {
+                        await this.VideoService.SetHomeScreenVideo(video.Id, brokerId, true);
+                        await this.VideoService.SetVetted(video.Id, true);
+                        break;
+                    }
+                    
                     if (video.Identifier.Contains("SendDateVideo") && video.VideoSendTypeId != VideoSendEnum.SendOnDate)
                     {
                         await this.VideoService.SetVideoSendDateTick(video.Id, brokerId, true);
@@ -856,6 +888,7 @@ namespace BrokerIQ.Online.Pages
                         case VideoSendEnum.BirthdayVideo: BirthdayVideo = null; break;
                         case VideoSendEnum.MortgageVideo: MortgageVideo = null; break;
                         case VideoSendEnum.InsuranceVideo: InsuranceVideo = null; break;
+                        case VideoSendEnum.HomeScreenVideo: HomeScreenVideo = null; break;
                         case VideoSendEnum.SendOnDate:
                             {
                                 switch (previousIdentifier)
@@ -990,6 +1023,11 @@ namespace BrokerIQ.Online.Pages
                 {
                     InsuranceVideo = video;
                     video.Identifier = "Insurance";
+                }
+                else if (video.HomeScreenVideo)
+                {
+                    HomeScreenVideo = video;
+                    video.Identifier = "HomeScreen";
                 }
                 else if (video.SendDateVideo)
                 {

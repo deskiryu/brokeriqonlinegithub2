@@ -36,6 +36,8 @@ namespace BrokerIQ.Online.Services.Interface
         Task<(bool, string)> SetMortgageVideo(int id, int brokerId, bool isMortgageVideo = true);
 
         Task<(bool, string)> SetInsuranceVideo(int id, int brokerId, bool isInsuranceVideo = true);
+        
+        Task<(bool, string)> SetHomeScreenVideo(int id, int brokerId,  bool isHomeScreenVideo = true);
 
         Task<(bool, string)> SetVideoSendDate(int id, int brokerId, DateTime? sendDate);
 
