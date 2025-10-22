@@ -64,15 +64,20 @@
                     Typo="Typo.caption">@BuildParameterText(param)</MudText>
             </div>
         }
-        @if(Step.AttachmentDto != null){
-            <MudStack Row="true" Class="mt-1" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
-                <MudIcon Icon="@Icons.Material.Filled.AttachFile" Size="Size.Small"></MudIcon>
-                <MudText Typo="Typo.caption"> @Step.AttachmentDto.FileName</MudText>
-            </MudStack>
-        }
     }
     else{
         <MudText Class="ma-1"
                 Typo="Typo.caption">@SelectedActivity.Description</MudText>
+    }
+    @if (Step.AttachmentDto != null)
+    {
+        <MudStack Row="true"
+                Class="mt-1"
+                Justify="Justify.FlexStart"
+                AlignItems="AlignItems.Center">
+            <MudIcon Icon="@Icons.Material.Filled.AttachFile"
+                    Size="Size.Small"></MudIcon>
+            <MudText Typo="Typo.caption"> @Step.AttachmentDto.FileName</MudText>
+        </MudStack>
     }
 </MudPaper>

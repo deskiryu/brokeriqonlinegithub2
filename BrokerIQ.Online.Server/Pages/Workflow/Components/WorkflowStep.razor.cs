@@ -66,9 +66,13 @@ public partial class WorkflowStep
 
             if (activity == null) return string.Empty;
 
+            if(activity.Id == -1) return "End";
+
             if (activity.IsBranchingActivity) return "Check";
 
-            return "Action";
+            if (!activity.Parameters.Any()) return "Action";
+
+            return "Edit";
         }
     }
 
