@@ -55,6 +55,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
         protected string ExistingFileName { get; set; }
 
         private IEnumerable<BrokerConsentDocumentDto> ExistingConsents { get; set; } = Enumerable.Empty<BrokerConsentDocumentDto>();
+        protected IEnumerable<BrokerConsentDocumentDto> BrokerConsents { get; private set; } = Enumerable.Empty<BrokerConsentDocumentDto>();
+        protected IEnumerable<BrokerConsentDocumentDto> YaviaConsents { get; private set; } = Enumerable.Empty<BrokerConsentDocumentDto>();
 
         private bool IsEditing { get; set; }
         private BrokerConsentDocumentDto EditingDocument { get; set; }
@@ -183,6 +185,10 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
                 ExistingConsents = await BrokerConsentDocumentService.GetAllForCurrentBroker();
             }
 
+            var allConsents = ExistingConsents ?? Enumerable.Empty<BrokerConsentDocumentDto>();
+            BrokerConsents = allConsents.Where(doc => !IsYavia(doc)).ToList();
+            YaviaConsents = allConsents.Where(doc => IsYavia(doc)).ToList();
+
             StateHasChanged();
         }
 
@@ -219,6 +225,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             if (bool.TryParse(value.ToString(), out var parsed)) return parsed;
             return fallback;
         }
+
+        private bool IsYavia(BrokerConsentDocumentDto doc) => GetBool(GetProp(doc, "YaviaRequired"));
 
         private string GetString(object value)
         {
@@ -391,6 +399,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         protected async Task ConfirmDelete(BrokerConsentDocumentDto doc)
         {
+            if (IsYavia(doc))
+            {
+                Snackbar.Add("Yavia required consents cannot be deleted.", Severity.Info);
+                return;
+            }
+
             var parameters = new DialogParameters
             {
                 { "ContentText", "Are you sure you wish to delete this consent requirement?" },
@@ -420,6 +434,12 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
         protected void StartEdit(BrokerConsentDocumentDto doc)
         {
+            if (IsYavia(doc))
+            {
+                Snackbar.Add("Yavia required consents cannot be edited.", Severity.Info);
+                return;
+            }
+
             EditingDocument = doc;
             IsEditing = true;
             ShowForm = true;
@@ -448,6 +468,8 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
             var fileName = GetString(GetProp(doc, "FileName"));
             HasExistingFileForEdit = (fileBytes != null && fileBytes.Length > 0) || !string.IsNullOrWhiteSpace(fileName);
             ExistingFileName = string.IsNullOrWhiteSpace(fileName) ? "Existing PDF" : fileName;
+
+            Model.YaviaRequired = IsYavia(doc);
 
             SelectedFiles.Clear();
             StateHasChanged();
@@ -517,6 +539,11 @@ namespace BrokerIQ.Online.Server.Pages.Settings.Components
 
             if (IsEditing && EditingDocument != null)
             {
+                if (IsYavia(EditingDocument))
+                {
+                    Snackbar.Add("Yavia required consents cannot be edited.", Severity.Info);
+                    return;
+                }
                 // Update existing document using reflection-safe setters
                 void SetEditProp(string name, object value)
                 {
