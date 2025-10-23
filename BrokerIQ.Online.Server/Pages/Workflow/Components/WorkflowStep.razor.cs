@@ -138,11 +138,13 @@ public partial class WorkflowStep
         BrokerVideos = (await VideoService.GetVideos(User.MasterBrokerId)).ToList();
     }
 
-    protected void SetActivity(int activityId)
+    protected async void SetActivity(int activityId)
     {
         SelectedActivityId = activityId;
 
         activityMenu.CloseMenu();
+
+        await EditParameters();
     }
 
     async Task EditParameters()
@@ -156,7 +158,6 @@ public partial class WorkflowStep
                 { "Step", Step },
                 { "User", User },
                 { "BrokerVideos", BrokerVideos }
-
             };
 
         var options = new DialogOptions() { MaxWidth = MaxWidth.Medium };
