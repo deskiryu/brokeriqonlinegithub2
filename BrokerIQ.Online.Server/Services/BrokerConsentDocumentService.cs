@@ -29,7 +29,7 @@ namespace BrokerIQ.Online.Services
             {
                 var docs = await _requestProviderService.Get<IEnumerable<BrokerConsentDocumentDto>>($"{API_CONTROLLER}/{brokerId}");
 
-                return mapper.Map<IEnumerable<BrokerConsentDocumentDto>>(docs);
+                return docs;
             }
             catch (Exception ex)
             {
@@ -45,7 +45,7 @@ namespace BrokerIQ.Online.Services
             {
                 var docs = await _requestProviderService.Get<IEnumerable<BrokerConsentDocumentDto>>($"{API_CONTROLLER}/{brokerId}");
 
-                return mapper.Map<IEnumerable<BrokerConsentDocumentDto>>(docs);
+                return docs;
             }
             catch (Exception ex)
             {

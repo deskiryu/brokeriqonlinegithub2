@@ -51,9 +51,16 @@ public class WorkflowEditBase : ComponentBase
 
                 if (stepActivity == null) return true;
 
+                if (!stepActivity.Parameters.Any()) return false;
+
                 var requiredOrder = stepActivity.Parameters.Where(p => p.IsRequired).Select(p => p.Order).ToList();
 
                 if (step.StepParameters.Any(p => requiredOrder.Contains(p.Order) && string.IsNullOrWhiteSpace(p.Value))) return true;
+
+                var hasAtLeastOneParameter = step.StepParameters.Any(p => !string.IsNullOrWhiteSpace(p.Value));
+                hasAtLeastOneParameter |= stepActivity.AcceptsAttachment && step.AttachmentDto != null;
+
+                if (!hasAtLeastOneParameter) return true;
             }
 
             return false;

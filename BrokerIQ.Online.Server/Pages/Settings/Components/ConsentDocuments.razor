@@ -4,8 +4,39 @@
 @using BrokerIQ.Dto.Models
 
 <MudPaper Class="pa-4 mb-4">
-    <MudText Typo="Typo.h6">Existing Consents</MudText>
-    <MudTable Items="@ExistingConsents" Dense="true" Hover>
+    <MudText Typo="Typo.h6">Yavia Required Consents</MudText>
+    <MudTable Items="@YaviaConsents" Dense="true" Hover>
+        <NoRecordsContent>
+            <MudText>No Yavia consents found.</MudText>
+        </NoRecordsContent>
+        <HeaderContent>
+            <MudTh>Type</MudTh>
+            <MudTh>Description (Shown to user in app)</MudTh>
+            <MudTh>Version</MudTh>
+            <MudTh>Source</MudTh>
+            <MudTh>View Consent</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>
+                <MudText Typo="Typo.body2" Bold="true">@GetConsentTypeLabel(context)</MudText>
+            </MudTd>
+            <MudTd>@GetDescription(context)</MudTd>
+            <MudTd>@GetBracketedVersion(context)</MudTd>
+            <MudTd>@GetSourceLabel(context)</MudTd>
+            <MudTd>
+                @if (CanView(context))
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Visibility" Variant="Variant.Filled" Color="Color.Primary"
+                        Style="color:black" Size="Size.Small" OnClick="@(r => ViewConsent(context))" />
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudPaper>
+
+<MudPaper Class="pa-4 mb-4">
+    <MudText Typo="Typo.h6">Your Consents</MudText>
+    <MudTable Items="@BrokerConsents" Dense="true" Hover>
         <NoRecordsContent>
             <MudText>No consents found.</MudText>
         </NoRecordsContent>

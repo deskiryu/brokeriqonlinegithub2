@@ -18,7 +18,7 @@
                     break;
                 case "videourl":
                     if(BrokerVideos != null){
-                        <MudSelect T="string" @bind-Value="param.Value" Dense="true" Label="Video" >
+                        <MudSelect T="string" @bind-Value="param.Value" Dense="true" Label="Video" Class="mb-5">
                             <MudSelectItem T="string" Value="0.ToString()">None</MudSelectItem>
                             @foreach (var video in BrokerVideos)
                             {
@@ -26,6 +26,7 @@
                             }
                         </MudSelect>
                     }
+
                     break;
                 default:
                     continue;
@@ -43,7 +44,7 @@
                             Size="Size.Small"
                             FullWidth="true"
                             for="@context.Id">
-                        Attach file
+                        Attach PDF file
                     </MudButton>
                 </ButtonTemplate>
             </MudFileUpload>
