@@ -10,6 +10,7 @@
         <WorkflowStep User="User"
                         Step="tmp"
                         Activities="Activities"
+                        BrokerVideos="BrokerVideos"
                         OnChanged="OnStepChange" />
 
         if (UsesBranchingActivity(tmp))
@@ -22,6 +23,7 @@
                                     InitialStep="Steps.First(s => s.Id == tmp.NextStepId)"
                                     Activities="Activities"
                                     User="User"
+                                    BrokerVideos="BrokerVideos"
                                     OnChanged="OnStepChange"/>
                     }
                     else{
@@ -48,6 +50,7 @@
                                     InitialStep="Steps.First(s => s.Id == tmp.AlternateStepId)"
                                     Activities="Activities"
                                     User="User"
+                                    BrokerVideos="BrokerVideos"
                                     OnChanged="OnStepChange"/>
                     }
                     else{

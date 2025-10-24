@@ -39,5 +39,7 @@
         public int MaxBlogEntries { get; set; }
 
         public bool ShowBlog { get; set; }
+
+        public bool ShowWorkflows { get; set; }
     }
 }

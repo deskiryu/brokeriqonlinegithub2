@@ -13,6 +13,9 @@ public partial class WorkflowDiagram
     [Inject]
     public IAccountService AccountService { get; set; }
 
+    [Inject]
+    public IVideoService VideoService { get; set; }
+
     [Parameter]
     public WorkflowDto Workflow { get; set; } = new();
 
@@ -27,9 +30,13 @@ public partial class WorkflowDiagram
 
     private User User { get; set; }
 
+    public IEnumerable<Models.Video> BrokerVideos { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         User = await AccountService.GetUser();
+
+        BrokerVideos = (await VideoService.GetVideos(User.MasterBrokerId)).ToList();
     }
 
     protected void AddInitialStep()
