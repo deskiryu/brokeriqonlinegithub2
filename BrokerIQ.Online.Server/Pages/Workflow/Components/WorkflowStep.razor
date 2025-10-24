@@ -15,7 +15,7 @@
                     var groups = Actions.Where(e => !string.IsNullOrWhiteSpace(e.Group)).Select(e => e.Group).Distinct();
                     @foreach (var group in groups) {
                         <MudMenuItem>
-                            <MudMenu AnchorOrigin="Origin.BottomLeft"
+                                    <MudMenu AnchorOrigin="Origin.BottomCenter"
                                     Dense="true"
                                     ActivationEvent="MouseEvent.MouseOver">
                                 <ActivatorContent>
@@ -37,7 +37,7 @@
                     var groups = BranchingActions.Where(e => !string.IsNullOrWhiteSpace(e.Group)).Select(e => e.Group).Distinct();
                     @foreach (var group in groups) {
                         <MudMenuItem>
-                            <MudMenu AnchorOrigin="Origin.BottomLeft"
+                            <MudMenu AnchorOrigin="Origin.BottomCenter"
                                     Dense="true"
                                     ActivationEvent="MouseEvent.MouseOver">
                                 <ActivatorContent>
