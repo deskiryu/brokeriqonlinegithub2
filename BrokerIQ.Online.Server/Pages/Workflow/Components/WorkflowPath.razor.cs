@@ -24,6 +24,9 @@ public partial class WorkflowPath : ComponentBase
     [Parameter]
     public IEnumerable<ActivityDto> Activities { get; set; } = Enumerable.Empty<ActivityDto>();
 
+    [Parameter]
+    public IEnumerable<Models.Video> BrokerVideos { get; set; }
+
     [Parameter] public EventCallback OnChanged { get; set; }
     private Task HasChanged() => OnChanged.InvokeAsync();
 

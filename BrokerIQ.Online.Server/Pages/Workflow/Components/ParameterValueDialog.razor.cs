@@ -16,6 +16,7 @@ using System.IO;
 using Microsoft.Extensions.Options;
 using BrokerIQ.Online.Server.AppSettings;
 using BrokerIQ.Online.Server.Shared;
+using System;
 
 namespace BrokerIQ.Online.Server.Pages.Workflow.Components;
 
@@ -49,7 +50,7 @@ public partial class ParameterValueDialog : ComponentBase
     public User User { get; set; }
 
     [Parameter]
-    public IEnumerable<Models.Video> BrokerVideos { get; set; }
+    public IEnumerable<Models.Video> BrokerVideos { get; set; } = Array.Empty<Models.Video>();
 
     private FileUploadSettings fileUploadSettings { get; set; }
 

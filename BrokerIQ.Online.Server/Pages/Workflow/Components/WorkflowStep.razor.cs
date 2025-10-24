@@ -16,9 +16,6 @@ public partial class WorkflowStep
     [Inject]
     IDialogService DialogService { get; set; }
 
-    [Inject]
-    public IVideoService VideoService { get; set; }
-
     [Parameter]
     public User User { get; set; }
 
@@ -28,12 +25,13 @@ public partial class WorkflowStep
     [Parameter]
     public IEnumerable<ActivityDto> Activities { get; set; } = Enumerable.Empty<ActivityDto>();
 
+    [Parameter]
+    public IEnumerable<Models.Video> BrokerVideos { get; set; }
+
     [Parameter] public EventCallback OnChanged { get; set; }
     private Task HasChanged() => OnChanged.InvokeAsync();
 
     private MudMenu activityMenu;
-
-    public IEnumerable<Models.Video> BrokerVideos { get; set; }
 
     public IEnumerable<ActivityDto> Actions => Activities.Where(a => !a.IsBranchingActivity).ToArray();
 
@@ -131,11 +129,6 @@ public partial class WorkflowStep
 
             return selected.Parameters;
         }
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        BrokerVideos = (await VideoService.GetVideos(User.MasterBrokerId)).ToList();
     }
 
     protected async void SetActivity(int activityId)
