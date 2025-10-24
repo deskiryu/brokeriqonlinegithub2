@@ -5,6 +5,7 @@ using BrokerIQ.Dto.Dto.Workflows;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Components;
 using BrokerIQ.Online.Server.Services.Interface;
+using BrokerIQ.Online.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -21,6 +22,12 @@ public class WorkflowsBase : ComponentBase
     [Inject]
     public IWorkflowService WorkflowService { get; set; }
 
+    [Inject]
+    public IAccountService AccountService { get; set; }    
+
+    [Inject]
+    public IBrokerService BrokerService { get; set; }        
+
     [Parameter]
     public User User { get; set; }
 
@@ -33,6 +40,8 @@ public class WorkflowsBase : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        User = await AccountService.GetUser();
+        Broker = await BrokerService.GetBroker(User.MasterBrokerId);
         Triggers = (await WorkflowService.GetTriggersAsync()).ToArray();
         BrokerWorkflows = await WorkflowService.GetWorkflowsAsync();
     }

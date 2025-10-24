@@ -136,5 +136,7 @@ namespace BrokerIQ.Online.Server.Models
         public bool UseConsentDocuments { get; set; } 
         
         public bool SendEmailNotificationReminders { get; set; }  
+
+        public bool UseWorkflows { get; set; } 
     }
 }
