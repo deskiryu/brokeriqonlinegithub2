@@ -8,5 +8,6 @@ namespace BrokerIQ.Online.Models
         public string Url { get; set; }
         public int MajorVersion { get; set; } = 1;
         public int MinorVersion { get; set; } = 1;
+        public bool YaviaRequired { get; set; }
     }
 }

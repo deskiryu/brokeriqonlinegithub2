@@ -1,0 +1,33 @@
+@using System.Globalization
+
+<label> Choose a pre formatted message (if required)</label>
+<div class="control_wrapper mb-5">
+    <MudAutocomplete T="BrokerIQ.Online.Models.BrokerDefinedMessage"
+                     Label="Select Message Template"
+                     Placeholder="Type part of the template prompt"
+                     AdornmentColor="Color.Primary"
+                     MaxItems="1000"
+                     TextChanged="@OnComboValueChanged"
+                     SearchFunc="@OnTemplateFilter"
+                     ToStringFunc="@(mm => mm is null ? string.Empty : mm.Prompt)"
+                     @ref="TemplateAutoComplete"
+                     Clearable="true"
+                     ItemDisabledFunc="@MessageContainsDateMarkers">
+    </MudAutocomplete>
+</div>
+<div class="control_wrapper mb-5">
+    <MudTextField ShrinkLabel
+                  Label="Message"
+                  @bind-Value="MessagePreview"
+                  Lines="3"
+                  AutoGrow="true"
+                  Variant="Variant.Outlined"
+                  OnBlur="OnPreviewMessageBlur"
+                  Immediate="true" />
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               Style="@($"color:{Colors.Shades.Black};")"
+               OnClick="@(f => ClearAutoComplete())"
+               Size="Size.Small"
+               FullWidth="true">Clear</MudButton>
+</div>

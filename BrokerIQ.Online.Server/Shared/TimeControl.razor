@@ -1,0 +1,8 @@
+<MudStack Row="true" Spacing="1">
+    <MudNumericField T="int" Value="_amount" ValueChanged="OnAmountChanged" Label="Amount" Min="0" Immediate="true" />
+    <MudSelect T="string" Value="_unit" ValueChanged="OnUnitChanged" Label="Unit">
+        <MudSelectItem T="string" Value="MINUTES">Minutes</MudSelectItem>
+        <MudSelectItem T="string" Value="HOURS">Hours</MudSelectItem>
+        <MudSelectItem T="string" Value="DAYS">Days</MudSelectItem>
+    </MudSelect>
+</MudStack>

@@ -1,0 +1,91 @@
+<MudPaper Outlined="true"
+          Class="d-flex flex-column align-center pa-1 ma-1">
+@{
+    var currentStep = InitialStep;
+
+    while(currentStep != null){
+        var tmp = currentStep;
+
+        <div class="arrow">&#8595;</div>
+        <WorkflowStep User="User"
+                        Step="tmp"
+                        Activities="Activities"
+                        BrokerVideos="BrokerVideos"
+                        OnChanged="OnStepChange" />
+
+        if (UsesBranchingActivity(tmp))
+        {
+            <div class="d-flex justify-space-around">
+                <div class="d-flex flex-column align-center flex-grow-1">
+                    <MudText Typo="Typo.button">Yes</MudText>
+                    @if(!string.IsNullOrWhiteSpace(tmp.NextStepId)){
+                        <WorkflowPath Steps ="Steps"
+                                    InitialStep="Steps.First(s => s.Id == tmp.NextStepId)"
+                                    Activities="Activities"
+                                    User="User"
+                                    BrokerVideos="BrokerVideos"
+                                    OnChanged="OnStepChange"/>
+                    }
+                    else{
+                        <MudIconButton Icon="@Icons.Material.Filled.Add"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Primary"
+                                    Size="Size.Small"
+                                    OnClick="() => AddNextStepFor(tmp)" />
+                    }
+                </div>
+                @if(string.IsNullOrWhiteSpace(tmp.NextStepId) && string.IsNullOrWhiteSpace(tmp.NextStepId) ){
+                    <div Class="ma-5">
+                        <MudIconButton Icon="@Icons.Material.Filled.Remove"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Error"
+                                    Size="Size.Small"
+                                    OnClick="@(() => RemoveStep(tmp))" />
+                    </div>
+                }
+                <div class="d-flex flex-column align-center">
+                    <MudText Typo="Typo.button">No</MudText>
+                    @if(!string.IsNullOrWhiteSpace(tmp.AlternateStepId)){
+                        <WorkflowPath Steps ="Steps"
+                                    InitialStep="Steps.First(s => s.Id == tmp.AlternateStepId)"
+                                    Activities="Activities"
+                                    User="User"
+                                    BrokerVideos="BrokerVideos"
+                                    OnChanged="OnStepChange"/>
+                    }
+                    else{
+                        <MudIconButton Icon="@Icons.Material.Filled.Add"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Primary"
+                                    Size="Size.Small"
+                                    OnClick="() => AddAlternateStepFor(tmp)" />
+                    }
+                </div>
+            </div>
+
+            break;
+        }
+        else
+        {
+            <MudStack Row="true">
+                @if(tmp.ActivityId != FinishActivity.Id && string.IsNullOrWhiteSpace(tmp.NextStepId)){
+                    <MudIconButton Icon="@Icons.Material.Filled.Add"
+                                Variant="Variant.Filled"
+                                Color="Color.Primary"
+                                Size="Size.Small"
+                                OnClick="() => AddNextStepFor(tmp)" />
+                }
+                @if(string.IsNullOrWhiteSpace(tmp.NextStepId)){
+                    <MudIconButton Icon="@Icons.Material.Filled.Remove"
+                                Variant="Variant.Filled"
+                                Color="Color.Error"
+                                Size="Size.Small"
+                                OnClick="@(() => RemoveStep(tmp))" />
+                }
+            </MudStack>
+        }
+
+        currentStep = Steps.FirstOrDefault(s => s.Id == currentStep.NextStepId);
+    }
+}
+</MudPaper>

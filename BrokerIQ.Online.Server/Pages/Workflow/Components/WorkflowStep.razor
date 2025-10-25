@@ -1,0 +1,83 @@
+﻿<MudPaper Class="pa-2 ma-1"
+          Elevation="3">
+    <MudStack Row="true"
+              AlignItems="AlignItems.Center"
+              Justify="Justify.SpaceBetween">
+        <MudMenu Label="@(SelectedActivity != null ? SelectedActivity.Name : "Choose Activity")"
+                 Dense="true"
+                 AnchorOrigin="Origin.BottomLeft"
+                 @ref="activityMenu">
+
+                @if(Actions.Any()){
+                    @foreach (var activity in Actions.Where(e => string.IsNullOrWhiteSpace(e.Group)).OrderBy(e => e.Name)) {
+                        <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name</MudMenuItem>
+                    }
+                    var groups = Actions.Where(e => !string.IsNullOrWhiteSpace(e.Group)).Select(e => e.Group).Distinct();
+                    @foreach (var group in groups) {
+                        <MudMenuItem>
+                                    <MudMenu AnchorOrigin="Origin.BottomCenter"
+                                    Dense="true"
+                                    ActivationEvent="MouseEvent.MouseOver">
+                                <ActivatorContent>
+                                    <MudText>@group ▸</MudText>
+                                </ActivatorContent>
+                                <ChildContent> @foreach (var activity in Actions.Where(e => e.Group == group).OrderBy(e => e.Name)) {
+                                        <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name</MudMenuItem>
+                                    }
+                                </ChildContent>
+                            </MudMenu>
+                        </MudMenuItem>
+                    }
+                }
+
+                @if(BranchingActions.Any()){
+                    @foreach (var activity in BranchingActions.Where(e => string.IsNullOrWhiteSpace(e.Group)).OrderBy(e => e.Name)) {
+                        <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name</MudMenuItem>
+                    }
+                    var groups = BranchingActions.Where(e => !string.IsNullOrWhiteSpace(e.Group)).Select(e => e.Group).Distinct();
+                    @foreach (var group in groups) {
+                        <MudMenuItem>
+                            <MudMenu AnchorOrigin="Origin.BottomCenter"
+                                    Dense="true"
+                                    ActivationEvent="MouseEvent.MouseOver">
+                                <ActivatorContent>
+                                    <MudText>@group ▸</MudText>
+                                </ActivatorContent>
+                                <ChildContent> @foreach (var activity in BranchingActions.Where(e => e.Group == group).OrderBy(e => e.Name)) {
+                                        <MudMenuItem AutoClose="true" OnClick="() => SetActivity(activity.Id)">@activity.Name</MudMenuItem>
+                                    }
+                                </ChildContent>
+                            </MudMenu>
+                        </MudMenuItem>
+                    }
+                }
+        </MudMenu>
+        <MudChip Size="Size.Small" Color="@ActivityColor"
+                 OnClick="EditParameters">@ActivityLabel</MudChip>
+    </MudStack>
+    <MudDivider Class="ma-1" />
+    @if(Step.StepParameters.Any(p => !string.IsNullOrWhiteSpace(p.Value)))
+    {
+        @foreach(var param in Step.StepParameters.Where(p => !string.IsNullOrWhiteSpace(p.Value))){
+            <div>
+            <MudText Class="ma-1"
+                    Typo="Typo.caption">@BuildParameterText(param)</MudText>
+            </div>
+        }
+    }
+    else{
+        <MudText Class="ma-1"
+                Typo="Typo.caption">@SelectedActivity.Description</MudText>
+    }
+    @if (Step.AttachmentDto != null)
+    {
+        <MudStack Row="true"
+                Class="mt-1"
+                Justify="Justify.FlexStart"
+                AlignItems="AlignItems.Center">
+            <MudIcon Icon="@Icons.Material.Filled.AttachFile"
+                    Size="Size.Small"></MudIcon>
+            <MudText Typo="Typo.caption"> @Step.AttachmentDto.FileName</MudText>
+        </MudStack>
+    }
+</MudPaper>

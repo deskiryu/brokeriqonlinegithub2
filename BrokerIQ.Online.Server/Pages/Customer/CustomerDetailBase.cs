@@ -405,9 +405,7 @@ namespace BrokerIQ.Online.Pages
             {
                 if (loadMessages && LastChatPageLoaded > 0)
                 {
-                    var newMessages = await LoadNewMessages();
-
-                    Chat.Messages = newMessages.Concat(Chat.Messages).OrderByDescending(m => m.Id).ToList();
+                    await LoadNewMessages();
                 }
             }
             else
@@ -1416,6 +1414,7 @@ namespace BrokerIQ.Online.Pages
             if (chat.Messages.Any())
             {
                 Chat.Messages = Chat.Messages.Concat(chat.Messages).ToList();
+                Chat.DraftMessages = Chat.DraftMessages.Concat(chat.DraftMessages).ToList();
             }
 
             StateHasChanged();
@@ -1432,10 +1431,15 @@ namespace BrokerIQ.Online.Pages
             return chat;
         }
 
-        private async Task<IList<ChatMessage>> LoadNewMessages()
+        private async Task LoadNewMessages()
         {
             var MaxId = Chat.Messages.Max(m => m.Id);
-            return (await ChatService.GetPaged(Customer.Id, Broker.Id, 1, ChatPageSize, IsInChatTab())).Messages.Where(m => m.Id > MaxId).ToList();
+
+            var chat = await ChatService.GetPaged(Customer.Id, Broker.Id, 1, ChatPageSize, IsInChatTab());
+            var newMessages = chat.Messages.Where(m => m.Id > MaxId).ToList();
+
+            Chat.Messages = newMessages.Concat(Chat.Messages).OrderByDescending(m => m.Id).ToList();
+            Chat.DraftMessages = chat.DraftMessages;
         }
 
         protected async Task<IEnumerable<BrokerDefinedMessage>> OnTemplateFilter(string value)
