@@ -15,7 +15,7 @@ public interface IWorkflowService
 
     Task<WorkflowDto> GetWorkflowAsync(string workflowId);
 
-    Task<IEnumerable<WorkflowDto>> GetWorkflowsAsync(int brokerId);
+    Task<IEnumerable<WorkflowDto>> GetWorkflowsAsync();
 
     Task DeleteWorkflowAsync(Guid workflowId);
 }
