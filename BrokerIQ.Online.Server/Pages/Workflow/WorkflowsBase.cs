@@ -45,9 +45,12 @@ public class WorkflowsBase : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        Triggers = (await WorkflowService.GetTriggersAsync()).ToArray();
-
         User = await AccountService.GetUser();
+        CurrentBrokerId = User.MasterBrokerId;
+
+        Broker = await BrokerService.GetBroker(User.MasterBrokerId);
+
+        Triggers = (await WorkflowService.GetTriggersAsync()).ToArray();
 
         if (User.IsAdmin || User.IsMinorAdmin)
         {
@@ -55,9 +58,9 @@ public class WorkflowsBase : ComponentBase
         }
         else
         {
-            Broker = await BrokerService.GetBroker(User.MasterBrokerId);
+            Broker = await BrokerService.GetBroker(CurrentBrokerId, true);
 
-            BrokerWorkflows = await WorkflowService.GetWorkflowsAsync(Broker.Id);
+            BrokerWorkflows = await WorkflowService.GetWorkflowsAsync(CurrentBrokerId);
         }
     }
 
@@ -95,7 +98,7 @@ public class WorkflowsBase : ComponentBase
     {
         CurrentBrokerId = brokerId;
 
-        Broker = brokerId == 0 ? null : await BrokerService.GetBroker(CurrentBrokerId);
+        Broker = brokerId == 0 ? null : await BrokerService.GetBroker(CurrentBrokerId, true);
 
         BrokerWorkflows = await WorkflowService.GetWorkflowsAsync(CurrentBrokerId);
     }
