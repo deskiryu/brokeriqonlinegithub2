@@ -50,8 +50,6 @@ public class WorkflowService : BIQService, IWorkflowService
 
     public async Task<WorkflowDto> SaveAsync(WorkflowDto workflowDto)
     {
-        var brokerId = await GetCurrentBrokerId();
-
         if (workflowDto.Id != Guid.Empty)
         {
             return await _requestProviderService.Put<WorkflowDto, WorkflowDto>($"{API_CONTROLLER}/{workflowDto.Id}", workflowDto);
@@ -59,7 +57,7 @@ public class WorkflowService : BIQService, IWorkflowService
 
         var createDto = new CreateWorkflowDto()
         {
-            BrokerId = brokerId,
+            BrokerId = workflowDto.BrokerId,
             Name = workflowDto.Name,
             Steps = workflowDto.Steps,
             IsActive = workflowDto.IsActive,
@@ -69,9 +67,9 @@ public class WorkflowService : BIQService, IWorkflowService
         return await _requestProviderService.Post<CreateWorkflowDto, WorkflowDto>($"{API_CONTROLLER}", createDto);
     }
 
-    public async Task<IEnumerable<WorkflowDto>> GetWorkflowsAsync()
+    public async Task<IEnumerable<WorkflowDto>> GetWorkflowsAsync(int brokerId)
     {
-        return await _requestProviderService.Get<IEnumerable<WorkflowDto>>($"{API_CONTROLLER}");
+        return await _requestProviderService.Get<IEnumerable<WorkflowDto>>($"{API_CONTROLLER}?brokerId={brokerId}");
     }
 
     public async Task<WorkflowDto> GetWorkflowAsync(string workflowId)
