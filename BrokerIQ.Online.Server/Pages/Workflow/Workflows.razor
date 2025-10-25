@@ -5,33 +5,75 @@
 
 @inherits WorkflowsBase
 
-<div class="mb-2">
-    <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Style="color: black" Size="Size.Medium"
-               Href="/workflow">Add workflow</MudButton>
-</div>
-<MudTable Items="@BrokerWorkflows" Dense="true">
-    <NoRecordsContent>
-        <MudText>No workflows have been defined.</MudText>
-    </NoRecordsContent>
-    <HeaderContent>
-        <MudTh>Name</MudTh>
-        <MudTh>Trigger</MudTh>
-        <MudTh Style="text-align:center">Is Active</MudTh>
-        <MudTh></MudTh>
-        <MudTh></MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd>@(context.Name)</MudTd>
-        <MudTd>@GetTriggerName(context)</MudTd>
-        <MudTd Style="text-align:center"><MudIcon Icon="@(context.IsActive ? Icons.Material.Filled.CheckCircleOutline :  Icons.Material.Filled.HighlightOff)"
-            Color="@(context.IsActive ? Color.Success :  Color.Error)"/></MudTd>
-        <MudTd>
-            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" Href="@($"workflow/{context.Id}")"/>
-        </MudTd>
-        <MudTd>
-            @{
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r=> RemoveWorkflow(context)) />
-            }
-        </MudTd>
-    </RowTemplate>
-</MudTable>
+@if(User is null){
+
+}
+else{
+    if(User.IsAdmin || User.IsMinorAdmin ||
+        ((User.IsBroker || User.IsBrokerStaff) && (Broker?.BrokerIdentifier?.UseWorkflows ?? false)))
+    {
+        <div class="mb-2">
+            <MudStack row="true" Justify="Justify.SpaceBetween">
+                @if(User.IsAdmin || User.IsMinorAdmin)
+                {
+                    <MudSelect T="int"
+                    Label="Filter By Broker"
+                    Placeholder="Select"
+                    Clearable="true"
+                    ValueChanged="@((int value) => OnBrokerChanged(value))"
+                    AdornmentColor="Color.Primary"
+                    Dense="true">
+                        <MudSelectItem Value="0">None</MudSelectItem>
+                            @foreach (var item in @Brokers)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                    </MudSelect>
+                }
+                @if(CurrentBrokerId > 0){
+                    <MudButton StartIcon="@Icons.Material.Filled.Add"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            Style="color: black"
+                            Size="Size.Medium"
+                            Href="@NewWorkflowUrl">Add workflow</MudButton>
+                }
+            </MudStack>
+
+        </div>
+        <MudTable Items="@BrokerWorkflows" Dense="true">
+            <NoRecordsContent>
+                <MudText>No workflows have been defined.</MudText>
+            </NoRecordsContent>
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>Trigger</MudTh>
+                <MudTh Style="text-align:center">Is Active</MudTh>
+                <MudTh></MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@(context.Name)</MudTd>
+                <MudTd>@GetTriggerName(context)</MudTd>
+                <MudTd Style="text-align:center"><MudIcon Icon="@(context.IsActive ? Icons.Material.Filled.CheckCircleOutline :  Icons.Material.Filled.HighlightOff)"
+                    Color="@(context.IsActive ? Color.Success :  Color.Error)"/></MudTd>
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Style="color:black" Size="Size.Small" Href="@($"workflow/{context.Id}")"/>
+                </MudTd>
+                <MudTd>
+                    @{
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick=@(r=> RemoveWorkflow(context)) />
+                    }
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+    else
+    {
+        <MudPaper Class="pa-4 mb-4"
+                Elevation="1">
+            <MudText Typo="Typo.subtitle1"> To activate Workflows please contact us at <MudLink Href="mailto:info@brokeriq.co.uk">info@brokeriq.co.uk
+                </MudLink>. </MudText>
+        </MudPaper>
+    }
+}
