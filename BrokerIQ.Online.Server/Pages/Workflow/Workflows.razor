@@ -5,13 +5,33 @@
 
 @inherits WorkflowsBase
 
-@if (User == null || Broker == null)
+
+@if (User == null && Broker == null)
 {
 
 }
 else
 {
-    if ((User.IsBroker || User.IsBrokerStaff) && (Broker?.BrokerIdentifier?.UseWorkflows ?? false))
+
+    @if(Broker.Id==0 && User.IsAdmin || User.IsMinorAdmin)
+    {
+        <MudSelect T="int"
+        Label="Filter By Broker"
+        Placeholder="Select"
+        Clearable="true"
+        ValueChanged="@((int value) => OnBrokerChanged(value))"
+        AdornmentColor="Color.Primary"
+        Dense="true">
+            <MudSelectItem Value="0">None</MudSelectItem>
+                @foreach (var item in @Brokers)
+                {
+                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                }
+        </MudSelect>
+        return;
+    }
+
+    if (Broker?.BrokerIdentifier?.UseWorkflows ?? false)
     {
         <div class="mb-2">
             <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"
@@ -51,11 +71,22 @@ else
     }
     else
     {
-        <MudPaper Class="pa-4 mb-4" Elevation="1">
-            <MudText Typo="Typo.subtitle1">
-                To activate Workflows please contact us at
-                <MudLink Href="mailto:info@brokeriq.co.uk">info@brokeriq.co.uk</MudLink>.
-            </MudText>
-        </MudPaper>
+            @if(User.IsAdmin || User.IsMinorAdmin)
+            {
+                <MudPaper Class="pa-4 mb-4" Elevation="1">
+                    <MudText Typo="Typo.subtitle1">
+                        Workflows not activated for this Broker
+                    </MudText>
+                </MudPaper>     
+            }
+            else{
+                <MudPaper Class="pa-4 mb-4" Elevation="1">
+                    <MudText Typo="Typo.subtitle1">
+                        To activate Workflows please contact us at
+                        <MudLink Href="mailto:info@brokeriq.co.uk">info@brokeriq.co.uk</MudLink>.
+                    </MudText>
+                </MudPaper>                
+            }
+
     }
 }
