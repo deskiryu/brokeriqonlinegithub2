@@ -25,7 +25,12 @@ public class WorkflowEditBase : ComponentBase
     public IWorkflowService WorkflowService { get; set; }
 
     [Parameter]
+    public string BrokerId { get; set; }
+
+    [Parameter]
     public string WorkflowId { get; set; }
+
+    public int CurrentBrokerId { get; set; }
 
     protected WorkflowDto Workflow = new();
 
@@ -76,6 +81,13 @@ public class WorkflowEditBase : ComponentBase
         if (!string.IsNullOrWhiteSpace(WorkflowId))
         {
             Workflow = await WorkflowService.GetWorkflowAsync(WorkflowId);
+
+            CurrentBrokerId = Workflow.BrokerId;
+        }
+        else
+        {
+            CurrentBrokerId = int.Parse(BrokerId);
+            Workflow = new WorkflowDto() {BrokerId = CurrentBrokerId};
         }
     }
 
@@ -105,6 +117,7 @@ public class WorkflowEditBase : ComponentBase
 
         try
         {
+            Workflow.BrokerId = CurrentBrokerId;
             Workflow = await WorkflowService.SaveAsync(Workflow);
 
             Snackbar.Add("Workflow saved successfully.", Severity.Success);
