@@ -23,13 +23,17 @@ public class WorkflowsBase : ComponentBase
     public IWorkflowService WorkflowService { get; set; }
 
     [Inject]
-    public IAccountService AccountService { get; set; }    
+    public IAccountService AccountService { get; set; }
 
     [Inject]
-    public IBrokerService BrokerService { get; set; }        
+    public IBrokerService BrokerService { get; set; }
 
     [Parameter]
     public User User { get; set; }
+
+    public int CurrentBrokerId { get; set; }
+
+    public IEnumerable<Online.Models.Broker> Brokers { get; set; }
 
     [Parameter]
     public Online.Models.Broker Broker { get; set; }
@@ -38,12 +42,25 @@ public class WorkflowsBase : ComponentBase
 
     protected IEnumerable<TriggerDto> Triggers { get; set; }
 
+    protected string NewWorkflowUrl => $"/workflow/new/{CurrentBrokerId}";
+
     protected override async Task OnInitializedAsync()
     {
         User = await AccountService.GetUser();
-        Broker = await BrokerService.GetBroker(User.MasterBrokerId);
+        CurrentBrokerId = User.MasterBrokerId;
+
         Triggers = (await WorkflowService.GetTriggersAsync()).ToArray();
-        BrokerWorkflows = await WorkflowService.GetWorkflowsAsync();
+
+        if (User.IsAdmin || User.IsMinorAdmin)
+        {
+            Brokers = await BrokerService.GetBrokers();
+            Broker = CurrentBrokerId == 0 ? new Online.Models.Broker() : await BrokerService.GetBroker(CurrentBrokerId, true);
+        }
+        else
+        {
+            Broker = await BrokerService.GetBroker(CurrentBrokerId, true);
+            BrokerWorkflows = await WorkflowService.GetWorkflowsAsync(CurrentBrokerId);
+        }
     }
 
     protected async Task RemoveWorkflow(WorkflowDto wf)
@@ -65,7 +82,7 @@ public class WorkflowsBase : ComponentBase
 
             Snackbar.Add("Workflow was deleted", Severity.Success);
 
-            BrokerWorkflows = await WorkflowService.GetWorkflowsAsync();
+            BrokerWorkflows = await WorkflowService.GetWorkflowsAsync(Broker.Id);
         }
     }
 
@@ -74,5 +91,24 @@ public class WorkflowsBase : ComponentBase
         if (!Triggers.Any() || !wf.Steps.Any()) return string.Empty;
 
         return Triggers.First(t => t.Key == wf.TriggerKey).Name;
+    }
+
+    public async Task OnBrokerChanged(int brokerId)
+    {
+        CurrentBrokerId = brokerId;
+
+        Broker = brokerId == 0 ? null : await BrokerService.GetBroker(CurrentBrokerId, true);
+
+        var workflows = new List<WorkflowDto>();
+        try
+        {
+            workflows = (await WorkflowService.GetWorkflowsAsync(CurrentBrokerId)).ToList();
+            BrokerWorkflows = workflows;
+        }
+        catch
+        {
+            Snackbar.Add("Unable to load workflows for selected broker.", Severity.Error);
+        }
+        StateHasChanged();
     }
 }
