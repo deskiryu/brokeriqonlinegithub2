@@ -31,18 +31,6 @@ public partial class WorkflowTrigger
         }
     }
 
-    private string TriggerLabel
-    {
-        get
-        {
-            var trigger = Triggers.FirstOrDefault(a => a.Key == SelectedTriggerKey);
-
-            if (trigger == null) return string.Empty;
-
-            return "Trigger";
-        }
-    }
-
     public TriggerDto SelectedTrigger => string.IsNullOrWhiteSpace(Workflow.TriggerKey) ? null : Triggers.FirstOrDefault(t => t.Key == Workflow.TriggerKey);
 
     protected void SetTrigger(string triggerKey)
@@ -50,5 +38,7 @@ public partial class WorkflowTrigger
         SelectedTriggerKey = triggerKey;
 
         triggerMenu.CloseMenu();
+
+        HasChanged();
     }
 }
