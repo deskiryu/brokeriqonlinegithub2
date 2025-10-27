@@ -34,8 +34,14 @@ else
     if (Broker?.BrokerIdentifier?.UseWorkflows ?? false)
     {
         <div class="mb-2">
-            <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary"
-                Style="color: black" Size="Size.Medium" Href="/workflow">Add workflow</MudButton>
+                @if(CurrentBrokerId > 0){
+                    <MudButton StartIcon="@Icons.Material.Filled.Add"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            Style="color: black"
+                            Size="Size.Medium"
+                            Href="@NewWorkflowUrl">Add workflow</MudButton>
+                }
         </div>
         <MudTable Items="@BrokerWorkflows" Dense="true">
             <NoRecordsContent>
