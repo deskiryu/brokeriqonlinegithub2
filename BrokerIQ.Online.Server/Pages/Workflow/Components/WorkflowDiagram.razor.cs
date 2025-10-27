@@ -52,4 +52,8 @@ public partial class WorkflowDiagram
     {
         HasChanged();
     }
+    private void OnTriggerChange()
+    {
+        HasChanged();
+    }
 }
