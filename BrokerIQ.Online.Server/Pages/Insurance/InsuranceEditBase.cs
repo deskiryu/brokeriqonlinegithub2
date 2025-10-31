@@ -17,6 +17,7 @@ using BrokerIQ.Online.Server.AppSettings;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Pages.Insurance.Components;
 using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
@@ -51,6 +52,9 @@ namespace BrokerIQ.Online.Pages
 
         [Inject]
         public IDialogService DialogService { get; set; }
+
+        [Inject]
+        public IAddOnBenefitSampleService AddOnBenefitSampleService { get; set; }
 
         [Inject]
         public INotificationService NotificationService { get; set; }
@@ -157,6 +161,26 @@ namespace BrokerIQ.Online.Pages
             if (Insurance.AddOnBenefits.Count >= MaxAddOnBenefits)
             {
                 return;
+            }
+
+            if (Insurance.Id == 0 && !Insurance.AddOnBenefits.Any() && AddOnBenefitSampleService != null)
+            {
+                var samples = await AddOnBenefitSampleService.GetSamplesAsync(InsuranceType, Math.Min(5, MaxAddOnBenefits));
+                if (samples != null && samples.Any())
+                {
+                    foreach (var sample in samples)
+                    {
+                        if (Insurance.AddOnBenefits.Count >= MaxAddOnBenefits)
+                        {
+                            break;
+                        }
+
+                        Insurance.AddOnBenefits.Add(CloneBenefit(sample));
+                    }
+
+                    await InvokeAsync(StateHasChanged);
+                    return;
+                }
             }
 
             var parameters = new DialogParameters
