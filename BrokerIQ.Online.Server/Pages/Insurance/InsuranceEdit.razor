@@ -1,6 +1,7 @@
 ﻿@page "/insuranceedit/{InsuranceId}/{CustomerId}"
 
 @using System.IO
+@using System.Linq
 
 @using Microsoft.Extensions.Options
 
@@ -105,6 +106,53 @@
                             <div class="col-sm-5">
                                 <InputTextArea id="brokerNotes" cols="40" rows="5" @bind-Value="@Insurance.BrokerNotes" placeholder="Enter notes for this insurance which will be visible to the client"></InputTextArea>
                                 <ValidationMessage class="offset-sm-3" For="@(() => Insurance.BrokerNotes)" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Add-on Benefits</label>
+                            <div class="col-sm-7">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <MudButton Variant="Variant.Outlined"
+                                               Color="Color.Primary"
+                                               Disabled="@(Insurance.AddOnBenefits?.Count >= MaxAddOnBenefits)"
+                                               OnClick="@AddAddOnBenefit">
+                                        Add benefit
+                                    </MudButton>
+                                    <small class="text-muted">Optional · max @MaxAddOnBenefits</small>
+                                </div>
+
+                                @if (Insurance.AddOnBenefits != null && Insurance.AddOnBenefits.Any())
+                                {
+                                    foreach (var benefit in Insurance.AddOnBenefits)
+                                    {
+                                        <div class="benefit-summary d-flex align-items-center border rounded px-3 py-2 mb-2">
+                                            <div class="fw-semibold text-truncate me-3" style="min-width:0; flex:0 1 30%;" title="@(string.IsNullOrWhiteSpace(benefit.Title) ? "Untitled benefit" : benefit.Title)">
+                                                @(string.IsNullOrWhiteSpace(benefit.Title) ? "Untitled benefit" : benefit.Title)
+                                            </div>
+                                            <div class="text-muted flex-grow-1 text-truncate me-3" style="min-width:0; flex:1 1 auto;" title="@(string.IsNullOrWhiteSpace(benefit.Description) ? "No description provided" : benefit.Description)">
+                                                @(string.IsNullOrWhiteSpace(benefit.Description) ? "No description provided" : benefit.Description)
+                                            </div>
+                                            <div class="ms-auto d-flex align-items-center" style="gap:0.35rem;">
+                                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                               Size="Size.Small"
+                                                               Color="Color.Primary"
+                                                               Style="@($"color:{Colors.Shades.Black};")"
+                                                               OnClick="@(async () => await EditAddOnBenefit(benefit))"
+                                                               aria-label="Edit add-on benefit" />
+                                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                               Size="Size.Small"
+                                                               Color="Color.Error"
+                                                               OnClick="@(() => RemoveAddOnBenefit(benefit))"
+                                                               aria-label="Remove add-on benefit" />
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted mb-0">No add-on benefits added yet.</p>
+                                }
                             </div>
                         </div>
 

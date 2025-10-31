@@ -119,5 +119,7 @@ namespace BrokerIQ.Online.Models
         public bool AvailableToClient { get; set; }
 
         public virtual ICollection<InsuranceDocument> SupportingDocuments { get; set; }
+
+        public List<AddOnBenefit> AddOnBenefits { get; set; } = new List<AddOnBenefit>();
     }
 }
