@@ -39,6 +39,11 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
+        <Content Update="Resources\AddOnBenefitsSample.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
         <None Remove="Converters\" />
         <None Remove="Pages\Wealth\" />
         <None Remove="Pages\Charts\Components\" />

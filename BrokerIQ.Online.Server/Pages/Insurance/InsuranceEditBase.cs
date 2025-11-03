@@ -163,7 +163,7 @@ namespace BrokerIQ.Online.Pages
                 return;
             }
 
-            if (Insurance.Id == 0 && !Insurance.AddOnBenefits.Any() && AddOnBenefitSampleService != null)
+            if (!Insurance.AddOnBenefits.Any() && AddOnBenefitSampleService != null)
             {
                 var samples = await AddOnBenefitSampleService.GetSamplesAsync(InsuranceType, Math.Min(5, MaxAddOnBenefits));
                 if (samples != null && samples.Any())

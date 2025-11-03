@@ -1,0 +1,1278 @@
+{
+  "insuranceBenefits": [
+    {
+      "insuranceId": 1,
+      "insuranceName": "Car",
+      "benefits": [
+        {
+          "title": "Courtesy Car Cover",
+          "description": "Provides a temporary replacement vehicle while your car is being repaired after an insured claim."
+        },
+        {
+          "title": "No Claims Discount Protector",
+          "description": "Safeguards your earned discount so a single fault claim will not reduce your premium reward."
+        },
+        {
+          "title": "UK Breakdown Assistance",
+          "description": "Offers roadside repair or recovery throughout the UK with onward travel arrangements when necessary."
+        },
+        {
+          "title": "Motor Legal Expenses",
+          "description": "Covers legal costs for uninsured losses such as injury compensation, excess recovery, or loss of earnings."
+        },
+        {
+          "title": "Windscreen Protection",
+          "description": "Pays for repair or replacement of windscreens and windows with no effect on your claims history."
+        }
+      ]
+    },
+    {
+      "insuranceId": 2,
+      "insuranceName": "Home",
+      "benefits": [
+        {
+          "title": "Home Emergency Response",
+          "description": "24/7 call-out for emergencies like burst pipes, faulty boilers, or electrical failures to limit damage."
+        },
+        {
+          "title": "Accidental Damage to Contents",
+          "description": "Extends protection to cover mishaps such as spilled paint, broken TVs, and damaged furniture."
+        },
+        {
+          "title": "Home Technology Cover",
+          "description": "Insures smart devices, home office equipment, and entertainment systems against breakdowns and surges."
+        },
+        {
+          "title": "Garden and Outdoor Protection",
+          "description": "Provides cover for sheds, landscaping, and garden equipment against theft, storms, and vandalism."
+        },
+        {
+          "title": "Alternative Accommodation",
+          "description": "Funds temporary housing if your home becomes uninhabitable due to an insured event."
+        }
+      ]
+    },
+    {
+      "insuranceId": 3,
+      "insuranceName": "Life",
+      "benefits": [
+        {
+          "title": "Accidental Death Benefit",
+          "description": "Pays an additional lump sum if death occurs as a result of a qualifying accident."
+        },
+        {
+          "title": "Terminal Illness Advance",
+          "description": "Allows early payment of the sum assured upon diagnosis of a terminal illness with a prognosis under twelve months."
+        },
+        {
+          "title": "Waiver of Premium",
+          "description": "Keeps the policy in force by covering premiums if you become unable to work due to illness or injury."
+        },
+        {
+          "title": "Funeral Expense Advance",
+          "description": "Releases a portion of the plan value quickly to help with immediate funeral and memorial costs."
+        },
+        {
+          "title": "Family Assistance Program",
+          "description": "Provides bereavement counselling, legal guidance, and estate planning support for surviving family members."
+        }
+      ]
+    },
+    {
+      "insuranceId": 4,
+      "insuranceName": "Life and Critical Illness",
+      "benefits": [
+        {
+          "title": "Early Diagnosis Lump Sum",
+          "description": "Offers a partial payout when an early-stage critical illness is detected, helping to fund immediate treatment."
+        },
+        {
+          "title": "Specialist Rehabilitation Support",
+          "description": "Coordinates physiotherapy, occupational therapy, and mental health services to aid recovery after a claim."
+        },
+        {
+          "title": "Second Medical Opinion",
+          "description": "Grants access to leading specialists for confirmation of diagnosis and exploration of alternative treatment paths."
+        },
+        {
+          "title": "Child Cover Extension",
+          "description": "Includes complimentary critical illness cover for dependent children with specified limits."
+        },
+        {
+          "title": "Premium Holiday Option",
+          "description": "Allows a temporary pause in premium payments during long-term medical treatment without lapsing the policy."
+        }
+      ]
+    },
+    {
+      "insuranceId": 5,
+      "insuranceName": "Pet",
+      "benefits": [
+        {
+          "title": "Routine Care Allowance",
+          "description": "Contributes towards vaccinations, flea treatments, and annual wellness visits to keep pets healthy."
+        },
+        {
+          "title": "Comprehensive Dental Cover",
+          "description": "Pays for dental procedures and cleanings arising from illness or injury."
+        },
+        {
+          "title": "Lost Pet Advertising",
+          "description": "Funds posters and online campaigns to help locate missing pets, with a reward contribution."
+        },
+        {
+          "title": "Behavioural Therapy",
+          "description": "Covers consultations with veterinary behaviourists for anxiety, aggression, or training issues."
+        },
+        {
+          "title": "Multi-Pet Discount",
+          "description": "Offers reduced premiums when multiple pets in the household are insured under the same plan."
+        }
+      ]
+    },
+    {
+      "insuranceId": 6,
+      "insuranceName": "Income Protection",
+      "benefits": [
+        {
+          "title": "Redundancy Safeguard",
+          "description": "Provides a short-term income top-up if you are made redundant and actively seeking new employment."
+        },
+        {
+          "title": "Extended Hospital Benefit",
+          "description": "Pays an additional weekly amount for every night spent in hospital during a covered claim period."
+        },
+        {
+          "title": "Rehabilitation Coaching",
+          "description": "Pairs you with return-to-work specialists who help tailor rehabilitation and workplace adjustments."
+        },
+        {
+          "title": "Mortgage Payment Support",
+          "description": "Directs part of the benefit to your lender to keep mortgage payments up to date while you recover."
+        },
+        {
+          "title": "Lifestyle Adjustment Service",
+          "description": "Provides occupational therapy and financial planning to help manage long-term changes in income."
+        }
+      ]
+    },
+    {
+      "insuranceId": 7,
+      "insuranceName": "Health",
+      "benefits": [
+        {
+          "title": "Virtual GP Access",
+          "description": "Round-the-clock video and phone consultations with general practitioners for quick medical advice."
+        },
+        {
+          "title": "Specialist Appointment Fast-Track",
+          "description": "Expedites referrals to consultants and diagnostic scans across a nationwide private network."
+        },
+        {
+          "title": "Preventative Health Screenings",
+          "description": "Includes annual health assessments and wellness tests tailored to your age and lifestyle."
+        },
+        {
+          "title": "Mental Health Helpline",
+          "description": "Offers confidential counselling, mindfulness resources, and crisis support for members."
+        },
+        {
+          "title": "Prescription Delivery Service",
+          "description": "Arranges home delivery of prescribed medications with pharmacist advice when needed."
+        }
+      ]
+    },
+    {
+      "insuranceId": 8,
+      "insuranceName": "Van",
+      "benefits": [
+        {
+          "title": "Tool Cover",
+          "description": "Protects work tools stored inside the van against theft or damage overnight."
+        },
+        {
+          "title": "Loss of Earnings Allowance",
+          "description": "Provides daily income if your van is off the road following a covered claim."
+        },
+        {
+          "title": "Windscreen and Glass Replacement",
+          "description": "Covers repair or replacement of van windscreens and body glass without affecting no claims discounts."
+        },
+        {
+          "title": "Goods in Transit",
+          "description": "Insures customer deliveries and materials transported in the van for theft, loss, or damage."
+        },
+        {
+          "title": "Replacement Vehicle Hire",
+          "description": "Arranges a similar sized van to keep your business moving during repairs."
+        }
+      ]
+    },
+    {
+      "insuranceId": 9,
+      "insuranceName": "Travel",
+      "benefits": [
+        {
+          "title": "Trip Cancellation Waiver",
+          "description": "Refunds pre-paid travel costs if you cancel due to illness, bereavement, or other covered reasons."
+        },
+        {
+          "title": "Lost Luggage Tracker",
+          "description": "Provides compensation for lost or delayed baggage and helps coordinate retrieval with airlines."
+        },
+        {
+          "title": "Worldwide Medical Evacuation",
+          "description": "Covers emergency transport to the nearest suitable hospital or repatriation home when medically necessary."
+        },
+        {
+          "title": "Travel Delay Compensation",
+          "description": "Pays a cash benefit for extended flight delays, missed connections, or enforced overnight stays."
+        },
+        {
+          "title": "Adventure Sports Upgrade",
+          "description": "Extends protection to higher risk pursuits such as skiing, scuba diving, or zip lining."
+        }
+      ]
+    },
+    {
+      "insuranceId": 10,
+      "insuranceName": "HGV",
+      "benefits": [
+        {
+          "title": "Cargo Protection Plus",
+          "description": "Enhances cover for high-value freight, including theft, spoilage, and accidental damage in transit."
+        },
+        {
+          "title": "Roadside Assistance Network",
+          "description": "Provides rapid heavy vehicle recovery and repair anywhere in the UK and mainland Europe."
+        },
+        {
+          "title": "Driver Personal Accident",
+          "description": "Pays a lump sum for serious injury or death of the named driver while operating the vehicle."
+        },
+        {
+          "title": "Tachograph Legal Defense",
+          "description": "Funds expert representation for alleged tachograph or drivers' hours infringements."
+        },
+        {
+          "title": "Hazardous Load Extension",
+          "description": "Automatically increases liability limits when hauling dangerous goods under ADR regulations."
+        }
+      ]
+    },
+    {
+      "insuranceId": 11,
+      "insuranceName": "Business",
+      "benefits": [
+        {
+          "title": "Business Interruption Support",
+          "description": "Covers loss of gross profit and extra expenses incurred when insured damage disrupts operations."
+        },
+        {
+          "title": "Professional Advisory Hotline",
+          "description": "Provides on-demand consultations with accountants, HR experts, and legal advisors."
+        },
+        {
+          "title": "Cyber Security Toolkit",
+          "description": "Delivers vulnerability scans, phishing simulations, and security awareness training for staff."
+        },
+        {
+          "title": "Employee Wellbeing Checks",
+          "description": "Funds annual health assessments and confidential counselling sessions for employees."
+        },
+        {
+          "title": "Key Supplier Extension",
+          "description": "Extends interruption cover to include disruption at key suppliers or customer premises."
+        }
+      ]
+    },
+    {
+      "insuranceId": 12,
+      "insuranceName": "Buildings",
+      "benefits": [
+        {
+          "title": "Trace and Access",
+          "description": "Pays for locating and exposing the source of water or oil leaks before repairs begin."
+        },
+        {
+          "title": "Alternative Accommodation",
+          "description": "Provides temporary housing for occupants when the building is uninhabitable after a claim."
+        },
+        {
+          "title": "Tenants Liability Cover",
+          "description": "Protects landlords against accidental damage caused by tenants to the building fabric."
+        },
+        {
+          "title": "Unoccupied Property Protection",
+          "description": "Maintains cover for buildings that are empty for extended periods with regular inspections."
+        },
+        {
+          "title": "Flood Resilience Support",
+          "description": "Funds surveys and mitigation measures to reduce recurrence of flood damage."
+        }
+      ]
+    },
+    {
+      "insuranceId": 13,
+      "insuranceName": "Key Person",
+      "benefits": [
+        {
+          "title": "Executive Recruitment Assistance",
+          "description": "Provides funding to source and onboard temporary or permanent replacements for the insured individual."
+        },
+        {
+          "title": "Business Loan Repayment",
+          "description": "Clears outstanding loans or overdrafts tied to the contributions of the key person."
+        },
+        {
+          "title": "Succession Planning Support",
+          "description": "Delivers specialist advice on leadership succession and knowledge transfer strategies."
+        },
+        {
+          "title": "Executive Counselling Service",
+          "description": "Offers coaching and psychological support for management teams during transition."
+        },
+        {
+          "title": "Tax Planning Guidance",
+          "description": "Includes consultations on tax-efficient use of the policy proceeds for the business."
+        }
+      ]
+    },
+    {
+      "insuranceId": 14,
+      "insuranceName": "Tradesman",
+      "benefits": [
+        {
+          "title": "Tool Replacement Cover",
+          "description": "Covers theft or accidental damage to portable hand and power tools on site or in transit."
+        },
+        {
+          "title": "Contract Works Extension",
+          "description": "Protects ongoing building works and materials until completion or handover."
+        },
+        {
+          "title": "Personal Accident Pays",
+          "description": "Provides weekly benefits if the tradesperson is injured and unable to work."
+        },
+        {
+          "title": "Public Liability Top-Up",
+          "description": "Increases liability limits to satisfy demanding commercial contracts."
+        },
+        {
+          "title": "Hired Plant Protection",
+          "description": "Insures rented machinery and equipment against accidental loss or damage."
+        }
+      ]
+    },
+    {
+      "insuranceId": 15,
+      "insuranceName": "Caravan",
+      "benefits": [
+        {
+          "title": "Awning Replacement",
+          "description": "Pays to repair or replace damaged caravan awnings following storm or accidental damage."
+        },
+        {
+          "title": "Emergency Accommodation",
+          "description": "Covers hotel costs if your caravan becomes uninhabitable during a trip."
+        },
+        {
+          "title": "Contents Protection",
+          "description": "Insures personal belongings kept in the caravan against theft or damage."
+        },
+        {
+          "title": "Towing Breakdown Assist",
+          "description": "Provides roadside support and recovery for both the caravan and towing vehicle."
+        },
+        {
+          "title": "European Travel Extension",
+          "description": "Automatically extends cover to trips within continental Europe for up to 90 days."
+        }
+      ]
+    },
+    {
+      "insuranceId": 16,
+      "insuranceName": "Landlord",
+      "benefits": [
+        {
+          "title": "Rent Guarantee",
+          "description": "Pays missed rental income when tenants fall into arrears during the tenancy."
+        },
+        {
+          "title": "Malicious Damage Cover",
+          "description": "Protects against intentional damage caused by tenants or their guests."
+        },
+        {
+          "title": "Eviction Legal Expenses",
+          "description": "Covers solicitor fees and court costs to regain possession of the property."
+        },
+        {
+          "title": "Annual Boiler Service",
+          "description": "Arranges a yearly inspection and service for the property’s heating system."
+        },
+        {
+          "title": "Property Inspection Reports",
+          "description": "Provides professional mid-tenancy inspections with photographic documentation."
+        }
+      ]
+    },
+    {
+      "insuranceId": 17,
+      "insuranceName": "Mobile Phone",
+      "benefits": [
+        {
+          "title": "Rapid Screen Repair",
+          "description": "Guarantees cracked screens are repaired or replaced within 24 hours of approval."
+        },
+        {
+          "title": "Worldwide Protection",
+          "description": "Extends cover for loss, theft, or damage anywhere in the world."
+        },
+        {
+          "title": "Accessory Cover",
+          "description": "Insures chargers, cases, and earphones when stolen or damaged with the phone."
+        },
+        {
+          "title": "Data Restore Service",
+          "description": "Assists with recovering contacts, photos, and documents from damaged devices."
+        },
+        {
+          "title": "Express Replacement Courier",
+          "description": "Delivers a loan or replacement handset directly to your door the next business day."
+        }
+      ]
+    },
+    {
+      "insuranceId": 18,
+      "insuranceName": "Mortgage Protection",
+      "benefits": [
+        {
+          "title": "Payment Holiday Support",
+          "description": "Allows a premium-free period while maintaining cover during financial hardship."
+        },
+        {
+          "title": "Early Critical Illness Payout",
+          "description": "Provides a portion of the benefit on diagnosis of specified critical illnesses to cover immediate costs."
+        },
+        {
+          "title": "Family Counselling",
+          "description": "Offers emotional and practical support for families adjusting to serious illness or loss."
+        },
+        {
+          "title": "Mortgage Adviser Helpline",
+          "description": "Connects you with mortgage specialists for refinancing or payment restructuring advice."
+        },
+        {
+          "title": "Premium Freeze Option",
+          "description": "Locks in your current premium for a fixed term despite changes in age or health."
+        }
+      ]
+    },
+    {
+      "insuranceId": 19,
+      "insuranceName": "Family Income Benefit",
+      "benefits": [
+        {
+          "title": "Cost of Living Escalator",
+          "description": "Automatically increases benefit payments each year to help match inflation."
+        },
+        {
+          "title": "Education Support Fund",
+          "description": "Allocates an annual grant toward school fees or university expenses for dependants."
+        },
+        {
+          "title": "Childcare Grant",
+          "description": "Provides additional payments to help cover childcare or after-school clubs."
+        },
+        {
+          "title": "Survivor Coaching",
+          "description": "Offers financial planning and budgeting support to surviving partners."
+        },
+        {
+          "title": "Family Budgeting Tools",
+          "description": "Includes access to online tools that track spending and forecast future needs."
+        }
+      ]
+    },
+    {
+      "insuranceId": 20,
+      "insuranceName": "Critical Illness",
+      "benefits": [
+        {
+          "title": "Early Detection Screening",
+          "description": "Funds annual health screenings aimed at identifying serious illnesses sooner."
+        },
+        {
+          "title": "Recovery Rehabilitation Program",
+          "description": "Coordinates physiotherapy, occupational therapy, and wellness support after a claim."
+        },
+        {
+          "title": "Partner Support Benefit",
+          "description": "Provides counselling and practical assistance for spouses or partners."
+        },
+        {
+          "title": "Specialist Treatment Travel",
+          "description": "Covers travel and accommodation costs to receive treatment from leading specialists."
+        },
+        {
+          "title": "Premium Waiver",
+          "description": "Waives future premiums once a critical illness claim has been accepted."
+        }
+      ]
+    },
+    {
+      "insuranceId": 21,
+      "insuranceName": "Children's Critical Illness",
+      "benefits": [
+        {
+          "title": "Parental Leave Benefit",
+          "description": "Pays a lump sum to cover unpaid leave taken to care for a critically ill child."
+        },
+        {
+          "title": "Hospital Stay Cash",
+          "description": "Provides a daily payment for each night a child spends in hospital receiving treatment."
+        },
+        {
+          "title": "Educational Tutoring",
+          "description": "Funds professional tutoring to help children catch up on missed schooling."
+        },
+        {
+          "title": "Play Therapy Sessions",
+          "description": "Covers child-friendly counselling designed to support emotional recovery."
+        },
+        {
+          "title": "Family Respite Care",
+          "description": "Arranges short-term care services to give families a much-needed break."
+        }
+      ]
+    },
+    {
+      "insuranceId": 22,
+      "insuranceName": "Accident",
+      "benefits": [
+        {
+          "title": "Fracture Cash Benefit",
+          "description": "Pays a fixed amount for specific broken bones or dislocations."
+        },
+        {
+          "title": "Home Alteration Grant",
+          "description": "Contributes towards adapting your home following a life-changing injury."
+        },
+        {
+          "title": "Temporary Income Replacement",
+          "description": "Provides weekly payments while you are unable to work due to an accident."
+        },
+        {
+          "title": "Physiotherapy Sessions",
+          "description": "Funds rehabilitation appointments to aid physical recovery."
+        },
+        {
+          "title": "Hospital Stay Allowance",
+          "description": "Offers cash for each night spent in hospital receiving treatment after an accident."
+        }
+      ]
+    },
+    {
+      "insuranceId": 23,
+      "insuranceName": "Value Added Services",
+      "benefits": [
+        {
+          "title": "Concierge Helpline",
+          "description": "Provides a single point of contact to arrange services, repairs, and expert advice."
+        },
+        {
+          "title": "Financial Coaching",
+          "description": "Delivers budgeting and debt management guidance through certified counsellors."
+        },
+        {
+          "title": "Holistic Wellness App",
+          "description": "Grants access to digital fitness plans, mindfulness resources, and health tracking."
+        },
+        {
+          "title": "Discount Marketplace",
+          "description": "Offers curated deals on travel, retail, and lifestyle services for policyholders."
+        },
+        {
+          "title": "Claims Fast-Track Desk",
+          "description": "Expedites claim assessment with dedicated case handlers and proactive updates."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1001,
+      "insuranceName": "Professional Indemnity",
+      "benefits": [
+        {
+          "title": "Contract Review Service",
+          "description": "Provides expert analysis of client contracts to highlight liability clauses and risk exposures."
+        },
+        {
+          "title": "Legal Defense Fund",
+          "description": "Allocates additional cover for defence costs in complex negligence claims."
+        },
+        {
+          "title": "Reputation Management",
+          "description": "Funds PR specialists to protect your brand during disputes or allegations."
+        },
+        {
+          "title": "Regulatory Updates",
+          "description": "Delivers regular briefings on regulatory changes affecting professional practice."
+        },
+        {
+          "title": "Mediation Facilitation",
+          "description": "Pays for mediation services to resolve claims quickly before litigation."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1002,
+      "insuranceName": "Cyber and Privacy Liability",
+      "benefits": [
+        {
+          "title": "Incident Response Team",
+          "description": "Mobilises cyber forensic specialists within hours of a breach to contain the threat."
+        },
+        {
+          "title": "Ransomware Negotiation",
+          "description": "Provides expert guidance and funding to manage ransomware demands legally and safely."
+        },
+        {
+          "title": "Credit Monitoring",
+          "description": "Offers identity monitoring and alerts for affected customers or employees."
+        },
+        {
+          "title": "Forensic Investigation",
+          "description": "Covers the costs of determining how the breach occurred and what data was accessed."
+        },
+        {
+          "title": "Compliance Training Portal",
+          "description": "Delivers staff e-learning modules focused on data protection and phishing awareness."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1003,
+      "insuranceName": "Management Liability",
+      "benefits": [
+        {
+          "title": "Regulatory Investigation Support",
+          "description": "Funds expert legal counsel during investigations by regulators or authorities."
+        },
+        {
+          "title": "Crisis PR Support",
+          "description": "Provides public relations assistance to manage reputational fallout from management claims."
+        },
+        {
+          "title": "Employment Practices Hotline",
+          "description": "Gives access to HR specialists for advice on disciplinaries, redundancies, and grievances."
+        },
+        {
+          "title": "Pension Trustee Advisory",
+          "description": "Offers guidance on pension governance and compliance responsibilities."
+        },
+        {
+          "title": "Extradition Expenses",
+          "description": "Covers legal and travel costs for executives facing overseas proceedings."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1004,
+      "insuranceName": "Business Combined",
+      "benefits": [
+        {
+          "title": "Stock Deterioration Cover",
+          "description": "Protects refrigerated and perishable goods against loss following equipment failure."
+        },
+        {
+          "title": "Supplier Failure Extension",
+          "description": "Pays for lost revenue when key suppliers suffer insured damage disrupting your operations."
+        },
+        {
+          "title": "Equipment Breakdown",
+          "description": "Extends cover to include sudden breakdown of boilers, compressors, and production machinery."
+        },
+        {
+          "title": "Loss of Licence",
+          "description": "Compensates for loss of turnover if a statutory licence is suspended or revoked."
+        },
+        {
+          "title": "Seasonal Stock Increase",
+          "description": "Automatically uplifts stock sums insured during peak trading periods."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1005,
+      "insuranceName": "Buildings and Property Owners Liability",
+      "benefits": [
+        {
+          "title": "Landlord Legal Defense",
+          "description": "Funds legal representation for disputes with tenants, contractors, or local authorities."
+        },
+        {
+          "title": "Service Charge Dispute Support",
+          "description": "Assists with professional fees when challenging or defending service charge claims."
+        },
+        {
+          "title": "Emergency Repairs Hotline",
+          "description": "Provides a managed network of contractors for urgent property repairs."
+        },
+        {
+          "title": "Environmental Liability Extension",
+          "description": "Extends protection to gradual pollution and clean-up costs on or off site."
+        },
+        {
+          "title": "Lift Inspection Service",
+          "description": "Arranges periodic engineering inspections for passenger and goods lifts to meet regulations."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1006,
+      "insuranceName": "Trade Credit",
+      "benefits": [
+        {
+          "title": "Buyer Credit Checks",
+          "description": "Provides vetted credit assessments on new and existing customers."
+        },
+        {
+          "title": "Debt Collection Support",
+          "description": "Covers third-party recovery costs for overdue invoices."
+        },
+        {
+          "title": "Political Risk Extension",
+          "description": "Insures against non-payment due to political instability or currency inconvertibility overseas."
+        },
+        {
+          "title": "Bad Debt Protection",
+          "description": "Pays outstanding balances when customers become insolvent or default."
+        },
+        {
+          "title": "Portfolio Analytics Dashboard",
+          "description": "Provides real-time reporting on buyer exposure and concentration risks."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1007,
+      "insuranceName": "Group Personal Accident and Travel",
+      "benefits": [
+        {
+          "title": "Corporate Evacuation",
+          "description": "Arranges emergency evacuation for employees during political unrest or natural disasters."
+        },
+        {
+          "title": "Business Class Upgrade",
+          "description": "Allows medical repatriation flights to be booked in business class for comfort and safety."
+        },
+        {
+          "title": "Dependent Cover",
+          "description": "Extends travel protection to accompanying spouses and children on company trips."
+        },
+        {
+          "title": "Relocation Assistance",
+          "description": "Helps cover accommodation and transport for employees repositioned after an incident."
+        },
+        {
+          "title": "Bereavement Counselling",
+          "description": "Provides professional grief support for colleagues and family members."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1008,
+      "insuranceName": "Events",
+      "benefits": [
+        {
+          "title": "Weather Cancellation Cover",
+          "description": "Pays irrecoverable costs if severe weather forces event cancellation."
+        },
+        {
+          "title": "Non-Appearance Protection",
+          "description": "Compensates for losses when a key speaker or performer cannot attend."
+        },
+        {
+          "title": "Terrorism Extension",
+          "description": "Extends cover to cancellations following acts or threats of terrorism."
+        },
+        {
+          "title": "Equipment Hire Protection",
+          "description": "Insures hired staging, lighting, and audio equipment against accidental damage."
+        },
+        {
+          "title": "Ticket Refund Administration",
+          "description": "Funds additional staff or systems needed to process mass ticket refunds."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1009,
+      "insuranceName": "Excess of Loss - Professional Indemnity",
+      "benefits": [
+        {
+          "title": "Drop-Down Reinstatement",
+          "description": "Automatically reinstates limits after a paid claim within the policy period."
+        },
+        {
+          "title": "Claims Audit Support",
+          "description": "Provides expert audit of underlying claims handling to optimise defence strategies."
+        },
+        {
+          "title": "Panel Counsel Access",
+          "description": "Grants access to a specialist panel of professional negligence solicitors."
+        },
+        {
+          "title": "Contract Negotiation Assistance",
+          "description": "Offers support when negotiating client contracts that impose higher liability limits."
+        },
+        {
+          "title": "Emerging Risk Bulletins",
+          "description": "Shares quarterly guidance on new exposures impacting professional services."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1010,
+      "insuranceName": "Excess of Loss - Public Liability",
+      "benefits": [
+        {
+          "title": "Crisis Management Team",
+          "description": "Deploys specialists to manage communication and logistics following a major liability incident."
+        },
+        {
+          "title": "Media Relations Support",
+          "description": "Provides PR consultants to protect brand reputation during high-profile claims."
+        },
+        {
+          "title": "Site Safety Audits",
+          "description": "Includes periodic risk assessments and safety training for high hazard sites."
+        },
+        {
+          "title": "Interim Funding Facility",
+          "description": "Offers short-term funding to meet urgent costs before claim settlement."
+        },
+        {
+          "title": "Legal Expense Buffer",
+          "description": "Adds an extra layer of cover for extended legal proceedings beyond the primary policy."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1011,
+      "insuranceName": "Excess of Loss - Employers Liability",
+      "benefits": [
+        {
+          "title": "Workplace Rehabilitation Program",
+          "description": "Coordinates medical care and physiotherapy to return injured employees to work safely."
+        },
+        {
+          "title": "Incident Investigation Support",
+          "description": "Provides specialists to analyse root causes and prevent recurrence of serious incidents."
+        },
+        {
+          "title": "HR Legal Advisory",
+          "description": "Delivers guidance on employment law, disciplinary processes, and settlement agreements."
+        },
+        {
+          "title": "Return-to-Work Coaching",
+          "description": "Helps employers design phased return plans tailored to each injured worker."
+        },
+        {
+          "title": "Claims Reserving Tools",
+          "description": "Offers software and expertise to model long-tail liability exposure accurately."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1012,
+      "insuranceName": "Commercial Combined",
+      "benefits": [
+        {
+          "title": "Supply Chain Support",
+          "description": "Provides assistance sourcing alternative suppliers after insured disruption."
+        },
+        {
+          "title": "Cyber Extension",
+          "description": "Adds cover for cyber attacks that halt business operations."
+        },
+        {
+          "title": "Business Continuity Planning",
+          "description": "Delivers consultancy to test and improve your continuity arrangements."
+        },
+        {
+          "title": "Trade Show Protection",
+          "description": "Covers exhibition costs and lost revenue if events are cancelled."
+        },
+        {
+          "title": "Stock Inflow Management",
+          "description": "Helps finance and manage sudden stock increases after insured delays."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1013,
+      "insuranceName": "Healthcare Combined",
+      "benefits": [
+        {
+          "title": "Private Nurse Access",
+          "description": "Arranges in-home nursing support following hospital discharge."
+        },
+        {
+          "title": "Chronic Condition Coaching",
+          "description": "Provides ongoing support for managing long-term illnesses such as diabetes or asthma."
+        },
+        {
+          "title": "Comprehensive Health Screening",
+          "description": "Includes annual medical assessments tailored to corporate wellbeing goals."
+        },
+        {
+          "title": "Employee Assistance Program",
+          "description": "Offers confidential counselling, legal advice, and wellness resources for staff."
+        },
+        {
+          "title": "Hospital Cash Upgrade",
+          "description": "Pays a daily cash benefit for each night an insured person spends in hospital."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1014,
+      "insuranceName": "Property",
+      "benefits": [
+        {
+          "title": "Vacant Property Inspections",
+          "description": "Organises routine inspections to maintain cover while premises are empty."
+        },
+        {
+          "title": "Rebuild Cost Appraisal",
+          "description": "Provides professional valuation to ensure buildings are insured for the correct sum."
+        },
+        {
+          "title": "Security Upgrade Grant",
+          "description": "Contributes towards improved alarms, CCTV, and access control."
+        },
+        {
+          "title": "Emergency Glazing Service",
+          "description": "Arranges rapid boarding up and glazing after accidental damage or vandalism."
+        },
+        {
+          "title": "Business Rates Advisory",
+          "description": "Offers guidance on reliefs and appeals to manage property rates."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1015,
+      "insuranceName": "Legal Expenses",
+      "benefits": [
+        {
+          "title": "24/7 Legal Helpline",
+          "description": "Immediate telephone advice from qualified solicitors on employment and commercial matters."
+        },
+        {
+          "title": "Contract Drafting Support",
+          "description": "Provides template agreements and lawyer reviews for key contracts."
+        },
+        {
+          "title": "Tax Investigation Defense",
+          "description": "Covers representation fees during HMRC inquiries or audits."
+        },
+        {
+          "title": "Court Attendance Costs",
+          "description": "Pays loss of earnings and travel expenses for required court appearances."
+        },
+        {
+          "title": "Mediation Vouchers",
+          "description": "Funds professional mediation to resolve disputes before litigation."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1016,
+      "insuranceName": "Motor Fleet",
+      "benefits": [
+        {
+          "title": "Telematics Insights",
+          "description": "Delivers driver behaviour analytics and risk scoring to improve safety."
+        },
+        {
+          "title": "Fuel Efficiency Coaching",
+          "description": "Provides training to reduce fuel consumption and emissions across the fleet."
+        },
+        {
+          "title": "Driver Training Program",
+          "description": "Offers advanced driver courses tailored to fleet requirements."
+        },
+        {
+          "title": "Replacement Vehicle Pool",
+          "description": "Ensures rapid access to hire vehicles when fleet cars are off the road."
+        },
+        {
+          "title": "Accident Investigation Team",
+          "description": "Deploys specialists to gather evidence and manage serious incidents."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1017,
+      "insuranceName": "Loss Recovery",
+      "benefits": [
+        {
+          "title": "Chartered Loss Adjuster",
+          "description": "Assigns a dedicated loss adjuster to represent your interests on complex claims."
+        },
+        {
+          "title": "Claim Preparation Costs",
+          "description": "Covers professional fees for compiling documentation and valuations."
+        },
+        {
+          "title": "Interim Payment Assistance",
+          "description": "Helps secure advance payments to maintain cash flow while repairs are underway."
+        },
+        {
+          "title": "Reinstatement Planning",
+          "description": "Provides project management support to coordinate rebuilding and procurement."
+        },
+        {
+          "title": "Dispute Resolution",
+          "description": "Offers legal advice and representation if claim settlements are contested."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1018,
+      "insuranceName": "Plant and Machinery",
+      "benefits": [
+        {
+          "title": "Emergency Breakdown Response",
+          "description": "Ensures engineers attend site quickly to diagnose and fix critical equipment."
+        },
+        {
+          "title": "Hired-In Plant Cover",
+          "description": "Extends protection to rented plant used on short-term projects."
+        },
+        {
+          "title": "Parts Replacement Fund",
+          "description": "Pays for OEM parts and labour following mechanical failure."
+        },
+        {
+          "title": "Operator Training",
+          "description": "Provides certified training to reduce accidents and downtime."
+        },
+        {
+          "title": "Theft Deterrent Systems",
+          "description": "Covers installation of trackers and immobilisers to protect valuable machinery."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1019,
+      "insuranceName": "Public and Products Liability",
+      "benefits": [
+        {
+          "title": "Product Recall Assistance",
+          "description": "Funds logistics, notifications, and disposal costs during a recall."
+        },
+        {
+          "title": "Customer Injury Compensation",
+          "description": "Provides additional indemnity for serious injury claims beyond statutory limits."
+        },
+        {
+          "title": "Safety Audit Program",
+          "description": "Delivers regular site inspections and recommendations to minimise risk."
+        },
+        {
+          "title": "Supplier Traceability Tools",
+          "description": "Offers software to track component origins for quick recall responses."
+        },
+        {
+          "title": "Reputation Repair Fund",
+          "description": "Pays for marketing and PR to restore consumer confidence after incidents."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1020,
+      "insuranceName": "Professional Indemnity Combined",
+      "benefits": [
+        {
+          "title": "Regulatory Liaison",
+          "description": "Coordinates with regulators to reduce penalties and satisfy compliance requirements."
+        },
+        {
+          "title": "Cyber Discovery Assistance",
+          "description": "Investigates whether cyber breaches contributed to professional failings."
+        },
+        {
+          "title": "Case Law Updates",
+          "description": "Provides quarterly briefings on legal precedents affecting your profession."
+        },
+        {
+          "title": "Contract Negotiation Desk",
+          "description": "Supports negotiations to limit liability in client contracts."
+        },
+        {
+          "title": "Claims Concierge",
+          "description": "Assigns a single point of contact to coordinate multi-line claims."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1021,
+      "insuranceName": "Run Off - Professional Indemnity",
+      "benefits": [
+        {
+          "title": "Extended Reporting Period",
+          "description": "Grants additional time to notify claims arising after practice closure or sale."
+        },
+        {
+          "title": "Legacy File Review",
+          "description": "Provides audits of historic files to identify potential exposure."
+        },
+        {
+          "title": "Notification Workshop",
+          "description": "Delivers training on what constitutes a notifiable circumstance post-closure."
+        },
+        {
+          "title": "Archive Digitisation",
+          "description": "Covers costs of scanning and securely storing physical records."
+        },
+        {
+          "title": "Dedicated Claims Handler",
+          "description": "Assigns a specialist to manage long-tail claims efficiently."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1022,
+      "insuranceName": "Terrorism",
+      "benefits": [
+        {
+          "title": "Denial of Access Cover",
+          "description": "Compensates for loss of income when authorities restrict access to your premises."
+        },
+        {
+          "title": "Debris Removal",
+          "description": "Pays for safe removal and disposal of debris following an insured incident."
+        },
+        {
+          "title": "Temporary Relocation",
+          "description": "Funds alternative premises and equipment to resume operations quickly."
+        },
+        {
+          "title": "Security Consultancy",
+          "description": "Provides professional advice on improving building and staff security measures."
+        },
+        {
+          "title": "Government Liaison",
+          "description": "Assists with navigating government compensation schemes and reporting obligations."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1023,
+      "insuranceName": "Shareholder Protection",
+      "benefits": [
+        {
+          "title": "Business Valuation Service",
+          "description": "Arranges independent valuations to set accurate share purchase prices."
+        },
+        {
+          "title": "Cross-Option Agreement Drafting",
+          "description": "Provides legal support to draft and maintain cross-option agreements."
+        },
+        {
+          "title": "Succession Coaching",
+          "description": "Offers workshops to prepare remaining shareholders for leadership transitions."
+        },
+        {
+          "title": "Tax Efficiency Review",
+          "description": "Delivers advice on structuring payouts to minimise tax liabilities."
+        },
+        {
+          "title": "Family Liaison Support",
+          "description": "Assigns a specialist to guide dependants through the share transfer process."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1024,
+      "insuranceName": "Relevant Life Plan",
+      "benefits": [
+        {
+          "title": "Trust Documentation Support",
+          "description": "Prepares and maintains the discretionary trust required for policy ownership."
+        },
+        {
+          "title": "Premium Equalisation",
+          "description": "Reviews benefit levels annually to keep cover aligned with salary changes."
+        },
+        {
+          "title": "Executive Health MOT",
+          "description": "Provides annual private health assessments for insured employees."
+        },
+        {
+          "title": "Bereavement Support Line",
+          "description": "Offers counselling and administration assistance for beneficiaries."
+        },
+        {
+          "title": "Policy Rewrite Service",
+          "description": "Allows seamless transfer of cover to a new employer without medical underwriting."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1025,
+      "insuranceName": "Executive Income Protection",
+      "benefits": [
+        {
+          "title": "Executive Health Screening",
+          "description": "Includes comprehensive annual health checks tailored to senior roles."
+        },
+        {
+          "title": "Lifestyle Coaching",
+          "description": "Provides nutrition and stress management coaching to maintain performance."
+        },
+        {
+          "title": "Bonus Protection",
+          "description": "Extends income replacement to include contractual annual bonuses."
+        },
+        {
+          "title": "Corporate Concierge",
+          "description": "Delivers travel, household, and administrative support during recovery."
+        },
+        {
+          "title": "Specialist Rehabilitation Network",
+          "description": "Gives access to leading clinics focused on executive return-to-work programs."
+        }
+      ]
+    },
+    {
+      "insuranceId": 1026,
+      "insuranceName": "Key Person Business",
+      "benefits": [
+        {
+          "title": "Recruitment Expense Cover",
+          "description": "Pays for headhunters and advertising to secure a replacement for the insured."
+        },
+        {
+          "title": "Interim Executive Support",
+          "description": "Funds temporary leadership resources to stabilise operations."
+        },
+        {
+          "title": "Customer Retention Program",
+          "description": "Provides marketing and account management to reassure key clients."
+        },
+        {
+          "title": "Stakeholder Communication Service",
+          "description": "Helps craft messaging for investors, staff, and partners after a loss."
+        },
+        {
+          "title": "Succession Planning Toolkit",
+          "description": "Delivers templates and consulting to formalise leadership contingency plans."
+        }
+      ]
+    }
+  ]
+}
