@@ -85,9 +85,6 @@
     <Content Update="wwwroot\js\cookieManager.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-      <Content Update="Resources\AddOnBenefitsSample.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>    
   </ItemGroup>
 
 </Project>
