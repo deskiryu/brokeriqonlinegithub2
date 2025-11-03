@@ -17,6 +17,7 @@ using BrokerIQ.Online.Server.AppSettings;
 using BrokerIQ.Online.Server.Extensions;
 using BrokerIQ.Online.Server.Pages.Insurance.Components;
 using BrokerIQ.Online.Server.Shared;
+using BrokerIQ.Online.Server.Services.Interface;
 using BrokerIQ.Online.Services.Interface;
 
 using MudBlazor;
@@ -53,6 +54,9 @@ namespace BrokerIQ.Online.Pages
         public IDialogService DialogService { get; set; }
 
         [Inject]
+        public IAddOnBenefitSampleService AddOnBenefitSampleService { get; set; }
+
+        [Inject]
         public INotificationService NotificationService { get; set; }
 
         [Inject]
@@ -86,6 +90,14 @@ namespace BrokerIQ.Online.Pages
         public int PaymentMethod = 0;
 
         protected List<(IBrowserFile, byte[])> LoadedFiles = new();
+        protected const int MaxAddOnBenefits = 10;
+        private readonly DialogOptions addOnBenefitDialogOptions = new()
+        {
+            CloseButton = true,
+            DisableBackdropClick = true,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true
+        };
 
         [Parameter]
         public string InsuranceId
@@ -142,11 +154,111 @@ namespace BrokerIQ.Online.Pages
 
         protected void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
 
+        protected async Task AddAddOnBenefit()
+        {
+            Insurance.AddOnBenefits ??= new List<AddOnBenefit>();
+
+            if (Insurance.AddOnBenefits.Count >= MaxAddOnBenefits)
+            {
+                return;
+            }
+
+            if (!Insurance.AddOnBenefits.Any() && AddOnBenefitSampleService != null)
+            {
+                var samples = await AddOnBenefitSampleService.GetSamplesAsync(InsuranceType, Math.Min(5, MaxAddOnBenefits));
+                if (samples != null && samples.Any())
+                {
+                    foreach (var sample in samples)
+                    {
+                        if (Insurance.AddOnBenefits.Count >= MaxAddOnBenefits)
+                        {
+                            break;
+                        }
+
+                        Insurance.AddOnBenefits.Add(CloneBenefit(sample));
+                    }
+
+                    await InvokeAsync(StateHasChanged);
+                    return;
+                }
+            }
+
+            var parameters = new DialogParameters
+            {
+                { nameof(AddOnBenefitDialog.Benefit), new AddOnBenefit() }
+            };
+
+            var dialog = DialogService.Show<AddOnBenefitDialog>("Add benefit", parameters, addOnBenefitDialogOptions);
+            var result = await dialog.Result;
+
+            if (!result.Cancelled && result.Data is AddOnBenefit benefit)
+            {
+                Insurance.AddOnBenefits.Add(CloneBenefit(benefit));
+                StateHasChanged();
+            }
+        }
+
+        protected async Task EditAddOnBenefit(AddOnBenefit benefit)
+        {
+            if (benefit == null || Insurance.AddOnBenefits == null)
+            {
+                return;
+            }
+
+            if (!Insurance.AddOnBenefits.Contains(benefit))
+            {
+                return;
+            }
+
+            var parameters = new DialogParameters
+            {
+                { nameof(AddOnBenefitDialog.Benefit), CloneBenefit(benefit) },
+                { nameof(AddOnBenefitDialog.IsEdit), true }
+            };
+
+            var dialog = DialogService.Show<AddOnBenefitDialog>("Edit benefit", parameters, addOnBenefitDialogOptions);
+            var result = await dialog.Result;
+
+            if (!result.Cancelled && result.Data is AddOnBenefit updated)
+            {
+                benefit.Title = updated.Title;
+                benefit.Description = updated.Description;
+                StateHasChanged();
+            }
+        }
+
+        protected void RemoveAddOnBenefit(AddOnBenefit benefit)
+        {
+            if (Insurance.AddOnBenefits == null)
+            {
+                return;
+            }
+
+            Insurance.AddOnBenefits.Remove(benefit);
+        }
+
+        private static AddOnBenefit CloneBenefit(AddOnBenefit source)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            return new AddOnBenefit
+            {
+                Id = source.Id,
+                InsuranceId = source.InsuranceId,
+                Title = source.Title,
+                Description = source.Description
+            };
+        }
+
         public InsuranceEditBase()
         {
             Insurance = new Insurance
             {
                 SupportingDocuments = new List<InsuranceDocument>(),
+                AddOnBenefits = new List<AddOnBenefit>(),
                 AvailableToClient = true
             };
             var insurancevalues = Enum.GetValues(typeof(InsuranceEnum)).Cast<InsuranceEnum>().ToList();
@@ -211,6 +323,7 @@ namespace BrokerIQ.Online.Pages
                 if (this.id > 0)
                 {
                     Insurance = (await InsuranceService.GetInsurance(this.id));
+                    Insurance.AddOnBenefits ??= new List<AddOnBenefit>();
                     InsuranceType = (int)Insurance.InsType;
 
                     TermType = (int)Insurance.TermType;
@@ -222,6 +335,8 @@ namespace BrokerIQ.Online.Pages
                     InsuranceType = ConsumerInsurances.First().Item1;
                     Insurance.InsType = (InsuranceEnum)ConsumerInsurances.First().Item1;
                 }
+
+                Insurance.AddOnBenefits ??= new List<AddOnBenefit>();
 
                 var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
                 if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("menuplanId", out var _value))

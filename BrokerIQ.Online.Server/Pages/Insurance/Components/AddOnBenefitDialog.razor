@@ -1,0 +1,29 @@
+@using BrokerIQ.Online.Models
+@using BrokerIQ.Online.Server.Extensions
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="_form">
+            <MudTextField Class="mb-3"
+                          Label="Title"
+                          Placeholder="Add-on benefit title"
+                          @bind-Value="Benefit.Title"
+                          MaxLength="100"
+                          For="@(() => Benefit.Title)" />
+            <MudTextField Label="Description"
+                          Placeholder="Describe this benefit"
+                          @bind-Value="Benefit.Description"
+                          MaxLength="1000"
+                          For="@(() => Benefit.Description)" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Text" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Style="@($"color:{Colors.Shades.Black};")"
+                   OnClick="Submit">
+            @SaveLabel
+        </MudButton>
+    </DialogActions>
+</MudDialog>

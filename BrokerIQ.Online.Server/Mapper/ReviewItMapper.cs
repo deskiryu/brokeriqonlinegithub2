@@ -289,6 +289,9 @@ namespace BrokerIQ.Online.Mapper
             .ForMember(d => d.IsInTrust, action => action.MapFrom(s => s.IsInTrust))
             .ForMember(d => d.HasWill, action => action.MapFrom(s => s.HasWill))
             .ForMember(d => d.AvailableToClient, action => action.MapFrom(s => s.AvailableToClient));
+
+            CreateMap<AddOnBenefitsDto, AddOnBenefit>();
+            CreateMap<AddOnBenefit, CreateAddOnBenefitsDto>();
         }
 
         private void InsuranceDocumentMapper()
