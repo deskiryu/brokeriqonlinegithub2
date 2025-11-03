@@ -113,13 +113,14 @@
                             <label class="col-sm-3 col-form-label">Add-on Benefits</label>
                             <div class="col-sm-7">
                                 <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <MudButton Variant="Variant.Outlined"
-                                               Color="Color.Primary"
+                                    <MudButton
+                                               Variant="Variant.Filled" 
+                                               Color="Color.Primary" 
+                                               Style="@($"color:{Colors.Shades.Black};")"
                                                Disabled="@(Insurance.AddOnBenefits?.Count >= MaxAddOnBenefits)"
                                                OnClick="@AddAddOnBenefit">
-                                        Add benefit
+                                        Add benefit(s)
                                     </MudButton>
-                                    <small class="text-muted">Optional · max @MaxAddOnBenefits</small>
                                 </div>
 
                                 @if (Insurance.AddOnBenefits != null && Insurance.AddOnBenefits.Any())
