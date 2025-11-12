@@ -13,6 +13,13 @@
 @inject IAccountService AccountService
 @inject IOptions<ReviewItAPIDetails> api
 
+@if (Customers == null)
+{
+    <div class="mb-2">
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-0" />
+    </div>
+}
+
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
     <h3 class="page-title mb-0">Clients</h3>
     <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -114,15 +121,8 @@
     </div>
 </div>
 
-@if (Customers == null)
+@if (Customers != null)
 {
-    <div>
-        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
-    </div>
-}
-else
-{
-
     <div class="card ">
         <div class="card-header">Notifications</div>
         <div class="card-body">
@@ -141,23 +141,34 @@ else
     </div>
 
     @if (FiltersDialogVisible)
-    {
-        <div class="filters-overlay" @onclick="CloseFiltersDialog">
-            <div class="filters-panel" @onclick:stopPropagation="true">
-                <div class="filters-header">
-                    <h4>Filter Clients</h4>
-                    <MudIconButton Icon="@Icons.Material.Filled.Close"
-                                   Variant="Variant.Text"
-                                   Color="Color.Dark"
-                                   OnClick="CloseFiltersDialog" />
-                </div>
-                <div class="filters-body">
-                    <div class="row">
-                        @if (User is not null && User.IsAdmin)
-                        {
-                            <div class="col-12">
+{
+    <div class="filters-overlay" @onclick="CloseFiltersDialog">
+        <div class="filters-panel" @onclick:stopPropagation="true">
+            <div class="filters-header">
+                <h4>Filter Clients</h4>
+                <MudIconButton Icon="@Icons.Material.Filled.Close"
+                               Variant="Variant.Text"
+                               Color="Color.Dark"
+                               OnClick="CloseFiltersDialog" />
+            </div>
+            <div class="filters-body">
+                @if (User is not null && User.IsAdmin)
+                {
+                    <div class="row gy-3">
+                        <div class="col-12">
+                            <label class="filter-label">Filter By Broker</label>
+                            @if (BrokerId > 0)
+                            {
+                                <div class="filter-chip filter-chip--inline">
+                                    <span>Broker: @GetBrokerName(BrokerId)</span>
+                                    <button type="button" class="filter-chip__close" @onclick="ClearBrokerFilter" aria-label="Remove broker filter">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
                                 <MudSelect T="int"
-                                           Label="Filter By Broker"
                                            Placeholder="Select"
                                            Clearable="true"
                                            @bind-Value="BrokerId"
@@ -169,14 +180,28 @@ else
                                         <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
                                     }
                                 </MudSelect>
-                            </div>
-                        }
+                            }
+                        </div>
+                    </div>
+                }
 
-                        @if (!User.IsAdmin && HasFilter)
-                        {
-                            <div class="col-lg-8">
+                @if (!User.IsAdmin && HasFilter)
+                {
+                    <div class="row gy-3">
+                        <div class="col-lg-8">
+                            <label class="filter-label">Filter By Assignee</label>
+                            @if (AssignedToId > 0)
+                            {
+                                <div class="filter-chip filter-chip--inline">
+                                    <span>Assignee: @GetEmployeeName(AssignedToId)</span>
+                                    <button type="button" class="filter-chip__close" @onclick="ClearAssigneeFilter" aria-label="Remove assignee filter">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
                                 <MudSelect T="int"
-                                           Label="Filter By Assignee"
                                            Placeholder="Select employee"
                                            Clearable="true"
                                            @bind-Value="AssignedToId"
@@ -188,10 +213,22 @@ else
                                         <MudSelectItem Value="@employee.Id">@employee.FullName</MudSelectItem>
                                     }
                                 </MudSelect>
-                            </div>
-                            <div class="col-lg-4">
+                            }
+                        </div>
+                        <div class="col-lg-4">
+                            <label class="filter-label">Filter By Usage</label>
+                            @if (showNonAppUsersOnly)
+                            {
+                                <div class="filter-chip filter-chip--inline">
+                                    <span>Usage: Not in app</span>
+                                    <button type="button" class="filter-chip__close" @onclick="ClearUsageFilter" aria-label="Remove usage filter">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
                                 <MudSelect T="int"
-                                           Label="Filter By Usage"
                                            Placeholder="Select"
                                            Clearable="true"
                                            @bind-Value="showNonAppUsersOnlyAsInt"
@@ -200,30 +237,41 @@ else
                                     <MudSelectItem Value="0">All</MudSelectItem>
                                     <MudSelectItem Value="1">Not downloaded or logged in to app</MudSelectItem>
                                 </MudSelect>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
+                }
 
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <label>Filter the list below by name</label>
-                            <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" />
-                        </div>
-                        <div class="col-lg-4 control_wrapper">
-                            <MudAutocomplete T="string"
-                                             Label="Go direct to client"
-                                             Placeholder="Start typing name, email or telephone ..."
-                                             AdornmentColor="Color.Primary"
-                                             TextChanged="@AutoCompleteClick"
-                                             SearchFunc="@OnFilter">
-                            </MudAutocomplete>
-                        </div>
-
+                <div class="row gy-3">
+                    <div class="col-lg-4">
+                        <label class="filter-label">Filter the list below by name</label>
+                        <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" />
+                    </div>
+                    <div class="col-lg-4 control_wrapper">
+                        <MudAutocomplete T="string"
+                                         Label="Go direct to client"
+                                         Placeholder="Start typing name, email or telephone ..."
+                                         AdornmentColor="Color.Primary"
+                                         TextChanged="@AutoCompleteClick"
+                                         SearchFunc="@OnFilter">
+                        </MudAutocomplete>
+                    </div>
+                    <div class="col-lg-4">
+                        <label class="filter-label">Filter By Upcoming</label>
                         @if (User.IsAdmin || HasFilter)
                         {
-                            <div class="col-lg-4">
+                            if (FilterRecent > 0)
+                            {
+                                <div class="filter-chip filter-chip--inline">
+                                    <span>Upcoming: @GetUpcomingFilterLabel()</span>
+                                    <button type="button" class="filter-chip__close" @onclick="ClearUpcomingFilter" aria-label="Remove upcoming filter">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
                                 <MudSelect T="int"
-                                           Label="Filter By Upcoming"
                                            Placeholder="Select"
                                            Clearable="true"
                                            @bind-Value="FilterRecent"
@@ -233,16 +281,28 @@ else
                                     <MudSelectItem Value="1">Upcoming Insurance Renewal</MudSelectItem>
                                     <MudSelectItem Value="2">Upcoming Mortgage Renewal</MudSelectItem>
                                 </MudSelect>
-                            </div>
+                            }
                         }
                     </div>
+                </div>
 
-                    @if (User.IsAdmin || HasFilter)
-                    {
-                        <div class="row">
-                            <div class="col-lg-4">
+                @if (User.IsAdmin || HasFilter)
+                {
+                    <div class="row gy-3">
+                        <div class="col-lg-4">
+                            <label class="filter-label">Mortgage Category</label>
+                            @if (CustomerCategory > 0)
+                            {
+                                <div class="filter-chip filter-chip--inline">
+                                    <span>@GetCustomerCategoryLabel()</span>
+                                    <button type="button" class="filter-chip__close" @onclick="ClearCategoryFilter" aria-label="Remove category filter">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
                                 <MudSelect T="int"
-                                           Label="Mortgage Category"
                                            Placeholder="Select"
                                            Clearable="true"
                                            @bind-Value="CustomerCategory"
@@ -256,10 +316,22 @@ else
                                         <MudSelectItem Value="@id">@looped.GetDisplayName()</MudSelectItem>
                                     }
                                 </MudSelect>
-                            </div>
-                            <div class="col-lg-4">
+                            }
+                        </div>
+                        <div class="col-lg-4">
+                            <label class="filter-label">Age Range</label>
+                            @if (AgeRange > 0)
+                            {
+                                <div class="filter-chip filter-chip--inline">
+                                    <span>@GetAgeRangeLabel()</span>
+                                    <button type="button" class="filter-chip__close" @onclick="ClearAgeRangeFilter" aria-label="Remove age filter">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
                                 <MudSelect T="int"
-                                           Label="Age Range"
                                            Placeholder="Select"
                                            Clearable="true"
                                            @bind-Value="AgeRange"
@@ -267,17 +339,29 @@ else
                                            AdornmentColor="Color.Primary">
                                     @{
                                         var names = Enum.GetNames(typeof(AgeRangeEnum));
-                                        @for (int i = 0; i <= names.Length; i++)
+                                        for (int i = 0; i <= names.Length; i++)
                                         {
                                             AgeRangeEnum looped = (AgeRangeEnum)i;
                                             <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
                                         }
                                     }
                                 </MudSelect>
-                            </div>
-                            <div class="col-lg-4">
+                            }
+                        </div>
+                        <div class="col-lg-4">
+                            <label class="filter-label">Time Period</label>
+                            @if (FilterPeriod > 0)
+                            {
+                                <div class="filter-chip filter-chip--inline">
+                                    <span>Period: @GetPeriodLabel()</span>
+                                    <button type="button" class="filter-chip__close" @onclick="ClearPeriodFilter" aria-label="Remove period filter">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
                                 <MudSelect T="int"
-                                           Label="Time Period"
                                            Placeholder="Select"
                                            Clearable="true"
                                            @bind-Value="FilterPeriod"
@@ -289,15 +373,27 @@ else
                                     <MudSelectItem Value="3">6 months</MudSelectItem>
                                     <MudSelectItem Value="4">9 months</MudSelectItem>
                                 </MudSelect>
-                            </div>
+                            }
                         </div>
+                    </div>
 
-                        @if (this.api.Value.ShowProtection)
-                        {
-                            <div class="row mb-2">
-                                <div class="col-12">
+                    @if (this.api.Value.ShowProtection)
+                    {
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <label class="filter-label">Client Profiling *</label>
+                                @if (ProfilingOption.HasValue)
+                                {
+                                    <div class="filter-chip filter-chip--inline">
+                                        <span>Profiling: @GetProfilingLabel()</span>
+                                        <button type="button" class="filter-chip__close" @onclick="ClearProfilingFilter" aria-label="Remove profiling filter">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
                                     <MudSelect T="int?"
-                                               Label="Client Profiling *"
                                                Placeholder="Select"
                                                Clearable="true"
                                                @bind-Value="ProfilingOption"
@@ -305,34 +401,36 @@ else
                                                AdornmentColor="Color.Primary">
                                         @{
                                             var enumCount = Enum.GetNames(typeof(ProfilingOptionEnum)).Length;
-                                            @for (int? i = 1; i <= enumCount; i++)
+                                            for (int? i = 1; i <= enumCount; i++)
                                             {
                                                 ProfilingOptionEnum looped = (ProfilingOptionEnum)i;
                                                 <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
                                             }
                                         }
                                     </MudSelect>
-                                </div>
+                                }
                             </div>
+                        </div>
 
-                            <div class="row">
-                                <div class="col-12">
-                                    <MudText Typo="Typo.body2">* Profiling highlights customers who would benefit from additional insurance, for example, when client is self-employed, has a mortgage & life & critical illness and doesn't have income protection.</MudText>
-                                </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <MudText Typo="Typo.body2">* Profiling highlights customers who would benefit from additional insurance, for example, when client is self-employed, has a mortgage & life & critical illness and doesn't have income protection.</MudText>
                             </div>
-                        }
+                        </div>
                     }
-                </div>
+                }
+            </div>
 
-                <div class="filters-dialog__footer w-100 text-center mt-3">
-                    Based on your applied filters, this message will be sent to <strong>@(FilteredCustomers?.Count ?? 0)</strong> clients.
-                </div>
-                <div class="filters-actions w-100 mt-3">
-                    <MudButton Variant="Variant.Text" OnClick="CloseFiltersDialog">Close</MudButton>
-                </div>
+            <div class="filters-dialog__footer w-100 text-center mt-3">
+                Based on your applied filters, this message will be sent to <strong>@(FilteredCustomers?.Count ?? 0)</strong> clients.
+            </div>
+            <div class="filters-actions w-100 mt-3">
+                <MudButton Variant="Variant.Text" OnClick="CloseFiltersDialog">Close</MudButton>
             </div>
         </div>
-    }
+    </div>
+}
+}
     <div>
 
         <div class="card">

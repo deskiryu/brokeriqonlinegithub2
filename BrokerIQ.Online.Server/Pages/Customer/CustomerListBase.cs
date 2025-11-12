@@ -229,6 +229,7 @@ namespace BrokerIQ.Online.Pages
         {
             try
             {
+                await ShowCustomerLoadingIndicatorAsync();
                 SelectFilled = false;
                 await GetCustomers();
                 User = await AccountService.GetUser();
@@ -293,6 +294,13 @@ namespace BrokerIQ.Online.Pages
 
                 if (colourIndex > colourValues.Length) colourIndex = 0;
             }
+        }
+
+        private Task ShowCustomerLoadingIndicatorAsync()
+        {
+            Customers?.Clear();
+            Customers = null;
+            return InvokeAsync(StateHasChanged);
         }
 
         protected async Task GetCustomers(bool clear = false)
@@ -370,8 +378,7 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task AutoCompleteClickBroker()
         {
-            Customers.Clear();
-            Customers = null;
+            await ShowCustomerLoadingIndicatorAsync();
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
 
             if (SelectedCustomers != null && SelectedCustomers.Any())
@@ -379,13 +386,12 @@ namespace BrokerIQ.Online.Pages
                 SelectedCustomers.Clear();
             }
 
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         protected async Task RefreshListFromFilterValues()
         {
-            Customers.Clear();
-            Customers = null;
+            await ShowCustomerLoadingIndicatorAsync();
 
             var filterValues = new CustomerFilter()
             {
@@ -407,7 +413,7 @@ namespace BrokerIQ.Online.Pages
                 SelectedCustomers.Clear();
             }
 
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         protected async Task SendChatMessageToSelected()
