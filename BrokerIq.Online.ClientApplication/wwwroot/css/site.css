@@ -30,6 +30,24 @@ textarea,
     font-family: var(--font-family-sans-serif) !important;
 }
 
+.appbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.appbar-brand__logo {
+    height: 32px;
+    width: auto;
+}
+
+.appbar-brand__text {
+    font-family: var(--font-family-sans-serif);
+    font-weight: 600;
+    font-size: 1.8rem;
+    color: var(--color-nav-text);
+}
+
 /*.page {
     position: relative;
     display: flex;

@@ -1,47 +1,31 @@
 ﻿@inherits LayoutComponentBase
 @using BrokerIQ.Online.Server.Helper
-@using Microsoft.Extensions.Options;
-@using BrokerIQ.Online.AppSettings
-
 @inject IDialogService DialogService
 @inject LoggedInAppState AppState
-@inject IOptions<ReviewItAPIDetails> api
 @inject IJSRuntime jsRuntime
 
 <MudDialogProvider />
 <MudSnackbarProvider />
-@if (api.Value.IsYAHTheme)
-{
-    <MudThemeProvider Theme="MyCustomThemeYah" />
-}
-else
-{
-    <MudThemeProvider Theme="MyCustomTheme2" />
-}
+<MudThemeProvider Theme="MyCustomTheme" />
 
 <MudLayout>
-    <MudAppBar Elevation="1" Style="@(api.Value.IsYAHTheme ? "background-color:#2d2141;" : $"background-color:{Colors.Shades.Black};")">
-
-        @if (api.Value.IsYAHTheme)
-        {
-            <img src="https://brokeriq.co.uk/wp-content/uploads/2024/07/yahLogo15239.png" alt="BrokerIQ" class="white-logo default-logo">
-        }
-        else
-        {
-            <img src="https://brokeriq.co.uk/wp-content/uploads/2022/05/iq-test-logo.png" alt="BrokerIQ" class="white-logo default-logo">
-        }
+    <MudAppBar Elevation="1" Style="background-color:var(--color-surface); color:var(--color-nav-text);">
+        <div class="appbar-brand">
+            <img src="https://brokeriq.co.uk/wp-content/uploads/2025/07/yahLogosmall.png" alt="Yavia logo" class="appbar-brand__logo">
+            <span class="appbar-brand__text">Yavia</span>
+        </div>
         <MudSpacer />
-        <MudText Typo="Typo.subtitle1" Style="@($"color:{Colors.Shades.White};")">@(AppState.LoggedIn ? AppState.FullName : string.Empty)</MudText>
-        <MudButton Color="Color.Primary" Style="@($"color:{Colors.Shades.White};")" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
+        <MudText Typo="Typo.subtitle1" Style="color:var(--color-nav-text);">@(AppState.LoggedIn ? AppState.FullName : string.Empty)</MudText>
+        <MudButton Color="Color.Primary" Style="color:var(--color-nav-text);" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Mini" Style="@DrawerStyle">
-        <div class="@(api.Value.IsYAHTheme? "sidebar sidebar-yah" : "sidebar")">
+        <div class="sidebar">
             <NavMenu />
         </div>
 
-        <MudPaper Style="@(api.Value.IsYAHTheme ? "text-align: right; background-color:#2d2141;border-radius: 0 !important;" : "text-align: right; background-color:#353c3b;border-radius: 0 !important;")">
-            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@(!_drawerOpen)" />
-            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="@($"color:{Colors.Shades.White};")" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen" />
+        <MudPaper Style="text-align: right; background-color:var(--color-surface);border-radius: 0 !important;">
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowLeft" Style="color:var(--color-nav-text);" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" hidden="@(!_drawerOpen)" />
+            <MudIconButton Icon="@Icons.Material.Filled.KeyboardDoubleArrowRight" Style="color:var(--color-nav-text);" Edge="Edge.End" OnClick="@((e) => DrawerToggle())" hidden="@_drawerOpen" />
         </MudPaper>
     </MudDrawer>
 
@@ -74,33 +58,7 @@ else
         await jsRuntime.InvokeVoidAsync("localStorage.setItem", DRAWER_STATE, _drawerOpen.ToString());
     }
 
-    MudTheme MyCustomTheme2 = new MudTheme()
-    {
-        Palette = new Palette()
-        {
-            Primary = "#CEBFFA",
-            PrimaryLighten = "#E4DAFD",
-            PrimaryDarken = "#A997E8",
-            Secondary = "#A997E8",
-            Tertiary = "#8E7EDC",
-            AppbarBackground = "#E4DAFD",
-            AppbarText = "#1F2937",
-            DrawerBackground = "#F8FAFC",
-            DrawerText = "#1F2937",
-            Surface = "#FFFFFF",
-            Background = "#F8FAFC",
-            TextPrimary = "#1F2937",
-            TextSecondary = "#475569"
-        },
-
-        LayoutProperties = new LayoutProperties()
-        {
-            DrawerWidthLeft = "260px",
-            DrawerWidthRight = "300px"
-        }
-    };
-
-    MudTheme MyCustomThemeYah = new MudTheme()
+    MudTheme MyCustomTheme = new MudTheme()
     {
         Palette = new Palette()
         {

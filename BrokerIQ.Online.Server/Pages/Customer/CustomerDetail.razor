@@ -2,17 +2,14 @@
 
 @using System.Globalization
 
-@using BrokerIQ.Online.AppSettings;
 @using BrokerIQ.Online.Models
 @using BrokerIQ.Dto.Enum
 @using BrokerIQ.Online.Pages
 @using BrokerIQ.Online.Server.Components
 @using BrokerIQ.Online.Server.Extensions
 @using BrokerIQ.Online.Server.Pages.Customer.Components
-@using Microsoft.Extensions.Options;
 
 @inherits CustomerDetailBase
-@inject IOptions<ReviewItAPIDetails> api
 @implements IDisposable
 
 @if (Customer == null)
@@ -42,7 +39,7 @@ else if (!Saved)
         <MudTabPanel>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">CUSTOMER</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.CustomerVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex==0)" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.CustomerVideoUrl" Visible="@(Tabs.ActivePanelIndex==0)" />
             </TabContent>
             <ChildContent>
                 <div class="card ">
@@ -73,7 +70,7 @@ else if (!Saved)
             <MudTabPanel>
                 <TabContent>
                     <MudText Typo="Typo.subtitle2" Class="mr-1">INSURANCE</MudText>
-                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.InsuranceVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 1)" />
+                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.InsuranceVideoUrl" Visible="@(Tabs.ActivePanelIndex == 1)" />
                 </TabContent>
                 <ChildContent>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"insuranceedit/0/{Customer.Id}?menuplanId=0")" class="mb-2">
@@ -146,7 +143,7 @@ else if (!Saved)
             <MudTabPanel>
                 <TabContent>
                     <MudText Typo="Typo.subtitle2" Class="mr-1">MORTGAGES</MudText>
-                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.MortgageVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex==2)" />
+                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.MortgageVideoUrl" Visible="@(Tabs.ActivePanelIndex==2)" />
                 </TabContent>
                 <ChildContent>
                     <div class="form-group row">
@@ -246,7 +243,7 @@ else if (!Saved)
         <MudTabPanel BadgeData="@NewClientUploadsCount" BadgeColor="@UploadsBadgeColor" BadgeDot="@ShouldShowAsDot" OnClick="@(f => ResetUploadsBadge())">
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">UPLOADS</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.UploadsVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex==3)" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.UploadsVideoUrl" Visible="@(Tabs.ActivePanelIndex==3)" />
             </TabContent>
             <ChildContent>
                 <div class="row" @onclick="this.ResetUploadsBadge">
@@ -334,7 +331,7 @@ else if (!Saved)
         <MudTabPanel>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">NOTES</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.NotesVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex==4)" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.NotesVideoUrl" Visible="@(Tabs.ActivePanelIndex==4)" />
             </TabContent>
             <ChildContent>
                 <div class="card mb-1">
@@ -402,7 +399,7 @@ else if (!Saved)
         <MudTabPanel BadgeData='@UnReadChat' BadgeColor="@ChatBadgeColour" BadgeDot='@ChatBadgeDot' OnClick="@(f => ClearUnReadChat())" ID='"pn_chat"'>
             <TabContent>
                 <MudText Typo="Typo.subtitle2" Class="mr-1">CHAT</MudText>
-                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.ChatVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex==5)" />
+                <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.ChatVideoUrl" Visible="@(Tabs.ActivePanelIndex==5)" />
             </TabContent>
             <ChildContent>
                 <div @onclick="this.ClearUnReadChat">
@@ -744,7 +741,7 @@ else if (!Saved)
             <MudTabPanel>
                 <TabContent>
                     <MudText Typo="Typo.subtitle2" Class="mr-1">CONNECTION</MudText>
-                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.ConnectionVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex==6)" />
+                    <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.ConnectionVideoUrl" Visible="@(Tabs.ActivePanelIndex==6)" />
                 </TabContent>
                 <ChildContent>
                     <CustomerCard User="@User" Broker="@Broker" Brokers="@Brokers" Customer="@Connection" OnCustomerConnectionChange="@(async () => await OnCustomerChange())" IsAlreadyConnected="true" />

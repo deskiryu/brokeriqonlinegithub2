@@ -30,6 +30,24 @@ textarea,
     font-family: var(--font-family-sans-serif) !important;
 }
 
+.appbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.appbar-brand__logo {
+    height: 32px;
+    width: auto;
+}
+
+.appbar-brand__text {
+    font-family: var(--font-family-sans-serif);
+    font-weight: 600;
+    font-size: 1.8rem;
+    color: var(--color-nav-text);
+}
+
 /*.page {
     position: relative;
     display: flex;
@@ -65,7 +83,7 @@ app {
 }
 
 .main-yah .top-row {
-    background-color: #2d2141!important;
+    background-color: #2d2141 !important;
 }
 
 .main .top-row>a,
@@ -133,11 +151,11 @@ app {
     padding-left: 0.85rem;
 }
 
-    .sidebar .nav-item a.active,
-    .sidebar-yah .nav-item a.active {
-        background-color: var(--color-primary-80);
-        color: var(--color-nav-text);
-    }
+.sidebar .nav-item a.active,
+.sidebar-yah .nav-item a.active {
+    background-color: var(--color-primary-80);
+    color: var(--color-nav-text);
+}
 
 .sidebar .nav-item a:hover,
 .sidebar-yah .nav-item a:hover {

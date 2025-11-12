@@ -34,7 +34,7 @@
 
         @if (IsLoggedIn)
         {
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
@@ -44,7 +44,7 @@
 
             @if (!User.IsMinorAdmin)
             {
-                <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+                <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="clientlist">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Clients
                     </NavLink>
@@ -54,14 +54,14 @@
 
             @if (User.IsAdmin || User.IsMinorAdmin)
             {
-                <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+                <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="videolist">
                         <span class="oi oi-monitor" aria-hidden="true"></span> Videos (admin)
                     </NavLink>
                 </li>
             }
 
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="videolist2">
                     <span class="oi oi-monitor" aria-hidden="true"></span> Videos
                 </NavLink>
@@ -70,7 +70,7 @@
 
             @if (!User.IsMinorAdmin && HasAudioFunctionality())
             {
-                <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+                <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="audiolist">
                         <span class="oi oi-bullhorn" aria-hidden="true"></span> Voice Recordings
                     </NavLink>
@@ -78,21 +78,21 @@
                 </li>
             }
 
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="notifications">
                     <span class="oi oi-phone" aria-hidden="true"></span> Tracking outbound
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowNotificationsTutorial" VideoUrl="@tutorialVideos.NotificationsVideoUrl" />
             </li>
 
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="emailinvitations">
                     <span class="oi oi-envelope-open" aria-hidden="true"></span> Invitations
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowInvitationsTutorial" VideoUrl="@tutorialVideos.InvitationsVideoUrl" />
             </li>
 
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="referrals">
                     <span class="oi oi-link-intact" aria-hidden="true"></span> Referrals
                 </NavLink>
@@ -100,7 +100,7 @@
             </li>
 
 
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="messagelist">
                     <MudBadge Content="@NewMessageCount" Overlap="true" Color="@(NewMessageHide ? Color.Inherit : Color.Error)" Dot="@NewMessageHide" Origin="Origin.CenterCenter">
                         <span class="oi oi-envelope-closed" aria-hidden="true"></span>
@@ -112,7 +112,7 @@
 
             @if (User.IsAdmin || User.IsMinorAdmin)
             {
-                <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+                <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="brokerlist">
                         <span class="oi oi-grid-two-up" aria-hidden="true"></span> Brokers
                     </NavLink>
@@ -120,7 +120,7 @@
             }
             else
             {
-                <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+                <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="brokeredit\0">
                         <span class="oi oi-grid-two-up" aria-hidden="true"></span> Details
                     </NavLink>
@@ -130,7 +130,7 @@
 
             @if (User.IsAdmin || User.IsMinorAdmin || User.IsBroker || User.IsAdminStaff)
             {
-                <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+                <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="brokerstafflist">
                         <span class="oi oi-people" aria-hidden="true"></span> Employees
                     </NavLink>
@@ -141,7 +141,7 @@
 
             @if (!User.IsMinorAdmin)
             {
-                <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+                <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="settingsedit">
                         <span class="oi oi-cog" aria-hidden="true"></span> Settings
                     </NavLink>
@@ -150,7 +150,7 @@
             }
 
             @if(api.Value.ShowWorkflows)            {
-                <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+                <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="workflows">
                         <span class="oi oi-collapse-down" aria-hidden="true"></span> Workflows
                     </NavLink>
@@ -159,20 +159,20 @@
 
             @if (!User.IsAdmin && !User.IsMinorAdmin)
             {
-                <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+                <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href=@($"charts/_dashboard/0")>
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Dashboard
                     </NavLink>
                 </li>
             }
 
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="trainingvideolist">
                     <span class="oi oi-monitor" aria-hidden="true"></span> Training Videos
                 </NavLink>
             </li>
 
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="account/logout">
                     <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
                 </NavLink>
@@ -180,7 +180,7 @@
 
             <li style="height:40px" />
 
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="https://brokeriq.co.uk/report-an-issue/" target="_blank">
                     <span class="oi oi-lightbulb" aria-hidden="true"></span> Report An Issue
                 </NavLink>
@@ -188,13 +188,13 @@
         }
         else
         {
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </li>
 
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="account/login">
                     <span class="oi oi-account-login" aria-hidden="true"></span> Login
                 </NavLink>
@@ -202,7 +202,7 @@
 
             <li style="height:40px" />
 
-            <li class="@(api.Value.IsYAHTheme? "nav-item nav-item-yah px-2 d-flex align-center" : "nav-item px-2 d-flex align-center")">
+            <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="https://brokeriq.co.uk/report-an-issue" target="_blank">
                     <span class="oi oi-lightbulb" aria-hidden="true"></span> Report An Issue
                 </NavLink>
@@ -298,23 +298,23 @@
         return Broker.BrokerIdentifier.HasAudio;
     }
 
-    private bool ShowClientListTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("clientlist"); } }
+    private bool ShowClientListTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("clientlist"); } }
 
-    private bool ShowVideoListTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("videolist2"); } }
+    private bool ShowVideoListTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("videolist2"); } }
 
-    private bool ShowAudioListTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("audiolist"); } }
+    private bool ShowAudioListTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("audiolist"); } }
 
-    private bool ShowNotificationsTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("notifications"); } }
+    private bool ShowNotificationsTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("notifications"); } }
 
-    private bool ShowInvitationsTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("emailinvitations"); } }
+    private bool ShowInvitationsTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("emailinvitations"); } }
 
-    private bool ShowReferralsTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("referrals"); } }
+    private bool ShowReferralsTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("referrals"); } }
 
-    private bool ShowMessageListTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("messagelist"); } }
+    private bool ShowMessageListTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("messagelist"); } }
 
-    private bool ShowBrokerTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("brokeredit/0"); } }
+    private bool ShowBrokerTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("brokeredit/0"); } }
 
-    private bool ShowEmployeesTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("brokerstafflist"); } }
+    private bool ShowEmployeesTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("brokerstafflist"); } }
 
-    private bool ShowSettingsTutorial { get { return api.Value.IsYAHTheme && Navigator.ToBaseRelativePath(Navigator.Uri).Equals("settingsedit/0"); } }
+    private bool ShowSettingsTutorial { get { return Navigator.ToBaseRelativePath(Navigator.Uri).Equals("settingsedit/0"); } }
 }

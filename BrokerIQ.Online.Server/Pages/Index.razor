@@ -81,8 +81,7 @@ else
                     if (Broker != null)
                     {
 
-                        if (Broker != null && Broker.BrokerIdentifier != null && !string.IsNullOrEmpty(Broker.BrokerIdentifier.MatchingCode) &&
-                        api.Value.IsYAHTheme)
+                        if (Broker != null && Broker.BrokerIdentifier != null && !string.IsNullOrEmpty(Broker.BrokerIdentifier.MatchingCode))
                         {
                             _showBrokerMatchingCode = true;
                             _brokerMatchingCode = Broker.BrokerIdentifier.MatchingCode;
