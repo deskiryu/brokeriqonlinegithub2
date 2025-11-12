@@ -86,12 +86,18 @@ namespace BrokerIQ.Online.Pages
 
         protected bool showNonAppUsersOnly;
 
+        protected bool FiltersDialogVisible { get; set; }
+
         protected async void ShowNonAppUsersOnly()
         {
             showNonAppUsersOnly = !showNonAppUsersOnly;
             showNonAppUsersOnlyAsInt = showNonAppUsersOnly ? 1 : 0;
             await RefreshListFromFilterValues();
         }
+
+        protected void OpenFiltersDialog() => FiltersDialogVisible = true;
+
+        protected void CloseFiltersDialog() => FiltersDialogVisible = false;
 
         protected override async Task OnInitializedAsync()
         {

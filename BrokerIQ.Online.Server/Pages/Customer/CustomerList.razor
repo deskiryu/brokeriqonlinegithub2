@@ -13,7 +13,18 @@
 @inject IAccountService AccountService
 @inject IOptions<ReviewItAPIDetails> api
 
-<h3 class="page-title">Clients</h3>
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+    <h3 class="page-title mb-0">Clients</h3>
+    <MudButton Variant="Variant.Outlined"
+               Color="Color.Primary"
+               Class="filters-trigger"
+               Disabled="@(Customers == null)"
+               Style="background-color: #fff;"
+               OnClick="OpenFiltersDialog">
+        Filters
+        <i class="fa-solid fa-filter ml-2" aria-hidden="true"></i>
+    </MudButton>
+</div>
 
 @if (Customers == null)
 {
@@ -41,10 +52,9 @@ else
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">Filter Clients</div>
-        <div class="card-body">
-
+    <MudDialog @bind-IsVisible="FiltersDialogVisible" MaxWidth="MaxWidth.ExtraLarge" FullWidth="true" CloseButton="true" Class="filters-dialog">
+        <TitleContent>Filter Clients</TitleContent>
+        <DialogContent>
             <div class="row">
                 @if (User is not null && User.IsAdmin)
                 {
@@ -216,8 +226,14 @@ else
                     </div>
                 }
             }
-        </div>
-    </div>
+            <div class="filters-dialog__footer w-100 text-center mt-4">
+                Based on your applied filters, this message will be sent to <strong>@(FilteredCustomers?.Count ?? 0)</strong> clients.
+            </div>
+            <div class="w-100 d-flex justify-content-end mt-3">
+                <MudButton Variant="Variant.Text" OnClick="CloseFiltersDialog">Close</MudButton>
+            </div>
+        </DialogContent>
+    </MudDialog>
     <div>
 
         <div class="card">
