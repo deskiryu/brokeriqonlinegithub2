@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Enum;
@@ -88,6 +89,17 @@ namespace BrokerIQ.Online.Pages
 
         protected bool FiltersDialogVisible { get; set; }
 
+        protected bool HasActiveFilterChips =>
+            (User?.IsAdmin == true && BrokerId > 0) ||
+            AssignedToId > 0 ||
+            showNonAppUsersOnly ||
+            !string.IsNullOrWhiteSpace(SearchTerm) ||
+            FilterRecent > 0 ||
+            CustomerCategory > 0 ||
+            AgeRange > 0 ||
+            FilterPeriod > 0 ||
+            ProfilingOption.HasValue;
+
         protected async void ShowNonAppUsersOnly()
         {
             showNonAppUsersOnly = !showNonAppUsersOnly;
@@ -98,6 +110,115 @@ namespace BrokerIQ.Online.Pages
         protected void OpenFiltersDialog() => FiltersDialogVisible = true;
 
         protected void CloseFiltersDialog() => FiltersDialogVisible = false;
+
+        protected string GetBrokerName(int brokerId) =>
+            Brokers?.FirstOrDefault(b => b.Id == brokerId)?.Name ?? "Broker";
+
+        protected string GetEmployeeName(int employeeId) =>
+            Employees?.FirstOrDefault(e => e.Id == employeeId)?.FullName ?? "Team member";
+
+        protected string GetCustomerCategoryLabel()
+        {
+            if (CustomerCategory <= 0) return string.Empty;
+            if (!Enum.IsDefined(typeof(CustomerCategoryEnum), CustomerCategory)) return string.Empty;
+            return ((CustomerCategoryEnum)CustomerCategory).GetDisplayName();
+        }
+
+        protected string GetAgeRangeLabel()
+        {
+            if (AgeRange <= 0) return string.Empty;
+            if (!Enum.IsDefined(typeof(AgeRangeEnum), AgeRange)) return string.Empty;
+            return ((AgeRangeEnum)AgeRange).GetDisplayName();
+        }
+
+        protected string GetUpcomingFilterLabel() => FilterRecent switch
+        {
+            1 => "Insurance renewal",
+            2 => "Mortgage renewal",
+            _ => string.Empty
+        };
+
+        protected string GetPeriodLabel()
+        {
+            var labels = new[] { "2 weeks", "4 weeks", "3 months", "6 months", "9 months" };
+            if (FilterPeriod >= 0 && FilterPeriod < labels.Length)
+            {
+                return labels[FilterPeriod];
+            }
+            return string.Empty;
+        }
+
+        protected string GetProfilingLabel()
+        {
+            if (!ProfilingOption.HasValue) return string.Empty;
+            if (!Enum.IsDefined(typeof(ProfilingOptionEnum), ProfilingOption.Value)) return string.Empty;
+            return ((ProfilingOptionEnum)ProfilingOption.Value).GetDisplayName();
+        }
+
+        protected async Task ClearBrokerFilter()
+        {
+            if (BrokerId == 0) return;
+            BrokerId = 0;
+            await AutoCompleteClickBroker();
+        }
+
+        protected async Task ClearAssigneeFilter()
+        {
+            if (AssignedToId == 0) return;
+            AssignedToId = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearUsageFilter()
+        {
+            if (!showNonAppUsersOnly) return;
+            showNonAppUsersOnly = false;
+            showNonAppUsersOnlyAsInt = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected Task ClearSearchFilter()
+        {
+            if (string.IsNullOrWhiteSpace(SearchTerm)) return Task.CompletedTask;
+            SearchTerm = string.Empty;
+            StateHasChanged();
+            return Task.CompletedTask;
+        }
+
+        protected async Task ClearUpcomingFilter()
+        {
+            if (FilterRecent == 0) return;
+            FilterRecent = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearCategoryFilter()
+        {
+            if (CustomerCategory == 0) return;
+            CustomerCategory = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearAgeRangeFilter()
+        {
+            if (AgeRange == 0) return;
+            AgeRange = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearPeriodFilter()
+        {
+            if (FilterPeriod == 0) return;
+            FilterPeriod = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearProfilingFilter()
+        {
+            if (!ProfilingOption.HasValue) return;
+            ProfilingOption = null;
+            await RefreshListFromFilterValues();
+        }
 
         protected override async Task OnInitializedAsync()
         {

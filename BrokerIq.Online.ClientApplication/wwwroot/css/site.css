@@ -244,6 +244,41 @@ app {
     justify-content: flex-end;
 }
 
+.filter-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-primary);
+    background-color: rgba(206, 191, 250, 0.2);
+    color: var(--color-nav-text);
+    font-size: 0.85rem;
+}
+
+.filter-chip__close {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.filter-chip__close:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(206, 191, 250, 0.4);
+    border-radius: 999px;
+}
+
 .filters-dialog__footer {
     border-radius: 16px;
     background-color: rgba(206, 191, 250, 0.2);

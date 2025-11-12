@@ -15,15 +15,103 @@
 
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
     <h3 class="page-title mb-0">Clients</h3>
-    <MudButton Variant="Variant.Outlined"
-               Color="Color.Primary"
-               Class="filters-trigger"
-               Disabled="@(Customers == null)"
-               Style="background-color: #fff;"
-               OnClick="OpenFiltersDialog">
-        Filters
-        <i class="fa-solid fa-filter ml-2" aria-hidden="true"></i>
-    </MudButton>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        @if (Customers != null && HasActiveFilterChips)
+        {
+            <div class="d-flex flex-wrap gap-2 filter-chip-group justify-content-end">
+                @if (BrokerId > 0 && User?.IsAdmin == true)
+                {
+                    <div class="filter-chip">
+                        Broker: @GetBrokerName(BrokerId)
+                        <button type="button" class="filter-chip__close" @onclick="ClearBrokerFilter" aria-label="Remove broker filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                }
+                @if (AssignedToId > 0)
+                {
+                    <div class="filter-chip">
+                        Assignee: @GetEmployeeName(AssignedToId)
+                        <button type="button" class="filter-chip__close" @onclick="ClearAssigneeFilter" aria-label="Remove assignee filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                }
+                @if (showNonAppUsersOnly)
+                {
+                    <div class="filter-chip">
+                        Usage: Not in app
+                        <button type="button" class="filter-chip__close" @onclick="ClearUsageFilter" aria-label="Remove usage filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(SearchTerm))
+                {
+                    <div class="filter-chip">
+                        Search: @SearchTerm
+                        <button type="button" class="filter-chip__close" @onclick="ClearSearchFilter" aria-label="Remove search filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                }
+                @if (FilterRecent > 0)
+                {
+                    <div class="filter-chip">
+                        Upcoming: @GetUpcomingFilterLabel()
+                        <button type="button" class="filter-chip__close" @onclick="ClearUpcomingFilter" aria-label="Remove upcoming filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                }
+                @if (CustomerCategory > 0)
+                {
+                    <div class="filter-chip">
+                        Category: @GetCustomerCategoryLabel()
+                        <button type="button" class="filter-chip__close" @onclick="ClearCategoryFilter" aria-label="Remove category filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                }
+                @if (AgeRange > 0)
+                {
+                    <div class="filter-chip">
+                        Age: @GetAgeRangeLabel()
+                        <button type="button" class="filter-chip__close" @onclick="ClearAgeRangeFilter" aria-label="Remove age filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                }
+                @if (FilterPeriod > 0)
+                {
+                    <div class="filter-chip">
+                        Period: @GetPeriodLabel()
+                        <button type="button" class="filter-chip__close" @onclick="ClearPeriodFilter" aria-label="Remove period filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                }
+                @if (ProfilingOption.HasValue)
+                {
+                    <div class="filter-chip">
+                        Profiling: @GetProfilingLabel()
+                        <button type="button" class="filter-chip__close" @onclick="ClearProfilingFilter" aria-label="Remove profiling filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+        <MudButton Variant="Variant.Outlined"
+                   Color="Color.Primary"
+                   Class="filters-trigger"
+                   Disabled="@(Customers == null)"
+                   Style="background-color: #fff;"
+                   OnClick="OpenFiltersDialog">
+            Filters
+            <i class="fa-solid fa-filter ml-2" aria-hidden="true"></i>
+        </MudButton>
+    </div>
 </div>
 
 @if (Customers == null)
