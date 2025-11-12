@@ -53,6 +53,8 @@ namespace BrokerIQ.Online.Pages
 
         public HashSet<Customer> SelectedCustomers { get; set; } = new HashSet<Customer>();
 
+        protected bool HasSelectedCustomers => SelectedCustomers?.Any() == true;
+
         public int BrokerId { get; set; }
 
         public int AssignedToId { get; set; }
@@ -453,6 +455,8 @@ namespace BrokerIQ.Online.Pages
             await DialogService.Show<MultipleChatDialog>("Send Chat To Multiple", dialogParams, dialogOptions).Result;
         }
 
+        protected async Task HandleSendChatOption() => await SendChatMessageToSelected();
+
         protected async Task SendNotificationToSelected()
         {
             var dialogParams = new DialogParameters();
@@ -532,6 +536,8 @@ namespace BrokerIQ.Online.Pages
                 ;
             }
         }
+
+        protected async Task HandleSendNotificationOption() => await SendNotificationToSelected();
 
         protected async Task OnCategoryClick(int customerId, int newCategory)
         {

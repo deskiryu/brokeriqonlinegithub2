@@ -109,6 +109,33 @@
                 }
             </div>
         }
+        <MudMenu AnchorOrigin="0"
+                 Dense="true"
+                 Class="send-menu"
+                 PopoverClass="send-menu__popover"
+                 CloseOnClick="true"
+                 Disabled="@(Customers == null || !HasSelectedCustomers)">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           Class="filters-trigger send-trigger"
+                           Disabled="@(Customers == null || !HasSelectedCustomers)"
+                           Style="background-color: #fff;">
+                    Send
+                    <i class="fa-solid fa-chevron-down ml-2" aria-hidden="true"></i>
+                </MudButton>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem Class="send-menu__item" OnClick="HandleSendNotificationOption">
+                    <i class="fa-solid fa-user-group" aria-hidden="true"></i>
+                    Send Notification
+                </MudMenuItem>
+                <MudMenuItem Class="send-menu__item" OnClick="HandleSendChatOption">
+                    <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+                    Send Chat
+                </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
         <MudButton Variant="Variant.Outlined"
                    Color="Color.Primary"
                    Class="filters-trigger"
@@ -126,24 +153,19 @@
     <div class="card ">
         <div class="card-header">Notifications</div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-sm-6 mt-1">
-                    <MudInputString @bind-Value="selectedNotification" Placeholder="Type a notification message" Style="width:100%" />
-                </div>
-                <div class="col-sm-3 mt-1">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendNotificationToSelected())">Send Notification to selected clients</MudButton>
-                </div>
-                <div class="col-sm-3 mt-1">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" @onclick="(async () => await SendChatMessageToSelected())">Send chat message to selected clients</MudButton>
-                </div>
-            </div>
+            <MudInputString @bind-Value="selectedNotification"
+                            Placeholder="Type a notification message"
+                            Style="width:100%" />
+            <p class="send-menu__hint text-muted mb-0 mt-2">
+                Select clients and choose an option from the Send menu above to notify or chat.
+            </p>
         </div>
     </div>
 
     @if (FiltersDialogVisible)
-{
-    <div class="filters-overlay" @onclick="CloseFiltersDialog">
-        <div class="filters-panel" @onclick:stopPropagation="true">
+    {
+        <div class="filters-overlay" @onclick="CloseFiltersDialog">
+            <div class="filters-panel" @onclick:stopPropagation="true">
             <div class="filters-header">
                 <h4>Filter Clients</h4>
                 <MudIconButton Icon="@Icons.Material.Filled.Close"
@@ -427,9 +449,9 @@
             <div class="filters-actions w-100 mt-3">
                 <MudButton Variant="Variant.Text" OnClick="CloseFiltersDialog">Close</MudButton>
             </div>
+            </div>
         </div>
-    </div>
-}
+    }
 }
     <div>
 

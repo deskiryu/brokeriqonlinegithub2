@@ -294,6 +294,55 @@ app {
     padding: 0.35rem 1rem;
 }
 
+.send-menu {
+    position: relative;
+}
+
+.send-trigger .mud-button-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.send-menu__popover .mud-list {
+    padding: 0.35rem;
+}
+
+.send-menu__item {
+    border-radius: 10px;
+    margin: 0.15rem 0.25rem;
+    padding: 0.45rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-nav-text-muted);
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.send-menu__item i {
+    width: 1.2rem;
+    text-align: center;
+    color: inherit;
+}
+
+.send-menu__item:hover,
+.send-menu__item:focus-visible,
+.send-menu__item.mud-selected {
+    background-color: var(--color-primary-80);
+    color: var(--color-nav-text);
+}
+
+.send-menu__item.mud-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.send-menu__hint {
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+
 .filters-dialog__footer {
     border-radius: 16px;
     background-color: rgba(206, 191, 250, 0.2);
