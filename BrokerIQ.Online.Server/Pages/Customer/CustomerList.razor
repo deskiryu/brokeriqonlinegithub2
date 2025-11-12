@@ -52,188 +52,199 @@ else
         </div>
     </div>
 
-    <MudDialog @bind-IsVisible="FiltersDialogVisible" MaxWidth="MaxWidth.ExtraLarge" FullWidth="true" CloseButton="true" Class="filters-dialog">
-        <TitleContent>Filter Clients</TitleContent>
-        <DialogContent>
-            <div class="row">
-                @if (User is not null && User.IsAdmin)
-                {
-                    <div class="col-12">
-                        <MudSelect T="int"
-                                   Label="Filter By Broker"
-                                   Placeholder="Select"
-                                   Clearable="true"
-                                   @bind-Value="BrokerId"
-                                   SelectedValuesChanged="@AutoCompleteClickBroker"
-                                   AdornmentColor="Color.Primary">
-                            <MudSelectItem Value="0">Select</MudSelectItem>
-                            @foreach (var item in @Brokers)
-                            {
-                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </div>
-                }
-
-                @if (!User.IsAdmin && HasFilter)
-                {
-                    <div class="col-lg-8">
-                        <MudSelect T="int"
-                                   Label="Filter By Assignee"
-                                   Placeholder="Select employee"
-                                   Clearable="true"
-                                   @bind-Value="AssignedToId"
-                                   SelectedValuesChanged="@RefreshListFromFilterValues"
-                                   AdornmentColor="Color.Primary">
-                            <MudSelectItem Value="0">Select</MudSelectItem>
-                            @foreach (var employee in @Employees)
-                            {
-                                <MudSelectItem Value="@employee.Id">@employee.FullName</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </div>
-                    <div class="col-lg-4">
-                        <MudSelect T="int"
-                                   Label="Filter By Usage"
-                                   Placeholder="Select"
-                                   Clearable="true"
-                                   @bind-Value="showNonAppUsersOnlyAsInt"
-                                   SelectedValuesChanged="@ShowNonAppUsersOnly"
-                                   AdornmentColor="Color.Primary">
-                            <MudSelectItem Value="0">All</MudSelectItem>
-                            <MudSelectItem Value="1">Not downloaded or logged in to app</MudSelectItem>
-                        </MudSelect>
-                    </div>
-                }
-            </div>
-
-            <div class="row">
-                <div class="col-lg-4">
-                    <label>Filter the list below by name</label>
-                    <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" />
+    @if (FiltersDialogVisible)
+    {
+        <div class="filters-overlay" @onclick="CloseFiltersDialog">
+            <div class="filters-panel" @onclick:stopPropagation="true">
+                <div class="filters-header">
+                    <h4>Filter Clients</h4>
+                    <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                   Variant="Variant.Text"
+                                   Color="Color.Dark"
+                                   OnClick="CloseFiltersDialog" />
                 </div>
-                <div class="col-lg-4 control_wrapper">
-                    <MudAutocomplete T="string"
-                                     Label="Go direct to client"
-                                     Placeholder="Start typing name, email or telephone ..."
-                                     AdornmentColor="Color.Primary"
-                                     TextChanged="@AutoCompleteClick"
-                                     SearchFunc="@OnFilter">
-                    </MudAutocomplete>
-                </div>
-
-                @if (User.IsAdmin || HasFilter)
-                {
-                    <div class="col-lg-4">
-                        <MudSelect T="int"
-                                   Label="Filter By Upcoming"
-                                   Placeholder="Select"
-                                   Clearable="true"
-                                   @bind-Value="FilterRecent"
-                                   SelectedValuesChanged="@RefreshListFromFilterValues"
-                                   AdornmentColor="Color.Primary">
-                            <MudSelectItem Value="0">None</MudSelectItem>
-                            <MudSelectItem Value="1">Upcoming Insurance Renewal</MudSelectItem>
-                            <MudSelectItem Value="2">Upcoming Mortgage Renewal</MudSelectItem>
-                        </MudSelect>
-                    </div>
-                }
-            </div>
-
-            @if (User.IsAdmin || HasFilter)
-            {
-                <div class="row">
-                    <div class="col-lg-4">
-                        <MudSelect T="int"
-                                   Label="Mortgage Category"
-                                   Placeholder="Select"
-                                   Clearable="true"
-                                   @bind-Value="CustomerCategory"
-                                   SelectedValuesChanged="@RefreshListFromFilterValues"
-                                   AdornmentColor="Color.Primary"
-                                   MaxHeight="400">
-                            @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
-                            {
-                                CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
-                                int id = (int)looped;
-                                <MudSelectItem Value="@id">@looped.GetDisplayName()</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </div>
-                    <div class="col-lg-4">
-                        <MudSelect T="int"
-                                   Label="Age Range"
-                                   Placeholder="Select"
-                                   Clearable="true"
-                                   @bind-Value="AgeRange"
-                                   SelectedValuesChanged="@RefreshListFromFilterValues"
-                                   AdornmentColor="Color.Primary">
-                            @if (true)
-                            {
-                                var names = Enum.GetNames(typeof(AgeRangeEnum));
-                                @for (int i = 0; i <= names.Length; i++)
-                                {
-                                    AgeRangeEnum looped = (AgeRangeEnum)i;
-                                    <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
-                                }
-                            }
-                        </MudSelect>
-                    </div>
-                    <div class="col-lg-4">
-                        <MudSelect T="int"
-                                   Label="Time Period"
-                                   Placeholder="Select"
-                                   Clearable="true"
-                                   @bind-Value="FilterPeriod"
-                                   SelectedValuesChanged="@RefreshListFromFilterValues"
-                                   AdornmentColor="Color.Primary">
-                            <MudSelectItem Value="0">2 weeks</MudSelectItem>
-                            <MudSelectItem Value="1">4 weeks</MudSelectItem>
-                            <MudSelectItem Value="2">3 months</MudSelectItem>
-                            <MudSelectItem Value="3">6 months</MudSelectItem>
-                            <MudSelectItem Value="4">9 months</MudSelectItem>
-                        </MudSelect>
-                    </div>
-                </div>
-
-                @if (this.api.Value.ShowProtection)
-                {
-                    <div class="row mb-2">
-                        <div class="col-12">
-                            <MudSelect T="int?"
-                                       Label="Client Profiling *"
-                                       Placeholder="Select"
-                                       Clearable="true"
-                                       @bind-Value="ProfilingOption"
-                                       SelectedValuesChanged="@RefreshListFromFilterValues"
-                                       AdornmentColor="Color.Primary">
-                                @{
-                                    var enumCount = Enum.GetNames(typeof(ProfilingOptionEnum)).Length;
-                                    @for (int? i = 1; i <= enumCount; i++)
+                <div class="filters-body">
+                    <div class="row">
+                        @if (User is not null && User.IsAdmin)
+                        {
+                            <div class="col-12">
+                                <MudSelect T="int"
+                                           Label="Filter By Broker"
+                                           Placeholder="Select"
+                                           Clearable="true"
+                                           @bind-Value="BrokerId"
+                                           SelectedValuesChanged="@AutoCompleteClickBroker"
+                                           AdornmentColor="Color.Primary">
+                                    <MudSelectItem Value="0">Select</MudSelectItem>
+                                    @foreach (var item in @Brokers)
                                     {
-                                        ProfilingOptionEnum looped = (ProfilingOptionEnum)i;
-                                        <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                        <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
                                     }
-                                }
-                            </MudSelect>
-                        </div>
+                                </MudSelect>
+                            </div>
+                        }
+
+                        @if (!User.IsAdmin && HasFilter)
+                        {
+                            <div class="col-lg-8">
+                                <MudSelect T="int"
+                                           Label="Filter By Assignee"
+                                           Placeholder="Select employee"
+                                           Clearable="true"
+                                           @bind-Value="AssignedToId"
+                                           SelectedValuesChanged="@RefreshListFromFilterValues"
+                                           AdornmentColor="Color.Primary">
+                                    <MudSelectItem Value="0">Select</MudSelectItem>
+                                    @foreach (var employee in @Employees)
+                                    {
+                                        <MudSelectItem Value="@employee.Id">@employee.FullName</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </div>
+                            <div class="col-lg-4">
+                                <MudSelect T="int"
+                                           Label="Filter By Usage"
+                                           Placeholder="Select"
+                                           Clearable="true"
+                                           @bind-Value="showNonAppUsersOnlyAsInt"
+                                           SelectedValuesChanged="@ShowNonAppUsersOnly"
+                                           AdornmentColor="Color.Primary">
+                                    <MudSelectItem Value="0">All</MudSelectItem>
+                                    <MudSelectItem Value="1">Not downloaded or logged in to app</MudSelectItem>
+                                </MudSelect>
+                            </div>
+                        }
                     </div>
 
                     <div class="row">
-                        <div class="col-12">
-                            <MudText Typo="Typo.body2">* Profiling highlights customers who would benefit from additional insurance, for example, when client is self-employed, has a mortgage & life & critical illness and doesn't have income protection.</MudText>
+                        <div class="col-lg-4">
+                            <label>Filter the list below by name</label>
+                            <input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Type name or business name" class="filter_customerBroker" />
                         </div>
+                        <div class="col-lg-4 control_wrapper">
+                            <MudAutocomplete T="string"
+                                             Label="Go direct to client"
+                                             Placeholder="Start typing name, email or telephone ..."
+                                             AdornmentColor="Color.Primary"
+                                             TextChanged="@AutoCompleteClick"
+                                             SearchFunc="@OnFilter">
+                            </MudAutocomplete>
+                        </div>
+
+                        @if (User.IsAdmin || HasFilter)
+                        {
+                            <div class="col-lg-4">
+                                <MudSelect T="int"
+                                           Label="Filter By Upcoming"
+                                           Placeholder="Select"
+                                           Clearable="true"
+                                           @bind-Value="FilterRecent"
+                                           SelectedValuesChanged="@RefreshListFromFilterValues"
+                                           AdornmentColor="Color.Primary">
+                                    <MudSelectItem Value="0">None</MudSelectItem>
+                                    <MudSelectItem Value="1">Upcoming Insurance Renewal</MudSelectItem>
+                                    <MudSelectItem Value="2">Upcoming Mortgage Renewal</MudSelectItem>
+                                </MudSelect>
+                            </div>
+                        }
                     </div>
-                }
-            }
-            <div class="filters-dialog__footer w-100 text-center mt-4">
-                Based on your applied filters, this message will be sent to <strong>@(FilteredCustomers?.Count ?? 0)</strong> clients.
+
+                    @if (User.IsAdmin || HasFilter)
+                    {
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <MudSelect T="int"
+                                           Label="Mortgage Category"
+                                           Placeholder="Select"
+                                           Clearable="true"
+                                           @bind-Value="CustomerCategory"
+                                           SelectedValuesChanged="@RefreshListFromFilterValues"
+                                           AdornmentColor="Color.Primary"
+                                           MaxHeight="400">
+                                    @for (int i = 0; i < CustomerCategoriesByRelevance.Length; i++)
+                                    {
+                                        CustomerCategoryEnum looped = CustomerCategoriesByRelevance[i];
+                                        int id = (int)looped;
+                                        <MudSelectItem Value="@id">@looped.GetDisplayName()</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </div>
+                            <div class="col-lg-4">
+                                <MudSelect T="int"
+                                           Label="Age Range"
+                                           Placeholder="Select"
+                                           Clearable="true"
+                                           @bind-Value="AgeRange"
+                                           SelectedValuesChanged="@RefreshListFromFilterValues"
+                                           AdornmentColor="Color.Primary">
+                                    @{
+                                        var names = Enum.GetNames(typeof(AgeRangeEnum));
+                                        @for (int i = 0; i <= names.Length; i++)
+                                        {
+                                            AgeRangeEnum looped = (AgeRangeEnum)i;
+                                            <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                        }
+                                    }
+                                </MudSelect>
+                            </div>
+                            <div class="col-lg-4">
+                                <MudSelect T="int"
+                                           Label="Time Period"
+                                           Placeholder="Select"
+                                           Clearable="true"
+                                           @bind-Value="FilterPeriod"
+                                           SelectedValuesChanged="@RefreshListFromFilterValues"
+                                           AdornmentColor="Color.Primary">
+                                    <MudSelectItem Value="0">2 weeks</MudSelectItem>
+                                    <MudSelectItem Value="1">4 weeks</MudSelectItem>
+                                    <MudSelectItem Value="2">3 months</MudSelectItem>
+                                    <MudSelectItem Value="3">6 months</MudSelectItem>
+                                    <MudSelectItem Value="4">9 months</MudSelectItem>
+                                </MudSelect>
+                            </div>
+                        </div>
+
+                        @if (this.api.Value.ShowProtection)
+                        {
+                            <div class="row mb-2">
+                                <div class="col-12">
+                                    <MudSelect T="int?"
+                                               Label="Client Profiling *"
+                                               Placeholder="Select"
+                                               Clearable="true"
+                                               @bind-Value="ProfilingOption"
+                                               SelectedValuesChanged="@RefreshListFromFilterValues"
+                                               AdornmentColor="Color.Primary">
+                                        @{
+                                            var enumCount = Enum.GetNames(typeof(ProfilingOptionEnum)).Length;
+                                            @for (int? i = 1; i <= enumCount; i++)
+                                            {
+                                                ProfilingOptionEnum looped = (ProfilingOptionEnum)i;
+                                                <MudSelectItem Value="@i">@looped.GetDisplayName()</MudSelectItem>
+                                            }
+                                        }
+                                    </MudSelect>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <MudText Typo="Typo.body2">* Profiling highlights customers who would benefit from additional insurance, for example, when client is self-employed, has a mortgage & life & critical illness and doesn't have income protection.</MudText>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="filters-dialog__footer w-100 text-center mt-3">
+                    Based on your applied filters, this message will be sent to <strong>@(FilteredCustomers?.Count ?? 0)</strong> clients.
+                </div>
+                <div class="filters-actions w-100 mt-3">
+                    <MudButton Variant="Variant.Text" OnClick="CloseFiltersDialog">Close</MudButton>
+                </div>
             </div>
-            <div class="w-100 d-flex justify-content-end mt-3">
-                <MudButton Variant="Variant.Text" OnClick="CloseFiltersDialog">Close</MudButton>
-            </div>
-        </DialogContent>
-    </MudDialog>
+        </div>
+    }
     <div>
 
         <div class="card">
