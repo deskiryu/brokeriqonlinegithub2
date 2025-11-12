@@ -1,0 +1,140 @@
+﻿@using BrokerIQ.Online.Models
+@using BrokerIQ.Online.Services.Interface
+
+@inject IDialogService DialogService
+@inject INotificationService NotificationService
+@inject IAlertService AlertService
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer Style="max-height: 800px; overflow-y: auto">
+            <div class="row">
+                <div class="col-sm-6 mt-1">
+                    <div class="card">
+                        <div class="card-body">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                Style="@($"color:{Colors.Shades.Black};")" OnClick="ComposeNotification"
+                                Disabled="@IsSending">
+                                Compose Notification
+                            </MudButton>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 mt-1">
+                    <div class="card">
+                        <div class="card-body">
+                            <p>Will be sent to:</p>
+                            @if (CustomerNames?.Any() == true)
+                            {
+                                foreach (var name in CustomerNames)
+                                {
+                                    <MudText Style="white-space: pre-line;">@name</MudText>
+                                }
+                            }
+                            else
+                            {
+                                <MudText>No recipients selected.</MudText>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")"
+            OnClick="Cancel" Disabled="@IsSending">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public List<int> CustomerIds { get; set; } = new();
+    [Parameter] public List<string> CustomerNames { get; set; } = new();
+    [Parameter] public int MasterBrokerId { get; set; }
+    [Parameter] public string PrePopulatedMessage { get; set; }
+
+    protected bool IsSending { get; set; }
+
+    private async Task ComposeNotification()
+    {
+        if (CustomerIds == null || !CustomerIds.Any())
+        {
+            AlertService.Error("No recipients available.");
+            return;
+        }
+
+        var dialogParams = new DialogParameters
+{
+{ "AllowScheduledMessage", false },
+{ "PrePopulatedMessage", PrePopulatedMessage ?? string.Empty }
+};
+        var dialogOptions = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true };
+
+        var result = await DialogService.Show<MessageSendDialog>("Send Notification", dialogParams, dialogOptions).Result;
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        if (result.Data is not MessageSendDialog.MessageSendModel messageModel)
+        {
+            AlertService.Error("Unable to compose message.");
+            return;
+        }
+
+        var message = messageModel.MessageToSend?.Trim();
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            AlertService.Error("Please enter a notification to send.");
+            return;
+        }
+
+        if (message.Length > 299)
+        {
+            AlertService.Error("Your notification is too long. It needs to be less than 300 letters.");
+            return;
+        }
+
+        await SendNotification(message);
+    }
+
+    private async Task SendNotification(string message)
+    {
+        IsSending = true;
+        StateHasChanged();
+
+        var succeeded = false;
+        try
+        {
+            succeeded = await NotificationService.SendMessageNotification(message, CustomerIds, MasterBrokerId, chat: false);
+        }
+        catch
+        {
+            succeeded = false;
+        }
+
+        IsSending = false;
+        StateHasChanged();
+
+        if (succeeded)
+        {
+            AlertService.Alert(new AlertBIQ
+            {
+                AutoClose = true,
+                Message = "Notification Sent"
+            });
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        else
+        {
+            AlertService.Error("Notification sending failed");
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+}

@@ -150,18 +150,6 @@
 
 @if (Customers != null)
 {
-    <div class="card ">
-        <div class="card-header">Notifications</div>
-        <div class="card-body">
-            <MudInputString @bind-Value="selectedNotification"
-                            Placeholder="Type a notification message"
-                            Style="width:100%" />
-            <p class="send-menu__hint text-muted mb-0 mt-2">
-                Select clients and choose an option from the Send menu above to notify or chat.
-            </p>
-        </div>
-    </div>
-
     @if (FiltersDialogVisible)
     {
         <div class="filters-overlay" @onclick="CloseFiltersDialog">

@@ -61,8 +61,6 @@ namespace BrokerIQ.Online.Pages
 
         public bool SelectFilled { get; set; }
 
-        protected string allNotification;
-        protected string selectedNotification;
         protected string SearchTerm { get; set; } = "";
 
         public int FilterRecent { get; set; }
@@ -459,82 +457,49 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task SendNotificationToSelected()
         {
-            var dialogParams = new DialogParameters();
-            if (string.IsNullOrEmpty(selectedNotification))
-            {
-                dialogParams.Add("Message", $"Please enter a notification to send.");
-                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
-                return;
-            }
-
-            if (selectedNotification.Length > 299)
-            {
-                dialogParams.Add("Message", $"Your notification is too long. It needs to be less than 300 letters.");
-                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
-                return;
-            }
-            dialogParams.Add("Notification", selectedNotification);
-
-            var targetsName = new List<string>();
-            if (SelectedCustomers != null)
-            {
-                targetsName = SelectedCustomers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed).Select(x => x.Name).ToList();
-            }
-
-            if (targetsName == null && !targetsName.Any())
+            if (SelectedCustomers == null || !SelectedCustomers.Any())
             {
                 AlertService.Error("No targets chosen or marketing for those targets not allowed");
+                return;
             }
-            ;
 
-            //var longlist = string.Join(",", targets);
+            var eligibleCustomers = SelectedCustomers
+                .Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed)
+                .ToList();
 
-            dialogParams.Add("Users", targetsName);
-            dialogParams.Add("areBrokers", false);
-            var result = await DialogService.Show<ScrollableDialog>("Send Notification", dialogParams).Result;
-
-            if (!result.Canceled)
+            if (!eligibleCustomers.Any())
             {
-                var targets = new List<int>();
-                if (SelectedCustomers != null)
-                {
-                    targets = SelectedCustomers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed).Select(x => x.Id).ToList();
-                }
-
-                if (targets != null && targets.Any())
-                {
-                    var user = await AccountService.GetUser();
-
-                    var succeeded = false;
-                    try
-                    {
-                        succeeded = await NotificationService.SendMessageNotification(selectedNotification, targets, user.MasterBrokerId);
-                    }
-                    catch
-                    {
-
-                    }
-
-                    if (succeeded)
-                    {
-                        AlertService.Alert(new AlertBIQ
-                        {
-                            AutoClose = true,
-                            Message = "Notification Sent"
-                        });
-                    }
-                    else
-                    {
-                        AlertService.Error("Notification sending failed");
-                    }
-                    ;
-                }
-                else
-                {
-                    AlertService.Error("No targets chosen or marketing for those targets not allowed");
-                }
-                ;
+                AlertService.Error("No targets chosen or marketing for those targets not allowed");
+                return;
             }
+
+            var masterBrokerId = User?.MasterBrokerId ?? 0;
+            if (masterBrokerId <= 0)
+            {
+                var user = await AccountService.GetUser();
+                masterBrokerId = user?.MasterBrokerId ?? 0;
+            }
+
+            if (masterBrokerId <= 0)
+            {
+                AlertService.Error("Unable to determine broker context for sending notifications.");
+                return;
+            }
+
+            var dialogParams = new DialogParameters
+            {
+                { "CustomerNames", eligibleCustomers.Select(x => x.Name).ToList() },
+                { "CustomerIds", eligibleCustomers.Select(x => x.Id).ToList() },
+                { "MasterBrokerId", masterBrokerId }
+            };
+
+            var dialogOptions = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true
+            };
+
+            await DialogService.Show<MultipleNotificationDialog>("Send Notification", dialogParams, dialogOptions).Result;
         }
 
         protected async Task HandleSendNotificationOption() => await SendNotificationToSelected();
