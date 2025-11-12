@@ -15,6 +15,21 @@ body {
     font-family: var(--font-family-sans-serif);
 }
 
+body,
+button,
+input,
+select,
+textarea,
+.mud-typography,
+.mud-button,
+.mud-link,
+.mud-list,
+.mud-list-item,
+.sidebar,
+.sidebar * {
+    font-family: var(--font-family-sans-serif) !important;
+}
+
 /*.page {
     position: relative;
     display: flex;
