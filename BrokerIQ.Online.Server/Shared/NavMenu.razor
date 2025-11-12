@@ -36,7 +36,7 @@
         {
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                    <i class="fa-solid fa-house" aria-hidden="true"></i> Home
                 </NavLink>
             </li>
 
@@ -46,7 +46,7 @@
             {
                 <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="clientlist">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Clients
+                        <i class="fa-solid fa-list" aria-hidden="true"></i> Clients
                     </NavLink>
                     <TutorialVideoIcon Visible="@ShowClientListTutorial" VideoUrl="@tutorialVideos.CustomersVideoUrl" />
                 </li>
@@ -56,14 +56,14 @@
             {
                 <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="videolist">
-                        <span class="oi oi-monitor" aria-hidden="true"></span> Videos (admin)
+                        <i class="fa-solid fa-tv" aria-hidden="true"></i> Videos (admin)
                     </NavLink>
                 </li>
             }
 
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="videolist2">
-                    <span class="oi oi-monitor" aria-hidden="true"></span> Videos
+                    <i class="fa-solid fa-tv" aria-hidden="true"></i> Videos
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowVideoListTutorial" VideoUrl="@tutorialVideos.VideosVideoUrl" />
             </li>
@@ -72,7 +72,7 @@
             {
                 <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="audiolist">
-                        <span class="oi oi-bullhorn" aria-hidden="true"></span> Voice Recordings
+                        <i class="fa-solid fa-bullhorn" aria-hidden="true"></i> Voice Recordings
                     </NavLink>
                     <TutorialVideoIcon Visible="@ShowAudioListTutorial" VideoUrl="@tutorialVideos.AudioVideoUrl" />
                 </li>
@@ -80,21 +80,21 @@
 
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="notifications">
-                    <span class="oi oi-phone" aria-hidden="true"></span> Tracking outbound
+                    <i class="fa-solid fa-phone" aria-hidden="true"></i> Tracking outbound
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowNotificationsTutorial" VideoUrl="@tutorialVideos.NotificationsVideoUrl" />
             </li>
 
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="emailinvitations">
-                    <span class="oi oi-envelope-open" aria-hidden="true"></span> Invitations
+                    <i class="fa-solid fa-envelope-open" aria-hidden="true"></i> Invitations
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowInvitationsTutorial" VideoUrl="@tutorialVideos.InvitationsVideoUrl" />
             </li>
 
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="referrals">
-                    <span class="oi oi-link-intact" aria-hidden="true"></span> Referrals
+                    <i class="fa-solid fa-link" aria-hidden="true"></i> Referrals
                 </NavLink>
                 <TutorialVideoIcon Visible="@ShowReferralsTutorial" VideoUrl="@tutorialVideos.ReferralsVideoUrl" />
             </li>
@@ -103,7 +103,7 @@
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="messagelist">
                     <MudBadge Content="@NewMessageCount" Overlap="true" Color="@(NewMessageHide ? Color.Inherit : Color.Error)" Dot="@NewMessageHide" Origin="Origin.CenterCenter">
-                        <span class="oi oi-envelope-closed" aria-hidden="true"></span>
+                        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
                     </MudBadge>
                     Action stream
                 </NavLink>
@@ -114,7 +114,7 @@
             {
                 <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="brokerlist">
-                        <span class="oi oi-grid-two-up" aria-hidden="true"></span> Brokers
+                        <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i> Brokers
                     </NavLink>
                 </li>
             }
@@ -122,7 +122,7 @@
             {
                 <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="brokeredit\0">
-                        <span class="oi oi-grid-two-up" aria-hidden="true"></span> Details
+                        <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i> Details
                     </NavLink>
                     <TutorialVideoIcon Visible="@ShowBrokerTutorial" VideoUrl="@tutorialVideos.BrokerVideoUrl" />
                 </li>
@@ -132,7 +132,7 @@
             {
                 <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="brokerstafflist">
-                        <span class="oi oi-people" aria-hidden="true"></span> Employees
+                        <i class="fa-solid fa-users" aria-hidden="true"></i> Employees
                     </NavLink>
                     <TutorialVideoIcon Visible="@ShowEmployeesTutorial" VideoUrl="@tutorialVideos.EmployeesVideoUrl" />
                 </li>
@@ -143,7 +143,7 @@
             {
                 <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="settingsedit">
-                        <span class="oi oi-cog" aria-hidden="true"></span> Settings
+                        <i class="fa-solid fa-gear" aria-hidden="true"></i> Settings
                     </NavLink>
                     <TutorialVideoIcon Visible="@ShowSettingsTutorial" VideoUrl="@tutorialVideos.SettingsVideoUrl" />
                 </li>
@@ -152,7 +152,7 @@
             @if(api.Value.ShowWorkflows)            {
                 <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href="workflows">
-                        <span class="oi oi-collapse-down" aria-hidden="true"></span> Workflows
+                        <i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Workflows
                     </NavLink>
                 </li>
             }
@@ -161,20 +161,20 @@
             {
                 <li class="nav-item px-2 d-flex align-center">
                     <NavLink class="nav-link" href=@($"charts/_dashboard/0")>
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Dashboard
+                    <i class="fa-solid fa-chart-line" aria-hidden="true"></i> Dashboard
                     </NavLink>
                 </li>
             }
 
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="trainingvideolist">
-                    <span class="oi oi-monitor" aria-hidden="true"></span> Training Videos
+                    <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Training Videos
                 </NavLink>
             </li>
 
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="account/logout">
-                    <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+                    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout
                 </NavLink>
             </li>
 
@@ -182,7 +182,7 @@
 
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="https://brokeriq.co.uk/report-an-issue/" target="_blank">
-                    <span class="oi oi-lightbulb" aria-hidden="true"></span> Report An Issue
+                    <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Report An Issue
                 </NavLink>
             </li>
         }
@@ -190,13 +190,13 @@
         {
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                    <i class="fa-solid fa-house" aria-hidden="true"></i> Home
                 </NavLink>
             </li>
 
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="account/login">
-                    <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                    <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Login
                 </NavLink>
             </li>
 
@@ -204,7 +204,7 @@
 
             <li class="nav-item px-2 d-flex align-center">
                 <NavLink class="nav-link" href="https://brokeriq.co.uk/report-an-issue" target="_blank">
-                    <span class="oi oi-lightbulb" aria-hidden="true"></span> Report An Issue
+                    <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Report An Issue
                 </NavLink>
             </li>
         }

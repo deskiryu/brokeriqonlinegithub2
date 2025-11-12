@@ -30,6 +30,30 @@ textarea,
     font-family: var(--font-family-sans-serif) !important;
 }
 
+.fa,
+.fa-solid,
+.fa-regular,
+.fa-light,
+.fa-thin,
+.fa-duotone {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+}
+
+.fa-regular {
+    font-weight: 400 !important;
+}
+
+.fa-light,
+.fa-thin {
+    font-weight: 300 !important;
+}
+
+.fa-brands {
+    font-family: "Font Awesome 6 Brands" !important;
+    font-weight: 400 !important;
+}
+
 .appbar-brand {
     display: flex;
     align-items: center;
@@ -46,6 +70,10 @@ textarea,
     font-weight: 600;
     font-size: 1.8rem;
     color: var(--color-nav-text);
+}
+
+.sidebar .nav-item i {
+    margin-right: 0.65rem;
 }
 
 /*.page {
