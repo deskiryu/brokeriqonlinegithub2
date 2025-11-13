@@ -1036,6 +1036,33 @@ tr.expired {
         color: #94a3b8;
     }
 
+.customer-list__avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.customer-list__avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.customer-list__action-button {
+    color: #6b7280;
+    min-width: 0;
+}
+
+    .customer-list__action-button:hover,
+    .customer-list__action-button:focus {
+        color: #4b5563;
+    }
+
 @media (max-width: 992px) {
     .customer-list__header {
         grid-template-columns: 1fr;
