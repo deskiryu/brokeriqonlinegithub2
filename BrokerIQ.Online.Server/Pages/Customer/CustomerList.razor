@@ -535,12 +535,9 @@
                               FixedHeader="@this.api.Value.FixedHeader"
                               FixedFooter="@this.api.Value.FixedFooter"
                               Height="@(this.api.Value.FixedHeader || this.api.Value.FixedFooter ? this.api.Value.ScrollHeight:"")"
-                              @bind-SelectedItems="SelectedCustomers">
+                              @bind-SelectedItems="SelectedCustomers"
+                              Class="customer-list__table">
                     <HeaderContent>
-                        @if (api.Value.ShowClientPictureColumn)
-                        {
-                            <MudTh></MudTh>
-                        }
                         @if (!User.IsAdmin)
                         {
                             <MudTh Style="text-align:center">
@@ -681,41 +678,6 @@
                         <MudTh>Actions</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        @if (api.Value.ShowClientPictureColumn)
-                        {
-                            <MudTd Style="text-align:center">
-                                @if (!string.IsNullOrWhiteSpace(context.PPAsImage))
-                                {
-                                    @if (context.HasNeeds)
-                                    {
-                                        <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
-                                            <MudAvatar Class="customer-list__avatar">
-                                                <img src="@context.PPAsImage" alt="@GetCustomerAvatarAltText(context)" class="customer-list__avatar-image" />
-                                            </MudAvatar>
-                                        </MudBadge>
-                                    }
-                                    else
-                                    {
-                                        <MudAvatar Class="customer-list__avatar">
-                                            <img src="@context.PPAsImage" alt="@GetCustomerAvatarAltText(context)" class="customer-list__avatar-image" />
-                                        </MudAvatar>
-                                    }
-                                }
-                                else
-                                {
-                                    @if (context.HasNeeds)
-                                    {
-                                        <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
-                                            <MudAvatar Class="customer-list__avatar" Color="Color.Secondary">@GetCustomerInitials(context)</MudAvatar>
-                                        </MudBadge>
-                                    }
-                                    else
-                                    {
-                                        <MudAvatar Class="customer-list__avatar" Color="Color.Secondary">@GetCustomerInitials(context)</MudAvatar>
-                                    }
-                                }
-                            </MudTd>
-                        }
                         @if (!User.IsAdmin)
                         {
                             <MudTh>
@@ -728,9 +690,46 @@
                             </MudTh>
                         }
                         <MudTd DataLabel="Client Name">
-                            <div class="d-flex flex-column">
-                                <span class="fw-bold">@context.Name</span>
-                                <span class="small text-muted">@context.EmailAddress</span>
+                            <div class="customer-list__name-cell">
+                                @if (api.Value.ShowClientPictureColumn)
+                                {
+                                    <div class="customer-list__avatar-wrapper">
+                                        @if (!string.IsNullOrWhiteSpace(context.PPAsImage))
+                                        {
+                                            @if (context.HasNeeds)
+                                            {
+                                                <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
+                                                    <MudAvatar Class="customer-list__avatar">
+                                                        <img src="@context.PPAsImage" alt="@GetCustomerAvatarAltText(context)" class="customer-list__avatar-image" />
+                                                    </MudAvatar>
+                                                </MudBadge>
+                                            }
+                                            else
+                                            {
+                                                <MudAvatar Class="customer-list__avatar">
+                                                    <img src="@context.PPAsImage" alt="@GetCustomerAvatarAltText(context)" class="customer-list__avatar-image" />
+                                                </MudAvatar>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @if (context.HasNeeds)
+                                            {
+                                                <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
+                                                    <MudAvatar Class="customer-list__avatar" Color="Color.Secondary">@GetCustomerInitials(context)</MudAvatar>
+                                                </MudBadge>
+                                            }
+                                            else
+                                            {
+                                                <MudAvatar Class="customer-list__avatar" Color="Color.Secondary">@GetCustomerInitials(context)</MudAvatar>
+                                            }
+                                        }
+                                    </div>
+                                }
+                                <div class="customer-list__name-details">
+                                    <span class="fw-bold">@context.Name</span>
+                                    <span class="small text-muted">@context.EmailAddress</span>
+                                </div>
                             </div>
                         </MudTd>
                         @if (api.Value.ShowClientPhoneColumn)
@@ -758,7 +757,7 @@
                             <MudTd DataLabel="App">@context.AppVersion</MudTd>
                             <MudTd DataLabel="WL"><MudCheckBox @bind-Checked="@context.IsWhiteLabel" Disabled="true"></MudCheckBox></MudTd>
                         }
-                        <MudTd Style="text-align:center" DataLabel="Verified">
+                        <MudTd Class="customer-list__verified-cell" DataLabel="Verified">
                             @if (context.EmailConfirmed)
                             {
                                 <i class="fa fa-check-circle font_awesome_table_checks success"></i>
