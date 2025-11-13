@@ -110,6 +110,35 @@ namespace BrokerIQ.Online.Pages
             ProfilingOption.HasValue ||
             VerifiedFilter.HasValue;
 
+        protected bool ShouldShowInviteButton => HasSelectedCustomers;
+
+        protected bool ShouldShowPrimaryActionButton => CanImport || HasSelectedCustomers;
+
+        protected string PrimaryActionLabel => HasSelectedCustomers ? "Assign" : "Import Clients";
+
+        protected bool IsPrimaryActionDisabled =>
+            Customers == null ||
+            (HasSelectedCustomers && (User?.IsAdmin == true || User?.IsBrokerStaff == true));
+
+        protected async Task ExecutePrimaryAction()
+        {
+            if (HasSelectedCustomers)
+            {
+                if (User?.IsAdmin == true || User?.IsBrokerStaff == true)
+                {
+                    return;
+                }
+
+                await AssignToStaff();
+                return;
+            }
+
+            if (CanImport)
+            {
+                await ShowImportDialog();
+            }
+        }
+
         protected async void ShowNonAppUsersOnly()
         {
             showNonAppUsersOnly = !showNonAppUsersOnly;
