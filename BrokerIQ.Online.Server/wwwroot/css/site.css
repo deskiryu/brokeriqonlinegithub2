@@ -74,6 +74,8 @@ textarea,
 
 .sidebar .nav-item i {
     margin-right: 0.65rem;
+    width: 1.5rem;
+    text-align: center;
 }
 
 /*.page {
@@ -173,10 +175,31 @@ app {
     height: 3rem;
     display: flex;
     align-items: center;
+    gap: 0.75rem;
     line-height: 3rem;
     font-weight: 500;
     transition: background-color 0.2s ease, color 0.2s ease;
     padding-left: 0.85rem;
+}
+
+.sidebar .nav-item a .nav-text,
+.sidebar-yah .nav-item a .nav-text {
+    flex: 1;
+    white-space: nowrap;
+}
+
+.sidebar .nav-item a .nav-badge,
+.sidebar-yah .nav-item a .nav-badge {
+    margin-left: auto;
+    background-color: #fb923c;
+    color: #fff;
+    border-radius: 8px;
+    padding: 0 0.5rem;
+    min-width: 1.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.5;
 }
 
 .sidebar .nav-item a.active,
@@ -189,6 +212,31 @@ app {
 .sidebar-yah .nav-item a:hover {
     background-color: var(--color-primary-80);
     color: var(--color-nav-text);
+}
+
+.sidebar--collapsed .nav-item {
+    justify-content: center;
+}
+
+.sidebar--collapsed .nav-item a {
+    justify-content: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    position: relative;
+}
+
+.sidebar--collapsed .nav-item a .nav-text {
+    display: none;
+}
+
+.sidebar--collapsed .nav-item a .nav-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+.sidebar--collapsed tutorialvideoicon {
+    display: none;
 }
 
 .filters-overlay {
