@@ -23,101 +23,6 @@
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
     <h3 class="page-title mb-0">Clients</h3>
     <div class="d-flex align-items-center gap-2 flex-wrap">
-        @if (Customers != null && HasActiveFilterChips)
-        {
-            <div class="d-flex flex-wrap gap-2 filter-chip-group justify-content-end">
-                @if (BrokerId > 0 && User?.IsAdmin == true)
-                {
-                    <div class="filter-chip">
-                        Broker: @GetBrokerName(BrokerId)
-                        <button type="button" class="filter-chip__close" @onclick="ClearBrokerFilter" aria-label="Remove broker filter">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                }
-                @if (AssignedToId > 0)
-                {
-                    <div class="filter-chip">
-                        Assignee: @GetEmployeeName(AssignedToId)
-                        <button type="button" class="filter-chip__close" @onclick="ClearAssigneeFilter" aria-label="Remove assignee filter">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                }
-                @if (showNonAppUsersOnly)
-                {
-                    <div class="filter-chip">
-                        Usage: Not in app
-                        <button type="button" class="filter-chip__close" @onclick="ClearUsageFilter" aria-label="Remove usage filter">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                }
-                @if (!string.IsNullOrWhiteSpace(SearchTerm))
-                {
-                    <div class="filter-chip">
-                        Search: @SearchTerm
-                        <button type="button" class="filter-chip__close" @onclick="ClearSearchFilter" aria-label="Remove search filter">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                }
-                @if (FilterRecent > 0)
-                {
-                    <div class="filter-chip">
-                        Upcoming: @GetUpcomingFilterLabel()
-                        <button type="button" class="filter-chip__close" @onclick="ClearUpcomingFilter" aria-label="Remove upcoming filter">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                }
-                @if (CustomerCategory > 0)
-                {
-                    <div class="filter-chip">
-                        Category: @GetCustomerCategoryLabel()
-                        <button type="button" class="filter-chip__close" @onclick="ClearCategoryFilter" aria-label="Remove category filter">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                }
-                @if (AgeRange > 0)
-                {
-                    <div class="filter-chip">
-                        Age: @GetAgeRangeLabel()
-                        <button type="button" class="filter-chip__close" @onclick="ClearAgeRangeFilter" aria-label="Remove age filter">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                }
-                @if (FilterPeriod > 0)
-                {
-                    <div class="filter-chip">
-                        Period: @GetPeriodLabel()
-                        <button type="button" class="filter-chip__close" @onclick="ClearPeriodFilter" aria-label="Remove period filter">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                }
-                @if (ProfilingOption.HasValue)
-                {
-                    <div class="filter-chip">
-                        Profiling: @GetProfilingLabel()
-                        <button type="button" class="filter-chip__close" @onclick="ClearProfilingFilter" aria-label="Remove profiling filter">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                }
-                @if (VerifiedFilter.HasValue)
-                {
-                    <div class="filter-chip">
-                        Verification: @(VerifiedFilter.Value ? "Verified" : "Not Verified")
-                        <button type="button" class="filter-chip__close" @onclick="async () => await ClearVerifiedFilter()" aria-label="Remove verification filter">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                }
-            </div>
-        }
         <MudMenu AnchorOrigin="0"
                  Dense="true"
                  Class="send-menu"
@@ -176,6 +81,135 @@
         </MudButton>
     </div>
 </div>
+
+@if (Customers != null && HasActiveFilterChips)
+{
+    <div class="active-filters mb-3">
+        <div class="active-filters__chips">
+            @if (BrokerId > 0 && User?.IsAdmin == true)
+            {
+                <div class="active-filters__item">
+                    <span class="active-filters__label">Broker:</span>
+                    <div class="filter-chip">
+                        <span>@GetBrokerName(BrokerId)</span>
+                        <button type="button" class="filter-chip__close" @onclick="ClearBrokerFilter" aria-label="Remove broker filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (AssignedToId > 0)
+            {
+                <div class="active-filters__item">
+                    <span class="active-filters__label">Assignee:</span>
+                    <div class="filter-chip">
+                        <span>@GetEmployeeName(AssignedToId)</span>
+                        <button type="button" class="filter-chip__close" @onclick="ClearAssigneeFilter" aria-label="Remove assignee filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (showNonAppUsersOnly)
+            {
+                <div class="active-filters__item">
+                    <span class="active-filters__label">Usage:</span>
+                    <div class="filter-chip">
+                        <span>Not in app</span>
+                        <button type="button" class="filter-chip__close" @onclick="ClearUsageFilter" aria-label="Remove usage filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                <div class="active-filters__item">
+                    <span class="active-filters__label">Search:</span>
+                    <div class="filter-chip">
+                        <span>@SearchTerm</span>
+                        <button type="button" class="filter-chip__close" @onclick="ClearSearchFilter" aria-label="Remove search filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (FilterRecent > 0)
+            {
+                <div class="active-filters__item">
+                    <span class="active-filters__label">Upcoming:</span>
+                    <div class="filter-chip">
+                        <span>@GetUpcomingFilterLabel()</span>
+                        <button type="button" class="filter-chip__close" @onclick="ClearUpcomingFilter" aria-label="Remove upcoming filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (CustomerCategory > 0)
+            {
+                <div class="active-filters__item">
+                    <span class="active-filters__label">Category:</span>
+                    <div class="filter-chip">
+                        <span>@GetCustomerCategoryLabel()</span>
+                        <button type="button" class="filter-chip__close" @onclick="ClearCategoryFilter" aria-label="Remove category filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (AgeRange > 0)
+            {
+                <div class="active-filters__item">
+                    <span class="active-filters__label">Age:</span>
+                    <div class="filter-chip">
+                        <span>@GetAgeRangeLabel()</span>
+                        <button type="button" class="filter-chip__close" @onclick="ClearAgeRangeFilter" aria-label="Remove age filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (FilterPeriod > 0)
+            {
+                <div class="active-filters__item">
+                    <span class="active-filters__label">Period:</span>
+                    <div class="filter-chip">
+                        <span>@GetPeriodLabel()</span>
+                        <button type="button" class="filter-chip__close" @onclick="ClearPeriodFilter" aria-label="Remove period filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (ProfilingOption.HasValue)
+            {
+                <div class="active-filters__item">
+                    <span class="active-filters__label">Profiling:</span>
+                    <div class="filter-chip">
+                        <span>@GetProfilingLabel()</span>
+                        <button type="button" class="filter-chip__close" @onclick="ClearProfilingFilter" aria-label="Remove profiling filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+            @if (VerifiedFilter.HasValue)
+            {
+                <div class="active-filters__item">
+                    <span class="active-filters__label">Verification:</span>
+                    <div class="filter-chip">
+                        <span>@(VerifiedFilter.Value ? "Verified" : "Not Verified")</span>
+                        <button type="button" class="filter-chip__close" @onclick="async () => await ClearVerifiedFilter()" aria-label="Remove verification filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+        <button type="button" class="active-filters__clear" @onclick="ClearAllFilters">Clear all filters</button>
+    </div>
+}
 
 @if (Customers != null)
 {

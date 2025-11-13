@@ -266,6 +266,43 @@ namespace BrokerIQ.Online.Pages
             await InvokeAsync(StateHasChanged);
         }
 
+        protected async Task ClearAllFilters()
+        {
+            if (!HasActiveFilterChips)
+            {
+                return;
+            }
+
+            BrokerId = 0;
+            AssignedToId = 0;
+            showNonAppUsersOnly = false;
+            showNonAppUsersOnlyAsInt = 0;
+            SearchTerm = string.Empty;
+            FilterRecent = 0;
+            FilterPeriod = 0;
+            CustomerCategory = 0;
+            AgeRange = 0;
+            ProfilingOption = null;
+            VerifiedFilter = null;
+
+            if (SelectedCustomers != null && SelectedCustomers.Any())
+            {
+                SelectedCustomers.Clear();
+            }
+
+            if (User?.IsAdmin == true)
+            {
+                Employees = new List<BrokerStaff>();
+                await AutoCompleteClickBroker();
+            }
+            else
+            {
+                await RefreshListFromFilterValues();
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+
         protected override async Task OnInitializedAsync()
         {
             await GetCustomersInit();
