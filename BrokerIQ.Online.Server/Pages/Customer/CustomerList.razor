@@ -702,7 +702,17 @@
                             <MudTd DataLabel="App">@context.AppVersion</MudTd>
                             <MudTd DataLabel="WL"><MudCheckBox @bind-Checked="@context.IsWhiteLabel" Disabled="true"></MudCheckBox></MudTd>
                         }
-                        <MudTd Style="text-align:center" DataLabel="Verified"><MudCheckBox @bind-Checked="@context.EmailConfirmed" Disabled="true"></MudCheckBox></MudTd>
+                        <MudTd Style="text-align:center" DataLabel="Verified">
+                            @if (context.EmailConfirmed)
+                            {
+                                <i class="fa fa-check-circle font_awesome_table_checks success"></i>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </MudTd>
+
                         <MudTd>@if (context.HasConnection) { <MudIcon Icon="@Icons.Material.Filled.Link" />}</MudTd>
                         <MudTd DataLabel="">
                             <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Filled" Size="Size.Small"
@@ -720,4 +730,4 @@
             </div>
         </div>
     </div>
-}
+
