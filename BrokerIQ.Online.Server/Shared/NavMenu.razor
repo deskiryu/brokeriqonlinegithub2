@@ -30,7 +30,8 @@
     }
 }
 
-<div class="@($"collapse {(DrawerOpen ? "menu-expanded" : "menu-collapsed")})">
+
+<div class="@ToggleDrawerOpenClass">
     <ul class="nav flex-column">
 
         @if (IsLoggedIn)
@@ -249,6 +250,11 @@
 
     [Parameter]
     public bool DrawerOpen { get; set; }
+
+    public string ToggleDrawerOpenClass
+    {
+        get => DrawerOpen ? "menu-expanded" : "menu-collapsed";
+    }
 
     protected TutorialVideos tutorialVideos { get; set; }
 
