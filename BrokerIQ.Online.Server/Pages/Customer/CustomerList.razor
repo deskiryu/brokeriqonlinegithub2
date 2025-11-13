@@ -145,6 +145,26 @@
                 </MudMenuItem>
             </ChildContent>
         </MudMenu>
+        @if (ShouldShowInviteButton)
+        {
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Disabled="@(Customers == null || !HasSelectedCustomers)"
+                       OnClick="SendInvite">
+                <i class="fa-solid fa-link mr-2" aria-hidden="true"></i>
+                Invite
+            </MudButton>
+        }
+        @if (ShouldShowPrimaryActionButton)
+        {
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Disabled="@IsPrimaryActionDisabled"
+                       OnClick="ExecutePrimaryAction">
+                <i class="fa-solid fa-user-plus mr-2" aria-hidden="true"></i>
+                @PrimaryActionLabel
+            </MudButton>
+        }
         <MudButton Variant="Variant.Outlined"
                    Color="Color.Primary"
                    Class="filters-trigger"
@@ -606,28 +626,7 @@
                             </div>
                         </MudTh>
                         <MudTh></MudTh>
-                        <MudTh>
-                            @if (CanImport || SelectedCustomers.Any())
-                            {
-                                <MudMenu Icon="@Icons.Material.Filled.MoreVert"
-                                         Size="Size.Small"
-                                         AriaLabel="Bulk actions"
-                                         Color="Color.Dark">
-                                    @if (CanImport)
-                                    {
-                                        <MudMenuItem OnClick="ShowImportDialog">Import</MudMenuItem>
-                                    }
-                                    @if (SelectedCustomers.Any())
-                                    {
-                                        @if (!User.IsAdmin && !User.IsBrokerStaff)
-                                        {
-                                            <MudMenuItem OnClick="AssignToStaff">Assign</MudMenuItem>
-                                        }
-                                        <MudMenuItem OnClick="SendInvite">Invite</MudMenuItem>
-                                    }
-                                </MudMenu>
-                            }
-                        </MudTh>
+                        <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         @if (api.Value.ShowClientPictureColumn)
