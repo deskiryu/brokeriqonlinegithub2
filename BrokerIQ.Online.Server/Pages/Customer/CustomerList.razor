@@ -224,10 +224,6 @@
 
 @if (Customers != null)
 {
-    @{ 
-        var filteredCustomers = FilteredCustomers;
-        var hasFilteredCustomers = filteredCustomers?.Any() == true;
-    }
     @if (FiltersDialogVisible)
     {
         <div class="filters-overlay" @onclick="CloseFiltersDialog">
@@ -524,6 +520,9 @@
         <div class="card">
             <div class="card-header">Clients</div>
             <div class="card-body">
+                @{
+                var filteredCustomers = FilteredCustomers;
+                var hasFilteredCustomers = filteredCustomers?.Any() == true;
                 @if (hasFilteredCustomers)
                 {
                     <MudTable Items="@filteredCustomers"
@@ -790,6 +789,7 @@
                         <p class="customer-empty-state__subtitle">Try adjusting your keywords or use the table filter to refine your search</p>
                         <button type="button" class="customer-empty-state__clear" @onclick="ClearAllFilters">Clear search</button>
                     </div>
+                }
                 }
             </div>
         </div>
