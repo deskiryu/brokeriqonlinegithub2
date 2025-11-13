@@ -472,7 +472,41 @@
                                     Style="@($"color:{Colors.Shades.Black}")" />*@
                             </MudTh>
                         }
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.Name)">Client Name</MudTableSortLabel></MudTh>
+                        <MudTh>
+                            <div class="d-flex align-items-center gap-1">
+                                <span>Client Name</span>
+                                <MudMenu AnchorOrigin="Origin.BottomLeft"
+                                         TransformOrigin="Origin.TopLeft"
+                                         Dense="true"
+                                         CloseOnClick="true"
+                                         OffsetY="true"
+                                         Class="customer-sort-menu"
+                                         PopoverClass="customer-sort-menu__popover">
+                                    <ActivatorContent>
+                                        <MudIconButton Icon="@Icons.Material.Filled.ArrowDropDown"
+                                                       Size="Size.Small"
+                                                       Color="Color.Inherit"
+                                                       DisableRipple="true"
+                                                       Class="customer-sort-menu__trigger" />
+                                    </ActivatorContent>
+                                    <MudMenuItem StartIcon="@Icons.Material.Filled.ArrowUpward"
+                                                 Class="@GetSortMenuItemClass(CustomerNameSortOption.Ascending)"
+                                                 OnClick="SortCustomersByNameAscending">
+                                        Sort A to Z
+                                    </MudMenuItem>
+                                    <MudMenuItem StartIcon="@Icons.Material.Filled.ArrowDownward"
+                                                 Class="@GetSortMenuItemClass(CustomerNameSortOption.Descending)"
+                                                 OnClick="SortCustomersByNameDescending">
+                                        Sort Z to A
+                                    </MudMenuItem>
+                                    <MudMenuItem StartIcon="@Icons.Material.Filled.Clear"
+                                                 Class="@GetSortMenuItemClass(CustomerNameSortOption.Default)"
+                                                 OnClick="ResetCustomerSort">
+                                        Remove Sort
+                                    </MudMenuItem>
+                                </MudMenu>
+                            </div>
+                        </MudTh>
                         @if (api.Value.ShowClientPhoneColumn)
                         {
                             <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>

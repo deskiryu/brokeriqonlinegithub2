@@ -841,3 +841,28 @@ tr.expired {
 .time_component {
     width: 30%;
 }
+
+.customer-sort-menu__trigger {
+    min-width: 0;
+    padding: 0;
+}
+
+.customer-sort-menu__popover {
+    padding: 0;
+}
+
+.customer-sort-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 180px;
+    font-size: 0.9rem;
+}
+
+.customer-sort-menu__item .mud-menu-item-icon {
+    margin-right: 0;
+}
+
+.customer-sort-menu__item--active {
+    font-weight: 600;
+}
