@@ -19,8 +19,8 @@
         <MudButton Color="Color.Primary" Style="color:var(--color-nav-text);" Variant="Variant.Outlined" @onclick="OpenDialog">About</MudButton>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Mini" Style="@DrawerStyle">
-        <div class="sidebar">
-            <NavMenu />
+        <div class="@SidebarCssClass">
+            <NavMenu DrawerOpen="@_drawerOpen" />
         </div>
 
         <MudPaper Style="text-align: right; background-color:var(--color-surface);border-radius: 0 !important;">
@@ -49,6 +49,8 @@
     public string DrawerStyle { get; set; } = "overflow-x: hidden; width: 250px;";
 
     bool _drawerOpen = true;
+
+    private string SidebarCssClass => _drawerOpen ? "sidebar" : "sidebar sidebar--collapsed";
     async void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
