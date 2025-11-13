@@ -188,18 +188,26 @@ app {
     white-space: nowrap;
 }
 
+.menu-collapsed .nav-text {
+    display: none !important;
+}
+
 .sidebar .nav-item a .nav-badge,
 .sidebar-yah .nav-item a .nav-badge {
     margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background-color: #fb923c;
     color: #fff;
     border-radius: 8px;
-    padding: 0 0.5rem;
     min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.4rem;
     text-align: center;
     font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1.5;
+    font-weight: 700;
+    line-height: 1;
 }
 
 .sidebar .nav-item a.active,
