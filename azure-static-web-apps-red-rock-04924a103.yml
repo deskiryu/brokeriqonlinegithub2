@@ -1,0 +1,44 @@
+name: Azure Static Web Apps CI/CD
+
+pr:
+  branches:
+    include:
+      - live/release_client
+trigger:
+  branches:
+    include:
+      - live/release_client
+
+jobs:
+- job: build_and_deploy_job
+  displayName: Build and Deploy Job
+  condition: or(eq(variables['Build.Reason'], 'Manual'),or(eq(variables['Build.Reason'], 'PullRequest'),eq(variables['Build.Reason'], 'IndividualCI')))
+  pool:
+    vmImage: ubuntu-22.04
+  variables:
+  - group: Azure-Static-Web-Apps-red-rock-04924a103-variable-group
+  
+  steps:
+  - checkout: self
+    submodules: true
+  - task: NuGetToolInstaller@1
+
+  # - task: UseDotNet@2
+  #   displayName: 'Install .NET Core SDK 7.x'
+  #   inputs:
+  #     version: 7.x
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: '**/*.sln'
+      feedsToUse: 'select'
+      vstsFeed: 'a4e5bddc-300e-45b4-bc64-d4675804cc09/e120d8a0-8927-4e52-a034-a8ee0f11b119'      
+      includeNuGetOrg: true 
+  - task: AzureStaticWebApp@0
+    inputs:
+      azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APPS_API_TOKEN_RED_ROCK_04924A103)
+###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+# For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+      app_location: "BrokerIq.Online.ClientApplication" # App source code path
+      api_location: "https://brokeriqbrokerapidevelop.azurewebsites.net/" # Api source code path - optional
+      output_location: "wwwroot" # Built app content directory - optional
+###### End of Repository/Build Configurations ######

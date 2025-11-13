@@ -4,6 +4,10 @@
 		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
 
+	<!--<PropertyGroup> Size of components too large compared to speed benefit
+		<RunAOTCompilation>true</RunAOTCompilation>
+	</PropertyGroup>-->	
+
 	  <ItemGroup>
     <Content Remove="appsettings.json" />
 	  <Content Remove="C:\Users\Livingroom\.nuget\packages\chartjs.blazor.fork\2.0.2\contentFiles\any\netstandard2.1\wwwroot\ChartJsBlazorInterop.js" />
@@ -33,6 +37,12 @@
   </ItemGroup>
 
 	<ItemGroup>
+
+		<PackageReference Include="Babel.Obfuscator" Version="10.2.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.20" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.20" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
@@ -76,15 +86,39 @@
     <Content Update="wwwroot\favicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\js\calendly.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Condition="'$(ExcludeConfigFilesFromBuildOutput)'!='true'" Update="wwwroot\appsettings.development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+	<Content Update="wwwroot\js\calendly.js">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+	<Content Condition="'$(ExcludeConfigFilesFromBuildOutput)'!='true'" Update="wwwroot\appsettings.development.json">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>	  
     <Content Update="wwwroot\js\cookieManager.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+  </Content>
+  </ItemGroup>	
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\" />
+	</ItemGroup>
+	
+	<PropertyGroup>
+		<NameLength>3</NameLength>
+		<ObfuscateEvents>true</ObfuscateEvents>
+		<ObfuscateFields>true</ObfuscateFields>
+		<ObfuscateMethods>true</ObfuscateMethods>
+		<ObfuscateParameters>true</ObfuscateParameters>
+		<ObfuscateProperties>true</ObfuscateProperties>
+		<ObfuscateTypes>true</ObfuscateTypes>
+		<StringEncryption>hash</StringEncryption>
+		<ControlFlowObfuscation>goto=on;if=on;switch=on;call=on</ControlFlowObfuscation>
+		<ShowStatistics>true</ShowStatistics>
+		<SuppressIldasm>false</SuppressIldasm>
+		<UnicodeNormalization>false</UnicodeNormalization>
+		<OverloadedRenaming>true</OverloadedRenaming>
+		<FlattenNamespaces>true</FlattenNamespaces>
+		<VerboseLevel>10</VerboseLevel>
+		<VirtualFunctions>true</VirtualFunctions>
+		<GenerateDebug>false</GenerateDebug>
+	</PropertyGroup>
 
 </Project>
