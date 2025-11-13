@@ -107,6 +107,15 @@
                         </button>
                     </div>
                 }
+                @if (VerifiedFilter.HasValue)
+                {
+                    <div class="filter-chip">
+                        Verification: @(VerifiedFilter.Value ? "Verified" : "Not Verified")
+                        <button type="button" class="filter-chip__close" @onclick="async () => await ClearVerifiedFilter()" aria-label="Remove verification filter">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                }
             </div>
         }
         <MudMenu AnchorOrigin="0"
@@ -504,14 +513,98 @@
                         {
                             <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>
                         }
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.DateOfBirth)">Date Of Birth</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.CustomerCategory.GetDisplayName())">Category</MudTableSortLabel></MudTh>
+                        <MudTh>
+                            <div class="d-flex align-items-center gap-1">
+                                <span>Date Of Birth</span>
+                                <MudMenu AnchorOrigin="Origin.BottomLeft"
+                                         TransformOrigin="Origin.TopLeft"
+                                         Icon="@Icons.Material.Filled.ArrowDropDown"
+                                         Dense="true"
+                                         CloseOnClick="true"
+                                         Class="customer-sort-menu"
+                                         PopoverClass="customer-sort-menu__popover">
+                                    <MudMenuItem StartIcon="@Icons.Material.Filled.ArrowUpward"
+                                                 Class="@GetDateOfBirthSortMenuItemClass(CustomerDateOfBirthSortOption.OldestToNewest)"
+                                                 OnClick="SortCustomersByDateOfBirthAscending">
+                                        Oldest to Newest
+                                    </MudMenuItem>
+                                    <MudMenuItem StartIcon="@Icons.Material.Filled.ArrowDownward"
+                                                 Class="@GetDateOfBirthSortMenuItemClass(CustomerDateOfBirthSortOption.NewestToOldest)"
+                                                 OnClick="SortCustomersByDateOfBirthDescending">
+                                        Newest to Oldest
+                                    </MudMenuItem>
+                                    <MudMenuItem StartIcon="@Icons.Material.Filled.Clear"
+                                                 Class="@GetDateOfBirthSortMenuItemClass(CustomerDateOfBirthSortOption.Default)"
+                                                 OnClick="ResetDateOfBirthSort">
+                                        Remove Sort
+                                    </MudMenuItem>
+                                </MudMenu>
+                            </div>
+                        </MudTh>
+                        <MudTh>
+                            <div class="d-flex align-items-center gap-1">
+                                <span>Category</span>
+                                <MudMenu AnchorOrigin="Origin.BottomLeft"
+                                         TransformOrigin="Origin.TopLeft"
+                                         Icon="@Icons.Material.Filled.ArrowDropDown"
+                                         Dense="true"
+                                         CloseOnClick="true"
+                                         Class="customer-sort-menu"
+                                         PopoverClass="customer-sort-menu__popover">
+                                    @if (CustomerCategoriesByRelevance != null)
+                                    {
+                                        foreach (var category in CustomerCategoriesByRelevance)
+                                        {
+                                            <MudMenuItem StartIcon="@(CustomerCategory == (int)category ? Icons.Material.Filled.Check : null)"
+                                                         Class="@GetCategoryFilterMenuItemClass((int)category)"
+                                                         OnClick="@async ()=> await ApplyCategoryFilter((int)category)">
+                                                @category.GetDisplayName()
+                                            </MudMenuItem>
+                                        }
+                                    }
+                                    <MudDivider />
+                                    <MudMenuItem StartIcon="@Icons.Material.Filled.Clear"
+                                                 Class="@GetCategoryFilterMenuItemClass(0)"
+                                                 OnClick="@async ()=> await ApplyCategoryFilter(0)">
+                                        Remove Filter
+                                    </MudMenuItem>
+                                </MudMenu>
+                            </div>
+                        </MudTh>
                         @if (User.IsAdmin)
                         {
                             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.AppVersion)">App</MudTableSortLabel></MudTh>
                             <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.IsWhiteLabel)">WL</MudTableSortLabel></MudTh>
                         }
-                        <MudTh>Verified</MudTh>
+                        <MudTh>
+                            <div class="d-flex align-items-center gap-1">
+                                <span>Verified</span>
+                                <MudMenu AnchorOrigin="Origin.BottomLeft"
+                                         TransformOrigin="Origin.TopLeft"
+                                         Icon="@Icons.Material.Filled.ArrowDropDown"
+                                         Dense="true"
+                                         CloseOnClick="true"
+                                         Class="customer-sort-menu"
+                                         PopoverClass="customer-sort-menu__popover">
+                                    <MudMenuItem StartIcon="@(VerifiedFilter == true ? Icons.Material.Filled.Check : null)"
+                                                 Class="@GetVerifiedFilterMenuItemClass(true)"
+                                                 OnClick="@async ()=> await ApplyVerifiedFilter(true)">
+                                        Verified
+                                    </MudMenuItem>
+                                    <MudMenuItem StartIcon="@(VerifiedFilter == false ? Icons.Material.Filled.Check : null)"
+                                                 Class="@GetVerifiedFilterMenuItemClass(false)"
+                                                 OnClick="@async ()=> await ApplyVerifiedFilter(false)">
+                                        Not Verified
+                                    </MudMenuItem>
+                                    <MudDivider />
+                                    <MudMenuItem StartIcon="@Icons.Material.Filled.Clear"
+                                                 Class="@GetVerifiedFilterMenuItemClass(null)"
+                                                 OnClick="@async ()=> await ClearVerifiedFilter()">
+                                        Remove Filter
+                                    </MudMenuItem>
+                                </MudMenu>
+                            </div>
+                        </MudTh>
                         <MudTh></MudTh>
                         <MudTh>
                             @if (CanImport || SelectedCustomers.Any())

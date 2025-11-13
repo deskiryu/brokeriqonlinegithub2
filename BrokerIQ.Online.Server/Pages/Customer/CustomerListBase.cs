@@ -70,14 +70,21 @@ namespace BrokerIQ.Online.Pages
 
         protected int? ProfilingOption { get; set; }
 
+        protected bool? VerifiedFilter { get; set; }
+
         protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
 
         protected CustomerNameSortOption NameSortOption { get; set; } = CustomerNameSortOption.Default;
 
+        protected CustomerDateOfBirthSortOption DateOfBirthSortOption { get; set; } = CustomerDateOfBirthSortOption.Default;
+
         //filter
-        protected List<Customer> FilteredCustomers => Customers.Where(i => i.ConnectedToCustomerId == null &&
-            ((!string.IsNullOrWhiteSpace(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())) ||
-            (!string.IsNullOrWhiteSpace(i.BusinessName) && i.BusinessName.ToLower().Contains(SearchTerm.ToLower())))).ToList();
+        protected List<Customer> FilteredCustomers => (Customers ?? new List<Customer>())
+            .Where(i => i.ConnectedToCustomerId == null)
+            .Where(i => !VerifiedFilter.HasValue || i.EmailConfirmed == VerifiedFilter.Value)
+            .Where(i => (!string.IsNullOrWhiteSpace(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())) ||
+                        (!string.IsNullOrWhiteSpace(i.BusinessName) && i.BusinessName.ToLower().Contains(SearchTerm.ToLower())))
+            .ToList();
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
@@ -100,7 +107,8 @@ namespace BrokerIQ.Online.Pages
             CustomerCategory > 0 ||
             AgeRange > 0 ||
             FilterPeriod > 0 ||
-            ProfilingOption.HasValue;
+            ProfilingOption.HasValue ||
+            VerifiedFilter.HasValue;
 
         protected async void ShowNonAppUsersOnly()
         {
@@ -220,6 +228,13 @@ namespace BrokerIQ.Online.Pages
             if (!ProfilingOption.HasValue) return;
             ProfilingOption = null;
             await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearVerifiedFilter()
+        {
+            if (!VerifiedFilter.HasValue) return;
+            VerifiedFilter = null;
+            await InvokeAsync(StateHasChanged);
         }
 
         protected override async Task OnInitializedAsync()
@@ -421,6 +436,53 @@ namespace BrokerIQ.Online.Pages
             await InvokeAsync(StateHasChanged);
         }
 
+        protected async Task ApplyCategoryFilter(int category)
+        {
+            if (CustomerCategory == category)
+            {
+                return;
+            }
+
+            CustomerCategory = category;
+
+            await RefreshListFromFilterValues();
+        }
+
+        protected string GetCategoryFilterMenuItemClass(int category)
+        {
+            var cssClass = "customer-sort-menu__item";
+
+            if (CustomerCategory == category)
+            {
+                cssClass += " customer-sort-menu__item--active";
+            }
+
+            return cssClass;
+        }
+
+        protected async Task ApplyVerifiedFilter(bool? isVerified)
+        {
+            if (VerifiedFilter == isVerified)
+            {
+                return;
+            }
+
+            VerifiedFilter = isVerified;
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected string GetVerifiedFilterMenuItemClass(bool? option)
+        {
+            var cssClass = "customer-sort-menu__item";
+
+            if (VerifiedFilter == option)
+            {
+                cssClass += " customer-sort-menu__item--active";
+            }
+
+            return cssClass;
+        }
+
         protected async Task SendChatMessageToSelected()
         {
             var dialogParams = new DialogParameters();
@@ -601,6 +663,7 @@ namespace BrokerIQ.Online.Pages
         protected async Task SortCustomersByNameAscending()
         {
             NameSortOption = CustomerNameSortOption.Ascending;
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.Default;
             ApplyCustomerSort();
             await InvokeAsync(StateHasChanged);
         }
@@ -608,6 +671,7 @@ namespace BrokerIQ.Online.Pages
         protected async Task SortCustomersByNameDescending()
         {
             NameSortOption = CustomerNameSortOption.Descending;
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.Default;
             ApplyCustomerSort();
             await InvokeAsync(StateHasChanged);
         }
@@ -615,6 +679,7 @@ namespace BrokerIQ.Online.Pages
         protected async Task ResetCustomerSort()
         {
             NameSortOption = CustomerNameSortOption.Default;
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.Default;
             ApplyCustomerSort();
             await InvokeAsync(StateHasChanged);
         }
@@ -631,10 +696,64 @@ namespace BrokerIQ.Online.Pages
             return cssClass;
         }
 
+        protected async Task SortCustomersByDateOfBirthAscending()
+        {
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.OldestToNewest;
+            NameSortOption = CustomerNameSortOption.Default;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task SortCustomersByDateOfBirthDescending()
+        {
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.NewestToOldest;
+            NameSortOption = CustomerNameSortOption.Default;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task ResetDateOfBirthSort()
+        {
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.Default;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected string GetDateOfBirthSortMenuItemClass(CustomerDateOfBirthSortOption option)
+        {
+            var cssClass = "customer-sort-menu__item";
+
+            if (DateOfBirthSortOption == option)
+            {
+                cssClass += " customer-sort-menu__item--active";
+            }
+
+            return cssClass;
+        }
+
         private void ApplyCustomerSort()
         {
             if (Customers == null || !Customers.Any())
             {
+                return;
+            }
+
+            if (DateOfBirthSortOption != CustomerDateOfBirthSortOption.Default)
+            {
+                switch (DateOfBirthSortOption)
+                {
+                    case CustomerDateOfBirthSortOption.OldestToNewest:
+                        Customers = Customers
+                            .OrderBy(customer => customer.DateOfBirth)
+                            .ToList();
+                        break;
+                    case CustomerDateOfBirthSortOption.NewestToOldest:
+                        Customers = Customers
+                            .OrderByDescending(customer => customer.DateOfBirth)
+                            .ToList();
+                        break;
+                }
+
                 return;
             }
 
@@ -663,6 +782,13 @@ namespace BrokerIQ.Online.Pages
             Default,
             Ascending,
             Descending
+        }
+
+        protected enum CustomerDateOfBirthSortOption
+        {
+            Default,
+            OldestToNewest,
+            NewestToOldest
         }
     }
 }
