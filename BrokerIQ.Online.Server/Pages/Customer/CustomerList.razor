@@ -557,7 +557,7 @@
                                         {
                                             <MudMenuItem StartIcon="@(CustomerCategory == (int)category ? Icons.Material.Filled.Check : null)"
                                                          Class="@GetCategoryFilterMenuItemClass((int)category)"
-                                                         OnClick="@async ()=> await ApplyCategoryFilter((int)category)">
+                                                         OnClick="@(async ()=> await ApplyCategoryFilter((int)category))">
                                                 @category.GetDisplayName()
                                             </MudMenuItem>
                                         }
@@ -565,7 +565,7 @@
                                     <MudDivider />
                                     <MudMenuItem StartIcon="@Icons.Material.Filled.Clear"
                                                  Class="@GetCategoryFilterMenuItemClass(0)"
-                                                 OnClick="@async ()=> await ApplyCategoryFilter(0)">
+                                                 OnClick="@(async ()=> await ApplyCategoryFilter(0))">
                                         Remove Filter
                                     </MudMenuItem>
                                 </MudMenu>
@@ -588,18 +588,18 @@
                                          PopoverClass="customer-sort-menu__popover">
                                     <MudMenuItem StartIcon="@(VerifiedFilter == true ? Icons.Material.Filled.Check : null)"
                                                  Class="@GetVerifiedFilterMenuItemClass(true)"
-                                                 OnClick="@async ()=> await ApplyVerifiedFilter(true)">
+                                                 OnClick="@(async ()=> await ApplyVerifiedFilter(true))">
                                         Verified
                                     </MudMenuItem>
                                     <MudMenuItem StartIcon="@(VerifiedFilter == false ? Icons.Material.Filled.Check : null)"
                                                  Class="@GetVerifiedFilterMenuItemClass(false)"
-                                                 OnClick="@async ()=> await ApplyVerifiedFilter(false)">
+                                                 OnClick="@(async ()=> await ApplyVerifiedFilter(false))">
                                         Not Verified
                                     </MudMenuItem>
                                     <MudDivider />
                                     <MudMenuItem StartIcon="@Icons.Material.Filled.Clear"
                                                  Class="@GetVerifiedFilterMenuItemClass(null)"
-                                                 OnClick="@async ()=> await ClearVerifiedFilter()">
+                                                 OnClick="@(async ()=> await ClearVerifiedFilter())">
                                         Remove Filter
                                     </MudMenuItem>
                                 </MudMenu>
