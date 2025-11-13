@@ -250,7 +250,7 @@ else
                                     Style="@($"color:{Colors.Shades.Black}")" />*@
                             </MudTh>
                         }
-                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x => string.Concat(x.FirstName, " ", x.LastName))">Client Name</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x => x.Name)">Client Name</MudTableSortLabel></MudTh>
                         @if (api.Value.ShowClientPhoneColumn)
                         {
                             <MudTh><MudTableSortLabel Enabled="@false" SortBy="new Func<BrokerIQ.Online.Models.Customer, object>(x=>x.TelephoneNumber)">Telephone Number</MudTableSortLabel></MudTh>
@@ -331,7 +331,7 @@ else
                             </MudTh>
                         }
                         <MudTd Class="client-name-cell" DataLabel="Client name">
-                            <div class="client-name">@($"{context.FirstName} {context.LastName}")</div>
+                            <div class="client-name">@($"{context.Name}")</div>
                             @if (!string.IsNullOrWhiteSpace(context.EmailAddress))
                             {
                                 <div class="client-email">@context.EmailAddress</div>
