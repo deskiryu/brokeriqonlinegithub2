@@ -678,7 +678,7 @@
                             </div>
                         </MudTh>
                         <MudTh></MudTh>
-                        <MudTh></MudTh>
+                        <MudTh>Actions</MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         @if (api.Value.ShowClientPictureColumn)
@@ -689,12 +689,16 @@
                                     @if (context.HasNeeds)
                                     {
                                         <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
-                                            <MudAvatar><img src="@context.PPAsImage" style="width:30px;" /></MudAvatar>
+                                            <MudAvatar Class="customer-list__avatar">
+                                                <img src="@context.PPAsImage" alt="@GetCustomerAvatarAltText(context)" class="customer-list__avatar-image" />
+                                            </MudAvatar>
                                         </MudBadge>
                                     }
                                     else
                                     {
-                                        <MudAvatar><img src="@context.PPAsImage" style="width:30px;" /></MudAvatar>
+                                        <MudAvatar Class="customer-list__avatar">
+                                            <img src="@context.PPAsImage" alt="@GetCustomerAvatarAltText(context)" class="customer-list__avatar-image" />
+                                        </MudAvatar>
                                     }
                                 }
                                 else
@@ -702,12 +706,12 @@
                                     @if (context.HasNeeds)
                                     {
                                         <MudBadge Color="Color.Warning" Icon="@Icons.Material.Filled.Warning" Overlap="true" Bordered="true">
-                                            <MudAvatar Color="Color.Secondary">@context.FirstName.ToUpper().First()@context.LastName.ToUpper().First()</MudAvatar>
+                                            <MudAvatar Class="customer-list__avatar" Color="Color.Secondary">@GetCustomerInitials(context)</MudAvatar>
                                         </MudBadge>
                                     }
                                     else
                                     {
-                                        <MudAvatar Color="Color.Secondary">@context.FirstName.ToUpper().First()@context.LastName.ToUpper().First()</MudAvatar>
+                                        <MudAvatar Class="customer-list__avatar" Color="Color.Secondary">@GetCustomerInitials(context)</MudAvatar>
                                     }
                                 }
                             </MudTd>
@@ -766,9 +770,14 @@
                         </MudTd>
 
                         <MudTd>@if (context.HasConnection) { <MudIcon Icon="@Icons.Material.Filled.Link" />}</MudTd>
-                        <MudTd DataLabel="">
-                            <MudIconButton Icon="@Icons.Material.Filled.Info" Variant="Variant.Filled" Size="Size.Small"
-                                           Color="Color.Primary" Style="@($"color:{Colors.Grey.Darken1};")" Link="@($"clientdetail/{@context.Id}")"></MudIconButton>
+                        <MudTd DataLabel="Actions">
+                            <MudIconButton Icon="@Icons.Material.Outlined.Info"
+                                           Variant="Variant.Text"
+                                           Size="Size.Small"
+                                           Class="customer-list__action-button"
+                                           Link="@($"clientdetail/{@context.Id}")"
+                                           AriaLabel="View client details"
+                                           Title="View details"></MudIconButton>
                             @* <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" Style="@($"color:{Colors.Shades.Black};")" Link="@($"clientdetail/{@context.Id}")" >
                                 <i class="fas fa-info-circle"></i>
                                 </MudButton> *@

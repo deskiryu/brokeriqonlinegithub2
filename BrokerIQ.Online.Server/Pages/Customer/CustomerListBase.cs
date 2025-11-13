@@ -181,6 +181,80 @@ namespace BrokerIQ.Online.Pages
 
         protected void CloseFiltersDialog() => FiltersDialogVisible = false;
 
+        protected string GetCustomerInitials(Customer customer)
+        {
+            if (customer == null)
+            {
+                return string.Empty;
+            }
+
+            var initials = new List<char>(capacity: 2);
+
+            void TryAddInitial(string? value)
+            {
+                if (initials.Count >= 2 || string.IsNullOrWhiteSpace(value))
+                {
+                    return;
+                }
+
+                var trimmed = value.Trim();
+                if (trimmed.Length == 0)
+                {
+                    return;
+                }
+
+                initials.Add(char.ToUpperInvariant(trimmed[0]));
+            }
+
+            TryAddInitial(customer.FirstName);
+            TryAddInitial(customer.LastName);
+
+            if (initials.Count == 0 && !string.IsNullOrWhiteSpace(customer.Name))
+            {
+                foreach (var part in customer.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    TryAddInitial(part);
+
+                    if (initials.Count >= 2)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (initials.Count == 0)
+            {
+                TryAddInitial(customer.EmailAddress);
+            }
+
+            if (initials.Count == 0)
+            {
+                return "?";
+            }
+
+            return new string(initials.ToArray());
+        }
+
+        protected string GetCustomerAvatarAltText(Customer customer)
+        {
+            if (customer == null)
+            {
+                return string.Empty;
+            }
+
+            if (!string.IsNullOrWhiteSpace(customer.Name))
+            {
+                return $"{customer.Name}'s profile picture";
+            }
+
+            if (!string.IsNullOrWhiteSpace(customer.EmailAddress))
+            {
+                return $"{customer.EmailAddress}'s profile picture";
+            }
+
+            return "Client profile picture";
+        }
+
         protected string GetBrokerName(int brokerId) =>
             Brokers?.FirstOrDefault(b => b.Id == brokerId)?.Name ?? "Broker";
 
