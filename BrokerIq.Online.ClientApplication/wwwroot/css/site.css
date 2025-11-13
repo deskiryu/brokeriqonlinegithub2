@@ -131,7 +131,6 @@ app {
 .sidebar-yah {
     background-color: var(--color-surface);
     background-image: none;
-    border-right: 1px solid #e2e8f0;
 }
 
     .sidebar .top-row,
@@ -241,6 +240,8 @@ app {
             position: absolute;
             top: 0.5rem;
             right: 0.5rem;
+            min-width: 1.0rem;
+            height: 1.0rem;
         }
 
 .sidebar--collapsed tutorialvideoicon {
@@ -476,7 +477,7 @@ app {
     }*/
 
     .sidebar {
-        width: 150px;
+        width: 56px;
         height: 100vh;
         position: sticky;
         top: 0;
@@ -990,7 +991,7 @@ tr.expired {
     border-radius: 9999px;
     flex: 1 0 clamp(260px, 30%, 420px);
     max-width: 420px;
-    min-width: 220px;
+    min-width: 360px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 

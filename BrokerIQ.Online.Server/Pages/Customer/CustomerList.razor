@@ -22,8 +22,19 @@
 
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3 customer-list__header">
     <h3 class="page-title mb-0">Clients</h3>
+    <div class="d-flex align-items-center gap-2 flex-wrap customer-list__action-buttons">
+        <div class="customer-list__search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input class="customer-list__search-input"
+                   type="search"
+                   placeholder="Search by name, email or assigned to"
+                   @bind-value="SearchTerm"
+                   @bind-value:event="oninput"
+                   aria-label="Search clients by name, email or assigned to" />
+        </div>
+    </div>
     <div class="d-flex align-items-center gap-3 flex-wrap customer-list__actions">
-        <div class="d-flex align-items-center gap-2 flex-wrap customer-list__action-buttons">
+
         <MudMenu AnchorOrigin="0"
                  Dense="true"
                  Class="send-menu"
@@ -51,6 +62,7 @@
                 </MudMenuItem>
             </ChildContent>
         </MudMenu>
+
         @if (ShouldShowInviteButton)
         {
             <MudButton Variant="Variant.Filled"
@@ -81,16 +93,6 @@
             <i class="fa-solid fa-filter ml-2" aria-hidden="true"></i>
         </MudButton>
         </div>
-        <div class="customer-list__search">
-            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-            <input class="customer-list__search-input"
-                   type="search"
-                   placeholder="Search by name, email or assigned to"
-                   @bind-value="SearchTerm"
-                   @bind-value:event="oninput"
-                   aria-label="Search clients by name, email or assigned to" />
-        </div>
-    </div>
 </div>
 
 @if (Customers != null && HasActiveFilterChips)
