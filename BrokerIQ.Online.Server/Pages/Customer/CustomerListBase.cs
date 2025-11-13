@@ -82,9 +82,40 @@ namespace BrokerIQ.Online.Pages
         protected List<Customer> FilteredCustomers => (Customers ?? new List<Customer>())
             .Where(i => i.ConnectedToCustomerId == null)
             .Where(i => !VerifiedFilter.HasValue || i.EmailConfirmed == VerifiedFilter.Value)
-            .Where(i => (!string.IsNullOrWhiteSpace(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())) ||
-                        (!string.IsNullOrWhiteSpace(i.BusinessName) && i.BusinessName.ToLower().Contains(SearchTerm.ToLower())))
+            .Where(MatchesSearchFilters)
             .ToList();
+
+        private bool MatchesSearchFilters(Customer customer)
+        {
+            if (string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                return true;
+            }
+
+            var term = SearchTerm.Trim();
+
+            bool Matches(string? value) =>
+                !string.IsNullOrWhiteSpace(value) &&
+                value.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0;
+
+            if (Matches(customer.Name) ||
+                Matches(customer.BusinessName) ||
+                Matches(customer.EmailAddress))
+            {
+                return true;
+            }
+
+            if (customer.CustomerAssignments?.Any(assignment =>
+                    Matches(assignment?.FullName) ||
+                    Matches(assignment?.FirstName) ||
+                    Matches(assignment?.LastName) ||
+                    Matches(assignment?.EmailAddress)) == true)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
