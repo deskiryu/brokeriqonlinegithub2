@@ -72,6 +72,8 @@ namespace BrokerIQ.Online.Pages
 
         protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
 
+        protected CustomerNameSortOption NameSortOption { get; set; } = CustomerNameSortOption.Default;
+
         //filter
         protected List<Customer> FilteredCustomers => Customers.Where(i => i.ConnectedToCustomerId == null &&
             ((!string.IsNullOrWhiteSpace(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())) ||
@@ -307,7 +309,8 @@ namespace BrokerIQ.Online.Pages
         {
             try
             {
-                Customers = (await CustomerService.GetAllCustomers(profilePictures: true)).OrderByDescending(x => x.Id).ToList();
+                Customers = (await CustomerService.GetAllCustomers(profilePictures: true)).ToList();
+                ApplyCustomerSort();
             }
             catch
             {
@@ -316,7 +319,7 @@ namespace BrokerIQ.Online.Pages
 
             if (clear)
             {
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -380,6 +383,7 @@ namespace BrokerIQ.Online.Pages
         {
             await ShowCustomerLoadingIndicatorAsync();
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
+            ApplyCustomerSort();
 
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
@@ -407,6 +411,7 @@ namespace BrokerIQ.Online.Pages
             };
 
             Customers = (await CustomerService.GetFilteredCustomers(filterValues)).ToList();
+            ApplyCustomerSort();
 
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
@@ -591,6 +596,73 @@ namespace BrokerIQ.Online.Pages
 
                 Snackbar.Add(wasSuccessfull ? "Emails sent successfully" : "Some emails failed", wasSuccessfull ? Severity.Success : Severity.Warning);
             }
+        }
+
+        protected async Task SortCustomersByNameAscending()
+        {
+            NameSortOption = CustomerNameSortOption.Ascending;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task SortCustomersByNameDescending()
+        {
+            NameSortOption = CustomerNameSortOption.Descending;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task ResetCustomerSort()
+        {
+            NameSortOption = CustomerNameSortOption.Default;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected string GetSortMenuItemClass(CustomerNameSortOption option)
+        {
+            var cssClass = "customer-sort-menu__item";
+
+            if (NameSortOption == option)
+            {
+                cssClass += " customer-sort-menu__item--active";
+            }
+
+            return cssClass;
+        }
+
+        private void ApplyCustomerSort()
+        {
+            if (Customers == null || !Customers.Any())
+            {
+                return;
+            }
+
+            switch (NameSortOption)
+            {
+                case CustomerNameSortOption.Ascending:
+                    Customers = Customers
+                        .OrderBy(customer => customer.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+                        .ToList();
+                    break;
+                case CustomerNameSortOption.Descending:
+                    Customers = Customers
+                        .OrderByDescending(customer => customer.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+                        .ToList();
+                    break;
+                default:
+                    Customers = Customers
+                        .OrderByDescending(customer => customer.Id)
+                        .ToList();
+                    break;
+            }
+        }
+
+        protected enum CustomerNameSortOption
+        {
+            Default,
+            Ascending,
+            Descending
         }
     }
 }
