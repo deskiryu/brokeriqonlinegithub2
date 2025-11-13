@@ -242,6 +242,56 @@ app {
     gap: 0.5rem;
 }
 
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.active-filters__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    flex: 1 1 auto;
+}
+
+.active-filters__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.active-filters__label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #000;
+    white-space: nowrap;
+}
+
+.active-filters__clear {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: #dc2626;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    align-self: center;
+}
+
+.active-filters__clear:hover,
+.active-filters__clear:focus {
+    text-decoration: underline;
+}
+
+.active-filters__clear:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.35);
+    border-radius: 4px;
+}
+
 .filter-chip {
     display: inline-flex;
     align-items: center;
