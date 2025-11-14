@@ -3,6 +3,8 @@
 @inject IDialogService DialogService
 @inject LoggedInAppState AppState
 @inject IJSRuntime jsRuntime
+@inject BrokerIQ.Online.Services.Interface.IAccountService AccountService
+@inject BrokerIQ.Online.Services.Interface.IBrokerService BrokerService
 
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -12,7 +14,7 @@
     <MudAppBar Elevation="1" Style="background-color:var(--color-surface); color:var(--color-nav-text);">
         <div class="appbar-brand">
             <img src="https://brokeriq.co.uk/wp-content/uploads/2025/07/yahLogosmall.png" alt="Yavia logo" class="appbar-brand__logo">
-            <span class="appbar-brand__text">Yavia</span>
+            <span class="appbar-brand__text">@BrandText</span>
         </div>
         <MudSpacer />
         <MudText Typo="Typo.subtitle1" Style="color:var(--color-nav-text);">@(AppState.LoggedIn ? AppState.FullName : string.Empty)</MudText>
@@ -86,9 +88,15 @@
         }
     };
 
+    private string BrandText => string.IsNullOrWhiteSpace(_brokerName) ? "Yavia" : _brokerName;
+
+    private string _brokerName;
+
     protected override async Task OnInitializedAsync()
     {
         AppState.OnChange += AppStateChangeHandler;
+
+        await LoadBrandingAsync();
 
         var value = await jsRuntime.InvokeAsync<string>("localStorage.getItem", DRAWER_STATE);
         Console.WriteLine($"Drawer State : {value ?? string.Empty}");
@@ -107,12 +115,41 @@
 
     private void AppStateChangeHandler()
     {
-        StateHasChanged();
+        _ = InvokeAsync(async () =>
+        {
+            await LoadBrandingAsync();
+            StateHasChanged();
+        });
     }
 
     private void OpenDialog()
     {
         DialogService.Show<VersionDialog>("About BrokerIQ");
+    }
+
+    private async Task LoadBrandingAsync()
+    {
+        _brokerName = null;
+
+        try
+        {
+            if (!await AccountService.IsLoggedIn())
+            {
+                return;
+            }
+
+            var user = await AccountService.GetUser();
+
+            if (user != null && (user.IsBroker || user.IsAdminStaff || user.IsBrokerStaff))
+            {
+                var broker = await BrokerService.GetBroker(user.MasterBrokerId, eagerload: true);
+                _brokerName = broker?.Name;
+            }
+        }
+        catch
+        {
+            _brokerName = null;
+        }
     }
 
     private async Task CookieAlertClosed()
