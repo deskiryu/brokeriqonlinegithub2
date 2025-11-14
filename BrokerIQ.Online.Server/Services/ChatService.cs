@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BrokerIQ.Dto.Models;
 using BrokerIQ.Dto.Request;
-using BrokerIQ.Online.AppSettings;
 using BrokerIQ.Online.Models;
 using BrokerIQ.Online.Server.Services.Base;
 using BrokerIQ.Online.Services.Abstract;
 using BrokerIQ.Online.Services.Interface;
-using Microsoft.Extensions.Options;
 
 namespace BrokerIQ.Online.Services
 {
@@ -19,13 +17,11 @@ namespace BrokerIQ.Online.Services
     {
         private readonly string ChatUrl = "Chat";
         private readonly IMapper mapper;
-        private readonly ReviewItAPIDetails api;
 
-        public ChatService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService, IOptions<ReviewItAPIDetails> api)
+        public ChatService(IRequestProviderService requestProviderService, IMapper mapper, IAccountService accountService)
             :base(accountService, requestProviderService)
         {
             this.mapper = mapper;
-            this.api = api.Value;
         }
 
         public async Task<Chat> Get(int customerId, int brokerId = 0)
@@ -35,13 +31,9 @@ namespace BrokerIQ.Online.Services
 
             var ChatDto = await _requestProviderService.Get<ChatDto>(newUrl);
             var chat = mapper.Map<Chat>(ChatDto);
-            if (this.api.IsYAHTheme)
+            if (chat != null && chat.Messages != null)
             {
-                if (chat != null && chat.Messages != null)
-                {
-                    chat.Messages = chat.Messages.Select(c => { c.YahTheme = true; return c; }).ToList();
-                }
-
+                chat.Messages = chat.Messages.Select(c => { c.YahTheme = true; return c; }).ToList();
             }
             return chat;
         }
@@ -207,12 +199,9 @@ namespace BrokerIQ.Online.Services
             });
             var chat = mapper.Map<Chat>(ChatDto);
 
-            if (this.api.IsYAHTheme)
+            if (chat != null && chat.Messages != null)
             {
-                if (chat != null && chat.Messages != null)
-                {
-                    chat.Messages = chat.Messages.Select(c => { c.YahTheme = true; return c; }).ToList();
-                }
+                chat.Messages = chat.Messages.Select(c => { c.YahTheme = true; return c; }).ToList();
             }
 
             return chat;

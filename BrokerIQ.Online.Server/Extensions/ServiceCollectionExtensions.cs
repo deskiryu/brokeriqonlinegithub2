@@ -68,6 +68,7 @@ namespace BrokerIQ.Online.Server.Extensions
             services.AddScoped<IEmailMessageTemplateService, EmailMessageTemplateService>();
             services.AddScoped<IBlogService, BlogService>();
             services.AddScoped<IWorkflowService, WorkflowService>();
+            services.AddScoped<IAddOnBenefitSampleService, AddOnBenefitSampleService>();
 
 
             services.AddAutoMapper(typeof(ReviewItMapper));

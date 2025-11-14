@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BrokerIQ.Dto.Enum;
@@ -52,14 +53,14 @@ namespace BrokerIQ.Online.Pages
 
         public HashSet<Customer> SelectedCustomers { get; set; } = new HashSet<Customer>();
 
+        protected bool HasSelectedCustomers => SelectedCustomers?.Any() == true;
+
         public int BrokerId { get; set; }
 
         public int AssignedToId { get; set; }
 
         public bool SelectFilled { get; set; }
 
-        protected string allNotification;
-        protected string selectedNotification;
         protected string SearchTerm { get; set; } = "";
 
         public int FilterRecent { get; set; }
@@ -69,12 +70,52 @@ namespace BrokerIQ.Online.Pages
 
         protected int? ProfilingOption { get; set; }
 
+        protected bool? VerifiedFilter { get; set; }
+
         protected Dictionary<int, string> EmployeeColour { get; set; } = new Dictionary<int, string>();
 
+        protected CustomerNameSortOption NameSortOption { get; set; } = CustomerNameSortOption.Default;
+
+        protected CustomerDateOfBirthSortOption DateOfBirthSortOption { get; set; } = CustomerDateOfBirthSortOption.Default;
+
         //filter
-        protected List<Customer> FilteredCustomers => Customers.Where(i => i.ConnectedToCustomerId == null &&
-            ((!string.IsNullOrWhiteSpace(i.Name) && i.Name.ToLower().Contains(SearchTerm.ToLower())) ||
-            (!string.IsNullOrWhiteSpace(i.BusinessName) && i.BusinessName.ToLower().Contains(SearchTerm.ToLower())))).ToList();
+        protected List<Customer> FilteredCustomers => (Customers ?? new List<Customer>())
+            .Where(i => i.ConnectedToCustomerId == null)
+            .Where(i => !VerifiedFilter.HasValue || i.EmailConfirmed == VerifiedFilter.Value)
+            .Where(MatchesSearchFilters)
+            .ToList();
+
+        private bool MatchesSearchFilters(Customer customer)
+        {
+            if (string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                return true;
+            }
+
+            var term = SearchTerm.Trim();
+
+            bool Matches(string? value) =>
+                !string.IsNullOrWhiteSpace(value) &&
+                value.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0;
+
+            if (Matches(customer.Name) ||
+                Matches(customer.BusinessName) ||
+                Matches(customer.EmailAddress))
+            {
+                return true;
+            }
+
+            if (customer.CustomerAssignments?.Any(assignment =>
+                    Matches(assignment?.FullName) ||
+                    Matches(assignment?.FirstName) ||
+                    Matches(assignment?.LastName) ||
+                    Matches(assignment?.EmailAddress)) == true)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         public CustomerCategoryEnum[] CustomerCategoriesByRelevance;
 
@@ -86,11 +127,285 @@ namespace BrokerIQ.Online.Pages
 
         protected bool showNonAppUsersOnly;
 
+        protected bool FiltersDialogVisible { get; set; }
+
+        protected bool HasActiveFilterChips =>
+            (User?.IsAdmin == true && BrokerId > 0) ||
+            AssignedToId > 0 ||
+            showNonAppUsersOnly ||
+            !string.IsNullOrWhiteSpace(SearchTerm) ||
+            FilterRecent > 0 ||
+            CustomerCategory > 0 ||
+            AgeRange > 0 ||
+            FilterPeriod > 0 ||
+            ProfilingOption.HasValue ||
+            VerifiedFilter.HasValue;
+
+        protected bool ShouldShowInviteButton => HasSelectedCustomers;
+
+        protected bool ShouldShowPrimaryActionButton => CanImport || HasSelectedCustomers;
+
+        protected string PrimaryActionLabel => HasSelectedCustomers ? "Assign" : "Import Clients";
+
+        protected bool IsPrimaryActionDisabled =>
+            Customers == null ||
+            (HasSelectedCustomers && (User?.IsAdmin == true || User?.IsBrokerStaff == true));
+
+        protected async Task ExecutePrimaryAction()
+        {
+            if (HasSelectedCustomers)
+            {
+                if (User?.IsAdmin == true || User?.IsBrokerStaff == true)
+                {
+                    return;
+                }
+
+                await AssignToStaff();
+                return;
+            }
+
+            if (CanImport)
+            {
+                await ShowImportDialog();
+            }
+        }
+
         protected async void ShowNonAppUsersOnly()
         {
             showNonAppUsersOnly = !showNonAppUsersOnly;
             showNonAppUsersOnlyAsInt = showNonAppUsersOnly ? 1 : 0;
             await RefreshListFromFilterValues();
+        }
+
+        protected void OpenFiltersDialog() => FiltersDialogVisible = true;
+
+        protected void CloseFiltersDialog() => FiltersDialogVisible = false;
+
+        protected string GetCustomerInitials(Customer customer)
+        {
+            if (customer == null)
+            {
+                return string.Empty;
+            }
+
+            var initials = new List<char>(capacity: 2);
+
+            void TryAddInitial(string? value)
+            {
+                if (initials.Count >= 2 || string.IsNullOrWhiteSpace(value))
+                {
+                    return;
+                }
+
+                var trimmed = value.Trim();
+                if (trimmed.Length == 0)
+                {
+                    return;
+                }
+
+                initials.Add(char.ToUpperInvariant(trimmed[0]));
+            }
+
+            TryAddInitial(customer.FirstName);
+            TryAddInitial(customer.LastName);
+
+            if (initials.Count == 0 && !string.IsNullOrWhiteSpace(customer.Name))
+            {
+                foreach (var part in customer.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    TryAddInitial(part);
+
+                    if (initials.Count >= 2)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (initials.Count == 0)
+            {
+                TryAddInitial(customer.EmailAddress);
+            }
+
+            if (initials.Count == 0)
+            {
+                return "?";
+            }
+
+            return new string(initials.ToArray());
+        }
+
+        protected string GetCustomerAvatarAltText(Customer customer)
+        {
+            if (customer == null)
+            {
+                return string.Empty;
+            }
+
+            if (!string.IsNullOrWhiteSpace(customer.Name))
+            {
+                return $"{customer.Name}'s profile picture";
+            }
+
+            if (!string.IsNullOrWhiteSpace(customer.EmailAddress))
+            {
+                return $"{customer.EmailAddress}'s profile picture";
+            }
+
+            return "Client profile picture";
+        }
+
+        protected string GetBrokerName(int brokerId) =>
+            Brokers?.FirstOrDefault(b => b.Id == brokerId)?.Name ?? "Broker";
+
+        protected string GetEmployeeName(int employeeId) =>
+            Employees?.FirstOrDefault(e => e.Id == employeeId)?.FullName ?? "Team member";
+
+        protected string GetCustomerCategoryLabel()
+        {
+            if (CustomerCategory <= 0) return string.Empty;
+            if (!Enum.IsDefined(typeof(CustomerCategoryEnum), CustomerCategory)) return string.Empty;
+            return ((CustomerCategoryEnum)CustomerCategory).GetDisplayName();
+        }
+
+        protected string GetAgeRangeLabel()
+        {
+            if (AgeRange <= 0) return string.Empty;
+            if (!Enum.IsDefined(typeof(AgeRangeEnum), AgeRange)) return string.Empty;
+            return ((AgeRangeEnum)AgeRange).GetDisplayName();
+        }
+
+        protected string GetUpcomingFilterLabel() => FilterRecent switch
+        {
+            1 => "Insurance renewal",
+            2 => "Mortgage renewal",
+            _ => string.Empty
+        };
+
+        protected string GetPeriodLabel()
+        {
+            var labels = new[] { "2 weeks", "4 weeks", "3 months", "6 months", "9 months" };
+            if (FilterPeriod >= 0 && FilterPeriod < labels.Length)
+            {
+                return labels[FilterPeriod];
+            }
+            return string.Empty;
+        }
+
+        protected string GetProfilingLabel()
+        {
+            if (!ProfilingOption.HasValue) return string.Empty;
+            if (!Enum.IsDefined(typeof(ProfilingOptionEnum), ProfilingOption.Value)) return string.Empty;
+            return ((ProfilingOptionEnum)ProfilingOption.Value).GetDisplayName();
+        }
+
+        protected async Task ClearBrokerFilter()
+        {
+            if (BrokerId == 0) return;
+            BrokerId = 0;
+            await AutoCompleteClickBroker();
+        }
+
+        protected async Task ClearAssigneeFilter()
+        {
+            if (AssignedToId == 0) return;
+            AssignedToId = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearUsageFilter()
+        {
+            if (!showNonAppUsersOnly) return;
+            showNonAppUsersOnly = false;
+            showNonAppUsersOnlyAsInt = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected Task ClearSearchFilter()
+        {
+            if (string.IsNullOrWhiteSpace(SearchTerm)) return Task.CompletedTask;
+            SearchTerm = string.Empty;
+            StateHasChanged();
+            return Task.CompletedTask;
+        }
+
+        protected async Task ClearUpcomingFilter()
+        {
+            if (FilterRecent == 0) return;
+            FilterRecent = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearCategoryFilter()
+        {
+            if (CustomerCategory == 0) return;
+            CustomerCategory = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearAgeRangeFilter()
+        {
+            if (AgeRange == 0) return;
+            AgeRange = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearPeriodFilter()
+        {
+            if (FilterPeriod == 0) return;
+            FilterPeriod = 0;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearProfilingFilter()
+        {
+            if (!ProfilingOption.HasValue) return;
+            ProfilingOption = null;
+            await RefreshListFromFilterValues();
+        }
+
+        protected async Task ClearVerifiedFilter()
+        {
+            if (!VerifiedFilter.HasValue) return;
+            VerifiedFilter = null;
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task ClearAllFilters()
+        {
+            if (!HasActiveFilterChips)
+            {
+                return;
+            }
+
+            BrokerId = 0;
+            AssignedToId = 0;
+            showNonAppUsersOnly = false;
+            showNonAppUsersOnlyAsInt = 0;
+            SearchTerm = string.Empty;
+            FilterRecent = 0;
+            FilterPeriod = 0;
+            CustomerCategory = 0;
+            AgeRange = 0;
+            ProfilingOption = null;
+            VerifiedFilter = null;
+
+            if (SelectedCustomers != null && SelectedCustomers.Any())
+            {
+                SelectedCustomers.Clear();
+            }
+
+            if (User?.IsAdmin == true)
+            {
+                Employees = new List<BrokerStaff>();
+                await AutoCompleteClickBroker();
+            }
+            else
+            {
+                await RefreshListFromFilterValues();
+            }
+
+            await InvokeAsync(StateHasChanged);
         }
 
         protected override async Task OnInitializedAsync()
@@ -102,6 +417,7 @@ namespace BrokerIQ.Online.Pages
         {
             try
             {
+                await ShowCustomerLoadingIndicatorAsync();
                 SelectFilled = false;
                 await GetCustomers();
                 User = await AccountService.GetUser();
@@ -168,11 +484,19 @@ namespace BrokerIQ.Online.Pages
             }
         }
 
+        private Task ShowCustomerLoadingIndicatorAsync()
+        {
+            Customers?.Clear();
+            Customers = null;
+            return InvokeAsync(StateHasChanged);
+        }
+
         protected async Task GetCustomers(bool clear = false)
         {
             try
             {
-                Customers = (await CustomerService.GetAllCustomers(profilePictures: true)).OrderByDescending(x => x.Id).ToList();
+                Customers = (await CustomerService.GetAllCustomers(profilePictures: true)).ToList();
+                ApplyCustomerSort();
             }
             catch
             {
@@ -181,7 +505,7 @@ namespace BrokerIQ.Online.Pages
 
             if (clear)
             {
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -243,22 +567,21 @@ namespace BrokerIQ.Online.Pages
 
         protected async Task AutoCompleteClickBroker()
         {
-            Customers.Clear();
-            Customers = null;
+            await ShowCustomerLoadingIndicatorAsync();
             Customers = (await CustomerService.GetAllCustomers(BrokerId, FilterRecent, FilterPeriod, CustomerCategory, AgeRange, profilePictures: true)).ToList();
+            ApplyCustomerSort();
 
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
                 SelectedCustomers.Clear();
             }
 
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         protected async Task RefreshListFromFilterValues()
         {
-            Customers.Clear();
-            Customers = null;
+            await ShowCustomerLoadingIndicatorAsync();
 
             var filterValues = new CustomerFilter()
             {
@@ -274,13 +597,61 @@ namespace BrokerIQ.Online.Pages
             };
 
             Customers = (await CustomerService.GetFilteredCustomers(filterValues)).ToList();
+            ApplyCustomerSort();
 
             if (SelectedCustomers != null && SelectedCustomers.Any())
             {
                 SelectedCustomers.Clear();
             }
 
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task ApplyCategoryFilter(int category)
+        {
+            if (CustomerCategory == category)
+            {
+                return;
+            }
+
+            CustomerCategory = category;
+
+            await RefreshListFromFilterValues();
+        }
+
+        protected string GetCategoryFilterMenuItemClass(int category)
+        {
+            var cssClass = "customer-sort-menu__item";
+
+            if (CustomerCategory == category)
+            {
+                cssClass += " customer-sort-menu__item--active";
+            }
+
+            return cssClass;
+        }
+
+        protected async Task ApplyVerifiedFilter(bool? isVerified)
+        {
+            if (VerifiedFilter == isVerified)
+            {
+                return;
+            }
+
+            VerifiedFilter = isVerified;
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected string GetVerifiedFilterMenuItemClass(bool? option)
+        {
+            var cssClass = "customer-sort-menu__item";
+
+            if (VerifiedFilter == option)
+            {
+                cssClass += " customer-sort-menu__item--active";
+            }
+
+            return cssClass;
         }
 
         protected async Task SendChatMessageToSelected()
@@ -320,85 +691,56 @@ namespace BrokerIQ.Online.Pages
             await DialogService.Show<MultipleChatDialog>("Send Chat To Multiple", dialogParams, dialogOptions).Result;
         }
 
+        protected async Task HandleSendChatOption() => await SendChatMessageToSelected();
+
         protected async Task SendNotificationToSelected()
         {
-            var dialogParams = new DialogParameters();
-            if (string.IsNullOrEmpty(selectedNotification))
-            {
-                dialogParams.Add("Message", $"Please enter a notification to send.");
-                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
-                return;
-            }
-
-            if (selectedNotification.Length > 299)
-            {
-                dialogParams.Add("Message", $"Your notification is too long. It needs to be less than 300 letters.");
-                await DialogService.Show<AlertDialog>("Send Notification", dialogParams).Result;
-                return;
-            }
-            dialogParams.Add("Notification", selectedNotification);
-
-            var targetsName = new List<string>();
-            if (SelectedCustomers != null)
-            {
-                targetsName = SelectedCustomers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed).Select(x => x.Name).ToList();
-            }
-
-            if (targetsName == null && !targetsName.Any())
+            if (SelectedCustomers == null || !SelectedCustomers.Any())
             {
                 AlertService.Error("No targets chosen or marketing for those targets not allowed");
+                return;
             }
-            ;
 
-            //var longlist = string.Join(",", targets);
+            var eligibleCustomers = SelectedCustomers
+                .Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed)
+                .ToList();
 
-            dialogParams.Add("Users", targetsName);
-            dialogParams.Add("areBrokers", false);
-            var result = await DialogService.Show<ScrollableDialog>("Send Notification", dialogParams).Result;
-
-            if (!result.Canceled)
+            if (!eligibleCustomers.Any())
             {
-                var targets = new List<int>();
-                if (SelectedCustomers != null)
-                {
-                    targets = SelectedCustomers.Where(x => x.MarketingMessagesAllowed && x.EmailConfirmed).Select(x => x.Id).ToList();
-                }
-
-                if (targets != null && targets.Any())
-                {
-                    var user = await AccountService.GetUser();
-
-                    var succeeded = false;
-                    try
-                    {
-                        succeeded = await NotificationService.SendMessageNotification(selectedNotification, targets, user.MasterBrokerId);
-                    }
-                    catch
-                    {
-
-                    }
-
-                    if (succeeded)
-                    {
-                        AlertService.Alert(new AlertBIQ
-                        {
-                            AutoClose = true,
-                            Message = "Notification Sent"
-                        });
-                    }
-                    else
-                    {
-                        AlertService.Error("Notification sending failed");
-                    }
-                    ;
-                }
-                else
-                {
-                    AlertService.Error("No targets chosen or marketing for those targets not allowed");
-                }
-                ;
+                AlertService.Error("No targets chosen or marketing for those targets not allowed");
+                return;
             }
+
+            var masterBrokerId = User?.MasterBrokerId ?? 0;
+            if (masterBrokerId <= 0)
+            {
+                var user = await AccountService.GetUser();
+                masterBrokerId = user?.MasterBrokerId ?? 0;
+            }
+
+            if (masterBrokerId <= 0)
+            {
+                AlertService.Error("Unable to determine broker context for sending notifications.");
+                return;
+            }
+
+            var dialogParams = new DialogParameters
+            {
+                { "CustomerNames", eligibleCustomers.Select(x => x.Name).ToList() },
+                { "CustomerIds", eligibleCustomers.Select(x => x.Id).ToList() },
+                { "MasterBrokerId", masterBrokerId }
+            };
+
+            var dialogOptions = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true
+            };
+
+            await DialogService.Show<MultipleNotificationDialog>("Send Notification", dialogParams, dialogOptions).Result;
         }
+
+        protected async Task HandleSendNotificationOption() => await SendNotificationToSelected();
 
         protected async Task OnCategoryClick(int customerId, int newCategory)
         {
@@ -487,6 +829,137 @@ namespace BrokerIQ.Online.Pages
 
                 Snackbar.Add(wasSuccessfull ? "Emails sent successfully" : "Some emails failed", wasSuccessfull ? Severity.Success : Severity.Warning);
             }
+        }
+
+        protected async Task SortCustomersByNameAscending()
+        {
+            NameSortOption = CustomerNameSortOption.Ascending;
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.Default;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task SortCustomersByNameDescending()
+        {
+            NameSortOption = CustomerNameSortOption.Descending;
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.Default;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task ResetCustomerSort()
+        {
+            NameSortOption = CustomerNameSortOption.Default;
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.Default;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected string GetSortMenuItemClass(CustomerNameSortOption option)
+        {
+            var cssClass = "customer-sort-menu__item";
+
+            if (NameSortOption == option)
+            {
+                cssClass += " customer-sort-menu__item--active";
+            }
+
+            return cssClass;
+        }
+
+        protected async Task SortCustomersByDateOfBirthAscending()
+        {
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.OldestToNewest;
+            NameSortOption = CustomerNameSortOption.Default;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task SortCustomersByDateOfBirthDescending()
+        {
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.NewestToOldest;
+            NameSortOption = CustomerNameSortOption.Default;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task ResetDateOfBirthSort()
+        {
+            DateOfBirthSortOption = CustomerDateOfBirthSortOption.Default;
+            ApplyCustomerSort();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected string GetDateOfBirthSortMenuItemClass(CustomerDateOfBirthSortOption option)
+        {
+            var cssClass = "customer-sort-menu__item";
+
+            if (DateOfBirthSortOption == option)
+            {
+                cssClass += " customer-sort-menu__item--active";
+            }
+
+            return cssClass;
+        }
+
+        private void ApplyCustomerSort()
+        {
+            if (Customers == null || !Customers.Any())
+            {
+                return;
+            }
+
+            if (DateOfBirthSortOption != CustomerDateOfBirthSortOption.Default)
+            {
+                switch (DateOfBirthSortOption)
+                {
+                    case CustomerDateOfBirthSortOption.OldestToNewest:
+                        Customers = Customers
+                            .OrderBy(customer => customer.DateOfBirth)
+                            .ToList();
+                        break;
+                    case CustomerDateOfBirthSortOption.NewestToOldest:
+                        Customers = Customers
+                            .OrderByDescending(customer => customer.DateOfBirth)
+                            .ToList();
+                        break;
+                }
+
+                return;
+            }
+
+            switch (NameSortOption)
+            {
+                case CustomerNameSortOption.Ascending:
+                    Customers = Customers
+                        .OrderBy(customer => customer.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+                        .ToList();
+                    break;
+                case CustomerNameSortOption.Descending:
+                    Customers = Customers
+                        .OrderByDescending(customer => customer.Name ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+                        .ToList();
+                    break;
+                default:
+                    Customers = Customers
+                        .OrderByDescending(customer => customer.Id)
+                        .ToList();
+                    break;
+            }
+        }
+
+        protected enum CustomerNameSortOption
+        {
+            Default,
+            Ascending,
+            Descending
+        }
+
+        protected enum CustomerDateOfBirthSortOption
+        {
+            Default,
+            OldestToNewest,
+            NewestToOldest
         }
     }
 }

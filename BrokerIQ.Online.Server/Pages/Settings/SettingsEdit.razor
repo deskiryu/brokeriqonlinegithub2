@@ -43,7 +43,7 @@
                     <TabContent>
                         <MudText Typo="Typo.subtitle2" Class="mr-1">TEMPLATES</MudText>
                         <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.TemplatesVideoUrl"
-                            Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 0)" />
+                            Visible="@(Tabs.ActivePanelIndex == 0)" />
                     </TabContent>
                     <ChildContent>
                         <DefinedMessageTable @bind-Broker="Broker" User="@User" />
@@ -57,7 +57,7 @@
                     <TabContent>
                         <MudText Typo="Typo.subtitle2" Class="mr-1">REMINDER OPTIONS</MudText>
                         <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.RemindersVideoUrl"
-                            Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 1)" />
+                            Visible="@(Tabs.ActivePanelIndex == 1)" />
                     </TabContent>
                     <ChildContent>
                         @if (this.api.Value.ShowProtection && ShowReminderSection())
@@ -79,7 +79,7 @@
                     <TabContent>
                         <MudText Typo="Typo.subtitle2" Class="mr-1">DOCUMENT VAULT TYPES</MudText>
                         <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl"
-                            Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 2)" />
+                            Visible="@(Tabs.ActivePanelIndex == 2)" />
                     </TabContent>
                     <ChildContent>
                         <DocumentVaultTypeTable Broker="@Broker" User="@User" />
@@ -92,7 +92,7 @@
                 <MudTabPanel>
                     <TabContent>
                         <MudText Typo="Typo.subtitle2" Class="mr-1">WEALTH TYPES</MudText>
-                        @*<TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 2)" />*@
+                        @*<TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(Tabs.ActivePanelIndex == 2)" />*@
                     </TabContent>
                     <ChildContent>
                         <WealthTypeTable Broker="@Broker" User="@User" />
@@ -102,7 +102,7 @@
                 <MudTabPanel>
                     <TabContent>
                         <MudText Typo="Typo.subtitle2" Class="mr-1">GOALS</MudText>
-                        @*<TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 2)" />*@
+                        @*<TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.DocumentVaultVideoUrl" Visible="@(Tabs.ActivePanelIndex == 2)" />*@
                     </TabContent>
                     <ChildContent>
                         <GoalTable Broker="@Broker" User="@User" />
@@ -111,7 +111,7 @@
             }
 
             @* Consent Documents tab *@
-            @if ((User.IsBroker || User.IsBrokerStaff) && (Broker?.BrokerIdentifier?.UseConsentDocuments ?? false))
+            @if ((User.IsBroker || User.IsAdminStaff) && (Broker?.BrokerIdentifier?.UseConsentDocuments ?? false))
             {
                 <MudTabPanel>
                     <TabContent>
@@ -130,7 +130,7 @@
                         <MudText Typo="Typo.subtitle2" Class="mr-1">NOTIFICATIONS</MudText>
                         <TutorialVideoIcon TooltipPlacement="Placement.Bottom"
                             VideoUrl="@tutorialVideos.NotificationSettingsVideoUrl"
-                            Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 3)" />
+                            Visible="@(Tabs.ActivePanelIndex == 3)" />
                     </TabContent>
                     <ChildContent>
                         @if (User.IsBrokerStaff)
@@ -391,7 +391,7 @@
                     <TabContent>
                         <MudText Typo="Typo.subtitle2" Class="mr-1">APPOINTMENTS</MudText>
                         <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.AppointmentsVideoUrl"
-                            Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 4)" />
+                            Visible="@(Tabs.ActivePanelIndex == 4)" />
                     </TabContent>
                     <ChildContent>
                         @if (ShowAppointmentSection())
@@ -412,7 +412,7 @@
                     <TabContent>
                         <MudText Typo="Typo.subtitle2" Class="mr-1">INTEGRATIONS</MudText>
                         <TutorialVideoIcon TooltipPlacement="Placement.Bottom" VideoUrl="@tutorialVideos.IntegrationsVideoUrl"
-                            Visible="@(api.Value.IsYAHTheme && Tabs.ActivePanelIndex == 5)" />
+                            Visible="@(Tabs.ActivePanelIndex == 5)" />
                     </TabContent>
                     <ChildContent>
                         <IntegrationStack Broker="@Broker" />
