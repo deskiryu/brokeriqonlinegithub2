@@ -1079,11 +1079,8 @@ tr.expired {
     text-align: left;
 }
 
-
 .customer-list__table {
     --customer-list-checkbox-size: 24px;
-    --customer-list-checkbox-column-padding-inline: 0.5rem;
-    --customer-list-checkbox-column-width: calc(var(--customer-list-checkbox-size) + (var(--customer-list-checkbox-column-padding-inline) * 2));
 }
 
 .customer-list__table th,
@@ -1091,20 +1088,9 @@ tr.expired {
     padding: 0.75rem 1rem;
 }
 
-.customer-list__table thead th:first-child,
-.customer-list__table tbody td:first-child,
-.customer-list__table tbody th:first-child {
-    width: var(--customer-list-checkbox-column-width);
-    min-width: var(--customer-list-checkbox-column-width);
-    max-width: var(--customer-list-checkbox-column-width);
-    padding-left: var(--customer-list-checkbox-column-padding-inline);
-    padding-right: var(--customer-list-checkbox-column-padding-inline);
-}
-
 .customer-list__table .mud-table-checkbox {
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
 .customer-list__table .mud-table-checkbox label.mud-checkbox-root {
@@ -1118,13 +1104,12 @@ tr.expired {
     transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
     padding: 0;
     color: #0f172a;
-    background-color: transparent;
 }
 
 .customer-list__table .mud-table-checkbox label.mud-checkbox-root.mud-checked {
     border-color: var(--mud-palette-primary);
-    background-color: var(--mud-palette-primary);
-    color: var(--mud-palette-primary-contrast-text, #ffffff);
+    background-color: rgba(var(--mud-palette-primary-rgb, 53, 132, 228), 0.12);
+    color: var(--mud-palette-primary);
 }
 
 .customer-list__table .mud-table-checkbox label.mud-checkbox-root .mud-svg-icon {
